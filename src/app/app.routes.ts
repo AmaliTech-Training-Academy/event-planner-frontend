@@ -12,22 +12,22 @@ export const routes: Routes = [
       },
       {
         path: 'login',
-        loadComponent: () => import('./auth/pages/login-page/login-page.component')
+        loadComponent: () => import('./modules/auth/pages/login-page/login-page.component')
           .then(m => m.LoginPageComponent),
       },
       {
         path: 'signup',
-        loadComponent: () => import('./auth/pages/signup-page/signup-page.component')
+        loadComponent: () => import('./modules/auth/pages/signup-page/signup-page.component')
           .then(m => m.SignupPageComponent),
       },
       {
         path: 'verify-email',
-        loadComponent: () => import('./auth/pages/verify-email-page/verify-email-page.component')
+        loadComponent: () => import('./modules/auth/pages/verify-email-page/verify-email-page.component')
           .then(m => m.VerifyEmailPageComponent),
       },
       {
         path: 'admin',
-        loadComponent: () => import('./auth/pages/admin-login-page/admin-login-page.component')
+        loadComponent: () => import('./modules/auth/pages/admin-login-page/admin-login-page.component')
           .then(m => m.AdminLoginPageComponent),
       }
     ]
@@ -38,37 +38,37 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./attendee/pages/landing-page/landing-page.component')
+        loadComponent: () => import('./modules/attendee/pages/landing-page/landing-page.component')
           .then(m => m.LandingPageComponent),
       },
       {
         path: 'about',
-        loadComponent: () => import('./attendee/pages/about-page/about-page.component')
+        loadComponent: () => import('./modules/attendee/pages/about-page/about-page.component')
           .then(m => m.AboutPageComponent),
       },
       {
         path: 'explore',
-        loadComponent: () => import('./attendee/pages/explore-page/explore-page.component')
+        loadComponent: () => import('./modules/attendee/pages/explore-page/explore-page.component')
           .then(m => m.ExplorePageComponent),
       },
       {
         path: 'create-event',
-        loadComponent: () => import('./attendee/pages/create-event-page/create-event-page.component')
+        loadComponent: () => import('./modules/attendee/pages/create-event-page/create-event-page.component')
           .then(m => m.CreateEventPageComponent),
       },
       {
         path: 'event/:id',
-        loadComponent: () => import('./attendee/pages/event-page/event-page.component')
+        loadComponent: () => import('./modules/attendee/pages/event-page/event-page.component')
           .then(m => m.EventPageComponent),
       },
       {
         path: 'profile',
-        loadComponent: () => import('./attendee/pages/profile-page/profile-page.component')
+        loadComponent: () => import('./modules/attendee/pages/profile-page/profile-page.component')
           .then(m => m.ProfilePageComponent),
       },
       {
         path: 'my-events',
-        loadComponent: () => import('./attendee/pages/my-events-page/my-events-page.component')
+        loadComponent: () => import('./modules/attendee/pages/my-events-page/my-events-page.component')
           .then(m => m.MyEventsPageComponent),
       },
     ]
@@ -79,12 +79,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./admin/pages/dashboard-page/dashboard-page.component')
+        loadComponent: () => import('./modules/admin/pages/dashboard-page/dashboard-page.component')
           .then(m => m.DashboardPageComponent),
       },
       {
         path: 'users',
-        loadComponent: () => import('./admin/pages/user-management-page/user-management-page.component')
+        loadComponent: () => import('./modules/admin/pages/user-management-page/user-management-page.component')
           .then(m => m.UserManagementPageComponent),
       },
     ]
