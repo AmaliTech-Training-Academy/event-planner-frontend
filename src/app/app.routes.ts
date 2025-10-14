@@ -34,6 +34,7 @@ export const routes: Routes = [
   },
   {
     path: 'app',
+    loadComponent: ()=>import('./layouts/atendee-layout/atendee-layout.component').then(m => m.AtendeeLayoutComponent),
     children: [
       {
         path: '',
@@ -72,4 +73,20 @@ export const routes: Routes = [
       },
     ]
   },
+  {
+    path: 'admin',
+    loadComponent: () => import('./layouts/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./admin/pages/dashboard-page/dashboard-page.component')
+          .then(m => m.DashboardPageComponent),
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./admin/pages/user-management-page/user-management-page.component')
+          .then(m => m.UserManagementPageComponent),
+      },
+    ]
+  }
 ];
