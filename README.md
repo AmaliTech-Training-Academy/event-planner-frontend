@@ -1,1 +1,1 @@
-# Event Planner Frontend
+# Event Planner
