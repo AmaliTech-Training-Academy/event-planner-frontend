@@ -19,10 +19,6 @@
   width: 100%;
   max-width: 465px;
   text-align: center;
-  @media (max-width:447px) {
-    max-width: 320px;
-    
-  }
 }
 
 .app-name {
@@ -64,6 +60,13 @@
     position: relative;
     display: flex;
     align-items: center;
+    transition: all 0.2s ease;
+
+    &.has-error {
+      .input-icon {
+        color: $red-500;
+      }
+    }
 
     .input-icon {
       position: absolute;
@@ -73,6 +76,7 @@
       z-index: 1;
       width: 20px;
       height: 20px;
+      transition: color 0.2s ease;
     }
   }
 
@@ -83,10 +87,21 @@
     font-family: $font-lato;
     width: 100%;
     display: block;
-    height: 48px;
+    transition: all 0.2s ease;
+
     &:focus {
       outline: none;
       border-color: $orange-500;
+    }
+
+    &.error {
+      border-color: $red-500;
+      background-color: rgba($red-50, 0.5);
+
+      &:focus {
+        border-color: $red-500;
+        box-shadow: 0 0 0 3px rgba($red-500, 0.1);
+      }
     }
   }
 
@@ -129,6 +144,33 @@
       }
     }
   }
+
+  .error-message {
+    @include body-3;
+    color: $red-600;
+    margin-top: $spacing-1;
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    animation: slideDown 0.2s ease-out;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .extras {
@@ -143,6 +185,13 @@
     align-items: center;
     gap: $spacing-2;
     cursor: pointer;
+    font-weight: 400;
+
+    input[type="checkbox"] {
+      cursor: pointer;
+      width: auto;
+      margin: 0;
+    }
   }
 
   .forgot-link {
@@ -171,6 +220,10 @@
   &:hover {
     background-color: $orange-700;
   }
+
+  &:active {
+    transform: scale(0.98);
+  }
 }
 
 .divider {
@@ -194,10 +247,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 
     &:hover {
       background: $gray-100;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &:active {
+      transform: translateY(0);
     }
 
     svg {
