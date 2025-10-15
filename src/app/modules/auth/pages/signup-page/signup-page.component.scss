@@ -28,18 +28,7 @@
     padding: 1.5rem;
     backdrop-filter: blur(0.05rem);
 
-    .logo {
-        display: flex;
-        justify-content: center;
-        h1 {
-            @include h-5;
-            color: $header-dark;
-            font-weight: bold;
-            span {
-                color: $primary-color;
-            }
-        }
-    }
+    
 
     .header {
         display: flex;

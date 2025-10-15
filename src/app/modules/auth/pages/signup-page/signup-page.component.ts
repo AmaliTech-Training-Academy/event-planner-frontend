@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LogoComponent } from "../../components/logo/logo.component";
 
 @Component({
   selector: 'app-signup-page',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LogoComponent],
   templateUrl: './signup-page.component.html',
   styleUrl: './signup-page.component.scss'
 })
