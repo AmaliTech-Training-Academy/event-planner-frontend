@@ -98,7 +98,14 @@
         <a class="forgot-link" href="#">Forgot password?</a>
       </div>
 
-      <button type="submit" class="login-btn">Log In</button>
+      <button 
+  type="submit" 
+  class="login-btn"
+  [disabled]="form.invalid"
+>
+  Log In
+</button>
+
     </form>
 
     <div class="divider">Or continue with</div>

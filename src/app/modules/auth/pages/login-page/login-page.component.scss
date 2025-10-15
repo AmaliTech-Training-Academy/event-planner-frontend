@@ -301,4 +301,10 @@
       text-decoration: underline;
     }
   }
+  
+}
+.login-btn:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+transition: opacity 0.2s ease;
 }
