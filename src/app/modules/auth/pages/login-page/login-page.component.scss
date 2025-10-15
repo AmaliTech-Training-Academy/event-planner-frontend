@@ -19,6 +19,10 @@
   width: 100%;
   max-width: 465px;
   text-align: center;
+  @media (max-width:447px) {
+    max-width: 320px;
+    
+  }
 }
 
 .app-name {
@@ -56,6 +60,22 @@
     }
   }
 
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .input-icon {
+      position: absolute;
+      left: $spacing-3;
+      color: $gray-500;
+      pointer-events: none;
+      z-index: 1;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
   input {
     padding: $spacing-3 $spacing-4;
     border: 1px solid $gray-300;
@@ -63,16 +83,25 @@
     font-family: $font-lato;
     width: 100%;
     display: block;
-
-
+    height: 48px;
     &:focus {
       outline: none;
       border-color: $orange-500;
     }
   }
 
+  .input-wrapper input {
+    padding-left: calc(#{$spacing-4} + #{$spacing-3} + 20px);
+  }
+
   .password-field {
     position: relative;
+    flex: 1;
+
+    input {
+      width: 100%;
+      padding-right: calc(#{$spacing-4} + #{$spacing-3} + 20px);
+    }
 
     .toggle-btn {
       position: absolute;
@@ -82,6 +111,22 @@
       background: none;
       border: none;
       cursor: pointer;
+      padding: $spacing-1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $gray-500;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: $gray-700;
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        display: block;
+      }
     }
   }
 }
@@ -91,6 +136,14 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: $spacing-4;
+
+  label {
+    @include body-2;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    cursor: pointer;
+  }
 
   .forgot-link {
     @include body-2;
@@ -113,6 +166,7 @@
   font-weight: 600;
   cursor: pointer;
   margin-top: $spacing-2;
+  transition: background-color 0.2s ease;
 
   &:hover {
     background-color: $orange-700;
@@ -137,14 +191,19 @@
     border-radius: $radius-3;
     padding: $spacing-2;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
 
     &:hover {
       background: $gray-100;
     }
 
-    img {
-      width: 20px;
-      height: 20px;
+    svg {
+      width: 24px;
+      height: 24px;
+      display: block;
     }
   }
 }
@@ -153,6 +212,22 @@
   margin-top: $spacing-4;
   @include body-3;
   color: $gray-600;
+
+  p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $spacing-1;
+
+    svg {
+      margin-right: $spacing-1;
+      color: $gray-500;
+    }
+  }
+
+  small {
+    display: block;
+  }
 }
 
 .signup-text {
