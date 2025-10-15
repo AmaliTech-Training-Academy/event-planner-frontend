@@ -1,0 +1,170 @@
+@use '../../../../../../src/styles/typography' as *;
+@use '../../../../../../src/styles/colors' as *;
+@use '../../../../../../src/styles/variables' as *;
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: $gray-50;
+  font-family: $font-lato;
+}
+
+.login-card {
+  background: $gray-50;
+  border: 8px solid $gray-200;
+  border-radius: $radius-8;
+  padding: $spacing-6;
+  width: 100%;
+  max-width: 465px;
+  text-align: center;
+}
+
+.app-name {
+  @include h-5;
+  color: $orange-600;
+
+  span {
+    color: $gray-900;
+  }
+}
+
+.welcome-text {
+  @include h-4;
+  margin-top: $spacing-4;
+}
+
+.subtitle {
+  @include body-2;
+  color: $gray-600;
+  margin-bottom: $spacing-6;
+}
+
+.form-group {
+  text-align: left;
+  margin-bottom: $spacing-4;
+
+  label {
+    @include body-2;
+    font-weight: 600;
+    display: block;
+    margin-bottom: $spacing-1;
+
+    span {
+      color: $red-500;
+    }
+  }
+
+  input {
+    padding: $spacing-3 $spacing-4;
+    border: 1px solid $gray-300;
+    border-radius: $radius-3;
+    font-family: $font-lato;
+    width: 100%;
+    display: block;
+
+
+    &:focus {
+      outline: none;
+      border-color: $orange-500;
+    }
+  }
+
+  .password-field {
+    position: relative;
+
+    .toggle-btn {
+      position: absolute;
+      right: $spacing-3;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  }
+}
+
+.extras {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-4;
+
+  .forgot-link {
+    @include body-2;
+    color: $blue-600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.login-btn {
+  width: 100%;
+  padding: $spacing-3;
+  background-color: $orange-600;
+  color: $gray-50;
+  border: none;
+  border-radius: $radius-3;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: $spacing-2;
+
+  &:hover {
+    background-color: $orange-700;
+  }
+}
+
+.divider {
+  margin: $spacing-6 0 $spacing-4;
+  position: relative;
+  @include body-2;
+  color: $gray-500;
+}
+
+.social-login {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-3;
+
+  button {
+    background: $gray-50;
+    border: 1px solid $gray-200;
+    border-radius: $radius-3;
+    padding: $spacing-2;
+    cursor: pointer;
+
+    &:hover {
+      background: $gray-100;
+    }
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.secure-text {
+  margin-top: $spacing-4;
+  @include body-3;
+  color: $gray-600;
+}
+
+.signup-text {
+  margin-top: $spacing-3;
+  @include body-2;
+
+  a {
+    color: $blue-600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
