@@ -1,1 +1,130 @@
-<p>signup-page works!</p>
+<div class="wrapper">
+
+    <div class="content">
+        <div class="logo">
+            <h1><span>Event</span>Hub</h1>
+        </div>
+        <div class="header">
+            <h2>Sign Up</h2>
+            <p>Fill the form below to register your account</p>
+        </div>
+        <div class="form-container">
+            <form [formGroup]="signupForm" action="" method="post">
+                <div class="field">
+                    <label for="fullname">Full name<span>*</span></label>
+                    <div class="input-container">
+                        <img src="icons/user.png" alt="" srcset="">
+                        <input formControlName="fullName" type="text" id="fullname" name="fullname"
+                            placeholder="E.g., John Doe">
+                    </div>
+                    <!-- <small class="error" *ngIf="hasError('fullName', 'required')">Full name is required.</small>
+    <small class="error" *ngIf="hasError('fullName', 'minlength')">Full name must be at least 3 characters.</small> -->
+                </div>
+                <div class="field">
+                    <label for="email">Email Address<span>*</span></label>
+                    <div class="input-container">
+                        <img src="icons/mail.png" alt="" srcset="">
+                        <input formControlName="email" type="email" id="email" name="email"
+                            placeholder="user@gmail.com">
+                    </div>
+                    <!-- <small class="error" *ngIf="hasError('email', 'required')">Email is required.</small>
+                        <small class="error" *ngIf="hasError('email', 'email')">Enter a valid email address.</small> -->
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="password">Password<span>*</span></label>
+                        <div class="input-container">
+                            <img src="icons/lock.png" alt="" srcset="">
+                            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" id="password"
+                                name="password" placeholder="********">
+                            <button type="button" (click)="toggleShowPassword()">
+                                <!-- eye icon -->
+                                @if (showPassword) {
+                                <svg width="23" height="21" viewBox="0 0 23 21" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M11.5 4.4748C15.29 4.4748 18.67 6.6048 20.32 9.9748C19.73 11.1948 18.9 12.2448 17.91 13.0948L19.32 14.5048C20.71 13.2748 21.81 11.7348 22.5 9.9748C20.77 5.58481 16.5 2.4748 11.5 2.4748C10.23 2.4748 9.01 2.6748 7.86 3.0448L9.51 4.6948C10.16 4.5648 10.82 4.4748 11.5 4.4748ZM10.43 5.6148L12.5 7.6848C13.07 7.9348 13.53 8.3948 13.78 8.9648L15.85 11.0348C15.93 10.6948 15.99 10.3348 15.99 9.9648C16 7.4848 13.98 5.4748 11.5 5.4748C11.13 5.4748 10.78 5.5248 10.43 5.6148ZM1.51 2.3448L4.19 5.02481C2.56 6.3048 1.27 8.0048 0.5 9.9748C2.23 14.3648 6.5 17.4748 11.5 17.4748C13.02 17.4748 14.48 17.1848 15.82 16.6548L19.24 20.0748L20.65 18.6648L2.92 0.924805L1.51 2.3448ZM9.01 9.8448L11.62 12.4548C11.58 12.4648 11.54 12.4748 11.5 12.4748C10.12 12.4748 9 11.3548 9 9.9748C9 9.9248 9.01 9.8948 9.01 9.8448ZM5.61 6.4448L7.36 8.19481C7.13 8.74481 7 9.3448 7 9.9748C7 12.4548 9.02 14.4748 11.5 14.4748C12.13 14.4748 12.73 14.3448 13.27 14.1148L14.25 15.0948C13.37 15.3348 12.45 15.4748 11.5 15.4748C7.71 15.4748 4.33 13.3448 2.68 9.9748C3.38 8.54481 4.4 7.3648 5.61 6.4448Z"
+                                        fill="#7C7C7C" />
+                                </svg>
+                                }@else {
+                                <svg width="23" height="21" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 23 21" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                </svg>
+                                }
+
+                            </button>
+
+                        </div>
+                        <!-- <small class="error" *ngIf="hasError('password', 'required')">Password is required.</small>
+                        <small class="error" *ngIf="hasError('password', 'minlength')">Password must be at least 6
+                            characters.</small> -->
+                    </div>
+                    <div class="field">
+                        <label for="confirm-password">Confirm Password<span>*</span></label>
+                        <div class="input-container">
+                            <img src="icons/lock.png" alt="" srcset="">
+                            <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword"
+                                id="confirm-password" name="confirm-password" placeholder="********">
+                            <button type="button" (click)="toggleShowConfirmPassword()">
+                                <!-- eye icon -->
+                                @if (showConfirmPassword) {
+                                <svg width="23" height="21" viewBox="0 0 23 21" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M11.5 4.4748C15.29 4.4748 18.67 6.6048 20.32 9.9748C19.73 11.1948 18.9 12.2448 17.91 13.0948L19.32 14.5048C20.71 13.2748 21.81 11.7348 22.5 9.9748C20.77 5.58481 16.5 2.4748 11.5 2.4748C10.23 2.4748 9.01 2.6748 7.86 3.0448L9.51 4.6948C10.16 4.5648 10.82 4.4748 11.5 4.4748ZM10.43 5.6148L12.5 7.6848C13.07 7.9348 13.53 8.3948 13.78 8.9648L15.85 11.0348C15.93 10.6948 15.99 10.3348 15.99 9.9648C16 7.4848 13.98 5.4748 11.5 5.4748C11.13 5.4748 10.78 5.5248 10.43 5.6148ZM1.51 2.3448L4.19 5.02481C2.56 6.3048 1.27 8.0048 0.5 9.9748C2.23 14.3648 6.5 17.4748 11.5 17.4748C13.02 17.4748 14.48 17.1848 15.82 16.6548L19.24 20.0748L20.65 18.6648L2.92 0.924805L1.51 2.3448ZM9.01 9.8448L11.62 12.4548C11.58 12.4648 11.54 12.4748 11.5 12.4748C10.12 12.4748 9 11.3548 9 9.9748C9 9.9248 9.01 9.8948 9.01 9.8448ZM5.61 6.4448L7.36 8.19481C7.13 8.74481 7 9.3448 7 9.9748C7 12.4548 9.02 14.4748 11.5 14.4748C12.13 14.4748 12.73 14.3448 13.27 14.1148L14.25 15.0948C13.37 15.3348 12.45 15.4748 11.5 15.4748C7.71 15.4748 4.33 13.3448 2.68 9.9748C3.38 8.54481 4.4 7.3648 5.61 6.4448Z"
+                                        fill="#7C7C7C" />
+                                </svg>
+                                }@else {
+                                <svg width="23" height="21" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 23 21" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                </svg>
+                                }
+                            </button>
+                        </div>
+                        <!-- <small class="error" *ngIf="hasError('confirmPassword', 'required')">Please confirm your
+                            password.</small>
+                        <small class="error" *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.touched">
+                            Passwords do not match.
+                        </small> -->
+                    </div>
+                </div>
+            </form>
+            <div class="action-container">
+                <button [disabled]="signupForm.invalid" (click)="toggleShowConfirmPassword()" class="create-account">
+                    Create Account
+                </button>
+                <div class="divider">
+                    <hr>
+                    <span>Or Sign Up with</span>
+                    <hr>
+                </div>
+                <div class="socials-login">
+                    <button class="google"><img src="icons/google.svg" alt="" srcset=""></button>
+                    <button class="apple"><img src="icons/apple.svg" alt="" srcset=""></button>
+                    <button class="facebook"><img src="icons/facebook.svg" alt="" srcset=""></button>
+                </div>
+
+                <div class="secure-info">
+                    <div class="header-info">
+                        <img src="icons/info.svg" alt="" srcset="">
+                        <h3>Secure login enabled</h3>
+                    </div>
+                    <p>This is a secure, encrypted connection</p>
+                </div>
+
+                <p class="already-signin">Already have an account? <a href="#" class="signin-cta">Sign In</a></p>
+
+            </div>
+        </div>
+    </div>
+
+</div>
