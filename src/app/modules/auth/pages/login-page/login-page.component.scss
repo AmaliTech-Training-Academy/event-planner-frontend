@@ -236,13 +236,15 @@
 .social-login {
   display: flex;
   justify-content: center;
-  gap: $spacing-3;
+  gap: $spacing-4;
 
   button {
     background: $gray-50;
     border: 1px solid $gray-200;
     border-radius: $radius-3;
     padding: $spacing-2;
+    width: 83px;
+    height: 36px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -290,7 +292,7 @@
 }
 
 .signup-text {
-  margin-top: $spacing-3;
+  margin-top: $spacing-6;
   @include body-2;
 
   a {

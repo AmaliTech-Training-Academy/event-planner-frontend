@@ -4,58 +4,64 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  FormControl,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+
+interface LoginForm {
+  email: FormControl<string | null>;
+  password: FormControl<string | null>;
+  remember: FormControl<boolean | null>;
+}
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
-  form: FormGroup;
+  form: FormGroup<LoginForm>;
   isPasswordHidden = true;
   isSubmitted = false;
 
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      remember: [false],
+  constructor(private readonly fb: FormBuilder) {
+    this.form = this.createForm();
+  }
+
+  private createForm(): FormGroup<LoginForm> {
+    return this.fb.group({
+      email: this.fb.control('', [Validators.required, Validators.email]),
+      password: this.fb.control('', [
+        Validators.required,
+        Validators.minLength(8),
+      ]),
+      remember: this.fb.control(false),
     });
   }
 
-  // Optional convenience getter
   get controls() {
     return this.form.controls;
   }
 
-  hasFieldError(fieldName: string): boolean {
+  hasFieldError(fieldName: keyof LoginForm): boolean {
     const field = this.form.get(fieldName);
     return !!(field && field.invalid && (field.touched || this.isSubmitted));
   }
 
-  getFieldErrorMessage(fieldName: string): string {
+  getFieldErrorMessage(fieldName: keyof LoginForm): string {
     const field = this.form.get(fieldName);
     if (!field || !field.errors) return '';
 
-    const errors = field.errors;
-
-    if (errors['required']) {
+    if (field.errors['required'])
       return `${this.capitalize(fieldName)} is required`;
-    }
-
-    if (errors['email']) {
-      return 'Please enter a valid email address';
-    }
-
-    if (errors['minlength']) {
+    if (field.errors['email']) return 'Please enter a valid email address';
+    if (field.errors['minlength'])
       return `${this.capitalize(fieldName)} must be at least ${
-        errors['minlength'].requiredLength
+        field.errors['minlength'].requiredLength
       } characters`;
-    }
 
     return '';
   }
@@ -66,15 +72,12 @@ export class LoginPageComponent {
 
   handleSubmit(): void {
     this.isSubmitted = true;
-    Object.keys(this.form.controls).forEach((key) =>
-      this.form.get(key)?.markAsTouched()
-    );
+    this.form.markAllAsTouched();
 
     if (this.form.valid) {
-      console.log('✅ Login data:', this.form.value);
-      // TODO: integrate AuthService here
+      console.log('Login data:', this.form.value);
     } else {
-      console.warn('⚠️ Form is invalid');
+      console.warn('Form is invalid');
     }
   }
 

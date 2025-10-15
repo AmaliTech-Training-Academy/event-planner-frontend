@@ -22,6 +22,7 @@
             formControlName="email"
             placeholder="user@gmail.com"
             [class.error]="hasFieldError('email')"
+            autocomplete="off"
           />
         </div>
 
@@ -38,6 +39,7 @@
       </div>
 
       <!-- Password Field -->
+      
       <div class="form-group">
         <label>Password<span>*</span></label>
         <div class="input-wrapper" [class.has-error]="hasFieldError('password')">
@@ -94,8 +96,8 @@
 
       <!-- Extras -->
       <div class="extras">
-        <label><input type="checkbox" formControlName="remember" /> Remember me</label>
-        <a class="forgot-link" href="#">Forgot password?</a>
+        <label><input type="checkbox" autocomplete="off" formControlName="remember" /> Remember me</label>
+        <a class="forgot-link" href="#" routerLink="/auth/forgot-password">Forgot password?</a>
       </div>
 
       <button 
@@ -166,6 +168,6 @@
       <small>This is a secure, encrypted connection</small>
     </div>
 
-    <p class="signup-text">Don't have an account? <a href="#">Sign Up</a></p>
+    <p class="signup-text">Don't have an account? <a href="#" routerLink="/auth/signup">Sign Up</a></p>
   </div>
 </div>
