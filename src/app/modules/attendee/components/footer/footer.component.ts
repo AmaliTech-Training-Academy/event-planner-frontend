@@ -11,6 +11,7 @@ interface FooterLinkGroup {
 interface SocialLink {
   name: string;
   url: string;
+  iconPath: string; // full path to asset
 }
 
 @Component({
@@ -21,7 +22,6 @@ interface SocialLink {
   standalone: true,
 })
 export class FooterComponent {
-  // Reactive state
   footerLinks = signal<FooterLinkGroup[]>([
     {
       title: 'Platform',
@@ -42,8 +42,20 @@ export class FooterComponent {
   ]);
 
   socialLinks = signal<SocialLink[]>([
-    { name: 'twitter', url: 'https://twitter.com' },
-    { name: 'linkedin', url: 'https://linkedin.com' },
-    { name: 'instagram', url: 'https://instagram.com' },
+    {
+      name: 'Twitter',
+      url: 'https://twitter.com',
+      iconPath: 'assets/icons/twitter-icon.png',
+    },
+    {
+      name: 'LinkedIn',
+      url: 'https://linkedin.com',
+      iconPath: 'assets/icons/linkedin-icon.png',
+    },
+    {
+      name: 'Instagram',
+      url: 'https://instagram.com',
+      iconPath: 'assets/icons/instagram-icon.png',
+    },
   ]);
 }
