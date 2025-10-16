@@ -43,26 +43,24 @@ export class LoginPageComponent {
   }
 
   get controls() {
-    return this.form.controls;
+    return this.form?.controls;
   }
 
   hasFieldError(fieldName: keyof LoginForm): boolean {
-    return !!(
-      this.form.get(fieldName)?.invalid &&
-      (this.form.get(fieldName)?.touched || this.isSubmitted)
-    );
+    const field = this.form?.get(fieldName);
+    return !!(field?.invalid && (field?.touched || this.isSubmitted));
   }
 
   getFieldErrorMessage(fieldName: keyof LoginForm): string {
-    const field = this.form.get(fieldName);
-    if (!field || !field.errors) return '';
+    const field = this.form?.get(fieldName);
+    if (!field?.errors) return '';
 
     if (field.errors['required'])
       return `${this.capitalize(fieldName)} is required`;
     if (field.errors['email']) return 'Please enter a valid email address';
     if (field.errors['minlength'])
       return `${this.capitalize(fieldName)} must be at least ${
-        field.errors['minlength'].requiredLength
+        field.errors['minlength']?.requiredLength
       } characters`;
 
     return '';
@@ -74,14 +72,16 @@ export class LoginPageComponent {
 
   handleSubmit(): void {
     this.isSubmitted = true;
-    this.form.markAllAsTouched();
+    this.form?.markAllAsTouched();
 
-    if (this.form.valid) {
+    if (this.form?.valid) {
+      // handle valid form submission
     } else {
+      // handle invalid form
     }
   }
 
   private capitalize(text: string): string {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+    return text?.charAt(0).toUpperCase() + text?.slice(1);
   }
 }
