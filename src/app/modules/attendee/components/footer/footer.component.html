@@ -27,29 +27,26 @@
       </ng-container>
 
       <!-- Social Links -->
-     <div class="footer__social-icons">
-  <a
-    *ngFor="let social of socialLinks()"
-    [href]="social.url"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="footer__social-link"
-    [attr.aria-label]="social.name"
-  >
-    <img
-      [src]="social.iconPath"
-      [alt]="social.name"
-      width="20"
-      height="20"
-    />
-  </a>
-</div>
-
+      <div class="footer__social-icons">
+        <a
+          *ngFor="let social of socialLinks()"
+          [href]="social.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer__social-link"
+          [attr.aria-label]="social.name"
+        >
+          <img
+            [src]="social.iconPath"
+            [alt]="social.name"
+            width="20"
+            height="20"
+          />
+        </a>
+      </div>
     </div>
 
     <!-- Copyright -->
-    <div class="footer__copyright">
-      © 2025 EventHub. All rights reserved.
-    </div>
+    <div class="footer__copyright">© 2025 EventHub. All rights reserved.</div>
   </div>
 </footer>
