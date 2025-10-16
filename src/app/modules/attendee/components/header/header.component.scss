@@ -7,6 +7,7 @@
   padding: $spacing-4 0;
   font-family: $font-lato;
   border-bottom: $stroke-0 solid $gray-100;
+  transition: background-color 0.3s ease, padding 0.3s ease;
 
   &__container {
     max-width: 1440px;
@@ -15,12 +16,18 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 $spacing-6;
+    transition: padding 0.3s ease;
   }
 
   &__logo {
     display: flex;
     align-items: baseline;
     @include h-5;
+    transition: transform 0.3s ease, color 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
 
     &--orange {
       color: $orange-500;
@@ -35,6 +42,7 @@
     display: flex;
     align-items: center;
     gap: $spacing-8;
+    transition: gap 0.3s ease, transform 0.3s ease;
   }
 
   &__link {
@@ -44,11 +52,12 @@
     display: flex;
     align-items: center;
     gap: $spacing-2;
-    transition: color 0.2s ease;
-    white-space: nowrap;
+    position: relative;
+    transition: color 0.3s ease, transform 0.2s ease;
 
     &:hover {
       color: $orange-400;
+      transform: translateY(-1px);
     }
 
     &.active {
@@ -56,13 +65,35 @@
       font-weight: 500;
     }
 
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: $orange-400;
+      transition: width 0.3s ease;
+    }
+
+    &:hover::after {
+      width: 100%;
+    }
+
     lucide-icon {
       width: 18px;
       height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      transition: transform 0.5s ease;
     }
+
+   
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    transition: all 0.3s ease;
   }
 
   &__btn {
@@ -74,18 +105,18 @@
     font-weight: 500;
     color: $gray-900;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     white-space: nowrap;
-    margin-left: $spacing-2;
 
     &:hover {
       background-color: $gray-900;
       color: $gray-50;
-      border-color: $gray-900;
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 
     &:active {
-      transform: translateY(1px);
+      transform: translateY(1px) scale(1.05);
     }
   }
 
@@ -96,83 +127,90 @@
     cursor: pointer;
     padding: $spacing-2;
     color: $gray-900;
+    transition: transform 0.3s ease, color 0.3s ease;
+
+    &:hover {
+      color: $orange-500;
+      transform: rotate(90deg);
+    }
+
+    &:active {
+      transform: rotate(90deg) scale(0.95);
+    }
 
     lucide-icon {
       width: 24px;
       height: 24px;
     }
   }
-}
 
-// Tablet view (768px - 1024px)
-@media (max-width: 1024px) {
-  .header {
+  @media (max-width: 1024px) {
     &__container {
       padding: 0 $spacing-5;
     }
 
     &__nav {
-      gap: $spacing-5;
-    }
-
-    &__link {
-      // Hide all links except "Explore Events"
-      display: none;
-
-      &:nth-child(2) {
-        // Show only "Explore Events" (second link)
-        display: flex;
-        align-items: center;
-        gap: $spacing-2;
-
-        // Keep both icon and label visible
-        span {
-          display: inline;
-        }
-
-        lucide-icon {
-          width: 20px;
-          height: 20px;
-        }
-      }
-    }
-  }
-}
-
-// Mobile view (max-width: 767px)
-@media (max-width: 767px) {
-  .header {
-    &__container {
-      padding: 0 $spacing-4;
-    }
-
-    &__logo {
-      font-size: 1.25rem; // Slightly smaller for mobile
-      font-weight: 700;
-    }
-
-    &__nav {
-      gap: $spacing-3;
-    }
-
-    &__link {
-      display: none; // Hide all nav links on mobile
-    }
-
-    &__btn {
-      padding: $spacing-2 $spacing-4;
-      font-size: 0.875rem;
-      margin-left: $spacing-3;
+      gap: $spacing-4;
     }
 
     &__hamburger {
       display: block;
-      margin-left: $spacing-2;
     }
   }
-}
-.header__actions {
-  display: flex;
-  align-items: center;
-  gap: $spacing-2;
+
+  @media (max-width: 767px) {
+    position: relative;
+
+    &__container {
+      padding: 0 $spacing-4;
+    }
+
+    &__nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      background-color: $gray-50;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.4s ease;
+    }
+
+    &__nav.open {
+      max-height: 400px;
+    }
+
+    &__link {
+      width: 100%;
+      padding: $spacing-3 $spacing-4;
+      border-bottom: 1px solid $gray-100;
+      display: flex;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: $gray-100;
+      }
+    }
+
+    &__actions {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      padding: $spacing-3 $spacing-4;
+      border-top: 1px solid $gray-100;
+      transition: padding 0.3s ease;
+    }
+
+    &__btn {
+      width: fit-content;
+      align-self: center;
+    }
+
+    &__hamburger {
+      display: block;
+    }
+  }
 }

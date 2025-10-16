@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import {
   LucideAngularModule,
   Home,
-  Menu,
   Users,
+  Menu,
   LucideIconData,
-  Calendar,
 } from 'lucide-angular';
 
 interface NavLink {
@@ -19,23 +18,21 @@ interface NavLink {
 @Component({
   selector: 'app-header',
   standalone: true,
+  imports: [CommonModule, RouterLink, LucideAngularModule],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  imports: [CommonModule, RouterLink, RouterLinkActive, LucideAngularModule],
 })
 export class HeaderComponent {
-  // Navigation links
   navLinks: NavLink[] = [
     { label: 'Home', path: '/', icon: Home },
-    { label: 'Explore Events', path: '/events', icon: Calendar },
+    { label: 'Explore Events', path: '/events', icon: Menu },
     { label: 'About Us', path: '/about', icon: Users },
   ];
 
-  // Hamburger state
-  isMenuOpen = false;
   MenuIcon = Menu;
+  isMenuOpen = false;
 
-  toggleMenu(): void {
+  toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
 }

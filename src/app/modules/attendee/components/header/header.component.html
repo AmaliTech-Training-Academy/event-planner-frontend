@@ -7,23 +7,26 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="header__nav">
+    <nav class="header__nav" [class.open]="isMenuOpen">
       <a
         *ngFor="let link of navLinks"
         [routerLink]="link.path"
         routerLinkActive="active"
         class="header__link"
+        (click)="isMenuOpen = false"
       >
         <lucide-icon [img]="link.icon"></lucide-icon>
         <span>{{ link.label }}</span>
       </a>
-      <!-- Right Side -->
+
       <div class="header__actions">
         <button class="header__btn">Sign In</button>
-        <button class="header__hamburger" (click)="toggleMenu()">
-          <lucide-icon [img]="MenuIcon"></lucide-icon>
-        </button>
       </div>
     </nav>
+
+    <!-- Hamburger outside nav -->
+    <button class="header__hamburger" (click)="toggleMenu()">
+      <lucide-icon [img]="MenuIcon"></lucide-icon>
+    </button>
   </div>
 </header>
