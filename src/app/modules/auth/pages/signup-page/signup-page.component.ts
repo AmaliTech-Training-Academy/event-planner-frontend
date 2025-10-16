@@ -2,10 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LogoComponent } from "../../components/logo/logo.component";
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-signup-page',
-  imports: [CommonModule, ReactiveFormsModule, LogoComponent],
+  imports: [CommonModule, ReactiveFormsModule, LogoComponent, RouterModule],
   templateUrl: './signup-page.component.html',
   styleUrl: './signup-page.component.scss'
 })
@@ -18,7 +19,7 @@ export class SignupPageComponent {
     this.signupForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
     }, { validators: this.passwordMatchValidator });
   }
