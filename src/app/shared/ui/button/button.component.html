@@ -1,1 +1,12 @@
-<p>button works!</p>
+<button
+  [class.primary]="type === 'primary'"
+  [class.social]="type === 'social'"
+  [class.full-width]="_fullWidth()"
+  [disabled]="_disabled()"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  (mousedown)="onMouseDown()"
+  (mouseup)="onMouseUp()"
+>
+  <ng-content></ng-content>
+</button>
