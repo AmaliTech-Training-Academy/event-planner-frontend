@@ -47,8 +47,10 @@ export class LoginPageComponent {
   }
 
   hasFieldError(fieldName: keyof LoginForm): boolean {
-    const field = this.form.get(fieldName);
-    return !!(field && field.invalid && (field.touched || this.isSubmitted));
+    return !!(
+      this.form.get(fieldName)?.invalid &&
+      (this.form.get(fieldName)?.touched || this.isSubmitted)
+    );
   }
 
   getFieldErrorMessage(fieldName: keyof LoginForm): string {
