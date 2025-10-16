@@ -110,7 +110,7 @@
 
           <div class="password-field">
             <input
-              [type]="isPasswordHidden ? 'password' : 'text'"
+              [type]="isPasswordHidden() ? 'password' : 'text'"
               formControlName="password"
               placeholder="••••••••"
               [class.error]="hasFieldError('password')"

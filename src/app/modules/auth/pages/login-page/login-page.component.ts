@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -23,12 +23,21 @@ interface LoginForm {
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
-  form: FormGroup<LoginForm>;
-  isPasswordHidden = true;
-  isSubmitted = false;
+  public form: FormGroup<LoginForm>;
+
+  public isPasswordHidden = signal(true);
+  public isSubmitted = signal(false);
 
   constructor(private readonly fb: FormBuilder) {
     this.form = this.createForm();
+
+    // Example effect if you want reactive logic
+    effect(() => {
+      // can react to changes in signals here
+      const submitted = this.isSubmitted();
+      const hidden = this.isPasswordHidden();
+      // console.log('Form submitted:', submitted, 'Password hidden:', hidden);
+    });
   }
 
   private createForm(): FormGroup<LoginForm> {
@@ -42,16 +51,12 @@ export class LoginPageComponent {
     });
   }
 
-  get controls() {
-    return this.form?.controls;
-  }
-
-  hasFieldError(fieldName: keyof LoginForm): boolean {
+  public hasFieldError(fieldName: keyof LoginForm): boolean {
     const field = this.form?.get(fieldName);
-    return !!(field?.invalid && (field?.touched || this.isSubmitted));
+    return !!(field?.invalid && (field?.touched || this.isSubmitted()));
   }
 
-  getFieldErrorMessage(fieldName: keyof LoginForm): string {
+  public getFieldErrorMessage(fieldName: keyof LoginForm): string {
     const field = this.form?.get(fieldName);
     if (!field?.errors) return '';
 
@@ -66,18 +71,16 @@ export class LoginPageComponent {
     return '';
   }
 
-  togglePasswordVisibility(): void {
-    this.isPasswordHidden = !this.isPasswordHidden;
+  public togglePasswordVisibility(): void {
+    this.isPasswordHidden.update((value) => !value);
   }
 
-  handleSubmit(): void {
-    this.isSubmitted = true;
+  public handleSubmit(): void {
+    this.isSubmitted.set(true);
     this.form?.markAllAsTouched();
 
     if (this.form?.valid) {
       // handle valid form submission
-    } else {
-      // handle invalid form
     }
   }
 
