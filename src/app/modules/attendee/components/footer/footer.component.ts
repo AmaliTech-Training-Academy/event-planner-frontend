@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 
@@ -8,14 +8,21 @@ interface FooterLinkGroup {
   links: { label: string; path: string }[];
 }
 
+interface SocialLink {
+  name: string;
+  url: string;
+}
+
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
   imports: [RouterLink, CommonModule, LucideAngularModule],
+  standalone: true,
 })
 export class FooterComponent {
-  footerLinks: FooterLinkGroup[] = [
+  // Reactive state
+  footerLinks = signal<FooterLinkGroup[]>([
     {
       title: 'Platform',
       links: [
@@ -32,11 +39,11 @@ export class FooterComponent {
         { label: 'Careers', path: '/careers' },
       ],
     },
-  ];
+  ]);
 
-  socialLinks = [
+  socialLinks = signal<SocialLink[]>([
     { name: 'twitter', url: 'https://twitter.com' },
     { name: 'linkedin', url: 'https://linkedin.com' },
     { name: 'instagram', url: 'https://instagram.com' },
-  ];
+  ]);
 }

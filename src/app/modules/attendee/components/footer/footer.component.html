@@ -12,46 +12,33 @@
         </p>
       </div>
 
-      <!-- Platform Links -->
-      <div class="footer__links">
-        <h3 class="footer__title">Platform</h3>
-        <a href="#"
-          *ngFor="let link of footerLinks[0].links"
-          [routerLink]="link.path"
-          class="footer__link"
-        >
-          {{ link.label }}
-        </a>
-      </div>
-
-      <!-- Company Links -->
-      <div class="footer__links">
-        <h3 class="footer__title">Company</h3>
-        <a href="#"
-          *ngFor="let link of footerLinks[1].links"
-          [routerLink]="link.path"
-          class="footer__link"
-        >
-          {{ link.label }}
-        </a>
-      </div>
+      <!-- Footer Link Groups -->
+      <ng-container *ngFor="let group of footerLinks()">
+        <div class="footer__links">
+          <h3 class="footer__title">{{ group.title }}</h3>
+          <a
+            *ngFor="let link of group.links"
+            [routerLink]="link.path"
+            class="footer__link"
+          >
+            {{ link.label }}
+          </a>
+        </div>
+      </ng-container>
 
       <!-- Social Links -->
       <div class="footer__social">
         <h3 class="footer__title">Connect</h3>
         <div class="footer__social-icons">
-          <a href="#"
-            *ngFor="let social of socialLinks"
+          <a
+            *ngFor="let social of socialLinks()"
             [href]="social.url"
             target="_blank"
             rel="noopener noreferrer"
             class="footer__social-link"
             [attr.aria-label]="social.name"
           >
-            <lucide-icon
-              [name]="social.name"
-              [size]="20"
-            ></lucide-icon>
+            <lucide-icon [name]="social.name" [size]="20"></lucide-icon>
           </a>
         </div>
       </div>
