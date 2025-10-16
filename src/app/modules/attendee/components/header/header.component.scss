@@ -24,6 +24,7 @@
     align-items: baseline;
     @include h-5;
     transition: transform 0.3s ease, color 0.3s ease;
+    cursor: pointer;
 
     &:hover {
       transform: translateY(-2px);
@@ -53,6 +54,7 @@
     align-items: center;
     gap: $spacing-2;
     position: relative;
+    padding-bottom: $spacing-2;
     transition: color 0.3s ease, transform 0.2s ease;
 
     &:hover {
@@ -68,7 +70,7 @@
     &::after {
       content: "";
       position: absolute;
-      bottom: -2px;
+      bottom: -$spacing-1;
       left: 0;
       width: 0;
       height: 2px;
@@ -76,17 +78,24 @@
       transition: width 0.3s ease;
     }
 
-    &:hover::after {
+    &:hover::after,
+    &.active::after {
       width: 100%;
     }
 
     lucide-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 18px;
       height: 18px;
       transition: transform 0.5s ease;
     }
 
-   
+    span {
+      display: flex;
+      align-items: center;
+    }
   }
 
   &__actions {
@@ -98,8 +107,8 @@
 
   &__btn {
     background-color: transparent;
-    border: $stroke-0 solid $gray-900;
-    border-radius: $radius-4;
+    border: $stroke-1 solid $gray-900;
+    border-radius: $radius-3;
     padding: $spacing-2 $spacing-4;
     @include body-2;
     font-weight: 500;
@@ -150,11 +159,7 @@
     }
 
     &__nav {
-      gap: $spacing-4;
-    }
-
-    &__hamburger {
-      display: block;
+      gap: $spacing-6;
     }
   }
 
@@ -177,10 +182,11 @@
       overflow: hidden;
       max-height: 0;
       transition: max-height 0.4s ease;
-    }
+      z-index: 100;
 
-    &__nav.open {
-      max-height: 400px;
+      &.open {
+        max-height: 400px;
+      }
     }
 
     &__link {
@@ -193,20 +199,14 @@
       &:hover {
         background-color: $gray-100;
       }
+
+      &::after {
+        display: none;
+      }
     }
 
     &__actions {
-      width: 100%;
-      flex-direction: column;
-      align-items: stretch;
-      padding: $spacing-3 $spacing-4;
-      border-top: 1px solid $gray-100;
-      transition: padding 0.3s ease;
-    }
-
-    &__btn {
-      width: fit-content;
-      align-self: center;
+      display: none;
     }
 
     &__hamburger {
