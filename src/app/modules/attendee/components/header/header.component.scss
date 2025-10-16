@@ -1,0 +1,178 @@
+@use 'typography' as *;
+@use 'colors' as *;
+@use 'variables' as *;
+
+.header {
+  background-color: $gray-50;
+  padding: $spacing-4 0;
+  font-family: $font-lato;
+  border-bottom: $stroke-0 solid $gray-100;
+
+  &__container {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 $spacing-6;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: baseline;
+    @include h-5;
+
+    &--orange {
+      color: $orange-500;
+    }
+
+    &--black {
+      color: $gray-900;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: $spacing-8;
+  }
+
+  &__link {
+    @include body-2;
+    color: $gray-900;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+
+    &:hover {
+      color: $orange-400;
+    }
+
+    &.active {
+      color: $orange-500;
+      font-weight: 500;
+    }
+
+    lucide-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &__btn {
+    background-color: transparent;
+    border: $stroke-0 solid $gray-900;
+    border-radius: $radius-4;
+    padding: $spacing-2 $spacing-4;
+    @include body-2;
+    font-weight: 500;
+    color: $gray-900;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    margin-left: $spacing-2;
+
+    &:hover {
+      background-color: $gray-900;
+      color: $gray-50;
+      border-color: $gray-900;
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  &__hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: $spacing-2;
+    color: $gray-900;
+
+    lucide-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// Tablet view (768px - 1024px)
+@media (max-width: 1024px) {
+  .header {
+    &__container {
+      padding: 0 $spacing-5;
+    }
+
+    &__nav {
+      gap: $spacing-5;
+    }
+
+    &__link {
+      // Hide all links except "Explore Events"
+      display: none;
+
+      &:nth-child(2) {
+        // Show only "Explore Events" (second link)
+        display: flex;
+        align-items: center;
+        gap: $spacing-2;
+
+        // Keep both icon and label visible
+        span {
+          display: inline;
+        }
+
+        lucide-icon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+  }
+}
+
+// Mobile view (max-width: 767px)
+@media (max-width: 767px) {
+  .header {
+    &__container {
+      padding: 0 $spacing-4;
+    }
+
+    &__logo {
+      font-size: 1.25rem; // Slightly smaller for mobile
+      font-weight: 700;
+    }
+
+    &__nav {
+      gap: $spacing-3;
+    }
+
+    &__link {
+      display: none; // Hide all nav links on mobile
+    }
+
+    &__btn {
+      padding: $spacing-2 $spacing-4;
+      font-size: 0.875rem;
+      margin-left: $spacing-3;
+    }
+
+    &__hamburger {
+      display: block;
+      margin-left: $spacing-2;
+    }
+  }
+}
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+}

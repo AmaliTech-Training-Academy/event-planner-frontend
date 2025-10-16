@@ -1,0 +1,29 @@
+<header class="header">
+  <div class="header__container">
+    <!-- Logo -->
+    <div class="header__logo">
+      <span class="header__logo--orange">Event</span>
+      <span class="header__logo--black">Hub</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="header__nav">
+      <a
+        *ngFor="let link of navLinks"
+        [routerLink]="link.path"
+        routerLinkActive="active"
+        class="header__link"
+      >
+        <lucide-icon [img]="link.icon"></lucide-icon>
+        <span>{{ link.label }}</span>
+      </a>
+      <!-- Right Side -->
+      <div class="header__actions">
+        <button class="header__btn">Sign In</button>
+        <button class="header__hamburger" (click)="toggleMenu()">
+          <lucide-icon [img]="MenuIcon"></lucide-icon>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
