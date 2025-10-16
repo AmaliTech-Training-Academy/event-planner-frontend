@@ -7,13 +7,13 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="header__nav" [class.open]="isMenuOpen">
+    <nav class="header__nav" [class.open]="isMenuOpen()">
       <a
-        *ngFor="let link of navLinks"
+        *ngFor="let link of navLinks()"
         [routerLink]="link.path"
         routerLinkActive="active"
         class="header__link"
-        (click)="isMenuOpen = false"
+        (click)="closeMenu()"
       >
         <lucide-icon [img]="link.icon"></lucide-icon>
         <span>{{ link.label }}</span>

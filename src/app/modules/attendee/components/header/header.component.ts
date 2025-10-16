@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   LucideAngularModule,
@@ -23,16 +23,22 @@ interface NavLink {
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  navLinks: NavLink[] = [
+  // Reactive state
+  navLinks = signal<NavLink[]>([
     { label: 'Home', path: '/', icon: Home },
     { label: 'Explore Events', path: '/events', icon: Menu },
     { label: 'About Us', path: '/about', icon: Users },
-  ];
+  ]);
+
+  isMenuOpen = signal(false);
 
   MenuIcon = Menu;
-  isMenuOpen = false;
 
   toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
+    this.isMenuOpen.update((isOpen) => !isOpen);
+  }
+
+  closeMenu() {
+    this.isMenuOpen.set(false);
   }
 }
