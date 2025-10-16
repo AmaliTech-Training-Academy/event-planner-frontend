@@ -75,9 +75,7 @@ export class LoginPageComponent {
     this.form.markAllAsTouched();
 
     if (this.form.valid) {
-      console.log('Login data:', this.form.value);
     } else {
-      console.warn('Form is invalid');
     }
   }
 

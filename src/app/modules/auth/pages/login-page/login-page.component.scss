@@ -1,6 +1,7 @@
-@use '../../../../../../src/styles/typography' as *;
-@use '../../../../../../src/styles/colors' as *;
-@use '../../../../../../src/styles/variables' as *;
+@use 'typography' as *;
+@use 'colors' as *;
+@use 'variables' as *;
+
 
 .login-container {
   display: flex;
@@ -37,7 +38,7 @@
 
 .subtitle {
   @include body-2;
-  color: $gray-600;
+  color: #6B7280;
   margin-bottom: $spacing-6;
 }
 
@@ -47,9 +48,10 @@
 
   label {
     @include body-2;
-    font-weight: 600;
+    font-weight: 400;
     display: block;
     margin-bottom: $spacing-1;
+    color: $gray-950;
 
     span {
       color: $red-500;
@@ -177,30 +179,74 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $spacing-4;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
 
-  label {
-    @include body-2;
+  .custom-checkbox {
     display: flex;
     align-items: center;
-    gap: $spacing-2;
     cursor: pointer;
-    font-weight: 400;
+    position: relative;
+    user-select: none;
+    gap: 0.5rem;
 
-    input[type="checkbox"] {
+    input {
+      position: absolute;
+      opacity: 0;
       cursor: pointer;
-      width: auto;
-      margin: 0;
+      height: 0;
+      width: 0;
+    }
+
+    .checkmark {
+      height: 18px;
+      width: 18px;
+      border-radius: 44%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      border: 1px solid $gray-300; 
+      background-color: transparent;
+
+      &::after {
+        content: '';
+        width: 8px;
+        height: 2px;
+        background-color: $gray-300; 
+        border-radius: 1px;
+        transform: scaleX(1);
+        transition: all 0.25s ease;
+      }
+    }
+
+    // Checked state
+    input:checked ~ .checkmark {
+      border-color: $red-300;
+
+      &::after {
+        background-color: $red-300;
+      }
+    }
+
+    .label-text {
+      font-size: 0.875rem;
+      color: $gray-900;
+    }
+
+    &:hover .checkmark {
+      border-color: $red-500;
     }
   }
 
   .forgot-link {
-    @include body-2;
-    color: $blue-600;
+    font-size: 0.875rem;
+    color: $blue-700;
     text-decoration: none;
+    transition: color 0.2s ease;
 
     &:hover {
-      text-decoration: underline;
+      color: $blue-900;
     }
   }
 }
@@ -208,7 +254,7 @@
 .login-btn {
   width: 100%;
   padding: $spacing-3;
-  background-color: $orange-600;
+  background-color: $orange-700;
   color: $gray-50;
   border: none;
   border-radius: $radius-3;
@@ -218,7 +264,7 @@
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: $orange-700;
+    background-color: $orange-600;
   }
 
   &:active {
@@ -306,7 +352,7 @@
   
 }
 .login-btn:disabled {
-opacity: 0.6;
 cursor: not-allowed;
 transition: opacity 0.2s ease;
+opacity: 0.5;
 }
