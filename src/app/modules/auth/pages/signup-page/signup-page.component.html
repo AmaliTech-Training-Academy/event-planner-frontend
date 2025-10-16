@@ -11,29 +11,61 @@
                 <div class="field">
                     <label for="fullname">Full name<span>*</span></label>
                     <div class="input-container">
-                        <img src="icons/user.png" alt="person icon" >
+                        <img src="icons/user.png" alt="person icon">
                         <input formControlName="fullName" type="text" id="fullname" name="fullname"
                             placeholder="E.g., John Doe">
                     </div>
-                    <!-- <small class="error" *ngIf="hasError('fullName', 'required')">Full name is required.</small>
-                    <small class="error" *ngIf="hasError('fullName', 'minlength')">Full name must be at least 3 characters.</small> -->
+                    <div *ngIf="hasError('fullName', 'required')" class="error-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+
+                        <small class="error">Full name is required.</small>
+                    </div>
+                    <div *ngIf="hasError('fullName', 'minlength')" class="error-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+
+                        <small class="error">Full name must be at least 3
+                            characters.</small>
+                    </div>
+
                 </div>
                 <div class="field">
                     <label for="email">Email Address<span>*</span></label>
                     <div class="input-container">
-                        <img src="icons/mail.png" alt="mail icon" >
+                        <img src="icons/mail.png" alt="mail icon">
                         <input formControlName="email" type="email" id="email" name="email"
                             placeholder="user@gmail.com">
                     </div>
-                    <!-- <small class="error" *ngIf="hasError('email', 'required')">Email is required.</small>
-                        <small class="error" *ngIf="hasError('email', 'email')">Enter a valid email address.</small> -->
+                    <div *ngIf="hasError('email', 'required')" class="error-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+                        <small class="error">Email is required.</small>
+                    </div>
+                    <div *ngIf="hasError('email', 'email')" class="error-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+                        <small class="error">Enter a valid email address.</small>
+                    </div>
                 </div>
 
                 <div class="row">
                     <div class="field">
                         <label for="password">Password<span>*</span></label>
                         <div class="input-container">
-                            <img src="icons/lock.png" alt="lock icon" >
+                            <img src="icons/lock.png" alt="lock icon">
                             <input [type]="showPassword ? 'text' : 'password'" formControlName="password" id="password"
                                 name="password" placeholder="********">
                             <button type="button" (click)="toggleShowPassword()">
@@ -58,14 +90,27 @@
                             </button>
 
                         </div>
-                        <!-- <small class="error" *ngIf="hasError('password', 'required')">Password is required.</small>
-                        <small class="error" *ngIf="hasError('password', 'minlength')">Password must be at least 6
-                            characters.</small> -->
+                        <div *ngIf="hasError('password', 'required')" class="error-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                            </svg>
+                            <small class="error">Password is required.</small>
+                        </div>
+                        <div *ngIf="hasError('password', 'minlength')" class="error-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                            </svg>
+                            <small class="error">Password must be at least 6 characters.</small>
+                        </div>
                     </div>
                     <div class="field">
                         <label for="confirm-password">Confirm Password<span>*</span></label>
                         <div class="input-container">
-                            <img src="icons/lock.png" alt="lock icon" >
+                            <img src="icons/lock.png" alt="lock icon">
                             <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword"
                                 id="confirm-password" name="confirm-password" placeholder="********">
                             <button type="button" (click)="toggleShowConfirmPassword()">
@@ -88,11 +133,25 @@
                                 }
                             </button>
                         </div>
-                        <!-- <small class="error" *ngIf="hasError('confirmPassword', 'required')">Please confirm your
-                            password.</small>
-                        <small class="error" *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.touched">
-                            Passwords do not match.
-                        </small> -->
+                        <div *ngIf="hasError('confirmPassword', 'required')" class="error-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                            </svg>
+                            <small class="error">Please confirm your password.</small>
+                        </div>
+
+                        <div *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.touched"
+                            class="error-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                            </svg>
+                            <small class="error"> Passwords do not match.</small>
+                        </div>
+
                     </div>
                 </div>
             </form>
@@ -106,20 +165,21 @@
                     <hr>
                 </div>
                 <div class="socials-login">
-                    <button class="google"><img src="icons/google.svg" alt="google icon" ></button>
-                    <button class="apple"><img src="icons/apple.svg" alt="apple icon" ></button>
-                    <button class="facebook"><img src="icons/facebook.svg" alt="facebook icon" ></button>
+                    <button class="google"><img src="icons/google.svg" alt="google icon"></button>
+                    <button class="apple"><img src="icons/apple.svg" alt="apple icon"></button>
+                    <button class="facebook"><img src="icons/facebook.svg" alt="facebook icon"></button>
                 </div>
 
                 <div class="secure-info">
                     <div class="header-info">
-                        <img src="icons/info.svg" alt="security info icon" >
+                        <img src="icons/info.svg" alt="security info icon">
                         <h3>Secure login enabled</h3>
                     </div>
                     <p>This is a secure, encrypted connection</p>
                 </div>
 
-                <p class="already-signin">Already have an account? <a routerLink="/auth/login" class="signin-cta">Sign In</a></p>
+                <p class="already-signin">Already have an account? <a routerLink="/auth/login" class="signin-cta">Sign
+                        In</a></p>
 
             </div>
         </div>
