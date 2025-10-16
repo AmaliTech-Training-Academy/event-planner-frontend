@@ -1,1 +1,65 @@
-<p>footer works!</p>
+<footer class="footer">
+  <div class="footer__container">
+    <div class="footer__content">
+      <!-- Brand Section -->
+      <div class="footer__brand">
+        <div class="footer__logo">
+          <span class="footer__logo--orange">Event</span>
+          <span class="footer__logo--blue">Hub</span>
+        </div>
+        <p class="footer__tagline">
+          Making event management seamless and successful.
+        </p>
+      </div>
+
+      <!-- Platform Links -->
+      <div class="footer__links">
+        <h3 class="footer__title">Platform</h3>
+        <a href="#"
+          *ngFor="let link of footerLinks[0].links"
+          [routerLink]="link.path"
+          class="footer__link"
+        >
+          {{ link.label }}
+        </a>
+      </div>
+
+      <!-- Company Links -->
+      <div class="footer__links">
+        <h3 class="footer__title">Company</h3>
+        <a href="#"
+          *ngFor="let link of footerLinks[1].links"
+          [routerLink]="link.path"
+          class="footer__link"
+        >
+          {{ link.label }}
+        </a>
+      </div>
+
+      <!-- Social Links -->
+      <div class="footer__social">
+        <h3 class="footer__title">Connect</h3>
+        <div class="footer__social-icons">
+          <a href="#"
+            *ngFor="let social of socialLinks"
+            [href]="social.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer__social-link"
+            [attr.aria-label]="social.name"
+          >
+            <lucide-icon
+              [name]="social.name"
+              [size]="20"
+            ></lucide-icon>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer__copyright">
+      © 2025 EventHub. All rights reserved.
+    </div>
+  </div>
+</footer>
