@@ -1,11 +1,6 @@
-import { Component, Input, signal, computed } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormsModule,
-  ReactiveFormsModule,
-  NgControl,
-  FormControl,
-} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
@@ -15,42 +10,54 @@ import {
   styleUrls: ['./input.component.scss'],
 })
 export class InputComponent {
-  @Input() type: 'text' | 'email' | 'password' = 'text';
-  @Input() placeholder: string = '';
-  @Input() label: string = '';
-  @Input() formControlName: string = '';
-  @Input() errorMessage: string = '';
-  @Input() iconSrc?: string; 
-  @Input() required: boolean = false;
-  @Input() disabled: boolean = false;
+  @Input() public type: 'text' | 'email' | 'password' = 'text';
+  @Input() public placeholder: string = '';
+  @Input() public label: string = '';
+  @Input() public formControlName: string = '';
+  @Input() public errorMessage: string = '';
+  @Input() public iconSrc?: string;
+  @Input() public required: boolean = false;
+  @Input() public disabled: boolean = false;
 
-  // Signals for reactive UI
-  _value = signal('');
-  _isFocused = signal(false);
-  _showPassword = signal(false);
+  public _value = signal<string>('');
+  public _isFocused = signal<boolean>(false);
+  public _showPassword = signal<boolean>(false);
 
-  get inputType() {
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Returns the current value of the input field.
+ * @returns {string} The current value of the input field.
+ */
+/*******  ebcfcf96-b982-4327-85ec-ca3aa0f020e7  *******/
+  public get value(): string {
+    return this._value();
+  }
+
+  public get isFocused(): boolean {
+    return this._isFocused();
+  }
+
+  public get inputType(): string {
     return this.type === 'password' && !this._showPassword()
       ? 'password'
       : 'text';
   }
 
-  togglePasswordVisibility() {
+  public get hasError(): boolean {
+    return !!this.errorMessage;
+  }
+
+  public togglePasswordVisibility(): void {
     if (this.type === 'password') {
       this._showPassword.update((isVisible) => !isVisible);
     }
   }
 
-  onFocus() {
+  public onFocus(): void {
     this._isFocused.set(true);
   }
 
-  onBlur() {
+  public onBlur(): void {
     this._isFocused.set(false);
-  }
-
-  // Derived state for classes
-  get hasError() {
-    return !!this.errorMessage;
   }
 }

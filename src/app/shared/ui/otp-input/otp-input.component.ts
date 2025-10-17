@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import {
+  Component,
+  QueryList,
+  ViewChildren,
+  ElementRef,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -10,60 +16,60 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule],
 })
 export class OtpInputComponent {
-  otpDigits: string[] = new Array(6).fill('');
+  public otpDigits = signal<string[]>(new Array(6).fill(''));
 
-  onInput(event: Event, index: number): void {
+  public get digits(): string[] {
+    return this.otpDigits();
+  }
+
+  @ViewChildren('otpInput') private inputs?: QueryList<
+    ElementRef<HTMLInputElement>
+  >;
+
+  public onInput(event: Event, index: number): void {
     const input = event.target as HTMLInputElement;
     const value = input.value;
 
-    // Only allow digits
     if (value && !/^\d$/.test(value)) {
       input.value = '';
       return;
     }
 
-    this.otpDigits[index] = value;
+    this.otpDigits.update((digits) => {
+      digits[index] = value;
+      return digits;
+    });
 
-    // Move to next input if value is entered
     if (value && index < 5) {
-      const nextInput = input.nextElementSibling as HTMLInputElement;
-      nextInput?.focus();
+      this.inputs?.toArray()[index + 1]?.nativeElement.focus();
     }
   }
 
-  onKeyDown(event: KeyboardEvent, index: number): void {
-    const input = event.target as HTMLInputElement;
-
-    // Move to previous input on backspace if current is empty
-    if (event.key === 'Backspace' && !this.otpDigits[index] && index > 0) {
-      const prevInput = input.previousElementSibling as HTMLInputElement;
-      prevInput?.focus();
+  public onKeyDown(event: KeyboardEvent, index: number): void {
+    if (event.key === 'Backspace' && !this.otpDigits()[index] && index > 0) {
+      this.inputs?.toArray()[index - 1]?.nativeElement.focus();
     }
   }
 
-  onPaste(event: ClipboardEvent): void {
+  public onPaste(event: ClipboardEvent): void {
     event.preventDefault();
-    const pastedData = event.clipboardData?.getData('text/plain').trim() || '';
+    const pastedData = event.clipboardData?.getData('text/plain')?.trim() ?? '';
 
-    // Only process if pasted data contains only digits
     if (!/^\d+$/.test(pastedData)) return;
 
     const digits = pastedData.slice(0, 6).split('');
-    digits.forEach((digit, index) => {
-      if (index < 6) {
-        this.otpDigits[index] = digit;
-      }
+    this.otpDigits.update((arr) => {
+      digits.forEach((digit, i) => {
+        if (i < 6) arr[i] = digit;
+      });
+      return arr;
     });
 
-    // Focus the appropriate input
-    const inputs = document.querySelectorAll(
-      '.otp-input'
-    ) as NodeListOf<HTMLInputElement>;
     const nextIndex = Math.min(digits.length, 5);
-    inputs[nextIndex]?.focus();
+    this.inputs?.toArray()[nextIndex]?.nativeElement.focus();
   }
 
-  getOtpValue(): string {
-    return this.otpDigits.join('');
+  public getOtpValue(): string {
+    return this.otpDigits().join('');
   }
 }

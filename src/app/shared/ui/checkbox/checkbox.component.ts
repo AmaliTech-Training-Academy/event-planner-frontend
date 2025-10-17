@@ -9,12 +9,17 @@ import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 export class CheckboxComponent {
   @Input() label: string = '';
   @Input() checked: boolean = false;
+
   @Output() checkedChange = new EventEmitter<boolean>();
 
-  _checked = signal(this.checked);
+  private _checked = signal<boolean>(this.checked);
 
-  toggle() {
-    this._checked.update((v) => !v);
+  public get isChecked(): boolean {
+    return this._checked();
+  }
+
+  public toggle(): void {
+    this._checked.update((current) => !current);
     this.checkedChange.emit(this._checked());
   }
 }

@@ -1,11 +1,22 @@
-<div class="form-group" [class.has-error]="hasError" [class.focused]="_isFocused()">
-  <label *ngIf="label" [attr.for]="formControlName">
+<div
+  class="form-group"
+  [class.has-error]="hasError"
+  [class.focused]="_isFocused()"
+>
+  @if (label) {
+  <label [attr.for]="formControlName">
     {{ label }}
-    <span *ngIf="required">*</span>
+    @if (required) {
+    <span>*</span>
+    }
   </label>
+  }
 
   <div class="input-wrapper">
-    <img *ngIf="iconSrc" [src]="iconSrc" alt="icon" class="input-icon" />
+    @if (iconSrc) {
+    <img [src]="iconSrc" alt="icon" class="input-icon" />
+    }
+
     <input
       [id]="formControlName"
       [type]="inputType"
@@ -16,21 +27,23 @@
       [disabled]="disabled"
       [class.error]="hasError"
     />
+
+    @if (type === 'password') {
     <button
-      *ngIf="type === 'password'"
       type="button"
       class="toggle-btn"
       (click)="togglePasswordVisibility()"
       aria-label="Toggle password visibility"
     >
       <img
-        [src]="_showPassword() ? 'assets/icons/eye-off.png' : 'assets/icons/eye.png'"
+        [src]="
+          _showPassword()
+            ? '/assets/icons/eye-close-icon.png'
+            : 'assets/icons/eye.png'
+        "
         alt="Toggle Password"
       />
     </button>
-  </div>
-
-  <div class="error-message" *ngIf="hasError" role="alert">
-    {{ errorMessage }}
+    }
   </div>
 </div>
