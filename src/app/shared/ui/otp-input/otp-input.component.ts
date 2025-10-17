@@ -16,9 +16,9 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule],
 })
 export class OtpInputComponent {
-  public otpDigits = signal<string[]>(new Array(6).fill(''));
+  protected otpDigits = signal<string[]>(new Array(6).fill(''));
 
-  public get digits(): string[] {
+  protected get digits(): string[] {
     return this.otpDigits();
   }
 
@@ -26,7 +26,7 @@ export class OtpInputComponent {
     ElementRef<HTMLInputElement>
   >;
 
-  public onInput(event: Event, index: number): void {
+  protected onInput(event: Event, index: number): void {
     const input = event.target as HTMLInputElement;
     const value = input.value;
 
@@ -45,13 +45,13 @@ export class OtpInputComponent {
     }
   }
 
-  public onKeyDown(event: KeyboardEvent, index: number): void {
+  protected onKeyDown(event: KeyboardEvent, index: number): void {
     if (event.key === 'Backspace' && !this.otpDigits()[index] && index > 0) {
       this.inputs?.toArray()[index - 1]?.nativeElement.focus();
     }
   }
 
-  public onPaste(event: ClipboardEvent): void {
+  protected onPaste(event: ClipboardEvent): void {
     event.preventDefault();
     const pastedData = event.clipboardData?.getData('text/plain')?.trim() ?? '';
 
@@ -69,7 +69,7 @@ export class OtpInputComponent {
     this.inputs?.toArray()[nextIndex]?.nativeElement.focus();
   }
 
-  public getOtpValue(): string {
+  protected getOtpValue(): string {
     return this.otpDigits().join('');
   }
 }

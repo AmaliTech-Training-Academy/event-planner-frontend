@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-divider',
@@ -9,5 +9,5 @@ import { Component, Input } from '@angular/core';
   imports: [CommonModule],
 })
 export class DividerComponent {
-  @Input() text?: string = '';
+  text = input<string>('');
 }

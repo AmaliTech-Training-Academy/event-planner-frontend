@@ -30,8 +30,5 @@ export class SocialLoginComponent {
   }
 
   // Handle click on a social platform
-  public onClick(platform: SocialPlatform): void {
-    console.log(`${platform} login clicked`);
-    // Emit an event here if needed
-  }
+  public onClick(platform: SocialPlatform): void {}
 }

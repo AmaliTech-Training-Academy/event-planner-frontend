@@ -1,3 +1,5 @@
 <div class="divider-container">
-  <span *ngIf="text">{{ text }}</span>
+  @if (text) {
+    <span>{{ text }}</span>
+  }
 </div>

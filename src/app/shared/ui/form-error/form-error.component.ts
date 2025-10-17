@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, signal } from '@angular/core';
+import {
+  Component,
+  input,
+  signal,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 
 @Component({
   selector: 'app-form-error',
@@ -8,13 +14,12 @@ import { Component, Input, signal } from '@angular/core';
   styleUrls: ['./form-error.component.scss'],
   imports: [CommonModule],
 })
-export class FormErrorComponent {
-  @Input() message: string = '';
-  @Input() showIcon: boolean = true;
+export class FormErrorComponent implements OnChanges {
+  public message = input<string>('');
+  public showIcon = input<boolean>(true);
+  private _visible = signal(false);
 
-  _visible = signal(false);
-
-  ngOnChanges() {
-    this._visible.set(!!this.message);
+  ngOnChanges(changes: SimpleChanges): void {
+    this._visible.set(!!this.message());
   }
 }

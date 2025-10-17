@@ -1,4 +1,4 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -10,25 +10,19 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   styleUrls: ['./input.component.scss'],
 })
 export class InputComponent {
-  @Input() public type: 'text' | 'email' | 'password' = 'text';
-  @Input() public placeholder: string = '';
-  @Input() public label: string = '';
-  @Input() public formControlName: string = '';
-  @Input() public errorMessage: string = '';
-  @Input() public iconSrc?: string;
-  @Input() public required: boolean = false;
-  @Input() public disabled: boolean = false;
+  public type = input<'text' | 'email' | 'password'>('text');
+  public placeholder = input<string>('');
+  public label = input<string>('');
+  public formControlName = input<string>('');
+  public errorMessage = input<string>('');
+  public iconSrc = input<string | undefined>();
+  public required = input<boolean>(false);
+  public disabled = input<boolean>(false);
 
   public _value = signal<string>('');
   public _isFocused = signal<boolean>(false);
   public _showPassword = signal<boolean>(false);
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * Returns the current value of the input field.
- * @returns {string} The current value of the input field.
- */
-/*******  ebcfcf96-b982-4327-85ec-ca3aa0f020e7  *******/
   public get value(): string {
     return this._value();
   }
@@ -38,17 +32,17 @@ export class InputComponent {
   }
 
   public get inputType(): string {
-    return this.type === 'password' && !this._showPassword()
+    return this.type() === 'password' && !this._showPassword()
       ? 'password'
       : 'text';
   }
 
   public get hasError(): boolean {
-    return !!this.errorMessage;
+    return !!this.errorMessage();
   }
 
   public togglePasswordVisibility(): void {
-    if (this.type === 'password') {
+    if (this.type() === 'password') {
       this._showPassword.update((isVisible) => !isVisible);
     }
   }
