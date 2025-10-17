@@ -7,7 +7,7 @@ import { Component, input } from '@angular/core';
   standalone: true,
 })
 export class ButtonComponent {
-  readonly type = input<'primary' | 'social'>('primary');
-  readonly disabled = input(false);
-  readonly fullWidth = input(false);
+  public readonly type = input<'primary' | 'social'>('primary');
+  public readonly disabled = input(false);
+  public readonly fullWidth = input(false);
 }

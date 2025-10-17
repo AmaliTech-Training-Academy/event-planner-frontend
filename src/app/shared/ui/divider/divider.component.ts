@@ -9,5 +9,5 @@ import { Component, input } from '@angular/core';
   imports: [CommonModule],
 })
 export class DividerComponent {
-  text = input<string>('');
+  public text = input<string>('');
 }
