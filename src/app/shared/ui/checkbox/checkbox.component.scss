@@ -1,0 +1,59 @@
+@use 'typography' as *;
+@use 'colors' as *;
+@use 'variables' as *;
+
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  gap: 0.5rem;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkmark {
+    height: 18px;
+    width: 18px;
+    border-radius: 44%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    border: 1px solid $gray-300; 
+    background-color: transparent;
+
+    &::after {
+      content: '';
+      width: 8px;
+      height: 2px;
+      background-color: $gray-300; 
+      border-radius: 1px;
+      transform: scaleX(1);
+      transition: all 0.25s ease;
+    }
+  }
+
+  input:checked ~ .checkmark {
+    border-color: $red-300;
+
+    &::after {
+      background-color: $red-300;
+    }
+  }
+
+  .label-text {
+    font-size: 0.875rem;
+    color: $gray-900;
+  }
+
+  &:hover .checkmark {
+    border-color: $red-500;
+  }
+}

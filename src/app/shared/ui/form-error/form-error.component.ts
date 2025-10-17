@@ -1,11 +1,20 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input, signal } from '@angular/core';
 
 @Component({
   selector: 'app-form-error',
-  imports: [],
+  standalone: true,
   templateUrl: './form-error.component.html',
-  styleUrl: './form-error.component.scss'
+  styleUrls: ['./form-error.component.scss'],
+  imports: [CommonModule],
 })
 export class FormErrorComponent {
+  @Input() message: string = '';
+  @Input() showIcon: boolean = true;
 
+  _visible = signal(false);
+
+  ngOnChanges() {
+    this._visible.set(!!this.message);
+  }
 }

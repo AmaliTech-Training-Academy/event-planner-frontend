@@ -1,1 +1,4 @@
-<p>form-error works!</p>
+<div *ngIf="_visible()" class="error-message">
+  <img *ngIf="showIcon" src="assets/images/error-icon.png" alt="Error" />
+  <span>{{ message }}</span>
+</div>

@@ -1,11 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
 
 @Component({
   selector: 'app-checkbox',
-  imports: [],
+  standalone: true,
   templateUrl: './checkbox.component.html',
-  styleUrl: './checkbox.component.scss'
+  styleUrls: ['./checkbox.component.scss'],
 })
 export class CheckboxComponent {
+  @Input() label: string = '';
+  @Input() checked: boolean = false;
+  @Output() checkedChange = new EventEmitter<boolean>();
 
+  _checked = signal(this.checked);
+
+  toggle() {
+    this._checked.update((v) => !v);
+    this.checkedChange.emit(this._checked());
+  }
 }

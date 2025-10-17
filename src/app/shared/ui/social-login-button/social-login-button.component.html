@@ -1,1 +1,9 @@
-<p>social-login-button works!</p>
+<div class="social-login">
+  <button
+    *ngFor="let platform of platforms"
+    type="button"
+    (click)="onClick(platform)"
+  >
+    <img [src]="getIconSrc(platform)" [alt]="platform + ' icon'" />
+  </button>
+</div>
