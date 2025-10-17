@@ -15,7 +15,6 @@ export class SocialLoginComponent {
     'twitter',
   ];
 
-  // Returns icon path for a given platform
   public getIconSrc(platform: SocialPlatform): string {
     switch (platform) {
       case 'google':
@@ -29,6 +28,5 @@ export class SocialLoginComponent {
     }
   }
 
-  // Handle click on a social platform
   public onClick(platform: SocialPlatform): void {}
 }
