@@ -20,7 +20,7 @@ export class InputComponent {
   @Input() label: string = '';
   @Input() formControlName: string = '';
   @Input() errorMessage: string = '';
-  @Input() iconSrc?: string; // image path
+  @Input() iconSrc?: string; 
   @Input() required: boolean = false;
   @Input() disabled: boolean = false;
 
@@ -37,7 +37,7 @@ export class InputComponent {
 
   togglePasswordVisibility() {
     if (this.type === 'password') {
-      this._showPassword.update((v) => !v);
+      this._showPassword.update((isVisible) => !isVisible);
     }
   }
 
