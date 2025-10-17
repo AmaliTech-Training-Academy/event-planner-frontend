@@ -1,0 +1,226 @@
+@use "_variables" as *;
+@use "_typography" as *;
+@use "_theme" as *;
+@use "_media_query" as *;
+
+.wrapper {
+    min-height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 0px 1.5rem;
+
+    @include sm {
+        padding-top: 0.875rem;
+        padding-bottom: 3rem;
+    }
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 29.063rem;
+    max-width: 29.063rem;
+    border: 0.5rem solid $general-stroke-light;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(0.05rem);
+
+    
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        h2 {
+            @include h-4;
+            color: $header-dark;
+            font-weight: 600;
+        }
+
+        p {
+            @include body-1;
+            color: $sub-header-dark;
+            text-align: center;
+        }
+    }
+
+    .form-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+
+            .row {
+                display: flex;
+                flex-direction: row;
+                overflow: hidden;
+                gap: 1rem;
+
+                @include sm {
+                    flex-direction: column;
+                }
+            }
+
+            .field {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                flex: 1;
+                overflow: hidden;
+                label {
+                    @include label-1;
+                    color: $header-text;
+                    span {
+                        color: $primary-color;
+                    }
+                }
+
+                .input-container {
+                    display: flex;
+                    flex-direction: row;
+                    overflow: hidden;
+                    gap: 0.75rem;
+                    border: 1px solid $general-stroke-light;
+                    border-radius: 0.25rem;
+                    padding: 0.75rem 0.5rem;
+                    img {
+                        width: 1.5rem;
+                        height: 1.5rem;
+                    }
+                    input {
+                        width: 100%;
+                        border: none;
+                        &:focus {
+                            outline: none;
+                        }
+                        &::placeholder {
+                            @include body-2;
+                            color: $paragraph-text;
+                        }
+                    }
+                    button{
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        img {
+                            width: 1.5rem;
+                            height: 1.5rem;
+                        }
+                    }
+                }
+
+                .error-container{
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 0.5rem;
+                    color: red;
+                    font-family: $font-lato;
+                    svg{
+                        width: 1rem;
+                        height: 1rem;
+                    }
+                }
+            }
+        }
+        .action-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+
+            .create-account {
+                @include primary_btn;
+                padding: 0.906rem 0;
+                border-radius: 0.5rem;
+            }
+
+            .divider {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 1rem;
+                hr {
+                    flex: 1;
+                    border: none;
+                    height: 1px;
+                    background-color: $general-stroke-light;
+                    color: $general-stroke-light;
+                }
+                span {
+                    @include label-1;
+                    color: #656565;
+                }
+            }
+
+            .socials-login {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+
+                button {
+                    border: 1px solid #e0e0e0;
+                    border-radius: 0.25rem;
+                    padding: 0.375rem 1.875rem;
+                    background-color: #ffffff;
+                    cursor: pointer;
+                    img {
+                        width: 1.5rem;
+                        height: 1.5rem;
+                    }
+                }
+            }
+
+            .secure-info {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+                align-items: center;
+                .header-info {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 0.5rem;
+                    h3 {
+                        @include body-1;
+                        color: $paragraph-text;
+                        text-align: center;
+                    }
+                    img {
+                        width: 0.967rem;
+                        height: 0.967rem;
+                    }
+                }
+                p {
+                    @include body-3;
+                    color: $paragraph-text;
+                    text-align: center;
+                }
+            }
+
+            .already-signin {
+                @include body-1;
+                text-align: center;
+                color: #6b7280;
+
+                a {
+                    color: $link-color;
+                    text-decoration: none;
+                    font-weight: 600;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
