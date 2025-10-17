@@ -26,11 +26,6 @@ export const routes: Routes = [
           .then(m => m.VerifyEmailPageComponent),
       },
       {
-        path: 'forgot-password',
-        loadComponent: () => import('./modules/auth/pages/forgot-password-page/forgot-password-page.component')
-          .then(m => m.ForgotPasswordComponent),
-      },
-      {
         path: 'admin',
         loadComponent: () => import('./modules/auth/pages/admin-login-page/admin-login-page.component')
           .then(m => m.AdminLoginPageComponent),
