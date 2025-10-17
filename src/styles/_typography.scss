@@ -1,6 +1,8 @@
 $font-inter: "Inter", sans-serif;
 $font-lato: "Lato", sans-serif;
 
+$font-stack: $font-lato;
+
 @mixin h-1 {
     font-family: $font-lato;
     font-size: 3rem;
