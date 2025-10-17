@@ -19,9 +19,9 @@ export class InputComponent {
   public required = input<boolean>(false);
   public disabled = input<boolean>(false);
 
-  public _value = signal<string>('');
-  public _isFocused = signal<boolean>(false);
-  public _showPassword = signal<boolean>(false);
+  private _value = signal<string>('');
+  private _isFocused = signal<boolean>(false);
+  private _showPassword = signal<boolean>(false);
 
   public get value(): string {
     return this._value();
