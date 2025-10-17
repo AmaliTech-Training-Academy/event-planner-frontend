@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-divider',
-  imports: [],
+  standalone: true,
   templateUrl: './divider.component.html',
-  styleUrl: './divider.component.scss'
+  styleUrls: ['./divider.component.scss'],
+  imports: [CommonModule],
 })
 export class DividerComponent {
-
+  @Input() text?: string = '';
 }
