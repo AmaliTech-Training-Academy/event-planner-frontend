@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LogoComponent } from "../../components/logo/logo.component";
 import { RouterModule } from '@angular/router';
+import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
 
 @Component({
   selector: 'app-signup-page',
@@ -11,9 +12,10 @@ import { RouterModule } from '@angular/router';
   styleUrl: './signup-page.component.scss'
 })
 export class SignupPageComponent {
-  signupForm: FormGroup;
-  showPassword: boolean = false;
-  showConfirmPassword: boolean = false;
+  
+  protected signupForm: FormGroup;
+  protected showPassword: boolean = false;
+  protected showConfirmPassword: boolean = false;
 
   constructor(private fb: FormBuilder) {
     this.signupForm = this.fb.group({
@@ -21,25 +23,18 @@ export class SignupPageComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
-    }, { validators: this.passwordMatchValidator });
+    }, {  validators: passwordMatchValidator('password', 'confirmPassword'), });
   }
 
-  toggleShowPassword(): void {
+  protected toggleShowPassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  toggleShowConfirmPassword(): void {
+  protected toggleShowConfirmPassword(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  // password match validator
-  passwordMatchValidator(form: FormGroup) {
-    const password = form.get('password')?.value;
-    const confirmPassword = form.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { passwordMismatch: true };
-  }
-
-  onSubmit(): void {
+  protected onSubmit(): void {
     if (this.signupForm.valid) {
       console.log('Signup data:', this.signupForm.value);
     } else {
@@ -47,7 +42,7 @@ export class SignupPageComponent {
     }
   }
 
-  hasError(controlName: string, error: string): boolean {
+  protected hasError(controlName: string, error: string): boolean {
     const control = this.signupForm.get(controlName);
     return !!(control && control.touched && control.hasError(error));
   }
