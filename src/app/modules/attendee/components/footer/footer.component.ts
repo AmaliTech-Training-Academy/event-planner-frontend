@@ -5,24 +5,25 @@ import { LucideAngularModule } from 'lucide-angular';
 
 interface FooterLinkGroup {
   title: string;
-  links: { label: string; path: string }[];
+  links: Array<{ label: string; path: string }>;
 }
 
 interface SocialLink {
   name: string;
+  title: string;
   url: string;
-  iconPath: string; // full path to asset
+  iconPath: string; 
 }
 
 @Component({
   selector: 'app-footer',
+  standalone: true,
+  imports: [CommonModule, RouterLink, LucideAngularModule],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
-  imports: [RouterLink, CommonModule, LucideAngularModule],
-  standalone: true,
 })
 export class FooterComponent {
-  footerLinks = signal<FooterLinkGroup[]>([
+  readonly footerLinks = signal<FooterLinkGroup[]>([
     {
       title: 'Platform',
       links: [
@@ -41,21 +42,33 @@ export class FooterComponent {
     },
   ]);
 
-  socialLinks = signal<SocialLink[]>([
+ 
+  readonly socialLinks = signal<SocialLink[]>([
     {
       name: 'Twitter',
+      title: 'Follow us on Twitter',
       url: 'https://twitter.com',
       iconPath: 'assets/icons/twitter-icon.png',
     },
     {
       name: 'LinkedIn',
+      title: 'Connect with us on LinkedIn',
       url: 'https://linkedin.com',
       iconPath: 'assets/icons/linkedin-icon.png',
     },
     {
       name: 'Instagram',
+      title: 'Follow us on Instagram',
       url: 'https://instagram.com',
       iconPath: 'assets/icons/instagram-icon.png',
     },
   ]);
+
+  get footerLinkGroups() {
+    return this.footerLinks();
+  }
+
+  get socialMediaLinks() {
+    return this.socialLinks();
+  }
 }

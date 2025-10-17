@@ -13,40 +13,50 @@
       </div>
 
       <!-- Footer Link Groups -->
-      <ng-container *ngFor="let group of footerLinks()">
-        <div class="footer__links">
-          <h3 class="footer__title">{{ group.title }}</h3>
-          <a
-            *ngFor="let link of group.links"
-            [routerLink]="link.path"
-            class="footer__link"
-          >
-            {{ link.label }}
-          </a>
-        </div>
-      </ng-container>
+      @for (group of footerLinkGroups; track group.title) {
+        @if (group?.links?.length) {
+          <div class="footer__links">
+            <h3 class="footer__title">{{ group?.title }}</h3>
 
-      <!-- Social Links -->
-      <div class="footer__social-icons">
-        <a
-          *ngFor="let social of socialLinks()"
-          [href]="social.url"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="footer__social-link"
-          [attr.aria-label]="social.name"
-        >
-          <img
-            [src]="social.iconPath"
-            [alt]="social.name"
-            width="20"
-            height="20"
-          />
-        </a>
-      </div>
+            @for (link of group.links; track link.path) {
+              <a [routerLink]="link?.path" class="footer__link">
+                {{ link?.label }}
+              </a>
+            }
+          </div>
+        }
+      }
+
+      <!-- Contact / Social Links -->
+      @if (socialMediaLinks?.length) {
+        <div class="footer__links">
+          <h3 class="footer__title">Contact</h3>
+          <div class="footer__social-icons">
+            @for (social of socialMediaLinks; track social.name) {
+              <a
+                [href]="social?.url"
+                [title]="social?.title"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer__social-link"
+                [attr.aria-label]="social?.name"
+              >
+                <img
+                  [src]="social?.iconPath"
+                  [alt]="social?.name"
+                  width="20"
+                  height="20"
+                />
+              </a>
+            }
+          </div>
+        </div>
+      }
     </div>
 
     <!-- Copyright -->
-    <div class="footer__copyright">© 2025 EventHub. All rights reserved.</div>
+    <div class="footer__copyright">
+      © 2025 EventHub. All rights reserved.
+    </div>
   </div>
 </footer>
