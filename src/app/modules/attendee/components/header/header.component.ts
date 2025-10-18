@@ -23,22 +23,22 @@ interface NavLink {
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  // Reactive state
-  navLinks = signal<NavLink[]>([
+  // Public properties for template binding
+  public readonly navLinks = signal<NavLink[]>([
     { label: 'Home', path: '/', icon: Home },
     { label: 'Explore Events', path: '/events', icon: Menu },
     { label: 'About Us', path: '/about', icon: Users },
   ]);
 
-  isMenuOpen = signal(false);
+  public readonly isMenuOpen = signal(false);
+  public readonly MenuIcon = Menu;
 
-  MenuIcon = Menu;
-
-  toggleMenu() {
+  // Public methods
+  public toggleMenu(): void {
     this.isMenuOpen.update((isOpen) => !isOpen);
   }
 
-  closeMenu() {
+  public closeMenu(): void {
     this.isMenuOpen.set(false);
   }
 }
