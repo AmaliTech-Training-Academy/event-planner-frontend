@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 
 export type SocialPlatform = 'google' | 'facebook' | 'twitter';
 
@@ -9,11 +9,11 @@ export type SocialPlatform = 'google' | 'facebook' | 'twitter';
   styleUrls: ['./social-login-button.component.scss'],
 })
 export class SocialLoginComponent {
-  @Input() public platforms: SocialPlatform[] = [
+  public readonly platforms = input<SocialPlatform[]>([
     'google',
     'facebook',
     'twitter',
-  ];
+  ]);
 
   public getIconSrc(platform: SocialPlatform): string {
     switch (platform) {
@@ -28,5 +28,7 @@ export class SocialLoginComponent {
     }
   }
 
-  public onClick(platform: SocialPlatform): void {}
+  public onClick(platform: SocialPlatform): void {
+    // Handle social login click
+  }
 }
