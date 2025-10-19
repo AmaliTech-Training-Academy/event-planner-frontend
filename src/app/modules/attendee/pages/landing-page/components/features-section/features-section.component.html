@@ -1,0 +1,18 @@
+<section class="features">
+  <div class="features__container">
+    <div class="features__image-wrapper">
+      <div class="features__image-container">
+        <img 
+          [src]="_dashboardImage()" 
+          alt="Event management dashboard with analytics" 
+          class="features__image"
+          loading="lazy">
+      </div>
+    </div>
+
+    <div class="features__content">
+      <h2 class="features__title">{{ _title() }}</h2>
+      <p class="features__description">{{ _description() }}</p>
+    </div>
+  </div>
+</section>
