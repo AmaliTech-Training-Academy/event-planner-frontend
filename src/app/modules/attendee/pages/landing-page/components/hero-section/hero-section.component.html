@@ -5,20 +5,17 @@
       <p class="hero__subtitle">{{ _subtitle() }}</p>
 
       <div class="hero__actions">
-        <button
-          class="hero__button hero__button--primary"
-          (click)="_onCreateEvent()"
-          type="button"
-        >
-          Create An Event
-        </button>
-        <button
-          class="hero__button hero__button--secondary"
-          (click)="_onViewEvents()"
-          type="button"
-        >
-          View Events
-        </button>
+        <app-button
+          label="Create An Event"
+          type="primary"
+          (clicked)="_onCreateEvent()"
+        ></app-button>
+
+        <app-button
+          label="View Events"
+          type="secondary"
+          (clicked)="_onViewEvents()"
+        ></app-button>
       </div>
     </div>
 
@@ -48,7 +45,10 @@
             />
           </button>
 
-          <button class="hero__icon hero__icon--accent icon-red" aria-label="Phone call">
+          <button
+            class="hero__icon hero__icon--accent icon-red"
+            aria-label="Phone call"
+          >
             <img
               [src]="_icons().phone"
               alt="Phone"

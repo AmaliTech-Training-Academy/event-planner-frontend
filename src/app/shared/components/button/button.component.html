@@ -1,0 +1,12 @@
+<button
+  type="button"
+  class="app-button"
+  [ngClass]="[
+    'app-button--' + variant(),
+    fullWidth() ? 'app-button--full' : ''
+  ]"
+  [disabled]="disabled()"
+  (click)="onClick()"
+>
+  {{ label }}
+</button>

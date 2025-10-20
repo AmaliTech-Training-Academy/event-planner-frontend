@@ -1,10 +1,11 @@
 import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ButtonComponent } from "../../../../../../shared/components/button/button.component";
 
 @Component({
   selector: 'app-hero-section',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './hero-section.component.html',
   styleUrls: ['./hero-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

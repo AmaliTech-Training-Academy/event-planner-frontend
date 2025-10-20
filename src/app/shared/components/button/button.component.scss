@@ -1,0 +1,60 @@
+@use 'typography' as *;
+@use 'colors' as *;
+@use 'variables' as *;
+
+.app-button {
+  @include body-1;
+  padding: $spacing-4 $spacing-7;
+  border-radius: $radius-2;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &--primary {
+    background-color: #ea580c;
+    border: $stroke-1 solid #ea580c;
+
+    color: #ffffff;
+
+    &:hover {
+      background-color: #c2410c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &--secondary {
+    background-color: #ffffff;
+    color: #374151;
+    border: $stroke-1 solid $gray-300;
+    background-color: #ffffff;
+
+    &:hover {
+      background-color: #f9fafb;
+      border-color: #9ca3af;
+    }
+
+    &:active {
+      background-color: #f3f4f6;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ea580c;
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &--full {
+    width: 100%;
+  }
+}
