@@ -17,7 +17,7 @@ export class SignupPageComponent {
   protected showPassword: boolean = false;
   protected showConfirmPassword: boolean = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private readonly fb: FormBuilder) {
     this.signupForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
@@ -36,15 +36,15 @@ export class SignupPageComponent {
 
   protected onSubmit(): void {
     if (this.signupForm.valid) {
-      console.log('Signup data:', this.signupForm.value);
+      // signup service implimentation here
     } else {
-      this.signupForm.markAllAsTouched();
+      this.signupForm?.markAllAsTouched();
     }
   }
 
   protected hasError(controlName: string, error: string): boolean {
-    const control = this.signupForm.get(controlName);
-    return !!(control && control.touched && control.hasError(error));
+    const control = this.signupForm?.get(controlName);
+    return !!(control && control?.touched && control?.hasError(error));
   }
 
 
