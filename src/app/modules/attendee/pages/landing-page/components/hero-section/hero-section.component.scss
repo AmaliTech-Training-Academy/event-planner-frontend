@@ -78,7 +78,7 @@
     &--secondary {
       background-color: #ffffff;
       color: #374151;
-      border: $stroke-1 solid #d1d5db;
+      border: $stroke-1 solid $gray-300;
 
       &:hover {
         background-color: #f9fafb;
@@ -107,6 +107,7 @@
     position: relative;
     width: 100%;
     max-width: 550px;
+    min-height: 501px;
     border-radius: $radius-9;
     overflow: hidden;
     background-color: #000000;
@@ -115,7 +116,7 @@
 
   &__image {
     width: 100%;
-    height: auto;
+    min-height:501px;
     display: block;
     object-fit: cover;
   }
@@ -125,26 +126,28 @@
     bottom: $spacing-6;
     left: 50%;
     transform: translateX(-50%);
+    bottom: 62px;
     display: flex;
     gap: $spacing-4;
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(15.9px);
     padding: $spacing-3;
     border-radius: $radius-full;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
   }
 
   &__icon {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: #f3f4f6;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    background: transparent;
 
     &:hover {
       background-color: #e5e7eb;
@@ -157,6 +160,7 @@
       &:hover {
         background-color: #dc2626;
       }
+      &.red
 
       .hero__icon-content {
         filter: brightness(0) invert(1);

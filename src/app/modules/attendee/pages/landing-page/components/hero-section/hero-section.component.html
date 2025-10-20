@@ -33,19 +33,39 @@
 
         <div class="hero__overlay-icons">
           <button class="hero__icon" aria-label="Microphone">
-            <span class="hero__icon-content">🎤</span>
+            <img
+              [src]="_icons().mic"
+              alt="Microphone"
+              class="hero__icon-content"
+            />
           </button>
+
           <button class="hero__icon" aria-label="Video camera">
-            <span class="hero__icon-content">📹</span>
+            <img
+              [src]="_icons().video"
+              alt="Video camera"
+              class="hero__icon-content"
+            />
           </button>
-          <button class="hero__icon hero__icon--accent" aria-label="Phone call">
-            <span class="hero__icon-content">📞</span>
+
+          <button class="hero__icon hero__icon--accent icon-red" aria-label="Phone call">
+            <img
+              [src]="_icons().phone"
+              alt="Phone"
+              class="hero__icon-content"
+            />
           </button>
+
           <button class="hero__icon" aria-label="Email">
-            <span class="hero__icon-content">✉️</span>
+            <img [src]="_icons().mail" alt="Email" class="hero__icon-content" />
           </button>
+
           <button class="hero__icon" aria-label="Settings">
-            <span class="hero__icon-content">⚙️</span>
+            <img
+              [src]="_icons().settings"
+              alt="Settings"
+              class="hero__icon-content"
+            />
           </button>
         </div>
       </div>

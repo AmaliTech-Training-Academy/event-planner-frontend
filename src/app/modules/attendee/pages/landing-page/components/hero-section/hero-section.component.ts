@@ -1,4 +1,3 @@
-// hero-section.component.ts
 import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -11,27 +10,26 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroSectionComponent {
-  protected readonly _title = signal<string>('Plan, Host, Engage & Grow');
-  protected readonly _subtitle = signal<string>(
+  protected readonly _title = signal('Plan, Host, Engage & Grow');
+  protected readonly _subtitle = signal(
     'Bring your community together with powerful tools for hosting productive online and in-person events.'
   );
-  protected readonly _heroImage = signal<string>(
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&h=600&fit=crop'
-  );
+  protected readonly _heroImage = signal('assets/images/hero-image.png');
 
-  /**
-   * Handles the create event button click
-   */
+  // 🎨 SVG icon paths
+  protected readonly _icons = signal({
+    mic: 'assets/icons/microphone-icon.svg',
+    video: 'assets/icons/video-icon.svg',
+    phone: 'assets/icons/phone-icon.svg',
+    mail: 'assets/icons/message-icon.svg',
+    settings: 'assets/icons/collaboration-icon.svg',
+  });
+
   protected _onCreateEvent(): void {
     // Handle create event action
-    console.log('Create event clicked');
   }
 
-  /**
-   * Handles the view events button click
-   */
   protected _onViewEvents(): void {
-    // Handle view events action
     console.log('View events clicked');
   }
 }
