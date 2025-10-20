@@ -17,6 +17,6 @@ export class ConferenceSectionComponent {
     'Dedicated spaces that make it easy to come together.'
   );
   protected readonly _conferenceImage = signal<string>(
-    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=900&h=600&fit=crop'
+    'assets/images/conference-img.png'
   );
 }

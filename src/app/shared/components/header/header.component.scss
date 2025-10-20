@@ -10,13 +10,11 @@
   transition: background-color 0.3s ease, padding 0.3s ease;
 
   &__container {
-    max-width: 1280px;
-    margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 $spacing-6;
     transition: padding 0.3s ease;
+    
   }
 
   &__logo {

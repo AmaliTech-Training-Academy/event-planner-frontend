@@ -3,19 +3,17 @@
 @use 'variables' as *;
 .why-us {
   width: 100%;
-  background-color: #1f2937;
-  border-radius: 1rem;
+  background-color: $gray-950;
   color: #ffffff;
   margin-bottom: $spacing-12;
+  overflow: hidden;
 
   &__container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 $spacing-6;
-    border-radius: 1rem;
+   
+    min-height: 100vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: $spacing-11;
+    gap: $spacing-12;
     align-items: center;
 
     @media (max-width: 968px) {
@@ -36,6 +34,18 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 600;
+    position: relative;
+    padding-left: 34px;
+    &::before{
+        content: '';
+        position: absolute;
+        width: 25px;
+        height: 2px;
+        background: $gray-500;
+        top: 50%;
+        transform: translateY(-50%);
+        left: .50px;
+    }
   }
 
   &__title {
@@ -74,22 +84,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #10b981;
+    color: $gray-500;
     margin-top: 2px;
   }
 
   &__feature-text {
     @include body-1;
+    color: $gray-500;
+    font-size: 14px;
     color: #e5e7eb;
     line-height: 1.6;
   }
 
+  // ---- PHONE IMAGE SECTION ----
   &__image-wrapper {
-    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    height: 100%;
     padding: $spacing-8 0;
+    background: transparent;
 
     @media (max-width: 968px) {
       order: -1;
@@ -98,49 +113,71 @@
 
   &__phone-container {
     position: relative;
-    transform: perspective(1200px) rotateY(-15deg) rotateX(5deg);
-    transition: transform 0.6s ease;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-end; // aligns phone towards the right
+    align-items: center;
+    z-index: 1;
+    &::after {
+        content: '';
+        position: absolute;
+        width: 350px;
+        height: 100vh;
+        left: -20px;
+        top: -2%;
+        
+        transform: skew(-20deg);
+              background: $gray-800;
+              opacity: 0.9;
 
-    &:hover {
-      transform: perspective(1200px) rotateY(-8deg) rotateX(2deg);
+        z-index: -1;
+    }
+    &::before {
+        content: '';
+        position: absolute;
+        width: 100px;
+        height: 100vh;
+        left: 330px;
+              top: -2%;
+
+        transform: skew(-20deg);
+        background: $gray-900;
+        opacity:0.8;
+        z-index: 1;
+      
     }
   }
 
   &__phone-frame {
-    position: relative;
-    width: 280px;
-    height: 560px;
-    background: linear-gradient(145deg, #e8e8e8, #ffffff);
-    border-radius: $radius-9;
-    padding: $spacing-3;
-    box-shadow: 
-      0 25px 50px -12px rgba(0, 0, 0, 0.5),
-      inset 0 2px 4px rgba(255, 255, 255, 0.5);
-    overflow: hidden;
-
-    @media (max-width: 480px) {
-      width: 240px;
-      height: 480px;
-    }
-  }
-
-  &__phone-notch {
-    position: absolute;
-    top: $spacing-3;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 24px;
-    background-color: #000000;
-    border-radius: $radius-full;
-    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   &__phone-image {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    border-radius: $radius-8;
+    object-fit: cover; 
     display: block;
+    border-radius: 0;
+    transform: scale(1); 
+    position: relative;
+    z-index: 10;
+    transform-origin: center;
+  }
+  &__phone-notch{
+    position: absolute;
+    top: $spacing-3;
+    left:5%;
+    width: 250px;
+    top: -2%;
+    height: 50px;
+    z-index: 2;
+          background: $gray-900;
+
   }
 }
+

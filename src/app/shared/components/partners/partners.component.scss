@@ -10,16 +10,14 @@
   background-color: #ffffff;
 
   &__container {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 0 $spacing-6;
+  
   }
 
   &__track {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: $spacing-8;
+    gap: $spacing-4;
     flex-wrap: wrap;
 
     @media (max-width: 768px) {
@@ -29,12 +27,9 @@
   }
 
   &__item {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.6;
-    transition: opacity 0.3s ease;
+   display: grid;
+   place-items: center;
+   grid-template-columns: repeat(auto-fit, minmax(7, 1fr));
 
     &:hover {
       opacity: 1;
@@ -44,9 +39,8 @@
   &__image {
     height: 40px;
     width: auto;
-    max-width: 120px;
+    max-width: 100px;
     object-fit: contain;
-    filter: grayscale(100%);
     transition: filter 0.3s ease;
 
     .partners__item:hover & {

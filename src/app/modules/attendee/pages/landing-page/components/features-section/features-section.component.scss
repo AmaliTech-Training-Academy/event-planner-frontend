@@ -5,12 +5,10 @@
 .features {
   width: 100%;
   padding: $spacing-11 0;
-  background-color: #ffffff;
+  background-color: #f9fafb;
+
 
   &__container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 $spacing-6;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: $spacing-11;
@@ -24,9 +22,6 @@
 
   &__image-wrapper {
     position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
     @media (max-width: 968px) {
       order: 2;
@@ -37,10 +32,10 @@
     position: relative;
     width: 100%;
     max-width: 550px;
+    height: 501px;
     border-radius: $radius-7;
     overflow: hidden;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 25px 50px -12px rgba(102, 126, 234, 0.4);
+
     transform: perspective(1000px) rotateY(-5deg);
     transition: transform 0.6s ease;
 
@@ -51,10 +46,9 @@
 
   &__image {
     width: 100%;
-    height: auto;
+    min-height:520px;
     display: block;
     object-fit: cover;
-    mix-blend-mode: overlay;
     opacity: 0.9;
   }
 

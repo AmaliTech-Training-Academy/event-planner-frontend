@@ -8,9 +8,6 @@
   border-bottom: $stroke-0 solid #e5e7eb;
 
   &__container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 $spacing-6;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: $spacing-11;
