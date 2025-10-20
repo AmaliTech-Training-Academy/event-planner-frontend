@@ -1,4 +1,4 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, input, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -10,7 +10,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   styleUrls: ['./input.component.scss'],
 })
 export class InputComponent {
-  // Public inputs
   public type = input<'text' | 'email' | 'password'>('text');
   public placeholder = input<string>('');
   public label = input<string>('');
@@ -20,31 +19,17 @@ export class InputComponent {
   public required = input<boolean>(false);
   public disabled = input<boolean>(false);
 
-  // Private signals for internal state
   private _value = signal<string>('');
   private _isFocused = signal<boolean>(false);
   private _showPassword = signal<boolean>(false);
 
-  // Getter for template and external use
-  public get value(): string {
-    return this._value();
-  }
+  public hasError = computed(() => !!this.errorMessage());
+  public inputType = computed(() =>
+    this.type() === 'password' && !this._showPassword() ? 'password' : 'text'
+  );
+  public showPassword = computed(() => this._showPassword());
+  public isFocused = computed(() => this._isFocused());
 
-  public get isFocused(): boolean {
-    return this._isFocused();
-  }
-
-  public get hasError(): boolean {
-    return !!this.errorMessage();
-  }
-
-  public get inputType(): string {
-    return this.type() === 'password' && !this._showPassword()
-      ? 'password'
-      : 'text';
-  }
-
-  // Methods
   public togglePasswordVisibility(): void {
     if (this.type() === 'password') {
       this._showPassword.update((v) => !v);
@@ -59,7 +44,5 @@ export class InputComponent {
     this._isFocused.set(false);
   }
 
-  public get showPassword(): boolean {
-    return this._showPassword();
-  }
+  public value = this._value.asReadonly();
 }

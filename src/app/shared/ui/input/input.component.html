@@ -1,7 +1,7 @@
 <div
   class="form-group"
-  [class.has-error]="hasError"
- [class.focused]="isFocused"
+  [class.has-error]="hasError()"
+  [class.focused]="isFocused()"
 >
   @if (label()) {
     <label [attr.for]="formControlName()">
@@ -19,14 +19,13 @@
 
     <input
       [id]="formControlName()"
-      [type]="inputType"
+      [type]="inputType()"
       [placeholder]="placeholder()"
-   [(ngModel)]="value"
-
+      [(ngModel)]="_value()"
       (focus)="onFocus()"
       (blur)="onBlur()"
       [disabled]="disabled()"
-      [class.error]="hasError"
+      [class.error]="hasError()"
     />
 
     @if (type() === 'password') {
@@ -35,9 +34,13 @@
         class="toggle-btn"
         (click)="togglePasswordVisibility()"
         aria-label="Toggle password visibility"
-      ><img [src]="showPassword ? '/assets/icons/eye-close-icon.png' : 'assets/icons/eye.png'" />
-
-          
+      >
+        <img
+          [src]="
+            showPassword()
+              ? '/assets/icons/eye-close-icon.png'
+              : '/assets/icons/eye.png'
+          "
           alt="Toggle Password"
         />
       </button>
