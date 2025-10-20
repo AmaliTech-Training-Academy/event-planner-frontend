@@ -104,7 +104,7 @@
   // Responsive
   @media (max-width: 968px) {
     &__content {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
 
     &__brand {
@@ -114,8 +114,11 @@
 
   @media (max-width: 640px) {
     &__content {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
       gap: $spacing-8;
+      &:nth-child(4) {
+       grid-column: span 2;
+      }
     }
 
     &__tagline {

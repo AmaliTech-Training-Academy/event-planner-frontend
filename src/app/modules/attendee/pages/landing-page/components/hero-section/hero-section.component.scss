@@ -13,7 +13,7 @@
     gap: $spacing-11;
     align-items: center;
 
-    @media (max-width: 968px) {
+    @media (max-width: 991px) {
       grid-template-columns: 1fr;
       gap: $spacing-9;
     }
@@ -46,52 +46,14 @@
     display: flex;
     gap: $spacing-4;
     flex-wrap: wrap;
-  }
-
-  &__button {
-    @include body-1;
-    padding: $spacing-4 $spacing-7;
-    border-radius: $radius-2;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s ease;
-
-    &--primary {
-      background-color: #ea580c;
-      color: #ffffff;
-
-      &:hover {
-        background-color: #c2410c;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-    }
-
-    &--secondary {
-      background-color: #ffffff;
-      color: #374151;
-      border: $stroke-1 solid $gray-300;
-
-      &:hover {
-        background-color: #f9fafb;
-        border-color: #9ca3af;
-      }
-
-      &:active {
-        background-color: #f3f4f6;
-      }
-    }
-
-    &:focus-visible {
-      outline: 2px solid #ea580c;
-      outline-offset: 2px;
+    @media (max-width: 991px) {
+      justify-content: space-between;
+      flex-wrap: nowrap;
+      gap: $spacing-3;
     }
   }
+
+
 
   &__image-wrapper {
     position: relative;
@@ -109,6 +71,10 @@
     overflow: hidden;
     background-color: #000000;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    @media (max-width: 991px) {
+      max-width: 100%;
+      min-height: 100%;
+    }
   }
 
   &__image {

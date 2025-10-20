@@ -10,6 +10,9 @@
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
+  @media (max-width:457px) {
+    font-size: 14px;
+  }
 
   &--primary {
     background-color: #ea580c;

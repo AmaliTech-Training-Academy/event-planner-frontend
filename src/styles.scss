@@ -11,4 +11,13 @@ img{
 }
 .container{
     padding-inline: 120px;;
+    @media (max-width:991px) {
+       padding-inline: 57px; 
+    }
+    @media (max-width:767px) {
+        padding-inline: 50px; 
+    }
+    @media (max-width:457px) {
+        padding-inline: 24px; 
+    }
 }
