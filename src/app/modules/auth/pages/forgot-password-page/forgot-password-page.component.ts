@@ -1,39 +1,44 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
-import { RouterLink } from '@angular/router';
-
+import { RouterModule } from '@angular/router';
+import { LogoComponent as logoComponent } from '../../components/logo/logo.component';
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterLink
-  ],
-  templateUrl: './forgot-password-page.component.html',
-  styleUrl: './forgot-password-page.component.scss'
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, logoComponent],
+  templateUrl: './forgot-password-page.component.html', 
+  styleUrls: ['./forgot-password-page.component.scss']
 })
 export class ForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
-  loading = false;
-  message: string | null = null;
-  isError = false;
-
+  isLoading: boolean = false; 
+  apiMessage: string | null = null;
+  isError: boolean = false;
+  
   constructor(private fb: FormBuilder) {
     this.forgotPasswordForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['user@gmail.com', [Validators.required, Validators.email]]
     });
   }
 
-  get f() {
+  get controls() {
     return this.forgotPasswordForm.controls;
   }
 
-  onSubmit() {
+  sendCode(): void {
     if (this.forgotPasswordForm.invalid) {
+      this.forgotPasswordForm.markAllAsTouched();
       return;
     }
-    // Handle form submission logic here
+
+    this.isLoading = true; 
+    const email = this.controls['email'].value;
+    
+    setTimeout(() => {
+      this.isLoading = false;
+      this.isError = false;
+      this.apiMessage = `An OTP has been sent to ${email}`;
+    }, 2000);
   }
 }
