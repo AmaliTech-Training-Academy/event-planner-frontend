@@ -32,9 +32,7 @@ export class WhyUsSectionComponent {
     { text: 'Crowdsource questions' },
   ]);
 
-  /**
-   * Track by function for performance optimization in *ngFor
-   */
+  
   protected _trackByFeature(index: number, feature: Feature): string {
     return feature.text;
   }

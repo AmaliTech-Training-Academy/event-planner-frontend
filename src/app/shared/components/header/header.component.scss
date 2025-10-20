@@ -43,6 +43,12 @@
     align-items: center;
     gap: $spacing-8;
     transition: gap 0.3s ease, transform 0.3s ease;
+    justify-content: flex-end;
+
+    flex: 1;
+@media (min-width: 1240px) {
+  padding-right:1.5rem;
+}
   }
 
   &__link {

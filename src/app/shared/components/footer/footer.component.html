@@ -13,7 +13,7 @@
       </div>
 
       <!-- Footer Link Groups -->
-      @for (group of footerLinkGroups; track group.title) {
+      @for (group of footerLinks(); track group.title) {
         @if (group?.links?.length) {
           <div class="footer__links">
             <h3 class="footer__title">{{ group?.title }}</h3>
@@ -28,11 +28,11 @@
       }
 
       <!-- Contact / Social Links -->
-      @if (socialMediaLinks) {
+      @if (socialLinks()) {
         <div class="footer__links">
           <h3 class="footer__title">Contact</h3>
           <div class="footer__social-icons">
-            @for (social of socialMediaLinks; track social.name) {
+            @for (social of socialLinks(); track social.name) {
               <a
                 [href]="social?.url"
                 [title]="social?.title"

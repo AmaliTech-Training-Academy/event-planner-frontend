@@ -12,7 +12,7 @@ interface SocialLink {
   name: string;
   title: string;
   url: string;
-  iconPath: string; 
+  iconPath: string;
 }
 
 @Component({
@@ -23,7 +23,7 @@ interface SocialLink {
   styleUrls: ['./footer.component.scss'],
 })
 export class FooterComponent {
-  readonly footerLinks = signal<FooterLinkGroup[]>([
+  public readonly footerLinks = signal<FooterLinkGroup[]>([
     {
       title: 'Platform',
       links: [
@@ -42,8 +42,7 @@ export class FooterComponent {
     },
   ]);
 
- 
-  readonly socialLinks = signal<SocialLink[]>([
+  public readonly socialLinks = signal<SocialLink[]>([
     {
       name: 'Twitter',
       title: 'Follow us on Twitter',
@@ -63,12 +62,4 @@ export class FooterComponent {
       iconPath: 'assets/icons/instagram-icon.png',
     },
   ]);
-
-  get footerLinkGroups() {
-    return this.footerLinks();
-  }
-
-  get socialMediaLinks() {
-    return this.socialLinks();
-  }
 }
