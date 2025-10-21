@@ -1,0 +1,31 @@
+@use 'colors' as *;
+@use 'variables' as *;
+// FIX: Add the typography file where @mixin body-3 is defined
+@use 'typography' as *; 
+
+.error-message {
+  @include body-3; // This line should now resolve successfully
+  color: $red-600;
+  margin-top: $spacing-1;
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
+  animation: slideDown 0.2s ease-out;
+
+  img {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
