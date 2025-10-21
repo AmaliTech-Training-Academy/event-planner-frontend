@@ -1,4 +1,16 @@
-<div>
-    <app-admin-sidebar/>
+<app-admin-sidebar></app-admin-sidebar>
+
+<div class="admin-layout__main">
+  <app-admin-top-nav
+    [pageTitle]="layoutService.pageTitle()"
+    [notificationsCount]="layoutService.notificationsCount()"
+    [userName]="layoutService.userName()"
+    [avatarSrc]="layoutService.avatarSrc()"
+    [logoSrc]="layoutService.logoSrc()"
+    [logoAlt]="layoutService.logoAlt()"
+  ></app-admin-top-nav>
+
+  <div class="admin-layout__content">
+    <router-outlet></router-outlet>
+  </div>
 </div>
-<router-outlet></router-outlet>

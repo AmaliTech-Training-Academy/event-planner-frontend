@@ -1,0 +1,19 @@
+<header class="admin-top-nav">
+  <div class="admin-top-nav__left">
+    <img [src]="logoSrc" [alt]="logoAlt" class="admin-top-nav__logo" />
+    <span class="admin-top-nav__page-title">{{ pageTitle }}</span>
+  </div>
+
+  <div class="admin-top-nav__right">
+    <button class="admin-top-nav__notifications" aria-label="Notifications">
+      <img src="icons/notification-icon.png" alt="Notifications" />
+      <span *ngIf="hasNotifications()" class="admin-top-nav__badge">
+        {{ notificationsCount }}
+      </span>
+    </button>
+
+    <div class="admin-top-nav__user">
+      <img [src]="avatarSrc" [alt]="userName" class="admin-top-nav__avatar" />
+    </div>
+  </div>
+</header>
