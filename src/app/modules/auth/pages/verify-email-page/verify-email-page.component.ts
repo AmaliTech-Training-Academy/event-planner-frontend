@@ -1,35 +1,87 @@
-import { Component, QueryList, ViewChildren, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { LogoComponent } from '../../components/logo/logo.component'; 
+import { LogoComponent } from '../../components/logo/logo.component';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component'; 
+import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
+import { OtpInputComponent } from '../../../../shared/ui/otp-input/otp-input.component'; 
+
 
 @Component({
-  selector: 'app-verify-email-page', 
-  standalone: true,
-  imports: [
-    CommonModule, 
-    FormsModule, 
-    RouterModule,
-    LogoComponent 
-  ],
-  templateUrl: './verify-email-page.component.html',
-  styleUrls: ['./verify-email-page.component.scss']
+ selector: 'app-verify-email-page',
+ standalone: true,
+ imports: [
+ CommonModule, 
+ FormsModule, 
+ RouterModule,
+ LogoComponent,
+ ButtonComponent, 
+ FormErrorComponent,
+ OtpInputComponent 
+],
+ templateUrl: './verify-email-page.component.html',
+styleUrls: ['./verify-email-page.component.scss']
 })
-export class VerifyEmailPageComponent {
-  
-  otp: string[] = ['', '', '', '', '', '']; 
-  isLoading: boolean = false; 
-  apiMessage: string | null = null; 
-  isError: boolean = false; 
-  
-  @ViewChildren('otpInput') otpInputs!: QueryList<ElementRef>;
+export class VerifyEmailPageComponent implements OnInit {
 
-  constructor() { }
-  
-  onOtpInput(event: Event, index: number): void { }
-  onKeyDown(event: KeyboardEvent, index: number): void {  }
-  isOtpComplete(): boolean { return this.otp.every(digit => digit !== ''); }
-  verifyAccount(): void {  }
-  resendOtp(): void {  }
+ currentOtpValue: string = ''; 
+ isOtpReady: boolean = false; 
+ isLoading: boolean = false; apiMessage: string | null = null;
+isError: boolean = false;
+
+ constructor() { }
+
+ ngOnInit(): void { }
+
+ 
+ onOtpChange(otpValue: string): void {
+this.currentOtpValue = otpValue;
+this.isOtpReady = otpValue.length === 6;
+ 
+ if (this.apiMessage) {
+ this.apiMessage = null;
+this.isError = false;
+ }
+ }
+
+ isOtpComplete(): boolean {
+ return this.isOtpReady;
+ }
+
+
+ verifyAccount(): void {
+ if (!this.isOtpComplete()) {
+ this.apiMessage = 'Please enter the complete 6-digit OTP.';
+ this.isError = true;
+ return;
+ }
+
+ this.isLoading = true;
+ this.apiMessage = null; 
+ console.log('Verifying account with OTP:', this.currentOtpValue);
+ 
+ setTimeout(() => {
+ this.isLoading = false;
+ this.isError = false;
+ this.apiMessage = 'Account verified successfully! Redirecting...';
+ 
+ }, 2000);
+ }
+
+ 
+ resendOtp(): void {
+ if(this.isLoading) return;
+
+ this.isLoading = true;
+ this.apiMessage = null; 
+ 
+ setTimeout(() => {
+ this.isLoading = false;
+ this.isError = false;
+ this.apiMessage = 'A new OTP has been sent to your email.';
+ 
+ this.currentOtpValue = ''; 
+ }, 2000);
+ }
 }

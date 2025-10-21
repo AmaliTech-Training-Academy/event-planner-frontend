@@ -17,45 +17,33 @@
         <form (ngSubmit)="verifyAccount()">
             
             <div class="field verification-field"> 
-                <div class="otp-input-group">
-                    @for (digit of otp; track $index) {
-                        <input 
-                            type="text" 
-                            maxlength="1" 
-                            [ngModel]="digit" 
-                            (ngModelChange)="otp[$index] = $event"
-                            (input)="onOtpInput($event, $index)"
-                            (keydown)="onKeyDown($event, $index)"
-                            #otpInput
-                            [name]="'otp-' + $index"
-                            class="otp-digit-input"
-                            inputmode="numeric" 
-                            pattern="[0-9]"
-                            [attr.aria-label]="'OTP digit ' + ($index + 1)">
-
-                    }
-                </div>
+                
+                <app-otp-input 
+                    [length]="6" 
+                    (otpChange)="onOtpChange($event)">
+                </app-otp-input>
                 
                 @if (apiMessage && isError) {
-                    <div class="error-container">
-                        <img src="assets/icon/error-info.svg" alt="Error"/>
-                        <span>{{ apiMessage }}</span> 
-                    </div>
+                    <app-form-error 
+                        [message]="apiMessage" 
+                        [showIcon]="true" 
+                        [class.error-override]="true" />
                 }
             </div>
 
-            <button 
-                type="submit" 
-                class="btn-primary" 
-                [disabled]="!isOtpComplete() || isLoading">
-                
+            <app-button 
+                [type]="'primary'" 
+                [fullWidth]="true" 
+                [disabled]="!isOtpComplete() || isLoading"
+                (click)="verifyAccount()"
+            >
                 @if (!isLoading) {
                     <span>Verify</span>
                 }
                 @if (isLoading) {
                     <span class="spinner"></span>
                 }
-            </button>
+            </app-button>
         </form>
         
         <div class="resend-otp-wrapper">

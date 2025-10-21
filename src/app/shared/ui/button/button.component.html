@@ -1,0 +1,6 @@
+<button
+  [class.primary]="type() === 'primary'"   [class.social]="type() === 'social'"   [class.full-width]="fullWidth()"
+  [disabled]="disabled()" 
+>
+  <ng-content></ng-content>
+</button>
