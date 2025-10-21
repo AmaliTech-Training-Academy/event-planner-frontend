@@ -8,6 +8,15 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { InputComponent } from '../../../../shared/ui/input/input.component';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { DividerComponent } from '../../../../shared/ui/divider/divider.component';
+import { CheckboxComponent } from '../../../../shared/ui/checkbox/checkbox.component';
+import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
+import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
+import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
+
+// Import reusable UI components
 
 interface LoginForm {
   email: FormControl<string | null>;
@@ -18,25 +27,32 @@ interface LoginForm {
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    InputComponent,
+    ButtonComponent,
+    DividerComponent,
+    CheckboxComponent,
+    SecureTextComponent,
+    SocialLoginComponent,
+    FormErrorComponent,
+  ],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
   public form: FormGroup<LoginForm>;
-
   public isPasswordHidden = signal(true);
   public isSubmitted = signal(false);
 
   constructor(private readonly fb: FormBuilder) {
     this.form = this.createForm();
 
-    // Example effect if you want reactive logic
     effect(() => {
-      // can react to changes in signals here
       const submitted = this.isSubmitted();
       const hidden = this.isPasswordHidden();
-      // console.log('Form submitted:', submitted, 'Password hidden:', hidden);
     });
   }
 
@@ -52,12 +68,12 @@ export class LoginPageComponent {
   }
 
   public hasFieldError(fieldName: keyof LoginForm): boolean {
-    const field = this.form?.get(fieldName);
-    return !!(field?.invalid && (field?.touched || this.isSubmitted()));
+    const field = this.form.get(fieldName);
+    return !!(field?.invalid && (field.touched || this.isSubmitted()));
   }
 
   public getFieldErrorMessage(fieldName: keyof LoginForm): string {
-    const field = this.form?.get(fieldName);
+    const field = this.form.get(fieldName);
     if (!field?.errors) return '';
 
     if (field.errors['required'])
@@ -77,14 +93,14 @@ export class LoginPageComponent {
 
   public handleSubmit(): void {
     this.isSubmitted.set(true);
-    this.form?.markAllAsTouched();
+    this.form.markAllAsTouched();
 
-    if (this.form?.valid) {
+    if (this.form.valid) {
       // handle valid form submission
     }
   }
 
   private capitalize(text: string): string {
-    return text?.charAt(0).toUpperCase() + text?.slice(1);
+    return text.charAt(0).toUpperCase() + text.slice(1);
   }
 }

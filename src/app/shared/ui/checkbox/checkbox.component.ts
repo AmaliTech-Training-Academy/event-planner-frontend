@@ -1,25 +1,58 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, signal, forwardRef } from '@angular/core';
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-checkbox',
   standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './checkbox.component.html',
   styleUrls: ['./checkbox.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => CheckboxComponent),
+      multi: true,
+    },
+  ],
 })
-export class CheckboxComponent {
+export class CheckboxComponent implements ControlValueAccessor {
   public label = input<string>('');
-  public checked = input<boolean>(false);
+  private _checked = signal<boolean>(false);
+  private _disabled = signal<boolean>(false);
 
-  public checkedChange = output<boolean>();
+  private onChange: (value: boolean) => void = () => {};
+  private onTouched: () => void = () => {};
 
-  protected _checked = signal(this.checked());
-
-  public get isChecked(): boolean {
-    return this._checked();
+  writeValue(value: boolean): void {
+    this._checked.set(value ?? false);
   }
 
-  public toggle(): void {
-    this._checked.update((current) => !current);
-    this.checkedChange.emit(this._checked());
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
   }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this._disabled.set(isDisabled);
+  }
+
+  public toggleCheck(): void {
+    if (this._disabled()) return;
+    const newValue = !this._checked();
+    this._checked.set(newValue);
+    this.onChange(newValue);
+    this.onTouched();
+  }
+
+  public checked = this._checked.asReadonly();
+  public disabled = this._disabled.asReadonly();
 }
