@@ -1,9 +1,9 @@
+@use 'index' as *; 
 
 
-@import '../../../../../styles/index'; 
 
 /* -------------------------------------------
-   BASE CARD & CONTAINER STYLES
+   GLOBAL AUTH FORM BASE STYLES
    ------------------------------------------- */
 
 .forgot-container {
@@ -47,15 +47,9 @@
 }
 
 /* -------------------------------------------
-   FORM FIELD STYLES 
+   FORM FIELD STRUCTURE STYLES (SHARED)
    ------------------------------------------- */
 
-/* --- .field (Parent Container) --- */
-/* -------------------------------------------
-   FORM FIELD STYLES 
-   ------------------------------------------- */
-
-/* --- .field (Parent Container) --- */
 .field {
     display: flex;
     flex-direction: column;
@@ -66,31 +60,29 @@
 
     width: 100%; 
     align-items: flex-start; 
-    text-align: left; 
+    text-align: initial; 
+}
+
+.label-input-group {
+    width: 100%; 
+    display: flex; 
+    flex-direction: column;
+    gap: $spacing-1;
+}
+
+.form-label {
+    display: block;
+    font-weight: 500;
+    color: $header-text;
+    margin-bottom: $spacing-1; 
     
-    .form-label {
-        display: block;
-        font-weight: 500;
-        color: $header-text;
-        margin-bottom: $spacing-1; 
-        
-        .required-star {
-            color: $orange-700;
-        }
+    .required-star {
+        color: $orange-700; 
     }
 }
 
-/* --- ADDED FIX: Styles for the new HTML wrapper --- */
-.label-input-group {
-    /* Fixes the stretching issue: Forces this group to take full width */
-    width: 100%; 
-    
-    display: flex; 
-    gap: $spacing-1; /* Small gap between label and input container */
-}
-
-/* --- .input-container (Input Wrapper) --- */
 .input-container {
+    width: 100%; 
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -98,12 +90,6 @@
     border: 1px solid $general-stroke-light;
     border-radius: 0.25rem;
     padding: $spacing-3 $spacing-2; 
-
-    /* This is already correctly set to 100% */
-    width: 100%; 
-    
-    // ... rest of the input container styles
-}
     
     img.icon {
         width: 1.5rem;
@@ -111,7 +97,6 @@
     }
     
     input {
-        /* This input is already correct */
         width: 100%; 
         border: none;
         background: none; 
@@ -125,7 +110,7 @@
             color: $paragraph-text;
         }
     }
-
+}
 
 .error-container {
     display: flex;
@@ -165,7 +150,6 @@
 }
 
 .btn-primary {
-    
     width: 100%;
     display: flex;
     align-items: center;
@@ -174,7 +158,8 @@
     padding: 15px; 
     border: none;
     
-    background-color: $orange-700; 
+   
+   background-color: $orange-700; 
     color: #FFFFFF;
     border-radius: $radius-4; 
 
@@ -186,11 +171,10 @@
     &:hover {
         background-color: darken($orange-700, 5%);
     }
-    
-    &:disabled {
-        background-color: $orange-400; 
-        cursor: not-allowed;
-    }
+    // &:disabled {
+    //     background-color: $orange-400; 
+    //     cursor: not-allowed;
+    // }
 }
 
 .spinner {
@@ -221,7 +205,7 @@
 }
 
 /* -------------------------------------------
-   MEDIA QUERIES (Braces checked)
+   MEDIA QUERIES 
    ------------------------------------------- */
 
 @media (min-width: 768px) {
