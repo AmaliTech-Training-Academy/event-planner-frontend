@@ -1,10 +1,10 @@
 @use 'colors' as *;
 @use 'variables' as *;
-// FIX: Add the typography file where @mixin body-3 is defined
+
 @use 'typography' as *; 
 
 .error-message {
-  @include body-3; // This line should now resolve successfully
+  @include body-3; 
   color: $red-600;
   margin-top: $spacing-1;
   display: flex;
