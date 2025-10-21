@@ -28,4 +28,10 @@
       </button>
     }
   </div>
+    <app-form-error
+      *ngIf="hasError()"
+      [message]="errorMessage()"
+      [showIcon]="true"
+      id="{{ label() + '-error' }}"
+    ></app-form-error>
 </div>

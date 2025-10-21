@@ -22,13 +22,18 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class CheckboxComponent implements ControlValueAccessor {
+  /** Label for the checkbox */
   public label = input<string>('');
+
+  /** Internal state */
   private _checked = signal<boolean>(false);
   private _disabled = signal<boolean>(false);
 
+  /** ControlValueAccessor callbacks */
   private onChange: (value: boolean) => void = () => {};
   private onTouched: () => void = () => {};
 
+  /** Write value from form */
   writeValue(value: boolean): void {
     this._checked.set(value ?? false);
   }
@@ -45,6 +50,7 @@ export class CheckboxComponent implements ControlValueAccessor {
     this._disabled.set(isDisabled);
   }
 
+  /** Toggle checkbox state */
   public toggleCheck(): void {
     if (this._disabled()) return;
     const newValue = !this._checked();
@@ -53,6 +59,15 @@ export class CheckboxComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
+  /** Handle keyboard events */
+  public onKeyDown(event: KeyboardEvent): void {
+    if (event.code === 'Space' || event.key === ' ') {
+      event.preventDefault();
+      this.toggleCheck();
+    }
+  }
+
+  /** Expose signals to template */
   public checked = this._checked.asReadonly();
   public disabled = this._disabled.asReadonly();
 }

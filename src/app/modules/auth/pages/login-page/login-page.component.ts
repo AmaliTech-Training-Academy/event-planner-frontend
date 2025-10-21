@@ -34,7 +34,6 @@ interface LoginForm {
     InputComponent,
     ButtonComponent,
     DividerComponent,
-    CheckboxComponent,
     SecureTextComponent,
     SocialLoginComponent,
     FormErrorComponent,

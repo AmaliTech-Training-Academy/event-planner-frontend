@@ -1,9 +1,13 @@
-<label class="checkbox">
-  <input
-    type="checkbox"
-    [checked]="checked()"
-    [disabled]="disabled()"
-    (change)="toggleCheck()"
-  />
-  <span class="checkbox-label">{{ label() }}</span>
-</label>
+<div
+  class="checkbox-wrapper"
+  role="checkbox"
+  [attr.aria-checked]="checked()"
+  [attr.aria-disabled]="disabled()"
+  tabindex="0"
+  (click)="toggleCheck()"
+  (keydown)="onKeyDown($event)"
+  [class.disabled]="disabled()"
+>
+  <span class="checkmark" [class.checked]="checked()"></span>
+  <span class="label-text">{{ label() }}</span>
+</div>
