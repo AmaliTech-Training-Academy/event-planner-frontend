@@ -10,25 +10,25 @@ import { Component, EventEmitter, Output } from '@angular/core';
 export class DatePickerComponent {
   @Output() dateSelected = new EventEmitter<Date>();
 
-  today = new Date();
-  currentMonth = this.today.getMonth();
-  currentYear = this.today.getFullYear();
-  selectedDate: Date | null = null;
+  private today = new Date();
+  protected currentMonth = this.today.getMonth();
+  protected currentYear = this.today.getFullYear();
+  protected selectedDate: Date | null = null;
 
-  get monthName(): string {
+  protected get monthName(): string {
     return new Date(this.currentYear, this.currentMonth).toLocaleString('default', { month: 'short' });
   }
 
-  get daysInMonth(): number[] {
+  protected get daysInMonth(): number[] {
     const total = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
     return Array.from({ length: total }, (_, i) => i + 1);
   }
 
-  get firstDayOffset(): number {
-    return new Date(this.currentYear, this.currentMonth, 1).getDay();
+  protected get firstDayOffset(): number {
+    return new Date(this.currentYear, this.currentMonth, 0).getDay();
   }
 
-  prevMonth() {
+  protected prevMonth() {
     if (this.currentMonth === 0) {
       this.currentMonth = 11;
       this.currentYear--;
@@ -37,7 +37,7 @@ export class DatePickerComponent {
     }
   }
 
-  nextMonth() {
+  protected nextMonth() {
     if (this.currentMonth === 11) {
       this.currentMonth = 0;
       this.currentYear++;
@@ -46,19 +46,24 @@ export class DatePickerComponent {
     }
   }
 
-  selectDate(day: number) {
+  protected selectDate(day: number) {
     this.selectedDate = new Date(this.currentYear, this.currentMonth, day);
     this.dateSelected.emit(this.selectedDate);
   }
 
-  selectToday() {
+  protected selectToday() {
     this.selectedDate = new Date();
     this.currentMonth = this.selectedDate.getMonth();
     this.currentYear = this.selectedDate.getFullYear();
     this.dateSelected.emit(this.selectedDate);
   }
 
-  selectLast() {
+  protected getSelectedDate():Date{
+    const date_  = this.selectedDate ?  this.selectedDate :  new Date();
+    return date_
+  }
+
+  protected selectLast() {
     if (this.selectedDate) this.dateSelected.emit(this.selectedDate);
   }
 }

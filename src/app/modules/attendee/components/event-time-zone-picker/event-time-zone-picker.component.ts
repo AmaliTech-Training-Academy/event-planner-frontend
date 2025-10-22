@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, HostListener } from '@angular/core';
 import { CreateEventDateComponent } from "../create-event-date/create-event-date.component";
 import { TimeZonePickerComponent } from "../../../../shared/components/time-zone-picker/time-zone-picker.component";
 
@@ -11,9 +11,18 @@ import { TimeZonePickerComponent } from "../../../../shared/components/time-zone
 export class EventTimeZonePickerComponent {
   protected isOpen: boolean = false;
 
-  
+  constructor(private readonly elementRef: ElementRef) { }
 
-  protected toggleState(value: boolean) {
-    this.isOpen = value;
+  protected toggleState() {
+    this.isOpen = !this.isOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  protected handleOutsideClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+
+    if (this.isOpen && !this.elementRef.nativeElement.contains(target)) {
+      this.isOpen = false;
+    }
   }
 }

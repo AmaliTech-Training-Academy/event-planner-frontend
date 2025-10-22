@@ -10,13 +10,13 @@ export class CreateEventDateComponent {
 
   @Input() icon: string = "";
   @Input() title: string = "";
-  @Output() clicked = new EventEmitter<boolean>();
+  @Output() clicked = new EventEmitter<void>();
 
   private selectedState: boolean = false;
 
   protected clickedOn() {
     this.selectedState = !this.selectedState;
-    this.clicked.emit(this.selectedState)
+    this.clicked.emit()
   }
 
 
