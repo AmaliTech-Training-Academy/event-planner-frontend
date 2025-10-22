@@ -1,0 +1,85 @@
+@use 'colors' as *;
+@use 'variables' as *;
+@use 'typography' as *;
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-4 0;
+  border-top: 1.5px solid $general-stroke-light;
+  margin-top: $spacing-4;
+
+  &__info {
+    @include body-2;
+    color: $gray-600;
+    font-weight: 400;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+  }
+
+  &__button {
+    @include body-2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    border: 1.5px solid $general-stroke-light;
+    border-radius: $radius-4;
+    background: white;
+    color: $gray-700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+
+    &--nav {
+      min-width: 80px;
+      padding: 0 $spacing-4;
+    }
+
+    &--page {
+      min-width: 44px;
+      width: 44px;
+    }
+
+    &:hover:not(:disabled):not(&--active) {
+      background: $gray-50;
+      border-color: $gray-300;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      color: $gray-400;
+      background: white;
+    }
+
+    &--active {
+      background: $gray-900;
+      border-color: $gray-900;
+      color: white;
+      cursor: default;
+
+      &:hover {
+        background: $gray-800;
+        border-color: $gray-800;
+      }
+    }
+  }
+
+  &__ellipsis {
+    @include body-2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    color: $gray-500;
+    user-select: none;
+    font-weight: 500;
+  }
+}
