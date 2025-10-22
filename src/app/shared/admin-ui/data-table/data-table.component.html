@@ -1,0 +1,159 @@
+<div class="data-table">
+  <div class="data-table__header">
+    <h2 class="data-table__title">User List</h2>
+
+    <div class="data-table__controls">
+      @if (searchable()) {
+        <div class="data-table__search-box">
+          <img
+            src="icons/search-icon.png"
+            alt="Search icon"
+            class="data-table__search-icon"
+          />
+          <input
+            type="text"
+            placeholder="Search users..."
+            [value]="searchQuery()"
+            (input)="updateSearch($any($event.target).value)"
+            class="data-table__search-input"
+            aria-label="Search users"
+          />
+        </div>
+      }
+
+      <!-- Reusable Filter Select -->
+      @for (filter of filters(); track filter.key) {
+        <app-filter-select
+          [label]="filter.label"
+          [options]="filter.options"
+          [value]="getFilterValue(filter.key)"
+          (valueChange)="updateFilter(filter.key, $event)"
+        ></app-filter-select>
+      }
+
+      <!-- Reusable Button -->
+      @if (primaryAction(); as action) {
+        <app-button
+          type="primary"
+          (click)="executePrimaryAction()"
+          aria-label="Add new user"
+        >
+          + {{ action.label }}
+        </app-button>
+      }
+    </div>
+  </div>
+
+  <table class="data-table__table" role="table">
+    <caption class="sr-only">List of users</caption>
+
+    <thead class="data-table__thead">
+      <tr>
+        <th class="data-table__th data-table__th--checkbox">
+          <app-checkbox
+            [checked]="isAllSelected()"
+            (checkedChange)="toggleSelectAll()"
+            [ariaLabel]="'Select all users'"
+          ></app-checkbox>
+        </th>
+
+        @if (expandable()) {
+          <th class="data-table__th data-table__th--expand"></th>
+        }
+
+        @for (column of columns(); track column.key) {
+          <th class="data-table__th" scope="col">{{ column.header }}</th>
+        }
+
+        @if (actions().length > 0) {
+          <th class="data-table__th data-table__th--actions" scope="col">
+            Actions
+          </th>
+        }
+      </tr>
+    </thead>
+
+    <tbody class="data-table__tbody">
+      @for (item of filteredData(); track trackByIndex($index)) {
+        <tr class="data-table__tr">
+          <!-- ✅ Checkbox column -->
+          <td class="data-table__td data-table__td--checkbox">
+            <app-checkbox
+              [checked]="isSelected(item)"
+              (checkedChange)="toggleSelect(item)"
+              [ariaLabel]="'Select user ' + (item['name'] || '')"
+            ></app-checkbox>
+          </td>
+
+          <!-- ✅ Expandable cell -->
+          @if (expandable()) {
+            <td class="data-table__td data-table__td--expand">
+              <app-button type="social" (click)="toggleRow($index)">
+                {{ isRowExpanded($index) ? '−' : '+' }}
+              </app-button>
+            </td>
+          }
+
+          <!-- ✅ Data columns -->
+          @for (column of columns(); track column.key) {
+            <td class="data-table__td">
+              @if (column.key === 'name' && item['email']) {
+                <div class="data-table__user-cell">
+                  <img
+                    [src]="item['avatar']"
+                    alt="User avatar"
+                    class="data-table__user-avatar"
+                  />
+                  <div class="data-table__user-info">
+                    <p class="data-table__user-name">
+                      {{ item[column.key] }}
+                    </p>
+                    <p class="data-table__user-email">{{ item['email'] }}</p>
+                  </div>
+                </div>
+              }
+           @else if (isRoleOrStatus(column.key)) {
+
+          <span [class]="getBadgeClass(item[column.key])">
+  {{ item[column.key] }}
+</span>
+
+              }
+              @else {
+                {{ item[column.key] }}
+              }
+            </td>
+          }
+
+          <!-- ✅ Actions column -->
+          @if (actions().length > 0) {
+            <td class="data-table__td data-table__td--actions">
+              @for (action of actions(); track action.label) {
+                @if (isActionVisible(action, item)) {
+                  <app-button
+                    type="social"
+                    (click)="executeAction(action, item)"
+                    [disabled]="isActionDisabled(action, item) ? isActionDisabled(action, item) : false"
+                    [ariaLabel]="action.label"
+                  >
+                    <img
+                      [src]="action.icon"
+                      [alt]="action.label + ' icon'"
+                    />
+                  </app-button>
+                }
+              }
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- ✅ No data -->
+  @if (filteredData().length === 0) {
+    <div class="data-table__no-data">
+      <p>No data found</p>
+    </div>
+  }
+</div>

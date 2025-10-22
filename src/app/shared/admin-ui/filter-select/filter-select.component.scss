@@ -1,0 +1,58 @@
+@use 'colors' as *;
+@use 'variables' as *;
+@use 'typography' as *;
+
+.filter-select {
+  display: inline-flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  min-width: 200px;
+
+  &__label {
+    @include body-3;
+    color: $gray-600;
+    font-weight: 500;
+    margin-bottom: $spacing-1;
+  }
+
+  &__input {
+    @include body-2;
+    padding: $spacing-2 $spacing-4;
+    border: $stroke-1 solid $general-stroke-light;
+    border-radius: $radius-3;
+    background: $gray-50;
+    color: $text-primary;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23667085' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right $spacing-3 center;
+    padding-right: $spacing-8;
+
+    &:hover {
+      border-color: $gray-400;
+      background: white;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $orange-500;
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.12);
+      background: white;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: $gray-100;
+    }
+
+    option {
+      padding: $spacing-2;
+      background: white;
+      color: $text-primary;
+    }
+  }
+}

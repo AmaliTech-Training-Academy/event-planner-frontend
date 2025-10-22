@@ -1,5 +1,11 @@
-<label class="custom-checkbox">
-  <input type="checkbox" [checked]="_checked()" (change)="toggle()" />
-  <span class="checkmark"></span>
-  <span class="label-text">{{ label() }}</span>
+<label class="app-checkbox">
+  <input
+    type="checkbox"
+    [checked]="isChecked"
+    (change)="toggle()"
+    [attr.aria-label]="ariaLabel() || label()"
+  />
+  @if (label()) {
+    <span class="app-checkbox__label">{{ label() }}</span>
+  }
 </label>
