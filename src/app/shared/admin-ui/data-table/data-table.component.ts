@@ -44,7 +44,6 @@ export interface TableFilter {
     FilterSelectComponent,
     ButtonComponent,
     CheckboxComponent,
-    InputComponent,
     PaginationComponent,
   ],
   templateUrl: './data-table.component.html',

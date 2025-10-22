@@ -11,7 +11,6 @@ import {
   TableAction,
   TableFilter,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
-import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagination.component";
 
 export interface User {
   id: number;
@@ -29,7 +28,7 @@ export interface User {
 @Component({
   selector: 'app-user-management-page',
   standalone: true,
-  imports: [AdminUserCardComponent, DataTableComponent, PaginationComponent],
+  imports: [AdminUserCardComponent, DataTableComponent],
   templateUrl: './user-management-page.component.html',
   styleUrls: ['./user-management-page.component.scss'],
 })
