@@ -10,7 +10,7 @@ import { Component, input } from '@angular/core';
 
 
 export class ButtonComponent {
-  disabled = input<boolean>(false); 
-fullWidth = input<boolean>(false); 
-type = input<'primary' | 'social'>('primary'); 
+public disabled = input<boolean>(false); 
+public fullWidth = input<boolean>(false); 
+public type = input<'primary' | 'social'>('primary'); 
 }
