@@ -9,13 +9,11 @@ import { Component, input, output, computed, model } from '@angular/core';
   styleUrls: ['./pagination.component.scss'],
 })
 export class PaginationComponent {
-  // Inputs
   public readonly totalItems = input.required<number>();
   public readonly itemsPerPage = input<number>(10);
   public readonly currentPage = model<number>(1);
   public readonly maxVisiblePages = input<number>(5);
 
-  // Computed properties
   public readonly totalPages = computed(() =>
     Math.ceil(this.totalItems() / this.itemsPerPage())
   );
@@ -66,7 +64,6 @@ export class PaginationComponent {
     return pages;
   });
 
-  // Methods
   public goToPage(page: number | string): void {
     if (typeof page === 'number' && page >= 1 && page <= this.totalPages()) {
       this.currentPage.set(page);

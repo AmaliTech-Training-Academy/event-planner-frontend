@@ -19,7 +19,6 @@ export class AdminLayoutComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    // Automatically update pageTitle from route data
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),

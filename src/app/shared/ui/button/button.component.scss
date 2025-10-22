@@ -13,7 +13,7 @@ button {
   cursor: pointer;
   transition: all 0.2s ease;
 
-  /* === Base power styles === */
+ 
   &.power {
     border: 1.5px solid $green-500;
     color: $gray-700;
@@ -100,7 +100,6 @@ button {
       border: 1.5px solid $gray-400;
     }
 
-    /* Fallback neutral power */
     &.power {
       border: 1.5px solid $gray-400;
     }

@@ -21,7 +21,6 @@ export interface MenuSection {
   styleUrls: ['./admin-sidebar.component.scss'],
 })
 export class AdminSidebarComponent {
-  /** Private signals */
   private readonly _menuSections = signal<ReadonlyArray<MenuSection>>([
     {
       title: 'Dashboard',
@@ -71,7 +70,6 @@ export class AdminSidebarComponent {
     route: '/admin/settings',
   });
 
-  /** Public computed signals for template use */
   public readonly menuSections = computed(() => this._menuSections());
   public readonly settingsItem = computed(() => this._settingsItem());
 }
