@@ -1,19 +1,33 @@
-<header class="admin-top-nav">
+<header class="admin-top-nav" role="banner">
   <div class="admin-top-nav__left">
-    <img [src]="logoSrc" [alt]="logoAlt" class="admin-top-nav__logo" />
-    <span class="admin-top-nav__page-title">{{ pageTitle }}</span>
+    <img
+      [src]="logoSrcSig()"
+      [alt]="logoAltSig()"
+      class="admin-top-nav__logo"
+    />
+    <span class="admin-top-nav__page-title">{{ pageTitleSig() }}</span>
   </div>
 
   <div class="admin-top-nav__right">
-    <button class="admin-top-nav__notifications" aria-label="Notifications">
+    <button
+      class="admin-top-nav__notifications"
+      type="button"
+      [attr.aria-label]="'Notifications'"
+    >
       <img src="icons/notification-icon.png" alt="Notifications" />
-      <span *ngIf="hasNotifications()" class="admin-top-nav__badge">
-        {{ notificationsCount }}
-      </span>
+      @if (hasNotifications()) {
+        <span class="admin-top-nav__badge">
+          {{ notificationsCount }}
+        </span>
+      }
     </button>
 
-    <div class="admin-top-nav__user">
-      <img [src]="avatarSrc" [alt]="userName" class="admin-top-nav__avatar" />
+    <div class="admin-top-nav__user" [attr.aria-label]="userName">
+      <img
+        [src]="avatarSrcSig()"
+        [alt]="userNameSig()"
+        class="admin-top-nav__avatar"
+      />
     </div>
   </div>
 </header>

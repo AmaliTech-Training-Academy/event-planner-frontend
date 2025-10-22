@@ -2,11 +2,12 @@
   <div
     class="filter-select__dropdown"
     tabindex="0"
+    role="button"
+    aria-haspopup="listbox"
+    [attr.aria-expanded]="isOpen()"
     (click)="toggleDropdown()"
   >
-    <span class="filter-select__selected">
-      {{ selectedLabel }}
-    </span>
+    <span class="filter-select__selected">{{ selectedLabel }}</span>
     <img
       src="icons/drop-down.png"
       alt="Dropdown arrow"
@@ -16,11 +17,13 @@
   </div>
 
   @if (isOpen()) {
-    <ul class="filter-select__menu">
+    <ul class="filter-select__menu" role="listbox">
       @for (option of options(); track option.value) {
         <li
+          role="option"
           (click)="selectOption(option)"
           [class.active]="option.value === value()"
+          [attr.aria-selected]="option.value === value()"
         >
           {{ option.label }}
         </li>

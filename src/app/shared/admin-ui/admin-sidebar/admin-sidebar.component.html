@@ -1,51 +1,53 @@
-<aside class="admin-sidebar">
+<aside class="admin-sidebar" role="navigation">
   <div class="admin-sidebar__header">
     <h1 class="admin-sidebar__title"><span>Event</span> Hub</h1>
   </div>
 
   <nav class="admin-sidebar__nav">
     @for (section of menuSections(); track section.title) {
-      <div class="admin-sidebar__section">
-        @if (section.title) {
-          <h2 class="admin-sidebar__section-title">
-            {{ section.title }}
-          </h2>
+    <div class="admin-sidebar__section">
+      @if (section?.title) {
+      <h2 class="admin-sidebar__section-title">{{ section.title }}</h2>
+      }
+
+      <ul class="admin-sidebar__list" role="menu">
+        @for (item of section?.items; track item.route) {
+        <li class="admin-sidebar__item" role="menuitem">
+          <a
+            [routerLink]="item?.route"
+            routerLinkActive="admin-sidebar__link--active"
+            class="admin-sidebar__link"
+            [attr.aria-label]="settingsItem().label"
+
+          >
+            <img
+              class="admin-sidebar__icon"
+              [src]="item?.iconPath"
+              [alt]="item?.label + ' icon'"
+            />
+            <span class="admin-sidebar__label">{{ item?.label }}</span>
+          </a>
+        </li>
         }
-        
-        <ul class="admin-sidebar__list">
-          @for (item of section.items; track item.route) {
-            <li class="admin-sidebar__item">
-              <a 
-                [routerLink]="item.route" 
-                routerLinkActive="admin-sidebar__link--active"
-                class="admin-sidebar__link"
-              >
-                <img 
-                  class="admin-sidebar__icon" 
-                  [src]="item.iconPath"
-                  [alt]="item.label + ' icon'"
-                />
-                <span class="admin-sidebar__label">{{ item.label }}</span>
-              </a>
-            </li>
-          }
-        </ul>
-      </div>
+      </ul>
+    </div>
     }
   </nav>
 
   <div class="admin-sidebar__footer">
-    <a 
-      [routerLink]="settingsItem().route" 
-      routerLinkActive="admin-sidebar__link--active"
-      class="admin-sidebar__link"
-    >
-      <img 
-        class="admin-sidebar__icon" 
-        [src]="settingsItem().iconPath"
-        [alt]="settingsItem().label + ' icon'"
-      />
-      <span class="admin-sidebar__label">{{ settingsItem().label }}</span>
-    </a>
+   <a
+  [routerLink]="settingsItem().route"
+  routerLinkActive="admin-sidebar__link--active"
+  class="admin-sidebar__link"
+  [attr.aria-label]="settingsItem().label"
+>
+  <img
+    class="admin-sidebar__icon"
+    [src]="settingsItem().iconPath"
+    [alt]="settingsItem().label + ' icon'"
+  />
+  <span class="admin-sidebar__label">{{ settingsItem().label }}</span>
+</a>
+
   </div>
 </aside>

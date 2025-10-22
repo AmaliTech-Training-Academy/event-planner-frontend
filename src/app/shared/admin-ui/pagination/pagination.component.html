@@ -1,4 +1,4 @@
-<div class="pagination">
+<nav class="pagination" role="navigation" aria-label="Pagination">
   <div class="pagination__info">
     Showing {{ startIndex() }} to {{ endIndex() }} of {{ totalItems() }} results
   </div>
@@ -7,6 +7,7 @@
     <button
       class="pagination__button pagination__button--nav"
       [disabled]="currentPage() === 1"
+      [attr.aria-disabled]="currentPage() === 1"
       (click)="goToPage(currentPage() - 1)"
       aria-label="Previous page"
     >
@@ -32,10 +33,11 @@
     <button
       class="pagination__button pagination__button--nav"
       [disabled]="currentPage() === totalPages()"
+      [attr.aria-disabled]="currentPage() === totalPages()"
       (click)="goToPage(currentPage() + 1)"
       aria-label="Next page"
     >
       Next
     </button>
   </div>
-</div>
+</nav>

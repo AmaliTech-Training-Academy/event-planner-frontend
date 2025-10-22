@@ -1,5 +1,5 @@
-import { Component, input, output, computed, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, input, output, computed, model } from '@angular/core';
 
 @Component({
   selector: 'app-pagination',
@@ -10,25 +10,25 @@ import { CommonModule } from '@angular/common';
 })
 export class PaginationComponent {
   // Inputs
-  public totalItems = input.required<number>();
-  public itemsPerPage = input<number>(10);
-  public currentPage = model<number>(1); // Changed to model for two-way binding
-  public maxVisiblePages = input<number>(5);
+  public readonly totalItems = input.required<number>();
+  public readonly itemsPerPage = input<number>(10);
+  public readonly currentPage = model<number>(1);
+  public readonly maxVisiblePages = input<number>(5);
 
-  // Computed values
-  public totalPages = computed(() =>
+  // Computed properties
+  public readonly totalPages = computed(() =>
     Math.ceil(this.totalItems() / this.itemsPerPage())
   );
 
-  public startIndex = computed(
+  public readonly startIndex = computed(
     () => (this.currentPage() - 1) * this.itemsPerPage() + 1
   );
 
-  public endIndex = computed(() =>
+  public readonly endIndex = computed(() =>
     Math.min(this.currentPage() * this.itemsPerPage(), this.totalItems())
   );
 
-  public visiblePages = computed(() => {
+  public readonly visiblePages = computed(() => {
     const total = this.totalPages();
     const current = this.currentPage();
     const max = this.maxVisiblePages();
@@ -37,23 +37,21 @@ export class PaginationComponent {
       return Array.from({ length: total }, (_, i) => i + 1);
     }
 
-    const pages: (number | string)[] = [];
-    const halfMax = Math.floor(max / 2);
+    const halfWindow = Math.floor(max / 2);
+    let startPage = Math.max(1, current - halfWindow);
+    let endPage = Math.min(total, current + halfWindow);
 
-    let startPage = Math.max(1, current - halfMax);
-    let endPage = Math.min(total, current + halfMax);
-
-    if (current <= halfMax) {
+    if (current <= halfWindow) {
       endPage = max;
-    } else if (current >= total - halfMax) {
+    } else if (current >= total - halfWindow) {
       startPage = total - max + 1;
     }
 
+    const pages: (number | string)[] = [];
+
     if (startPage > 1) {
       pages.push(1);
-      if (startPage > 2) {
-        pages.push('...');
-      }
+      if (startPage > 2) pages.push('...');
     }
 
     for (let i = startPage; i <= endPage; i++) {
@@ -61,16 +59,14 @@ export class PaginationComponent {
     }
 
     if (endPage < total) {
-      if (endPage < total - 1) {
-        pages.push('...');
-      }
+      if (endPage < total - 1) pages.push('...');
       pages.push(total);
     }
 
     return pages;
   });
 
-  // Public methods
+  // Methods
   public goToPage(page: number | string): void {
     if (typeof page === 'number' && page >= 1 && page <= this.totalPages()) {
       this.currentPage.set(page);

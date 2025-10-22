@@ -1,13 +1,14 @@
 import { Component, signal, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
-interface MenuItem {
+export interface MenuItem {
   readonly label: string;
   readonly iconPath: string;
   readonly route: string;
 }
 
-interface MenuSection {
+export interface MenuSection {
   readonly title?: string;
   readonly items: ReadonlyArray<MenuItem>;
 }
@@ -15,11 +16,12 @@ interface MenuSection {
 @Component({
   selector: 'app-admin-sidebar',
   standalone: true,
-  imports: [RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './admin-sidebar.component.html',
   styleUrls: ['./admin-sidebar.component.scss'],
 })
 export class AdminSidebarComponent {
+  /** Private signals */
   private readonly _menuSections = signal<ReadonlyArray<MenuSection>>([
     {
       title: 'Dashboard',
@@ -69,7 +71,7 @@ export class AdminSidebarComponent {
     route: '/admin/settings',
   });
 
-  // Public computed signals for template access
+  /** Public computed signals for template use */
   public readonly menuSections = computed(() => this._menuSections());
   public readonly settingsItem = computed(() => this._settingsItem());
 }

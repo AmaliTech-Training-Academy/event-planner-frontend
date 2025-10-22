@@ -14,24 +14,29 @@ interface FilterOption {
   styleUrls: ['./filter-select.component.scss'],
 })
 export class FilterSelectComponent {
-  public options = input<FilterOption[]>([]);
-  public value = input<string>('all');
-  public placeholder = input<string>('All');
-  public valueChange = output<string>();
+  // Inputs
+  public readonly options = input<FilterOption[]>([]);
+  public readonly value = input<string>('all');
+  public readonly placeholder = input<string>('All');
 
-  public isOpen = signal(false);
+  // Outputs
+  public readonly valueChange = output<string>();
 
-  toggleDropdown(): void {
+  // Local state
+  public readonly isOpen = signal(false);
+
+  // Methods
+  public toggleDropdown(): void {
     this.isOpen.update((v) => !v);
   }
 
-  selectOption(option: FilterOption): void {
+  public selectOption(option: FilterOption): void {
     this.valueChange.emit(option.value);
     this.isOpen.set(false);
   }
 
-  // ✅ Safe getter for the currently selected label
-  get selectedLabel(): string {
+  // Getter
+  public get selectedLabel(): string {
     const selected = this.options().find((o) => o.value === this.value());
     return selected ? selected.label : this.placeholder();
   }

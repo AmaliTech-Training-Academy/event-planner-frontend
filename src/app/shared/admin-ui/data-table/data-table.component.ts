@@ -51,91 +51,38 @@ export interface TableFilter {
   styleUrls: ['./data-table.component.scss'],
 })
 export class DataTableComponent<T extends Record<string, any>> {
-  // Inputs
-  public data = input.required<T[]>();
-  public columns = input.required<TableColumn<T>[]>();
-  public actions = input<TableAction<T>[]>([]);
-  public filters = input<TableFilter[]>([]);
-  public searchable = input<boolean>(true);
-  public expandable = input<boolean>(false);
-  public primaryAction = input<{ label: string; handler: () => void }>();
-  public itemsPerPage = input<number>(10);
+  // ✅ Inputs
+  public readonly data = input.required<T[]>();
+  public readonly columns = input.required<TableColumn<T>[]>();
+  public readonly actions = input<TableAction<T>[]>([]);
+  public readonly filters = input<TableFilter[]>([]);
+  public readonly searchable = input<boolean>(true);
+  public readonly expandable = input<boolean>(false);
+  public readonly primaryAction = input<{
+    label: string;
+    handler: () => void;
+  }>();
+  public readonly itemsPerPage = input<number>(10);
 
-  // Outputs
-  public rowExpanded = output<T>();
+  // ✅ Outputs
+  public readonly rowExpanded = output<T>();
 
-  // Signals for state management
-  public searchQuery = signal<string>('');
-  public currentPage = signal<number>(1);
-  private _activeFilters = signal<Map<string, string>>(new Map());
-  private _expandedRows = signal<Set<number>>(new Set());
-  private _selectedItems = signal<Set<T>>(new Set());
+  // ✅ Reactive signals
+  private readonly _activeFilters = signal<Map<string, string>>(new Map());
+  private readonly _expandedRows = signal<Set<number>>(new Set());
+  private readonly _selectedItems = signal<Set<T>>(new Set());
+  public readonly searchQuery = signal<string>('');
+  public readonly currentPage = signal<number>(1);
 
-  // Selection logic
-  public isSelected(item: T): boolean {
-    return this._selectedItems().has(item);
-  }
-
-  public toggleSelect(item: T): void {
-    const selected = new Set(this._selectedItems());
-    if (selected.has(item)) {
-      selected.delete(item);
-    } else {
-      selected.add(item);
-    }
-    this._selectedItems.set(selected);
-  }
-
-  public isActionDisabled(action: TableAction<T>, item: T): boolean {
-    return typeof action.disabled === 'function'
-      ? action.disabled(item)
-      : !!action.disabled;
-  }
-
-  public isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
-    return ['role', 'status'].includes(String(key));
-  }
-
-  public getBadgeClass(value: unknown): string {
-    return (
-      'data-table__badge data-table__badge--' + String(value).toLowerCase()
-    );
-  }
-
-  public isAllSelected(): boolean {
-    const currentPageData = this.paginatedData();
-    return (
-      currentPageData.length > 0 &&
-      currentPageData.every((item) => this._selectedItems().has(item))
-    );
-  }
-
-  public toggleSelectAll(): void {
-    const currentPageData = this.paginatedData();
-    const selected = new Set(this._selectedItems());
-
-    if (this.isAllSelected()) {
-      // Deselect all items on current page
-      currentPageData.forEach((item) => selected.delete(item));
-    } else {
-      // Select all items on current page
-      currentPageData.forEach((item) => selected.add(item));
-    }
-
-    this._selectedItems.set(selected);
-  }
-
-  // Computed values
-  public filteredData = computed(() => {
+  // ✅ Computed signals
+  public readonly filteredDataSig = computed(() => {
     let result = this.data();
-
-    // Apply search filter
     const searchQuery = this.searchQuery().toLowerCase();
+
     if (searchQuery) {
       result = result.filter((item) => this._matchesSearch(item, searchQuery));
     }
 
-    // Apply active filters
     const activeFilters = this._activeFilters();
     activeFilters.forEach((value, key) => {
       if (value !== 'all') {
@@ -148,65 +95,104 @@ export class DataTableComponent<T extends Record<string, any>> {
     return result;
   });
 
-  public paginatedData = computed(() => {
-    const filtered = this.filteredData();
-    const page = this.currentPage(); // Changed from _currentPage
+  public readonly paginatedDataSig = computed(() => {
+    const filtered = this.filteredDataSig();
+    const page = this.currentPage();
     const perPage = this.itemsPerPage();
-
     const start = (page - 1) * perPage;
     const end = start + perPage;
-
     return filtered.slice(start, end);
   });
 
-  // Public methods for template
-  public updateSearch(query: string): void {
-    this.searchQuery.set(query);
-    this.currentPage.set(1); // Changed from _currentPage
-  }
-  public updateFilter(filterKey: string, value: string): void {
-    const filters = new Map(this._activeFilters());
-    filters.set(filterKey, value);
-    this._activeFilters.set(filters);
-    this.currentPage.set(1); // Changed from _currentPage
+  // ✅ Selection logic
+  public isSelected(item: T): boolean {
+    return this._selectedItems().has(item);
   }
 
-  public toggleRow(index: number): void {
-    const expanded = new Set(this._expandedRows());
-    if (expanded.has(index)) {
-      expanded.delete(index);
+  public toggleSelect(item: T): void {
+    const selected = new Set(this._selectedItems());
+    selected.has(item) ? selected.delete(item) : selected.add(item);
+    this._selectedItems.set(selected);
+  }
+
+  public isAllSelected(): boolean {
+    const currentPageData = this.paginatedDataSig();
+    return (
+      currentPageData.length > 0 &&
+      currentPageData.every((item) => this._selectedItems().has(item))
+    );
+  }
+
+  public toggleSelectAll(): void {
+    const currentPageData = this.paginatedDataSig();
+    const selected = new Set(this._selectedItems());
+
+    if (this.isAllSelected()) {
+      currentPageData.forEach((item) => selected.delete(item));
     } else {
-      expanded.add(index);
+      currentPageData.forEach((item) => selected.add(item));
     }
-    this._expandedRows.set(expanded);
+    this._selectedItems.set(selected);
   }
 
-  public isRowExpanded(index: number): boolean {
-    return this._expandedRows().has(index);
-  }
-
-  public isActionVisible(action: TableAction<T>, item: T): boolean {
-    return action.visible ? action.visible(item) : true;
-  }
-
+  // ✅ Actions
   public executeAction(action: TableAction<T>, item: T): void {
     action.handler(item);
   }
 
   public executePrimaryAction(): void {
     const action = this.primaryAction();
-    if (action) {
-      action.handler();
-    }
+    action?.handler();
+  }
+
+  // ✅ Filters & Search
+  public updateSearch(query: string): void {
+    this.searchQuery.set(query);
+    this.currentPage.set(1);
+  }
+
+  public updateFilter(filterKey: string, value: string): void {
+    const filters = new Map(this._activeFilters());
+    filters.set(filterKey, value);
+    this._activeFilters.set(filters);
+    this.currentPage.set(1);
+  }
+
+  // ✅ Expansion
+  public toggleRow(index: number): void {
+    const expanded = new Set(this._expandedRows());
+    expanded.has(index) ? expanded.delete(index) : expanded.add(index);
+    this._expandedRows.set(expanded);
+  }
+
+  public isRowExpanded(index: number): boolean {
+    return this._expandedRows().has(index);
+  }
+  public isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
+    return ['role', 'status'].includes(String(key));
+    // return ['role', 'status'].includes(String(key));
+  }
+
+  public getBadgeClass(value: unknown): string {
+    return `data-table__badge data-table__badge--${String(
+      value
+    ).toLowerCase()}`;
+  }
+
+  public isActionVisible(action: TableAction<T>, item: T): boolean {
+    return action.visible ? action.visible(item) : true;
+  }
+
+  public isActionDisabled(action: TableAction<T>, item: T): boolean {
+    return typeof action.disabled === 'function'
+      ? action.disabled(item)
+      : !!action.disabled;
   }
 
   public getFilterValue(filterKey: string): string {
-    return this._activeFilters().get(filterKey) || 'all';
+    return this._activeFilters().get(filterKey) ?? 'all';
   }
 
-
-
-  // Private helper methods
   private _matchesSearch(item: T, query: string): boolean {
     return Object.values(item).some((value) =>
       String(value).toLowerCase().includes(query)
