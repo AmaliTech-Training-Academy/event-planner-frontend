@@ -9,5 +9,5 @@ export const API_ENDPOINTS = {
     AUTH_LOGIN: `${BASE}/auth/login`,
     AUTH_REGISTER: `${BASE}/auth/login`,
     AUTH_VERIFY_OTP: `${BASE}/auth/verify-otp`,
-    GET_USER: (userId: string): string => `${BASE}//users/${userId}`
+    GET_USER: (userId: string): string => `${BASE}/users/${userId}`
 };
