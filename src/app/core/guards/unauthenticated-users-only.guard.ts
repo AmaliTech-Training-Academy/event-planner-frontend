@@ -7,7 +7,7 @@ import { APP_ROUTES } from "../constants/app-routes.constants";
 @Injectable({
     providedIn: 'root'
 })
-export class PublicOnlyGuard implements CanActivate {
+export class UnAuthenticatedUsersOnlyGuard implements CanActivate {
     constructor(private readonly authService: AuthService, private readonly router: Router) { }
 
     canActivate(): Observable<boolean | UrlTree> {
