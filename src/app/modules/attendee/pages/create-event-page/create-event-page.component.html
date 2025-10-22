@@ -1,4 +1,4 @@
-<div class="wrapper">
+<form [formGroup]="form" method="post" class="wrapper">
     <div class="left-panel">
         <div class="title-container">
             <input type="text" placeholder="Add Event Title" class="title">
@@ -6,22 +6,22 @@
                 <div class="day-container">
                     <p>Select event type:</p>
                     <div class="radio-container">
-                        <input type="radio" name="event-type" id="day-event">
+                        <input value="day" formControlName="eventType" type="radio" id="day-event">
                         <label for="day-event">Day Event</label>
                     </div>
                     <div class="radio-container">
-                        <input type="radio" name="event-type" id="multi-day-event">
+                        <input value="multi-day" formControlName="eventType" type="radio" id="multi-day-event">
                         <label for="multi-day-event">Multi-day</label>
                     </div>
                 </div>
-                <div class="date-container">
-                    <!-- <app-time-picker></app-time-picker> -->
-                   <app-event-date-picker></app-event-date-picker>
-                   <app-event-time-picker></app-event-time-picker>
-                   <app-event-time-zone-picker></app-event-time-zone-picker>
-                     
-                     <!-- <app-time-zone-picker></app-time-zone-picker> -->
-                  
+                <div class="date-container" formArrayName="dates">
+                    @for (dateGroup of eventDates.controls; track $index) {
+                    <div class="row" [formGroupName]="$index">
+                        <app-event-date-picker></app-event-date-picker>
+                        <app-event-time-picker></app-event-time-picker>
+                        <app-event-time-zone-picker></app-event-time-zone-picker>
+                    </div>
+                    }
                 </div>
             </div>
         </div>
@@ -29,40 +29,57 @@
             <div class="meeting-contianer">
                 <p>Select meeting type:</p>
                 <div class="radio-container">
-                    <input type="radio" name="meeting-type" id="virtual-meeting">
+                    <input type="radio" value="virtual" formControlName="meetingType" id="virtual-meeting">
                     <label for="virtual-meeting">Virtual</label>
                 </div>
                 <div class="radio-container">
-                    <input type="radio" name="meeting-type" id="inperson-meeting">
+                    <input type="radio" value="in-person" formControlName="meetingType" id="inperson-meeting">
                     <label for="inperson-meeting">In-person</label>
                 </div>
             </div>
-            <div class="field">
-                <label for="event-location">Add event location</label>
-                <div class="input-container">
-                    <img src="icons/pin.svg" alt="" srcset="">
-                    <input type="text" name="location" id="event-location" placeholder="Type location here">
-                </div>
-            </div>
-            <div class="field">
-                <label for="description">Add event description</label>
-                <textarea name="description" id="description" placeholder="Type description here"></textarea>
-            </div>
-            <div class="upload-continer">
-                <div class="image-container">
-                    <p>Upload up to 5 images of venue</p>
-                    <div class="preview-container">
-                        <img src="images/event-location.png" alt="" class="preview">
+            @if (meetingType?.value === "in-person") {
+                <div class="in-person-details">
+                    <div class="field">
+                        <label for="event-location">Add event location</label>
+                        <div class="input-container">
+                            <img src="icons/pin.svg" alt="" srcset="">
+                            <input type="text" name="location" id="event-location" placeholder="Type location here">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="description">Add event description</label>
+                        <textarea name="description" id="description" placeholder="Type description here"></textarea>
+                    </div>
+                    <div class="upload-continer">
+                        <div class="image-container">
+                            <p>Upload up to 5 images of venue</p>
+                            <div class="preview-container">
+                                <img src="images/event-location.png" alt="" class="preview">
+                                <button type="button">
+                                    <img src="icons/add.svg" alt="" class="preview">
+                                </button>
+                            </div>
+                        </div>
                         <button type="button">
-                            <img src="icons/add.svg" alt="" class="preview">
+                            <p>Define venue section</p>
+                            <img src="icons/arrow-right.svg" />
                         </button>
                     </div>
                 </div>
-                <button type="button">
-                    <p>Define venue section</p>
-                    <img src="icons/arrow-right.svg" />
-                </button>
-            </div>
+            }
+            @if (meetingType?.value === "virtual") {
+                <div class="virtual-details">
+                    <p>Choose Virtual Option</p>
+                    <button type="button">
+                        <img src="icons/cam_corder.svg" />
+                        <p>Create Zoom Meeting</p>
+                    </button>
+                    <button type="button">
+                        <img src="icons/cam_corder.svg" />
+                        <p>Use Existing Meeting</p>
+                    </button>
+                </div>
+            }
         </div>
     </div>
     <div class="right-panel">
@@ -70,7 +87,7 @@
             <div class="flyer-preview">
                 <img src="images/flyer.jpg" alt="" class="preview">
 
-                <button>
+                <button type="button">
                     <img src="icons/image.svg" alt="" class="preview">
                 </button>
             </div>
@@ -125,4 +142,4 @@
             </button>
         </div>
     </div>
-</div>
+</form>
