@@ -35,7 +35,7 @@ export interface User {
 export class UserManagementPageComponent {
   private _layoutService = inject(LayoutService);
 
-  // Reactive signal array for user cards matching the design
+  // User overview cards
   public userCards = signal<UserCardData[]>([
     {
       title: 'Total Users',
@@ -48,7 +48,6 @@ export class UserManagementPageComponent {
     {
       title: 'Active Organizers',
       count: 156,
-      percentageChange: undefined,
       icon: 'icons/user-icon-green.png',
       bgColor: '#E8F5E9',
       iconColor: '#4CAF50',
@@ -56,7 +55,6 @@ export class UserManagementPageComponent {
     {
       title: 'Attendees',
       count: 2387,
-      percentageChange: undefined,
       icon: 'icons/user-icon-blue.png',
       bgColor: '#E3F2FD',
       iconColor: '#2196F3',
@@ -64,14 +62,13 @@ export class UserManagementPageComponent {
     {
       title: 'Deactivated',
       count: 24,
-      percentageChange: undefined,
       icon: 'icons/user-icon-red.png',
       bgColor: '#FFEBEE',
       iconColor: '#F44336',
     },
   ]);
 
-  // User data signal
+  // User data
   private _users = signal<User[]>([
     {
       id: 1,
@@ -80,8 +77,8 @@ export class UserManagementPageComponent {
       avatar: 'icons/avatar.png',
       role: 'Organizer',
       status: 'Active',
-      eventsOrganized: 1,
-      eventsAttended: 1,
+      eventsOrganized: 3,
+      eventsAttended: 10,
       joinedDate: '2024-01-15',
       lastActive: '2 hours ago',
     },
@@ -90,11 +87,10 @@ export class UserManagementPageComponent {
       name: 'John Smith',
       email: 'john@example.com',
       avatar: 'icons/avatar.png',
-
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
-      eventsAttended: 0,
+      eventsAttended: 2,
       joinedDate: '2024-02-20',
       lastActive: '5 days ago',
     },
@@ -103,11 +99,10 @@ export class UserManagementPageComponent {
       name: 'Emily Johnson',
       email: 'emily@example.com',
       avatar: 'icons/avatar.png',
-
-      role: 'Attendee',
+      role: 'Co-Organizer',
       status: 'Active',
-      eventsOrganized: 0,
-      eventsAttended: 5,
+      eventsOrganized: 2,
+      eventsAttended: 6,
       joinedDate: '2024-03-10',
       lastActive: '1 hour ago',
     },
@@ -116,11 +111,10 @@ export class UserManagementPageComponent {
       name: 'Michael Brown',
       email: 'michael@example.com',
       avatar: 'icons/avatar.png',
-
-      role: 'Organizer',
+      role: 'Venue Staff',
       status: 'Active',
-      eventsOrganized: 3,
-      eventsAttended: 2,
+      eventsOrganized: 0,
+      eventsAttended: 8,
       joinedDate: '2023-12-05',
       lastActive: '30 minutes ago',
     },
@@ -129,7 +123,6 @@ export class UserManagementPageComponent {
       name: 'Jessica Davis',
       email: 'jessica@example.com',
       avatar: 'icons/avatar.png',
-
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
@@ -141,7 +134,7 @@ export class UserManagementPageComponent {
 
   public users = this._users.asReadonly();
 
-  // Table column configuration
+  // Table columns
   public tableColumns: TableColumn<User>[] = [
     { key: 'name', header: 'User', sortable: true },
     { key: 'role', header: 'Role(s)', filterable: true },
@@ -150,7 +143,7 @@ export class UserManagementPageComponent {
     { key: 'eventsAttended', header: 'Events Attended', sortable: true },
   ];
 
-  // Table actions configuration
+  // Table actions
   public tableActions: TableAction<User>[] = [
     {
       icon: 'icons/view-icon.png',
@@ -165,85 +158,72 @@ export class UserManagementPageComponent {
       handler: (user) => this._editUser(user),
     },
     {
-      icon: 'icons/power-red.png', 
+      icon: 'icons/power-red.png',
       label: 'Toggle User Status',
       color: 'power',
       handler: (user) => this._toggleUserStatus(user),
     },
   ];
 
-  // Table filters configuration
+  // Table filters
   public tableFilters: TableFilter[] = [
     {
       key: 'role',
       placeholder: 'All Roles',
       options: [
-        { label: 'Admin', value: 'admin' },
-        { label: 'User', value: 'user' },
-        { label: 'Manager', value: 'manager' },
+        { label: 'Organizer', value: 'Organizer' },
+        { label: 'Co-Organizer', value: 'Co-Organizer' },
+        { label: 'Attendee', value: 'Attendee' },
+        { label: 'Venue Staff', value: 'Venue Staff' },
       ],
     },
     {
       key: 'status',
       placeholder: 'All Status',
       options: [
-        { label: 'Active', value: 'active' },
-        { label: 'Inactive', value: 'inactive' },
-        { label: 'Pending', value: 'pending' },
+        { label: 'Active', value: 'Active' },
+        { label: 'Inactive', value: 'Inactive' },
       ],
     },
   ];
 
-  // Primary action configuration
   public primaryAction = {
     label: 'Invite User',
     handler: () => this._inviteUser(),
   };
 
   ngOnInit(): void {
-    // Update page title via LayoutService
     this._layoutService.pageTitle.set('User Management');
   }
 
-  // Private action handlers
   private _viewUser(user: User): void {
     console.log('Viewing user:', user);
-    // TODO: Navigate to user detail page or open modal
-    // this._router.navigate(['/admin/users', user.id]);
   }
 
   private _editUser(user: User): void {
     console.log('Editing user:', user);
-    // TODO: Open edit user modal or navigate to edit page
-    // this._modalService.openEditUserModal(user);
   }
 
   private _toggleUserStatus(user: User): void {
     const users = this._users();
     const index = users.findIndex((u) => u.id === user.id);
-
     if (index !== -1) {
       const updatedUsers = [...users];
       const currentStatus = updatedUsers[index].status;
-
       updatedUsers[index] = {
         ...updatedUsers[index],
         status: currentStatus === 'Active' ? 'Inactive' : 'Active',
       };
-
       this._users.set(updatedUsers);
-
       console.log(`User ${user.name} is now ${updatedUsers[index].status}`);
     }
   }
 
   private _inviteUser(): void {
-    // TODO: Open invite user modal
-    // this._modalService.openInviteUserModal();
+    console.log('Inviting new user...');
   }
 
-  // Public method for handling row expansion (optional)
   public onRowExpanded(user: User): void {
-    // TODO: Load additional user data if needed
+    console.log('Expanded user row:', user);
   }
 }
