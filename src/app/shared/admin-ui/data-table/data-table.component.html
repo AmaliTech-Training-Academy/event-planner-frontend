@@ -22,14 +22,14 @@
       }
 
       <!-- Reusable Filter Select -->
-      @for (filter of filters(); track filter.key) {
-        <app-filter-select
-          [label]="filter.label"
-          [options]="filter.options"
-          [value]="getFilterValue(filter.key)"
-          (valueChange)="updateFilter(filter.key, $event)"
-        ></app-filter-select>
-      }
+@for (filter of filters(); track filter.key) {
+  <app-filter-select
+    [placeholder]="filter.placeholder"
+    [options]="filter.options"
+    [value]="getFilterValue(filter.key)"
+    (valueChange)="updateFilter(filter.key, $event)"
+  ></app-filter-select>
+}
 
       <!-- Reusable Button -->
       @if (primaryAction(); as action) {
@@ -129,9 +129,8 @@
           @if (actions().length > 0) {
             <td class="data-table__td data-table__td--actions">
               @for (action of actions(); track action.label) {
-                @if (isActionVisible(action, item)) {
-                  <app-button
-                    type="social"
+                  <app-button class="data-table__action-btn"
+                   [type]="action.type === 'primary' ? 'primary' : 'social'" 
                     (click)="executeAction(action, item)"
                     [disabled]="isActionDisabled(action, item) ? isActionDisabled(action, item) : false"
                     [ariaLabel]="action.label"
@@ -141,7 +140,6 @@
                       [alt]="action.label + ' icon'"
                     />
                   </app-button>
-                }
               }
             </td>
           }

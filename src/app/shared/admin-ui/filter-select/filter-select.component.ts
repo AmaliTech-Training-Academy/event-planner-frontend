@@ -14,9 +14,9 @@ interface FilterOption {
   styleUrls: ['./filter-select.component.scss'],
 })
 export class FilterSelectComponent {
-  public label = input<string>('');
   public options = input<FilterOption[]>([]);
   public value = input<string>('all');
+  public placeholder = input<string>('All');
   public valueChange = output<string>();
 
   public onChange(event: Event) {

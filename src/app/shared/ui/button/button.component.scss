@@ -49,4 +49,26 @@ button {
       transition: opacity 0.2s ease;
     }
   }
+  &.social {
+    background-color: $gray-50;
+    color: $gray-900;
+    border: 1.5px solid $gray-300;
+    border-radius: $radius-3;
+
+    &:hover:not(:disabled) {
+      background-color: $gray-100;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+}
+  }
 }

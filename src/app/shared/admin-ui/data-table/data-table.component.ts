@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { FilterSelectComponent } from "../filter-select/filter-select.component";
 import { ButtonComponent } from "../../ui/button/button.component";
 import { CheckboxComponent } from "../../ui/checkbox/checkbox.component";
+import { InputComponent } from "../../ui/input/input.component";
 
 export interface TableColumn<T> {
   key: Extract<keyof T, string>;
@@ -18,7 +19,8 @@ export interface TableAction<T> {
   color?: string;
   handler: (item: T) => void;
   visible?: (item: T) => boolean;
-  disabled?: boolean | ((item: T) => boolean); // ✅ new
+  disabled?: boolean | ((item: T) => boolean);
+  type?: 'primary' | 'secondary' | 'danger' | 'outline' | 'social' | string;
 }
 
 
@@ -29,7 +31,7 @@ export interface FilterOption {
 
 export interface TableFilter {
   key: string;
-  label: string;
+  placeholder: string;
   options: FilterOption[];
 }
 
@@ -43,7 +45,8 @@ export interface TableFilter {
     FilterSelectComponent,
     ButtonComponent,
     CheckboxComponent,
-  ],
+    InputComponent
+],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
 })
@@ -89,6 +92,7 @@ export class DataTableComponent<T extends Record<string, any>> {
   public isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
     return ['role', 'status'].includes(String(key));
   }
+
   public getBadgeClass(value: unknown): string {
     return (
       'data-table__badge data-table__badge--' + String(value).toLowerCase()

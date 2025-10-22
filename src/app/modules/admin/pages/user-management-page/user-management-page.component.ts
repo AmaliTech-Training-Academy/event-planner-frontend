@@ -157,12 +157,15 @@ export class UserManagementPageComponent {
       label: 'View User Details',
       color: 'view',
       handler: (user) => this._viewUser(user),
+      type: 'primary',
+      
     },
     {
       icon: 'icons/edit-icon.png',
       label: 'Edit User',
       color: 'edit',
       handler: (user) => this._editUser(user),
+      type: 'social',
     },
     {
       icon: 'icons/delete-icon.png',
@@ -170,6 +173,7 @@ export class UserManagementPageComponent {
       color: 'toggle',
       handler: (user) => this._toggleUserStatus(user),
       visible: (user) => user.status === 'Active',
+      type: 'social',
     },
   ];
 
@@ -177,18 +181,20 @@ export class UserManagementPageComponent {
   public tableFilters: TableFilter[] = [
     {
       key: 'role',
-      label: 'All Roles',
+      placeholder: 'All Roles',
       options: [
-        { label: 'Organizer', value: 'Organizer' },
-        { label: 'Attendee', value: 'Attendee' },
+        { label: 'Admin', value: 'admin' },
+        { label: 'User', value: 'user' },
+        { label: 'Manager', value: 'manager' },
       ],
     },
     {
       key: 'status',
-      label: 'Status',
+      placeholder: 'All Status',
       options: [
-        { label: 'Active', value: 'Active' },
-        { label: 'Inactive', value: 'Inactive' },
+        { label: 'Active', value: 'active' },
+        { label: 'Inactive', value: 'inactive' },
+        { label: 'Pending', value: 'pending' },
       ],
     },
   ];
@@ -237,14 +243,12 @@ export class UserManagementPageComponent {
   }
 
   private _inviteUser(): void {
-    console.log('Opening invite user dialog');
     // TODO: Open invite user modal
     // this._modalService.openInviteUserModal();
   }
 
   // Public method for handling row expansion (optional)
   public onRowExpanded(user: User): void {
-    console.log('Row expanded for user:', user);
     // TODO: Load additional user data if needed
   }
 }
