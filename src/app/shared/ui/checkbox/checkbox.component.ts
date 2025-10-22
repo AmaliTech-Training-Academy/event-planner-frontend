@@ -22,18 +22,14 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class CheckboxComponent implements ControlValueAccessor {
-  /** Label for the checkbox */
   public label = input<string>('');
 
-  /** Internal state */
   private _checked = signal<boolean>(false);
   private _disabled = signal<boolean>(false);
 
-  /** ControlValueAccessor callbacks */
   private onChange: (value: boolean) => void = () => {};
   private onTouched: () => void = () => {};
 
-  /** Write value from form */
   writeValue(value: boolean): void {
     this._checked.set(value ?? false);
   }

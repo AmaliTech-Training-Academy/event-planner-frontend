@@ -36,7 +36,6 @@ interface LoginForm {
     DividerComponent,
     SecureTextComponent,
     SocialLoginComponent,
-    FormErrorComponent,
   ],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],

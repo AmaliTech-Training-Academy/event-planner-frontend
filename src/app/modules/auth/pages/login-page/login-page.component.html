@@ -5,7 +5,6 @@
     <p class="subtitle">Log In to your account</p>
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()">
-      <!-- Email Field -->
       <app-input
         formControlName="email"
         label="Email Address"
@@ -16,7 +15,6 @@
         [iconSrc]="'icons/mail.png'"
       ></app-input>
 
-      <!-- Password Field -->
       <app-input
         formControlName="password"
         label="Password"
@@ -27,7 +25,6 @@
         [iconSrc]="'icons/lock.png'"
       ></app-input>
 
-      <!-- Extras -->
       <div class="extras">
         <label class="custom-checkbox">
           <input
