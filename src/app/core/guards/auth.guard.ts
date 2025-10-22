@@ -7,24 +7,25 @@ import {
 import { Observable, of } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { catchError, map, switchMap, take } from 'rxjs/operators';
+import { APP_ROUTES } from '../constants/app-routes.constants';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(private readonly authService: AuthService, private readonly router: Router) { }
 
     canActivate(): Observable<boolean | UrlTree> {
-        return this.authService?.isLoggedIn().pipe(
+        return this.authService.isLoggedIn().pipe(
             take(1),
             switchMap(isLoggedIn => {
                 if (isLoggedIn) {
                     return of(true);
                 } else {
-                    return of(this.router.createUrlTree(['/auth/login']));
+                    return of(this.router.createUrlTree([APP_ROUTES.LOGIN]));
                 }
             }),
-            catchError(() => of(this.router.createUrlTree(['/auth/login'])))
+            catchError(() => of(this.router.createUrlTree([APP_ROUTES.LOGIN])))
         );
     }
 }
