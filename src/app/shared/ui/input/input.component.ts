@@ -1,6 +1,6 @@
-import { Component, input, signal, computed } from '@angular/core';
+import { Component, Input, forwardRef, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
@@ -8,41 +8,85 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => InputComponent),
+      multi: true
+    }
+  ]
 })
-export class InputComponent {
-  public type = input<'text' | 'email' | 'password'>('text');
-  public placeholder = input<string>('');
-  public label = input<string>('');
-  public formControlName = input<string>('');
-  public errorMessage = input<string>('');
-  public iconSrc = input<string | undefined>();
-  public required = input<boolean>(false);
-  public disabled = input<boolean>(false);
+export class InputComponent implements ControlValueAccessor {
+  
+  @Input() type: 'text' | 'email' | 'password' = 'text';
+  @Input() placeholder: string = '';
+  @Input() label: string = '';
+  @Input() errorMessage: string = '';
+  @Input() iconSrc?: string;
+  @Input() required: boolean = false;
+  @Input() disabled: boolean = false;
 
+ 
   private _value = signal<string>('');
   private _isFocused = signal<boolean>(false);
   private _showPassword = signal<boolean>(false);
 
-  public hasError = computed(() => !!this.errorMessage());
-  public inputType = computed(() =>
-    this.type() === 'password' && !this._showPassword() ? 'password' : 'text'
-  );
-  public showPassword = computed(() => this._showPassword());
+  
+  public value = this._value.asReadonly();
   public isFocused = computed(() => this._isFocused());
+  public showPassword = computed(() => this._showPassword());
+  public inputType = computed(() =>
+    this.type === 'password' && !this._showPassword() ? 'password' : this.type
+  );
+  
 
-  public togglePasswordVisibility(): void {
-    if (this.type() === 'password') {
-      this._showPassword.update((v) => !v);
-    }
+
+
+
+  
+  private onChange: (v: any) => void = () => {};
+  private onTouched: () => void = () => {};
+
+  
+  writeValue(obj: any): void {
+    this._value.set(obj ?? '');
   }
 
-  public onFocus(): void {
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  
+  public onInput(event: Event): void {
+  const target = event.target as HTMLInputElement | null;
+  const val = target?.value ?? '';
+  this._value.set(val);
+  
+  if (this.onChange) {
+    this.onChange(val);
+  }
+}
+
+  onFocus(): void {
     this._isFocused.set(true);
   }
 
-  public onBlur(): void {
+  onBlur(): void {
     this._isFocused.set(false);
+    this.onTouched();
   }
 
-  public value = this._value.asReadonly();
+  togglePasswordVisibility(): void {
+    if (this.type === 'password') {
+      this._showPassword.update(v => !v);
+    }
+  }
 }

@@ -17,7 +17,7 @@ import {
 export class FormErrorComponent implements OnChanges {
   public message = input<string>('');
   public showIcon = input<boolean>(true);
-  private _visible = signal(false);
+  public _visible = signal(false);
 
   ngOnChanges(changes: SimpleChanges): void {
     this._visible.set(!!this.message());
