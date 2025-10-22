@@ -6,7 +6,8 @@
   display: inline-flex;
   flex-direction: column;
   gap: $spacing-2;
-  min-width: 200px;
+  max-width: 140px;
+  
 
   &__label {
     @include body-3;
@@ -18,7 +19,7 @@
   &__input {
     @include body-2;
     padding: $spacing-2 $spacing-4;
-    border: $stroke-1 solid $general-stroke-light;
+    border: $stroke-1 solid #E5E7EB;
     border-radius: $radius-3;
     background: $gray-50;
     color: $text-primary;
@@ -32,8 +33,7 @@
     padding-right: $spacing-8;
 
     &:hover {
-      border-color: $gray-400;
-      background: white;
+      
     }
 
     &:focus {

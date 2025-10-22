@@ -33,21 +33,22 @@
 
       <!-- Reusable Button -->
       @if (primaryAction(); as action) {
-      <app-button
-        type="primary"
-        (click)="executePrimaryAction()"
-        aria-label="Add new user"
-      >
-        + {{ action.label }}
-      </app-button>
-      }
+        <div class="invite-btn">
+
+            <app-button
+            type="primary"
+            (click)="executePrimaryAction()"
+            aria-label="Add new user"
+            >
+            + {{ action.label }}
+        </app-button>
+    </div>
+    }
     </div>
   </div>
 
   <table class="data-table__table" role="table">
-    <caption class="sr-only">
-      List of users
-    </caption>
+
 
     <thead class="data-table__thead">
       <tr>
