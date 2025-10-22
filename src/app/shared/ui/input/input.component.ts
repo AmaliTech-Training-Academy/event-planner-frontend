@@ -23,7 +23,6 @@ import { FormErrorComponent } from "../form-error/form-error.component";
   ],
 })
 export class InputComponent implements ControlValueAccessor {
-  // Inputs
   public type = input<'text' | 'email' | 'password'>('text');
   public placeholder = input<string>('');
   public label = input<string>('');
@@ -32,13 +31,11 @@ export class InputComponent implements ControlValueAccessor {
   public required = input<boolean>(false);
   public disabled = input<boolean>(false);
 
-  // Internal state
   private _value = signal<string>('');
   private _isFocused = signal<boolean>(false);
   private _showPassword = signal<boolean>(false);
   private _isDisabled = signal<boolean>(false);
 
-  // Computed properties
   public hasError = computed(() => !!this.errorMessage());
   public inputType = computed(() =>
     this.type() === 'password' && !this._showPassword() ? 'password' : 'text'
@@ -47,11 +44,9 @@ export class InputComponent implements ControlValueAccessor {
   public showPassword = computed(() => this._showPassword());
   public isDisabled = computed(() => this.disabled() || this._isDisabled());
 
-  // ControlValueAccessor callbacks
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
-  // Value binding
   writeValue(value: string): void {
     this._value.set(value ?? '');
   }
@@ -68,7 +63,6 @@ export class InputComponent implements ControlValueAccessor {
     this._isDisabled.set(isDisabled);
   }
 
-  // DOM event handlers
   public onInput(event: Event): void {
     const newValue = (event.target as HTMLInputElement).value;
     this._value.set(newValue);
@@ -90,6 +84,5 @@ export class InputComponent implements ControlValueAccessor {
     }
   }
 
-  // Readonly value for template
   public value = this._value.asReadonly();
 }

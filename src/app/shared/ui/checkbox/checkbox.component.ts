@@ -46,7 +46,6 @@ export class CheckboxComponent implements ControlValueAccessor {
     this._disabled.set(isDisabled);
   }
 
-  /** Toggle checkbox state */
   public toggleCheck(): void {
     if (this._disabled()) return;
     const newValue = !this._checked();
@@ -55,7 +54,6 @@ export class CheckboxComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
-  /** Handle keyboard events */
   public onKeyDown(event: KeyboardEvent): void {
     if (event.code === 'Space' || event.key === ' ') {
       event.preventDefault();
@@ -63,7 +61,6 @@ export class CheckboxComponent implements ControlValueAccessor {
     }
   }
 
-  /** Expose signals to template */
   public checked = this._checked.asReadonly();
   public disabled = this._disabled.asReadonly();
 }
