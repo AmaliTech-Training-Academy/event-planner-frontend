@@ -1,0 +1,36 @@
+<div class="calendar">
+    <div class="header">
+        <p>10 <span>/</span> {{currentMonth}} <span>/</span> {{currentYear}}</p>
+    </div>
+
+    <div class="actions">
+        <div class="right">
+            <button (click)="selectToday()">Today</button>
+            <button (click)="selectLast()">Last selection</button>
+        </div>
+        <div class="left">
+            <button class="nav" (click)="prevMonth()">
+                <img src="icons/chevron-left.svg" alt="" />
+            </button>
+            <span>{{ monthName }}</span>
+            <button class="nav" (click)="nextMonth()">
+                <img src="icons/chevron-right.svg" alt="" />
+            </button>
+        </div>
+    </div>
+
+    <div class="table">
+        <div class="weekdays">
+            <div class="cell" *ngFor="let day of ['Mo','Tu','We','Th','Fr','Sa','Su']">{{ day }}</div>
+        </div>
+
+        <div class="days">
+            <div class="cell" *ngFor="let _ of [].constructor(firstDayOffset)"></div>
+            <div *ngFor="let day of daysInMonth" class="day cell"
+                [class.selected]="selectedDate?.getDate() === day && selectedDate?.getMonth() === currentMonth"
+                (click)="selectDate(day)">
+                {{ day }}
+            </div>
+        </div>
+    </div>
+</div>

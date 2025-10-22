@@ -1,0 +1,10 @@
+:host{
+    flex:1;
+}
+.contianer {
+    flex: 1;
+    position: relative;
+    app-date-picker {
+        position: absolute;
+    }
+}

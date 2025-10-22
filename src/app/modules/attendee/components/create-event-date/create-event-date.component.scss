@@ -1,0 +1,20 @@
+@use "typography" as *;
+@use "variables" as *;
+@use "theme" as *;
+:host {
+    display: flex;
+    flex: 1;
+}
+button {
+    border-radius: 8px;
+    border: 1px solid $general-stroke-light;
+    padding: $spacing-4;
+    background: transparent;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    @include body-1;
+    color: $paragraph-text;
+    flex: 1;
+    cursor: pointer;
+}

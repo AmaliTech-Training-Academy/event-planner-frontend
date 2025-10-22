@@ -1,0 +1,13 @@
+<div class="selector">
+    <div class="options" role="list">
+        @for (time of timeSlots; track $index) {
+            <button class="option" role="listitem">
+                {{time}}
+            </button>
+
+            @if ($index != timeSlots.length-1) {
+                <hr>
+            }
+        }
+    </div>
+</div>

@@ -1,1 +1,128 @@
-<p>create-event-page works!</p>
+<div class="wrapper">
+    <div class="left-panel">
+        <div class="title-container">
+            <input type="text" placeholder="Add Event Title" class="title">
+            <div class="time-container">
+                <div class="day-container">
+                    <p>Select event type:</p>
+                    <div class="radio-container">
+                        <input type="radio" name="event-type" id="day-event">
+                        <label for="day-event">Day Event</label>
+                    </div>
+                    <div class="radio-container">
+                        <input type="radio" name="event-type" id="multi-day-event">
+                        <label for="multi-day-event">Multi-day</label>
+                    </div>
+                </div>
+                <div class="date-container">
+                    <!-- <app-time-picker></app-time-picker> -->
+                   <app-event-date-picker></app-event-date-picker>
+                   <app-event-time-picker></app-event-time-picker>
+                   <app-event-time-zone-picker></app-event-time-zone-picker>
+                     
+                     <!-- <app-time-zone-picker></app-time-zone-picker> -->
+                  
+                </div>
+            </div>
+        </div>
+        <div class="event-info-container">
+            <div class="meeting-contianer">
+                <p>Select meeting type:</p>
+                <div class="radio-container">
+                    <input type="radio" name="meeting-type" id="virtual-meeting">
+                    <label for="virtual-meeting">Virtual</label>
+                </div>
+                <div class="radio-container">
+                    <input type="radio" name="meeting-type" id="inperson-meeting">
+                    <label for="inperson-meeting">In-person</label>
+                </div>
+            </div>
+            <div class="field">
+                <label for="event-location">Add event location</label>
+                <div class="input-container">
+                    <img src="icons/pin.svg" alt="" srcset="">
+                    <input type="text" name="location" id="event-location" placeholder="Type location here">
+                </div>
+            </div>
+            <div class="field">
+                <label for="description">Add event description</label>
+                <textarea name="description" id="description" placeholder="Type description here"></textarea>
+            </div>
+            <div class="upload-continer">
+                <div class="image-container">
+                    <p>Upload up to 5 images of venue</p>
+                    <div class="preview-container">
+                        <img src="images/event-location.png" alt="" class="preview">
+                        <button type="button">
+                            <img src="icons/add.svg" alt="" class="preview">
+                        </button>
+                    </div>
+                </div>
+                <button type="button">
+                    <p>Define venue section</p>
+                    <img src="icons/arrow-right.svg" />
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="right-panel">
+        <div class="flyer-container">
+            <div class="flyer-preview">
+                <img src="images/flyer.jpg" alt="" class="preview">
+
+                <button>
+                    <img src="icons/image.svg" alt="" class="preview">
+                </button>
+            </div>
+            <div class="change-flyer-container">
+                <div class="info">
+                    <h5>Upload event flyer</h5>
+                    <p>Accepted formats: PDF, JPG, PNG (max 10MB)</p>
+                </div>
+                <button type="button">Change the picture</button>
+            </div>
+        </div>
+        <div class="event-options-container">
+            <div class="options-container">
+                <h3>Event Options</h3>
+                <div class="options">
+                    <div class="item">
+                        <div class="left">
+                            <img src="icons/ticket.svg" alt="" class="preview">
+                            <p>Tickets</p>
+                        </div>
+                        <div class="right">
+                            <p>$50</p>
+                            <img src="icons/pencil.svg" alt="" class="preview">
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="left">
+                            <img src="icons/add-user.svg" alt="" class="preview">
+                            <p>Require Approval</p>
+                        </div>
+                        <div class="right">
+                            <label class="toggle-switch">
+                                <input type="checkbox" [checked]="checked" (change)="onToggle()" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="left">
+                            <img src="icons/add-user.svg" alt="" class="preview">
+                            <p>Capacity</p>
+                        </div>
+                        <div class="right">
+                            <p>Unlimited</p>
+                            <img src="icons/pencil.svg" alt="" class="preview">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="primary">
+                Create event
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+<div class="contianer">
+    <app-create-event-date (clicked)="toggleState($event)" icon="icons/clock.svg"
+        title="Time"></app-create-event-date>
+        @if (isOpen) {
+            <app-time-picker></app-time-picker>
+        }
+</div>
