@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 
 interface FilterOption {
   label: string;
@@ -19,8 +19,20 @@ export class FilterSelectComponent {
   public placeholder = input<string>('All');
   public valueChange = output<string>();
 
-  public onChange(event: Event) {
-    const newValue = (event.target as HTMLSelectElement).value;
-    this.valueChange.emit(newValue);
+  public isOpen = signal(false);
+
+  toggleDropdown(): void {
+    this.isOpen.update((v) => !v);
+  }
+
+  selectOption(option: FilterOption): void {
+    this.valueChange.emit(option.value);
+    this.isOpen.set(false);
+  }
+
+  // ✅ Safe getter for the currently selected label
+  get selectedLabel(): string {
+    const selected = this.options().find((o) => o.value === this.value());
+    return selected ? selected.label : this.placeholder();
   }
 }

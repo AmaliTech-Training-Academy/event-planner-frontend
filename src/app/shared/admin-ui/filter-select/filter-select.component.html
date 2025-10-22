@@ -1,12 +1,32 @@
 <div class="filter-select">
-  <select
-    class="filter-select__input"
-    [value]="value()"
-    (change)="onChange($event)"
+  <div
+    class="filter-select__dropdown"
+    tabindex="0"
+    (click)="toggleDropdown()"
   >
-    <option value="all">{{ placeholder() }}</option>
-    @for (option of options(); track option.value) {
-      <option [value]="option.value">{{ option.label }}</option>
-    }
-  </select>
+    <span class="filter-select__selected">
+      {{ selectedLabel }}
+    </span>
+    <img
+      src="icons/drop-down.png"
+      alt="Dropdown arrow"
+      class="filter-select__icon"
+      [class.open]="isOpen()"
+    />
+  </div>
+
+  @if (isOpen()) {
+    <ul class="filter-select__menu">
+      @for (option of options(); track option.value) {
+        <li
+          (click)="selectOption(option)"
+          [class.active]="option.value === value()"
+        >
+          {{ option.label }}
+        </li>
+      } @empty {
+        <li class="filter-select__empty">No options available</li>
+      }
+    </ul>
+  }
 </div>
