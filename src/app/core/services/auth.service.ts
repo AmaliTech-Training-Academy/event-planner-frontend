@@ -24,7 +24,7 @@ export class AuthService {
                     });
                 }),
                 catchError(err => {
-                    // error handling implimentation goes here
+                    //TODO: error handling implimentation goes here
                     return of(err);
                 })
             );
@@ -38,7 +38,7 @@ export class AuthService {
                         queryParams: { email },
                     });
                 }), catchError(err => {
-                    // error handling implimentation goes here
+                    //TODO: error handling implimentation goes here
                     return of(err);
                 })
             );
@@ -55,7 +55,7 @@ export class AuthService {
                     this.router.navigate([APP_ROUTES.LANDING_PAGE]);
                 }),
                 catchError(err => {
-                    // error handling implimentation goes here
+                    //TODO: error handling implimentation goes here
                     return of(err);
                 })
             )
@@ -72,7 +72,7 @@ export class AuthService {
                     this.router.navigate([APP_ROUTES.LOGIN]);
                 }),
                 catchError(err => {
-                    // error handling implimentation goes here
+                    //TODO: error handling implimentation goes here
                     return of(err);
                 })
             );
@@ -85,7 +85,7 @@ export class AuthService {
                     this._userInfo$.next(response?.data)
                 }),
                 catchError(err => {
-                    // error handling implimentation goes here
+                    //TODO: error handling implimentation goes here
                     return of(err);
                 })
             );
