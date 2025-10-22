@@ -10,7 +10,37 @@ button {
   font-family: $font-lato;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+
+  /* === Base power styles === */
+  &.power {
+    border: 1.5px solid $green-500;
+    color: $gray-700;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($green-500, 0.1);
+    }
+  }
+
+  &.power-inactive {
+    border: 1.5px solid $green-600 !important;
+    background-color: transparent;
+    color: $gray-700;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($green-600, 0.1);
+    }
+  }
+
+  &.power-active {
+    border: 1.5px solid $red-600 !important;
+    background-color: transparent;
+    color: $gray-700;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($red-600, 0.1);
+    }
+  }
 
   &.primary {
     background-color: $orange-700;
@@ -20,14 +50,9 @@ button {
       background-color: $orange-600;
     }
 
-    &:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
     &:disabled {
-      cursor: not-allowed;
       opacity: 0.5;
-      transition: opacity 0.2s ease;
+      cursor: not-allowed;
     }
   }
 
@@ -38,37 +63,45 @@ button {
     &:hover:not(:disabled) {
       background-color: $blue-400;
     }
-
-    &:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-      transition: opacity 0.2s ease;
-    }
   }
+
   &.social {
-    background-color: $gray-50;
     color: $gray-900;
     border: 1.5px solid $gray-300;
-    border-radius: $radius-3;
 
     &:hover:not(:disabled) {
       background-color: $gray-100;
       transform: translateY(-2px);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+  }
 
-    &:active:not(:disabled) {
-      transform: translateY(0);
+  &.action {
+    width: 30px;
+    height: 30px;
+    padding: 0.5rem;
+    border-radius: $radius-5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+
+    &.view {
+      background: $orange-700;
+      color: $gray-50;
     }
 
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-      transition: opacity 0.2s ease;
-}
+    &.edit {
+      border: 1.5px solid $gray-400;
+    }
+
+    &.delete {
+      border: 1.5px solid $gray-400;
+    }
+
+    /* Fallback neutral power */
+    &.power {
+      border: 1.5px solid $gray-400;
+    }
   }
 }

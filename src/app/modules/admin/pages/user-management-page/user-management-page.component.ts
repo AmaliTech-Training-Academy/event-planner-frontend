@@ -157,23 +157,18 @@ export class UserManagementPageComponent {
       label: 'View User Details',
       color: 'view',
       handler: (user) => this._viewUser(user),
-      type: 'primary',
-      
     },
     {
       icon: 'icons/edit-icon.png',
       label: 'Edit User',
       color: 'edit',
       handler: (user) => this._editUser(user),
-      type: 'social',
     },
     {
-      icon: 'icons/delete-icon.png',
-      label: 'Toggle Status',
-      color: 'toggle',
+      icon: 'icons/power-red.png', 
+      label: 'Toggle User Status',
+      color: 'power',
       handler: (user) => this._toggleUserStatus(user),
-      visible: (user) => user.status === 'Active',
-      type: 'social',
     },
   ];
 
@@ -229,16 +224,16 @@ export class UserManagementPageComponent {
 
     if (index !== -1) {
       const updatedUsers = [...users];
+      const currentStatus = updatedUsers[index].status;
+
       updatedUsers[index] = {
         ...updatedUsers[index],
-        status: updatedUsers[index].status === 'Active' ? 'Inactive' : 'Active',
+        status: currentStatus === 'Active' ? 'Inactive' : 'Active',
       };
+
       this._users.set(updatedUsers);
 
-      // TODO: Call API to update user status
-      console.log(
-        `User ${user.name} status toggled to ${updatedUsers[index].status}`
-      );
+      console.log(`User ${user.name} is now ${updatedUsers[index].status}`);
     }
   }
 

@@ -20,7 +20,7 @@ export interface TableAction<T> {
   handler: (item: T) => void;
   visible?: (item: T) => boolean;
   disabled?: boolean | ((item: T) => boolean);
-  type?: 'primary' | 'secondary' | 'danger' | 'outline' | 'social' | string;
+  type?: 'primary' | 'secondary' | 'social' | 'action';
 }
 
 
