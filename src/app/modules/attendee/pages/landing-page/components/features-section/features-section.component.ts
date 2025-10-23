@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 @Component({
@@ -10,9 +10,10 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeaturesSectionComponent {
-  protected readonly title = signal<string>('Manage & Collaborate On Events');
-  protected readonly description = signal<string>(
-    'EventUp is designed to be inclusive, by being able to use your own device to help hybrid-conference teams create, collaborate and celebrate together.'
-  );
-  protected readonly dashboardImage = signal<string>('images/card-img.png');
+  protected readonly title: string = 'Manage & Collaborate On Events';
+
+  protected readonly description: string =
+    'EventUp is designed to be inclusive, by being able to use your own device to help hybrid-conference teams create, collaborate and celebrate together.';
+
+  protected readonly dashboardImage: string = 'images/card-img.png';
 }

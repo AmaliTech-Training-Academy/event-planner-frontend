@@ -6,7 +6,6 @@
       <span class="header__logo--black">Hub</span>
     </div>
 
-    <!-- Navigation -->
     <nav class="header__nav" [class.open]="isMenuOpen()">
       @for (link of navLinks(); track link.path) {
       <a
@@ -25,12 +24,12 @@
       }
 
       <div class="header__actions">
-        <app-button type="social">Sign In</app-button>
+        <app-button type="social" routerLink="/auth/login">Sign In</app-button>
       </div>
     </nav>
 
     <button class="header__hamburger" (click)="toggleMenu()">
-      <img src="assets/icons/menu-icon.svg" alt="Menu" class="header__icon" />
+      <img src="icons/menu.png" alt="Menu" class="header__icon" />
     </button>
   </div>
 </header>

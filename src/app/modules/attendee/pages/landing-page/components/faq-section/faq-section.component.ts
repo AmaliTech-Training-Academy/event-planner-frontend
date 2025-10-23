@@ -22,12 +22,12 @@ interface FaqItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FaqSectionComponent {
-  protected readonly _title = signal<string>('Frequently Asked Questions');
-  protected readonly _subtitle = signal<string>(
-    'Discover amazing destinations, find the best flights and hotels, and create memorable travel experiences with our all-in-one travel platform.'
-  );
+  protected readonly title: string = 'Frequently Asked Questions';
 
-  private readonly initialFaqs: readonly FaqItem[] = [
+  protected readonly subtitle: string =
+    'Discover amazing destinations, find the best flights and hotels, and create memorable travel experiences with our all-in-one travel platform.';
+
+  private readonly _initialFaqs: readonly FaqItem[] = [
     {
       id: '1',
       question: 'How does this platform work?',
@@ -51,21 +51,22 @@ export class FaqSectionComponent {
     },
   ];
 
-  protected readonly _faqs = signal<readonly FaqItem[]>(this.initialFaqs);
-  protected readonly _openFaqCount = computed(
-    () => this._faqs().filter((faq) => faq.isOpen).length
+  protected readonly faqs = signal<readonly FaqItem[]>(this._initialFaqs);
+
+  protected readonly openFaqCount = computed(
+    () => this.faqs().filter((faq: FaqItem) => faq.isOpen).length
   );
 
-  protected _toggleFaq(id: string): void {
-    this._faqs.update((faqs) =>
-      faqs.map((faq) => ({
+  protected toggleFaq(id: string): void {
+    this.faqs.update((faqs: readonly FaqItem[]) =>
+      faqs.map((faq: FaqItem) => ({
         ...faq,
         isOpen: faq.id === id ? !faq.isOpen : faq.isOpen,
       }))
     );
   }
 
-  protected _trackByFaqId(index: number, item: FaqItem): string {
+  protected trackByFaqId(index: number, item: FaqItem): string {
     return item.id;
   }
 }

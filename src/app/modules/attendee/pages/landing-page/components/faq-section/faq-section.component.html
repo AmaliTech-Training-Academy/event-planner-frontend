@@ -1,16 +1,16 @@
 <section class="faq">
   <div class="faq__container">
     <div class="faq__header">
-      <h2 class="faq__title">{{ _title() }}</h2>
-      <p class="faq__subtitle">{{ _subtitle() }}</p>
+      <h2 class="faq__title">{{ title }}</h2>
+      <p class="faq__subtitle">{{ subtitle }}</p>
     </div>
 
     <div class="faq__list">
-      @for (item of _faqs(); track _trackByFaqId($index, item)) {
+      @for (item of faqs(); track trackByFaqId($index, item)) {
       <div class="faq__item" [class.faq__item--open]="item.isOpen">
         <button
           class="faq__question"
-          (click)="_toggleFaq(item.id)"
+          (click)="toggleFaq(item.id)"
           type="button"
           [attr.aria-expanded]="item.isOpen"
           [attr.aria-controls]="'faq-answer-' + item.id"
