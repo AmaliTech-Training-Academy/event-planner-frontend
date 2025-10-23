@@ -33,6 +33,7 @@
                     color: $paragraph-text;
                 }
             }
+
             .time-container {
                 display: flex;
                 flex-direction: column;
@@ -54,6 +55,7 @@
                         align-items: center;
                     }
                 }
+
                 .date-container {
                     display: flex;
                     flex-direction: column;
@@ -69,6 +71,7 @@
                 }
             }
         }
+
         .event-info-container {
             display: flex;
             flex-direction: column;
@@ -102,10 +105,12 @@
                 display: flex;
                 flex-direction: column;
                 gap: $spacing-2;
+
                 label {
                     @include label-1;
                     color: $sub-header-dark;
                 }
+
                 .input-container {
                     display: flex;
                     flex-direction: row;
@@ -115,6 +120,7 @@
                     border: 1px solid $general-stroke-light;
                     border-radius: $radius-4;
                     padding: 15px $spacing-2;
+
                     input {
                         width: 100%;
                         @include body-2;
@@ -123,6 +129,7 @@
                         color: $paragraph-text;
                     }
                 }
+
                 textarea {
                     @include body-2;
                     border: 1px solid $general-stroke-light;
@@ -140,6 +147,7 @@
                 display: flex;
                 flex-direction: column;
                 gap: 48px;
+
                 .image-container {
                     display: flex;
                     flex-direction: column;
@@ -149,12 +157,14 @@
                         @include label-1;
                         color: $sub-header-dark;
                     }
+
                     .preview-container {
                         display: flex;
                         flex-direction: row;
                         align-items: center;
                         gap: $spacing-2;
                         overflow-x: auto;
+
                         .preview {
                             width: 203px;
                             height: 112px;
@@ -171,6 +181,7 @@
                             display: flex;
                             align-items: center;
                             justify-content: center;
+
                             img {
                                 width: $spacing-6;
                                 height: $spacing-6;
@@ -178,6 +189,7 @@
                         }
                     }
                 }
+
                 button {
                     background-color: transparent;
                     @include secondary_btn;
@@ -186,16 +198,17 @@
                 }
             }
 
-            .virtual-details{
+            .virtual-details {
                 display: flex;
                 flex-direction: column;
                 gap: 8px;
-                p{
-                      @include label-1;
+
+                p {
+                    @include label-1;
                     color: $sub-header-dark;
                 }
 
-                button{
+                button {
                     background-color: transparent;
                     border: none;
                     display: flex;
@@ -272,17 +285,20 @@
                     display: flex;
                     flex-direction: column;
                     flex: 1;
+
                     h5 {
                         @include h-6;
                         font-weight: bold;
                         padding: 4px 8px;
                     }
+
                     p {
                         @include body-2;
                         color: $paragraph-text;
                         padding: 4px 8px;
                     }
                 }
+
                 button {
                     @include secondary_btn;
                     font-weight: bold;
@@ -323,6 +339,7 @@
                         justify-content: space-between;
                         padding: 8px;
                         border-bottom: 1px solid $general-stroke-light;
+
                         .left {
                             display: flex;
                             flex-direction: row;
@@ -331,6 +348,7 @@
                             @include body-1;
                             color: $sub-header-dark;
                         }
+
                         .right {
                             display: flex;
                             flex-direction: row;
@@ -339,7 +357,7 @@
                             @include body-1;
                             color: $sub-header-dark;
 
-                            button{
+                            button {
                                 background-color: transparent;
                             }
                         }
@@ -350,6 +368,7 @@
                     }
                 }
             }
+
             button {
                 @include primary_btn;
                 border-radius: 8px;
@@ -395,11 +414,11 @@
         transition: 0.3s;
     }
 
-    input:checked + .slider {
+    input:checked+.slider {
         background-color: #4caf50;
     }
 
-    input:checked + .slider::before {
+    input:checked+.slider::before {
         transform: translateX(22px);
     }
 }
@@ -414,9 +433,9 @@
     border-radius: 16px;
     padding: 24px;
 
-    img.icon{
-        width:56px;
-        height:56px;
+    img.icon {
+        width: 56px;
+        height: 56px;
     }
 
     .header {
@@ -424,27 +443,32 @@
         flex-direction: column;
         gap: 8px;
         text-align: center;
-        h3{
+
+        h3 {
             @include h-4;
         }
-        p{
+
+        p {
             @include body-1;
             color: $paragraph-text;
         }
+
         .alert-container {
             display: flex;
             flex-direction: row;
             align-items: center;
             gap: 8px;
-          
+
             background-color: #FFFFEA;
             border-radius: 8px;
-            padding: 6px 8px ;
-            img.icon{
+            padding: 6px 8px;
+
+            img.icon {
                 width: 24px;
                 height: 24px;
             }
-            p{
+
+            p {
                 color: #756400;
                 @include body-1;
             }
@@ -455,34 +479,56 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
+        width: 100%;
         align-items: center;
+
         .price-selection-container {
             display: flex;
             flex-direction: row;
             gap: 12px;
+
             .radio-container {
                 display: flex;
                 flex-direction: row;
                 gap: 4px;
                 align-items: center;
+
                 label {
                     @include body-1;
                     color: $sub-header-dark;
                 }
+
                 input {
                     width: 18px;
                     height: 18px;
                 }
             }
         }
+
+        app-input {
+            width: 100%;
+        }
+
         .field {
+            width: 100%;
             display: flex;
             flex-direction: column;
             gap: 8px;
+
             label {
                 @include label-1;
                 color: $header-dark;
             }
+
+            textarea {
+                height: 104px;
+                padding: 8px;
+                border-radius: 4px;
+                border: 1px solid $general-stroke-light;
+            }
+        }
+        app-button{
+            width: 100%;
         }
     }
 }

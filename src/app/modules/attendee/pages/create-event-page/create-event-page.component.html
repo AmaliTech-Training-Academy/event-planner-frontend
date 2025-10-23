@@ -42,6 +42,7 @@
             <div class="in-person-details" formGroupName="inPersonDetails">
                 <div class="field">
                     <label for="event-location">Add event location</label>
+                    
                     <div class="input-container">
                         <img src="icons/pin.svg" alt="" srcset="">
                         <input type="text" formControlName="location" name="location" id="event-location"
@@ -120,7 +121,7 @@
                         </div>
                         <div class="right">
                             <p>$50</p>
-                            <button>
+                            <button (click)="togglePriceModal()">
                                 <img src="icons/pencil.svg" alt="" class="preview">
                             </button>
                         </div>
@@ -165,38 +166,39 @@
             </button>
         </div>
     </div>
-</form>
-<app-modal-container>
-   <div class="set-price-container">
-        <img src="icons/ticket_circle.svg" alt="" srcset="" class="icon">
-    <div class="header">
-        <h3>Set Price for Event</h3>
-        <p>Select whether your event is a free or paid event</p>
-        <div class="alert-container">
-            <img src="icons/info_warn.svg" alt="" srcset="" class="icon">
-            <p>Define Venue Sections to add multiple prices</p>
-        </div>
-    </div>
-    <div class="content">
-        <div class="price-selection-container">
-            <div class="radio-container">
-                <input type="radio" name="price-selection" id="price-selection-free">
-                <label for="price-selection-free">Free Entry</label>
+    @if (showPriceModal) {
+        <app-modal-container (close)="togglePriceModal()">
+           <div class="set-price-container">
+                <img src="icons/ticket_circle.svg" alt="" srcset="" class="icon">
+            <div class="header">
+                <h3>Set Price for Event</h3>
+                <p>Select whether your event is a free or paid event</p>
+                <div class="alert-container">
+                    <img src="icons/info_warn.svg" alt="" srcset="" class="icon">
+                    <p>Define Venue Sections to add multiple prices</p>
+                </div>
             </div>
-            <div class="radio-container">
-                <input type="radio" name="price-selection" id="price-selection-paid">
-                <label for="price-selection-paid">Paid</label>
+            <div class="content">
+                <div class="price-selection-container">
+                    <div class="radio-container">
+                        <input type="radio" name="price-selection" id="price-selection-free">
+                        <label for="price-selection-free">Free Entry</label>
+                    </div>
+                    <div class="radio-container">
+                        <input type="radio" name="price-selection" id="price-selection-paid">
+                        <label for="price-selection-paid">Paid</label>
+                    </div>
+                </div>
+               <app-input [iconSrc]="'icons/money.svg'" [label]="'Price'" [formControlName]="'price'" [type]="'text'" [placeholder]="'0.00'"></app-input>
+                <div class="field">
+                    <label for="price">What’s included with this ticket?</label>
+                    <textarea name="price-included" id="price-included" placeholder="Enter what’s included with this ticket"></textarea>
+                </div>
+                <app-button [fullWidth]="true" type="primary">Set Price</app-button>
             </div>
-        </div>
-        <div class="field">
-            <label for="price">Price</label>
-            <input type="number" name="price" id="price" placeholder="Enter price">
-        </div>
-        <div class="field">
-            <label for="price">What’s included with this ticket?</label>
-            <textarea name="price-included" id="price-included" placeholder="Enter what’s included with this ticket"></textarea>
-        </div>
-    </div>
+        
+           </div>
+        </app-modal-container>
+    }
 
-   </div>
-</app-modal-container>
+</form>

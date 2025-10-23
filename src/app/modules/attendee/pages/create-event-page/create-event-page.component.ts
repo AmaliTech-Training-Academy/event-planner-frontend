@@ -5,6 +5,8 @@ import { EventDatePickerComponent } from "../../components/event-date-picker/eve
 import { EventTimePickerComponent } from "../../components/event-time-picker/event-time-picker.component";
 import { EventTimeZonePickerComponent } from "../../components/event-time-zone-picker/event-time-zone-picker.component";
 import { ModalContainerComponent } from "../../../../shared/components/modal-container/modal-container.component";
+import { InputComponent } from "../../../../shared/ui/input/input.component";
+import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 
 const EVENT_TYPE = {
   SINGLE_DAY: 'day',
@@ -17,15 +19,15 @@ const MEETING_TYPE = {
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, ModalContainerComponent],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, ModalContainerComponent, InputComponent, ButtonComponent],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
 export class CreateEventPageComponent implements OnInit {
   protected form: FormGroup;
-  checked: boolean = false;
-  flyerPreview: string | null = null;
-
+  protected checked: boolean = false;
+  protected flyerPreview: string | null = null;
+  protected showPriceModal:boolean = false;
 
 
   constructor(private readonly fb: FormBuilder) {
@@ -181,6 +183,9 @@ export class CreateEventPageComponent implements OnInit {
     return image;
   }
 
+  protected togglePriceModal(){
+    this.showPriceModal = !this.showPriceModal;
+  }
 
   onToggle() {
 
