@@ -56,9 +56,7 @@ export class PartnersComponent {
   );
   protected readonly _partnerCount = computed(() => this._partners().length);
 
-  /**
-   * Track by function for performance optimization in *ngFor
-   */
+  
   protected _trackByPartnerName(index: number, partner: Partner): string {
     return partner.name;
   }

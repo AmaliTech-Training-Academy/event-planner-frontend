@@ -1,14 +1,13 @@
 @use 'typography' as *;
 @use 'colors' as *;
 @use 'variables' as *;
+@use 'media_query' as *;
 
 .footer {
   background-color: #111827;
   color: $gray-50;
   padding: $spacing-12 0 $spacing-6;
   font-family: $font-lato;
-
-
 
   &__content {
     display: grid;
@@ -101,8 +100,8 @@
     border-top: 1px solid $gray-950;
   }
 
-  // Responsive
-  @media (max-width: 968px) {
+  // ✅ Responsive (using mixins)
+  @include lg {
     &__content {
       grid-template-columns: repeat(3, 1fr);
     }
@@ -112,13 +111,21 @@
     }
   }
 
-  @media (max-width: 640px) {
+  @include md {
     &__content {
-      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: $spacing-8;
-      &:nth-child(4) {
-       grid-column: span 2;
-      }
+    }
+
+    &__brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @include sm {
+    &__content {
+      grid-template-columns: repeat(2, 1fr);
+      gap: $spacing-6;
     }
 
     &__tagline {

@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 interface FooterLinkGroup {
@@ -17,12 +17,12 @@ interface SocialLink {
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, NgOptimizedImage],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
 })
 export class FooterComponent {
-  public readonly footerLinks = signal<FooterLinkGroup[]>([
+  protected readonly footerLinks: readonly FooterLinkGroup[] = [
     {
       title: 'Platform',
       links: [
@@ -39,9 +39,9 @@ export class FooterComponent {
         { label: 'Careers', path: '/careers' },
       ],
     },
-  ]);
+  ];
 
-  public readonly socialLinks = signal<SocialLink[]>([
+  protected readonly socialLinks: readonly SocialLink[] = [
     {
       name: 'Twitter',
       title: 'Follow us on Twitter',
@@ -60,5 +60,5 @@ export class FooterComponent {
       url: 'https://instagram.com',
       iconPath: 'icons/instagram-icon.png',
     },
-  ]);
+  ];
 }

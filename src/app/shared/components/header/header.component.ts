@@ -8,6 +8,7 @@ import {
   Menu,
   LucideIconData,
 } from 'lucide-angular';
+import { ButtonComponent } from '../../ui/button/button.component';
 
 interface NavLink {
   label: string;
@@ -19,7 +20,7 @@ interface NavLink {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ButtonComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })

@@ -13,7 +13,7 @@
       </div>
 
       <!-- Footer Link Groups -->
-      @for (group of footerLinks(); track group.title) {
+      @for (group of footerLinks; track group.title) {
         @if (group?.links?.length) {
           <div class="footer__links">
             <h3 class="footer__title">{{ group?.title }}</h3>
@@ -28,30 +28,29 @@
       }
 
       <!-- Contact / Social Links -->
-      @if (socialLinks()) {
-        <div class="footer__links">
-          <h3 class="footer__title">Contact</h3>
-          <div class="footer__social-icons">
-            @for (social of socialLinks(); track social.name) {
-              <a
-                [href]="social?.url"
-                [title]="social?.title"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="footer__social-link"
-                [attr.aria-label]="social?.name"
-              >
-                <img
-                  [src]="social?.iconPath"
-                  [alt]="social?.name"
-                  width="20"
-                  height="20"
-                />
-              </a>
-            }
-          </div>
+      <div class="footer__links">
+        <h3 class="footer__title">Contact</h3>
+        <div class="footer__social-icons">
+          @for (social of socialLinks; track social.name) {
+            <a
+              [href]="social?.url"
+              [title]="social?.title"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer__social-link"
+              [attr.aria-label]="social?.name"
+            >
+              <img
+                [ngSrc]="social.iconPath"
+                [alt]="social?.name"
+                width="20"
+                height="20"
+                loading="lazy"
+              />
+            </a>
+          }
         </div>
-      }
+      </div>
     </div>
 
     <!-- Copyright -->

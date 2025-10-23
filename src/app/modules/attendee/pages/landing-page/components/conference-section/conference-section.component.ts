@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,13 +10,11 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConferenceSectionComponent {
-  protected readonly _title = signal<string>(
-    'Powerful virtual conferencing platform solution'
-  );
-  protected readonly _subtitle = signal<string>(
-    'Dedicated spaces that make it easy to come together.'
-  );
-  protected readonly _conferenceImage = signal<string>(
-    'images/conference-img.png'
-  );
+  protected readonly title: string =
+    'Powerful virtual conferencing platform solution';
+
+  protected readonly subtitle: string =
+    'Dedicated spaces that make it easy to come together.';
+
+  protected readonly conferenceImage: string = 'images/conference-img.png';
 }

@@ -1,35 +1,32 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ButtonComponent } from '../../../../../../shared/components/button/button.component';
+import { Component } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 
 @Component({
   selector: 'app-hero-section',
   standalone: true,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, NgOptimizedImage, ButtonComponent],
   templateUrl: './hero-section.component.html',
   styleUrls: ['./hero-section.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroSectionComponent {
-  protected readonly _title = signal('Plan, Host, Engage & Grow');
-  protected readonly _subtitle = signal(
-    'Bring your community together with powerful tools for hosting productive online and in-person events.'
-  );
-  protected readonly _heroImage = signal('images/hero-image.png');
+  protected readonly title = 'Plan, Host, Engage & Grow';
+  protected readonly subtitle =
+    'Bring your community together with powerful tools for hosting productive online and in-person events.';
+  protected readonly heroImage = 'images/hero-image.png';
 
-  protected readonly _icons = signal({
+  protected readonly icons = {
     mic: 'icons/microphone-icon.svg',
     video: 'icons/video-icon.svg',
     phone: 'icons/phone-icon.svg',
     mail: 'icons/message-icon.svg',
     settings: 'icons/collaboration-icon.svg',
-  });
+  };
 
-  protected _onCreateEvent(): void {
-    // Handle create event action
+  protected onCreateEvent(): void {
+    // TODO: handle create event action
   }
 
-  protected _onViewEvents(): void {
-    console.log('View events clicked');
+  protected onViewEvents(): void {
   }
 }

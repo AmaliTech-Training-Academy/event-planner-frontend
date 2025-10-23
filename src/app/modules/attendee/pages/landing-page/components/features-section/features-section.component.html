@@ -2,17 +2,20 @@
   <div class="features__container container">
     <div class="features__image-wrapper">
       <div class="features__image-container">
-        <img 
-          [src]="_dashboardImage()" 
-          alt="Event management dashboard with analytics" 
+        <img
+          [ngSrc]="dashboardImage()"
+          alt="Event management dashboard with analytics"
+          width="600"
+          height="400"
           class="features__image"
-          loading="lazy">
+          priority
+        />
       </div>
     </div>
 
     <div class="features__content">
-      <h2 class="features__title">{{ _title() }}</h2>
-      <p class="features__description">{{ _description() }}</p>
+      <h2 class="features__title">{{ title() }}</h2>
+      <p class="features__description">{{ description() }}</p>
     </div>
   </div>
 </section>
