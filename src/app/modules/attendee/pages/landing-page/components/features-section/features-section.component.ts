@@ -16,6 +16,6 @@ export class FeaturesSectionComponent {
     'EventUp is designed to be inclusive, by being able to use your own device to help hybrid-conference teams create, collaborate and celebrate together.'
   );
   protected readonly _dashboardImage = signal<string>(
-    'assets/images/card-img.png'
+    'images/card-img.png'
   );
 }

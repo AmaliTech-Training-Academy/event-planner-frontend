@@ -15,15 +15,14 @@ export class HeroSectionComponent {
   protected readonly _subtitle = signal(
     'Bring your community together with powerful tools for hosting productive online and in-person events.'
   );
-  protected readonly _heroImage = signal('assets/images/hero-image.png');
+  protected readonly _heroImage = signal('images/hero-image.png');
 
-  // 🎨 SVG icon paths
   protected readonly _icons = signal({
-    mic: 'assets/icons/microphone-icon.svg',
-    video: 'assets/icons/video-icon.svg',
-    phone: 'assets/icons/phone-icon.svg',
-    mail: 'assets/icons/message-icon.svg',
-    settings: 'assets/icons/collaboration-icon.svg',
+    mic: 'icons/microphone-icon.svg',
+    video: 'icons/video-icon.svg',
+    phone: 'icons/phone-icon.svg',
+    mail: 'icons/message-icon.svg',
+    settings: 'icons/collaboration-icon.svg',
   });
 
   protected _onCreateEvent(): void {

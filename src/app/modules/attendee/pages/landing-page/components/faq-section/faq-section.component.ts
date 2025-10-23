@@ -1,4 +1,3 @@
-// faq-section.component.ts
 import {
   Component,
   ChangeDetectionStrategy,
@@ -57,10 +56,6 @@ export class FaqSectionComponent {
     () => this._faqs().filter((faq) => faq.isOpen).length
   );
 
-  /**
-   * Toggles the open/closed state of an FAQ item
-   * @param id - The unique identifier of the FAQ item to toggle
-   */
   protected _toggleFaq(id: string): void {
     this._faqs.update((faqs) =>
       faqs.map((faq) => ({
@@ -70,12 +65,6 @@ export class FaqSectionComponent {
     );
   }
 
-  /**
-   * Track by function for performance optimization
-   * @param index - The index of the FAQ item
-   * @param item - The FAQ item
-   * @returns The unique identifier of the FAQ item
-   */
   protected _trackByFaqId(index: number, item: FaqItem): string {
     return item.id;
   }

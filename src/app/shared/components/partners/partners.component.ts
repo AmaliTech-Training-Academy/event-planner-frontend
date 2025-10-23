@@ -23,32 +23,31 @@ export class PartnersComponent {
   private readonly initialPartners: readonly Partner[] = [
     {
       name: 'Slack',
-      imageUrl: 'assets/images/slack-img.png',
+      imageUrl: 'images/slack-img.png',
     },
     {
       name: 'Netflix',
-      imageUrl: 'assets/images/netflix-img.png',
+      imageUrl: 'images/netflix-img.png',
     },
     {
       name: 'Google',
-      imageUrl: 'assets/images/google-img.png',
+      imageUrl: 'images/google-img.png',
     },
     {
       name: 'Airbnb',
-      imageUrl: 'assets/images/airbnb-img.png',
+      imageUrl: 'images/airbnb-img.png',
     },
     {
       name: 'UNICEF',
-      imageUrl: 'assets/images/unicef-img.png',
+      imageUrl: 'images/unicef-img.png',
     },
     {
       name: 'Adobe',
-      imageUrl: 'assets/images/adobe-img.png',
+      imageUrl: 'images/adobe-img.png',
     },
     {
       name: 'Microsoft',
-      imageUrl:
-        'assets/images/microsoft-img.png',
+      imageUrl: 'images/microsoft-img.png',
     },
   ];
 

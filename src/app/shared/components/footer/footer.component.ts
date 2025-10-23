@@ -46,19 +46,19 @@ export class FooterComponent {
       name: 'Twitter',
       title: 'Follow us on Twitter',
       url: 'https://twitter.com',
-      iconPath: 'assets/icons/twitter-icon.png',
+      iconPath: 'icons/twitter-icon.png',
     },
     {
       name: 'LinkedIn',
       title: 'Connect with us on LinkedIn',
       url: 'https://linkedin.com',
-      iconPath: 'assets/icons/linkedin-icon.png',
+      iconPath: 'icons/linkedin-icon.png',
     },
     {
       name: 'Instagram',
       title: 'Follow us on Instagram',
       url: 'https://instagram.com',
-      iconPath: 'assets/icons/instagram-icon.png',
+      iconPath: 'icons/instagram-icon.png',
     },
   ]);
 }

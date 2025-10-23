@@ -17,6 +17,6 @@ export class ConferenceSectionComponent {
     'Dedicated spaces that make it easy to come together.'
   );
   protected readonly _conferenceImage = signal<string>(
-    'assets/images/conference-img.png'
+    'images/conference-img.png'
   );
 }

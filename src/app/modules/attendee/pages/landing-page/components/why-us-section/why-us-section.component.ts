@@ -20,7 +20,7 @@ export class WhyUsSectionComponent {
     'Why should I use this platform over Zoom or Eventbrite?'
   );
   protected readonly _phoneImage = signal<string>(
-    'assets/images/phone-img.png'
+    'images/phone-img.png'
   );
 
   protected readonly _features = signal<readonly Feature[]>([

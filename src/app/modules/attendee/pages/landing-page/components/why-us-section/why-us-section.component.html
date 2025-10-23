@@ -3,15 +3,15 @@
     <div class="why-us__content">
       <span class="why-us__label">{{ _sectionLabel() }}</span>
       <h2 class="why-us__title">{{ _title() }}</h2>
-      
+
       <div class="why-us__features">
         @for (feature of _features(); track _trackByFeature($index, feature)) {
-          <div class="why-us__feature">
-            <div class="why-us__check-icon">
-            <img src="/assets/icons/check-mark.svg" alt="checkmark">
-            </div>
-            <span class="why-us__feature-text">{{ feature.text }}</span>
+        <div class="why-us__feature">
+          <div class="why-us__check-icon">
+            <img src="icons/check-mark.svg" alt="checkmark" />
           </div>
+          <span class="why-us__feature-text">{{ feature.text }}</span>
+        </div>
         }
       </div>
     </div>
@@ -20,11 +20,12 @@
       <div class="why-us__phone-container">
         <div class="why-us__phone-frame">
           <div class="why-us__phone-notch"></div>
-          <img 
-            [src]="_phoneImage()" 
-            alt="Mobile app interface" 
+          <img
+            [src]="_phoneImage()"
+            alt="Mobile app interface"
             class="why-us__phone-image"
-            loading="lazy">
+            loading="lazy"
+          />
         </div>
       </div>
     </div>
