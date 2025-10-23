@@ -12,28 +12,26 @@ import {
 interface NavLink {
   label: string;
   path: string;
-  icon: LucideIconData;
+  icon: string; 
 }
+
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  // Public properties for template binding
   public readonly navLinks = signal<NavLink[]>([
-    { label: 'Home', path: '/', icon: Home },
-    { label: 'Explore Events', path: '/events', icon: Menu },
-    { label: 'About Us', path: '/about', icon: Users },
+    { label: 'Home', path: '/', icon: 'icons/home-icon.png' },
+    { label: 'Explore Events', path: '/events', icon: 'assets/icons/menu.svg' },
+    { label: 'About Us', path: '/about', icon: 'assets/icons/users.svg' },
   ]);
 
   public readonly isMenuOpen = signal(false);
-  public readonly MenuIcon = Menu;
 
-  // Public methods
   public toggleMenu(): void {
     this.isMenuOpen.update((isOpen) => !isOpen);
   }
@@ -42,3 +40,4 @@ export class HeaderComponent {
     this.isMenuOpen.set(false);
   }
 }
+

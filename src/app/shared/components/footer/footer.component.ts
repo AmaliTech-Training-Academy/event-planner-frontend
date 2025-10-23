@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { LucideAngularModule } from 'lucide-angular';
 
 interface FooterLinkGroup {
   title: string;
@@ -18,7 +17,7 @@ interface SocialLink {
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, RouterLink, LucideAngularModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
 })

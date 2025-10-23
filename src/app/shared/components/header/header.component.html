@@ -15,7 +15,7 @@
         class="header__link"
         (click)="closeMenu()"
       >
-        <lucide-icon [img]="link.icon"></lucide-icon>
+        <img [src]="link.icon" alt="{{ link.label }} icon" class="header__icon"/>
         <span>{{ link.label }}</span>
       </a>
 
@@ -26,7 +26,7 @@
 
     <!-- Hamburger outside nav -->
     <button class="header__hamburger" (click)="toggleMenu()">
-      <lucide-icon [img]="MenuIcon"></lucide-icon>
+      <img src="assets/icons/menu.svg" alt="Menu" class="header__icon"/>
     </button>
   </div>
 </header>
