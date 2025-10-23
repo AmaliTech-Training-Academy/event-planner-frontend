@@ -403,3 +403,86 @@
         transform: translateX(22px);
     }
 }
+
+.set-price-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #FFFFFF;
+    gap: 24px;
+    width: 588px;
+    border-radius: 16px;
+    padding: 24px;
+
+    img.icon{
+        width:56px;
+        height:56px;
+    }
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        h3{
+            @include h-4;
+        }
+        p{
+            @include body-1;
+            color: $paragraph-text;
+        }
+        .alert-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+          
+            background-color: #FFFFEA;
+            border-radius: 8px;
+            padding: 6px 8px ;
+            img.icon{
+                width: 24px;
+                height: 24px;
+            }
+            p{
+                color: #756400;
+                @include body-1;
+            }
+        }
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        .price-selection-container {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            .radio-container {
+                display: flex;
+                flex-direction: row;
+                gap: 4px;
+                align-items: center;
+                label {
+                    @include body-1;
+                    color: $sub-header-dark;
+                }
+                input {
+                    width: 18px;
+                    height: 18px;
+                }
+            }
+        }
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            label {
+                @include label-1;
+                color: $header-dark;
+            }
+        }
+    }
+}

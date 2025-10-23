@@ -4,6 +4,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 import { EventDatePickerComponent } from "../../components/event-date-picker/event-date-picker.component";
 import { EventTimePickerComponent } from "../../components/event-time-picker/event-time-picker.component";
 import { EventTimeZonePickerComponent } from "../../components/event-time-zone-picker/event-time-zone-picker.component";
+import { ModalContainerComponent } from "../../../../shared/components/modal-container/modal-container.component";
 
 const EVENT_TYPE = {
   SINGLE_DAY: 'day',
@@ -16,7 +17,7 @@ const MEETING_TYPE = {
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, ModalContainerComponent],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
