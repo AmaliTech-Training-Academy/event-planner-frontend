@@ -1,8 +1,8 @@
 <div class="contianer">
-       <input type="text" [formControl]="control" hidden />
+    
     <app-create-event-date (clicked)="toggleState()" icon="icons/globe.svg"
-        title="Time Zone"></app-create-event-date>
+        [title]="selectedTimeZone?.gmt || 'Time Zone'"></app-create-event-date>
         @if (isOpen) {
-            <app-time-zone-picker></app-time-zone-picker>
+            <app-time-zone-picker (timeZoneSelected)="selectTimeZone($event)"></app-time-zone-picker>
         }
 </div>

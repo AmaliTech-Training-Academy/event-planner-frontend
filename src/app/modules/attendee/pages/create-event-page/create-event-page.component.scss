@@ -154,6 +154,7 @@
                         flex-direction: row;
                         align-items: center;
                         gap: $spacing-2;
+                        overflow-x: auto;
                         .preview {
                             width: 203px;
                             height: 112px;
@@ -337,6 +338,10 @@
                             gap: 10px;
                             @include body-1;
                             color: $sub-header-dark;
+
+                            button{
+                                background-color: transparent;
+                            }
                         }
 
                         &:last-child {

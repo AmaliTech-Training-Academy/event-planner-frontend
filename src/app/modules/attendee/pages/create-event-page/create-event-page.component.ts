@@ -16,20 +16,22 @@ const MEETING_TYPE = {
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent,ReactiveFormsModule,CommonModule],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
 export class CreateEventPageComponent implements OnInit {
   protected form: FormGroup;
   checked: boolean = false;
+  flyerPreview: string | null = null;
+
 
 
   constructor(private readonly fb: FormBuilder) {
     this.form = fb.group({
       eventType: [EVENT_TYPE.SINGLE_DAY, [Validators.required]],
       dates: this.fb.array([
-        
+
       ]),
       meetingType: [MEETING_TYPE.IN_PERSON, [Validators.required]],
       flyer: ['', Validators.required],
@@ -39,8 +41,10 @@ export class CreateEventPageComponent implements OnInit {
 
     })
     this.eventDates.push(this.createDateGroup())
-    
+    this.form.addControl('inPersonDetails', this.createInPersonDetailGroup());
+
   }
+
 
   ngOnInit(): void {
 
@@ -70,13 +74,47 @@ export class CreateEventPageComponent implements OnInit {
 
   }
 
+  onVenueImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files?.length) return;
+
+    const files = Array.from(input.files);
+
+    const currentImages = this.inPersonDetails.get('images')?.value || [];
+
+    const updatedImages = [...currentImages, ...files].slice(0, 5);
+
+    this.inPersonDetails.get('images')?.setValue(updatedImages);
+    this.inPersonDetails.get('images')?.markAsDirty();
+
+  }
+
+  onFlyerImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const file = input.files[0];
+
+    this.form.get('flyer')?.setValue(file);
+    this.form.get('flyer')?.markAsDirty();
+
+    this.flyerPreview = URL.createObjectURL(file);
+  }
+
   // protected get eventDates(): FormArray {
   //   return this.form.get('dates') as FormArray;
   // }
 
+
   get eventDates(): FormArray<FormGroup> {
-  return this.form.get('dates') as FormArray<FormGroup>;
-}
+    return this.form.get('dates') as FormArray<FormGroup>;
+  }
+
+  get inPersonDetails() {
+    return this.form.get('inPersonDetails') as FormGroup;
+  }
+
   protected get meetingType() {
     return this.form.get('meetingType')
   }
@@ -134,6 +172,13 @@ export class CreateEventPageComponent implements OnInit {
     return group.get(controlName) as FormControl;
   }
 
+
+  getImageSrc(image: any): string {
+    if (image instanceof File) {
+      return URL.createObjectURL(image);
+    }
+    return image;
+  }
 
 
   onToggle() {

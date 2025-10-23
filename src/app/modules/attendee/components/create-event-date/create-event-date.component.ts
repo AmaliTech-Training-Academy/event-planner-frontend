@@ -14,13 +14,8 @@ export class CreateEventDateComponent {
 
   @Input() icon: string = "";
   @Input() title: string = "";
-@Input() control!: FormControl;
   @Output() clicked = new EventEmitter<void>();
 
-
-  constructor(){
-    
-  }
 
   private selectedState: boolean = false;
 

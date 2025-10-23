@@ -19,7 +19,8 @@
                     <div class="row" [formGroupName]="$index">
                         <app-event-date-picker [control]="getDateControl(dateGroup, 'date')"></app-event-date-picker>
                         <app-event-time-picker [control]="getDateControl(dateGroup, 'time')"></app-event-time-picker>
-                        <app-event-time-zone-picker [control]="getDateControl(dateGroup, 'timeZone')"></app-event-time-zone-picker>
+                        <app-event-time-zone-picker
+                            [control]="getDateControl(dateGroup, 'timeZone')"></app-event-time-zone-picker>
                     </div>
                     }
                 </div>
@@ -38,24 +39,31 @@
                 </div>
             </div>
             @if (meetingType?.value === "in-person") {
-            <div class="in-person-details">
+            <div class="in-person-details" formGroupName="inPersonDetails">
                 <div class="field">
                     <label for="event-location">Add event location</label>
                     <div class="input-container">
                         <img src="icons/pin.svg" alt="" srcset="">
-                        <input type="text" name="location" id="event-location" placeholder="Type location here">
+                        <input type="text" formControlName="location" name="location" id="event-location"
+                            placeholder="Type location here">
                     </div>
                 </div>
                 <div class="field">
                     <label for="description">Add event description</label>
-                    <textarea name="description" id="description" placeholder="Type description here"></textarea>
+                    <textarea name="description" formControlName="description" id="description"
+                        placeholder="Type description here"></textarea>
                 </div>
                 <div class="upload-continer">
                     <div class="image-container">
                         <p>Upload up to 5 images of venue</p>
                         <div class="preview-container">
-                            <img src="images/event-location.png" alt="" class="preview">
-                            <button type="button">
+                            @for (image of inPersonDetails.get('images')?.value; track $index) {
+                            <img [src]="getImageSrc(image)" alt="" class="preview" />
+                            }
+                            <input #venueFileInput type="file" accept="image/*" (change)="onVenueImageSelected($event)"
+                                multiple hidden />
+                            <button type="button" (click)="venueFileInput.click()"
+                                [disabled]="inPersonDetails.get('images')?.value?.length >= 5">
                                 <img src="icons/add.svg" alt="" class="preview">
                             </button>
                         </div>
@@ -68,7 +76,7 @@
             </div>
             }
             @if (meetingType?.value === "virtual") {
-            <div class="virtual-details">
+            <div class="virtual-details" formGroupName="virtualDetails">
                 <p>Choose Virtual Option</p>
                 <button type="button">
                     <img src="icons/cam_corder.svg" />
@@ -85,18 +93,20 @@
     <div class="right-panel">
         <div class="flyer-container">
             <div class="flyer-preview">
-                <img src="images/flyer.jpg" alt="" class="preview">
+                <img [src]="flyerPreview || 'images/flyer.jpg'" alt="" class="flyer-preview">
 
                 <button type="button">
                     <img src="icons/image.svg" alt="" class="preview">
                 </button>
             </div>
             <div class="change-flyer-container">
+                <input #flyerFileInput type="file" accept="image/*" (change)="onFlyerImageSelected($event)" hidden>
+
                 <div class="info">
                     <h5>Upload event flyer</h5>
                     <p>Accepted formats: PDF, JPG, PNG (max 10MB)</p>
                 </div>
-                <button type="button">Change the picture</button>
+                <button (click)="flyerFileInput.click()" type="button">Change the picture</button>
             </div>
         </div>
         <div class="event-options-container">
@@ -110,7 +120,9 @@
                         </div>
                         <div class="right">
                             <p>$50</p>
-                            <img src="icons/pencil.svg" alt="" class="preview">
+                            <button>
+                                <img src="icons/pencil.svg" alt="" class="preview">
+                            </button>
                         </div>
                     </li>
                     <li class="item">
@@ -132,7 +144,9 @@
                         </div>
                         <div class="right">
                             <p>Unlimited</p>
-                            <img src="icons/pencil.svg" alt="" class="preview">
+                            <button>
+                                <img src="icons/pencil.svg" alt="" class="preview">
+                            </button>
                         </div>
                     </li>
                     <li class="item">

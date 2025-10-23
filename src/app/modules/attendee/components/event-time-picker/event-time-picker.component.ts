@@ -1,9 +1,8 @@
-import { Component, ElementRef, HostListener, Input } from '@angular/core';
-import { CreateEventDateComponent } from "../create-event-date/create-event-date.component";
-import { DatePickerComponent } from "../../../../shared/components/date-picker/date-picker.component";
-import { TimePickerComponent } from "../../../../shared/components/time-picker/time-picker.component";
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { TimePickerComponent } from "../../../../shared/components/time-picker/time-picker.component";
+import { CreateEventDateComponent } from "../create-event-date/create-event-date.component";
 
 @Component({
   selector: 'app-event-time-picker',
@@ -12,13 +11,24 @@ import { CommonModule } from '@angular/common';
   styleUrl: './event-time-picker.component.scss'
 })
 export class EventTimePickerComponent {
+  @Input({ required: false }) control?: FormControl;
   protected isOpen: boolean = false;
-  @Input({ required: true }) control!: FormControl;
+  protected selectedTime: string = "";
 
   constructor(private readonly elementRef: ElementRef) { }
 
   protected toggleState() {
     this.isOpen = !this.isOpen;
+  }
+
+  protected selectTime(time: string) {
+    this.selectedTime = time;
+    if (this.control) {
+      this.control.setValue(time);
+      this.control.markAsDirty();
+    }
+
+    this.toggleState();
   }
 
   @HostListener('document:click', ['$event'])
