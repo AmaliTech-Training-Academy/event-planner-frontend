@@ -1,4 +1,5 @@
 <div class="contianer">
+    <input type="text" [formControl]="control" hidden />
     <app-create-event-date (clicked)="toggleState()" icon="icons/clock.svg"
         title="Time"></app-create-event-date>
         @if (isOpen) {

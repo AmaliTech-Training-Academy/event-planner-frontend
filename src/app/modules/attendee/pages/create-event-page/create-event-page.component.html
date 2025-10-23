@@ -17,9 +17,9 @@
                 <div class="date-container" formArrayName="dates">
                     @for (dateGroup of eventDates.controls; track $index) {
                     <div class="row" [formGroupName]="$index">
-                        <app-event-date-picker></app-event-date-picker>
-                        <app-event-time-picker></app-event-time-picker>
-                        <app-event-time-zone-picker></app-event-time-zone-picker>
+                        <app-event-date-picker [control]="getDateControl(dateGroup, 'date')"></app-event-date-picker>
+                        <app-event-time-picker [control]="getDateControl(dateGroup, 'time')"></app-event-time-picker>
+                        <app-event-time-zone-picker [control]="getDateControl(dateGroup, 'timeZone')"></app-event-time-zone-picker>
                     </div>
                     }
                 </div>
@@ -38,47 +38,47 @@
                 </div>
             </div>
             @if (meetingType?.value === "in-person") {
-                <div class="in-person-details">
-                    <div class="field">
-                        <label for="event-location">Add event location</label>
-                        <div class="input-container">
-                            <img src="icons/pin.svg" alt="" srcset="">
-                            <input type="text" name="location" id="event-location" placeholder="Type location here">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label for="description">Add event description</label>
-                        <textarea name="description" id="description" placeholder="Type description here"></textarea>
-                    </div>
-                    <div class="upload-continer">
-                        <div class="image-container">
-                            <p>Upload up to 5 images of venue</p>
-                            <div class="preview-container">
-                                <img src="images/event-location.png" alt="" class="preview">
-                                <button type="button">
-                                    <img src="icons/add.svg" alt="" class="preview">
-                                </button>
-                            </div>
-                        </div>
-                        <button type="button">
-                            <p>Define venue section</p>
-                            <img src="icons/arrow-right.svg" />
-                        </button>
+            <div class="in-person-details">
+                <div class="field">
+                    <label for="event-location">Add event location</label>
+                    <div class="input-container">
+                        <img src="icons/pin.svg" alt="" srcset="">
+                        <input type="text" name="location" id="event-location" placeholder="Type location here">
                     </div>
                 </div>
+                <div class="field">
+                    <label for="description">Add event description</label>
+                    <textarea name="description" id="description" placeholder="Type description here"></textarea>
+                </div>
+                <div class="upload-continer">
+                    <div class="image-container">
+                        <p>Upload up to 5 images of venue</p>
+                        <div class="preview-container">
+                            <img src="images/event-location.png" alt="" class="preview">
+                            <button type="button">
+                                <img src="icons/add.svg" alt="" class="preview">
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button">
+                        <p>Define venue section</p>
+                        <img src="icons/arrow-right.svg" />
+                    </button>
+                </div>
+            </div>
             }
             @if (meetingType?.value === "virtual") {
-                <div class="virtual-details">
-                    <p>Choose Virtual Option</p>
-                    <button type="button">
-                        <img src="icons/cam_corder.svg" />
-                        <p>Create Zoom Meeting</p>
-                    </button>
-                    <button type="button">
-                        <img src="icons/cam_corder.svg" />
-                        <p>Use Existing Meeting</p>
-                    </button>
-                </div>
+            <div class="virtual-details">
+                <p>Choose Virtual Option</p>
+                <button type="button">
+                    <img src="icons/cam_corder.svg" />
+                    <p>Create Zoom Meeting</p>
+                </button>
+                <button type="button">
+                    <img src="icons/cam_corder.svg" />
+                    <p>Use Existing Meeting</p>
+                </button>
+            </div>
             }
         </div>
     </div>
@@ -102,8 +102,8 @@
         <div class="event-options-container">
             <div class="options-container">
                 <h3>Event Options</h3>
-                <div class="options">
-                    <div class="item">
+                <ul class="options">
+                    <li class="item">
                         <div class="left">
                             <img src="icons/ticket.svg" alt="" class="preview">
                             <p>Tickets</p>
@@ -112,8 +112,8 @@
                             <p>$50</p>
                             <img src="icons/pencil.svg" alt="" class="preview">
                         </div>
-                    </div>
-                    <div class="item">
+                    </li>
+                    <li class="item">
                         <div class="left">
                             <img src="icons/add-user.svg" alt="" class="preview">
                             <p>Require Approval</p>
@@ -124,18 +124,27 @@
                                 <span class="slider"></span>
                             </label>
                         </div>
-                    </div>
-                    <div class="item">
+                    </li>
+                    <li class="item">
                         <div class="left">
-                            <img src="icons/add-user.svg" alt="" class="preview">
+                            <img src="icons/trend-up.svg" alt="" class="preview">
                             <p>Capacity</p>
                         </div>
                         <div class="right">
                             <p>Unlimited</p>
                             <img src="icons/pencil.svg" alt="" class="preview">
                         </div>
-                    </div>
-                </div>
+                    </li>
+                    <li class="item">
+                        <div class="left">
+                            <img src="icons/user-circle.svg" alt="" class="preview">
+                            <p>Manage user roles</p>
+                        </div>
+                        <div class="right">
+                            <img src="icons/chevron-right.svg" alt="" class="preview">
+                        </div>
+                    </li>
+                </ul>
             </div>
             <button type="button" class="primary">
                 Create event

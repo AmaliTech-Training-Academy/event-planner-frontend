@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventDatePickerComponent } from "../../components/event-date-picker/event-date-picker.component";
 import { EventTimePickerComponent } from "../../components/event-time-picker/event-time-picker.component";
 import { EventTimeZonePickerComponent } from "../../components/event-time-zone-picker/event-time-zone-picker.component";
@@ -70,9 +70,13 @@ export class CreateEventPageComponent implements OnInit {
 
   }
 
-  protected get eventDates(): FormArray {
-    return this.form.get('dates') as FormArray;
-  }
+  // protected get eventDates(): FormArray {
+  //   return this.form.get('dates') as FormArray;
+  // }
+
+  get eventDates(): FormArray<FormGroup> {
+  return this.form.get('dates') as FormArray<FormGroup>;
+}
   protected get meetingType() {
     return this.form.get('meetingType')
   }
@@ -124,6 +128,10 @@ export class CreateEventPageComponent implements OnInit {
 
   removeDateGroup(index: number): void {
     this.eventDates.removeAt(index);
+  }
+
+  getDateControl(group: FormGroup, controlName: string): FormControl {
+    return group.get(controlName) as FormControl;
   }
 
 

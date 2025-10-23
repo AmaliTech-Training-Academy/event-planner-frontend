@@ -1,7 +1,8 @@
 <div class="contianer">
-    <app-create-event-date (clicked)="toggleState()" icon="icons/event_note.svg"
+        <input type="text" [formControl]="control" hidden />
+    <app-create-event-date [control]="control" (clicked)="toggleState()" icon="icons/event_note.svg"
         title="Date"></app-create-event-date>
         @if (isOpen) {
-            <app-date-picker></app-date-picker>
+            <app-date-picker (dateSelected)="selectedDate($event)" ></app-date-picker>
         }
 </div>
