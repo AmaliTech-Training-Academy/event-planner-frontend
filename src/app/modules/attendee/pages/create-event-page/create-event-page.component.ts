@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ModalContainerComponent } from "../../../../shared/components/modal-container/modal-container.component";
+import { ButtonComponent } from "../../../../shared/ui/button/button.component";
+import { InputComponent } from "../../../../shared/ui/input/input.component";
 import { EventDatePickerComponent } from "../../components/event-date-picker/event-date-picker.component";
 import { EventTimePickerComponent } from "../../components/event-time-picker/event-time-picker.component";
 import { EventTimeZonePickerComponent } from "../../components/event-time-zone-picker/event-time-zone-picker.component";
-import { ModalContainerComponent } from "../../../../shared/components/modal-container/modal-container.component";
-import { InputComponent } from "../../../../shared/ui/input/input.component";
-import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 
 const EVENT_TYPE = {
   SINGLE_DAY: 'day',
@@ -27,7 +27,8 @@ export class CreateEventPageComponent implements OnInit {
   protected form: FormGroup;
   protected checked: boolean = false;
   protected flyerPreview: string | null = null;
-  protected showPriceModal:boolean = false;
+  protected showPriceModal: boolean = false;
+  protected showCapacityModal: boolean = false;
 
 
   constructor(private readonly fb: FormBuilder) {
@@ -183,8 +184,11 @@ export class CreateEventPageComponent implements OnInit {
     return image;
   }
 
-  protected togglePriceModal(){
+  protected togglePriceModal() {
     this.showPriceModal = !this.showPriceModal;
+  }
+  protected toggleCapacityModal() {
+    this.showCapacityModal = !this.showCapacityModal;
   }
 
   onToggle() {

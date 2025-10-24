@@ -527,8 +527,58 @@
                 border: 1px solid $general-stroke-light;
             }
         }
-        app-button{
+
+        app-button {
             width: 100%;
         }
     }
+}
+
+.set-capacity-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #FFFFFF;
+    width: 588px;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+
+    .content{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        img.icon {
+            width: 56px;
+            height: 56px;
+        }
+
+        .info{
+            display: flex;
+        flex-direction: column;
+        gap: 8px;
+            h3{
+                @include h-3;
+                color: $header-dark;
+            }
+
+            p{
+                @include body-1;
+                color: $paragraph-text;
+            }
+        }
+    }
+
+    .actions{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+        gap: 24px;
+        app-button{
+            flex:1;
+        }
+    }
+
 }
