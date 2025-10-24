@@ -15,6 +15,7 @@ import { CheckboxComponent } from '../../../../shared/ui/checkbox/checkbox.compo
 import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
 import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
 import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
 // Import reusable UI components
 
@@ -41,17 +42,14 @@ interface LoginForm {
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
-  public form: FormGroup<LoginForm>;
-  public isPasswordHidden = signal(true);
-  public isSubmitted = signal(false);
+  protected form: FormGroup<LoginForm>;
+  protected isPasswordHidden = signal(true);
+  protected hasAttemptedSubmit = signal(false);
+
+  protected readonly APP_ROUTES = APP_ROUTES;
 
   constructor(private readonly fb: FormBuilder) {
     this.form = this.createForm();
-
-    effect(() => {
-      const submitted = this.isSubmitted();
-      const hidden = this.isPasswordHidden();
-    });
   }
 
   private createForm(): FormGroup<LoginForm> {
@@ -67,7 +65,7 @@ export class LoginPageComponent {
 
   public hasFieldError(fieldName: keyof LoginForm): boolean {
     const field = this.form.get(fieldName);
-    return !!(field?.invalid && (field.touched || this.isSubmitted()));
+    return !!(field?.invalid && (field.touched || this.hasAttemptedSubmit()));
   }
 
   public getFieldErrorMessage(fieldName: keyof LoginForm): string {
@@ -90,7 +88,7 @@ export class LoginPageComponent {
   }
 
   public handleSubmit(): void {
-    this.isSubmitted.set(true);
+    this.hasAttemptedSubmit.set(true);
     this.form.markAllAsTouched();
 
     if (this.form.valid) {

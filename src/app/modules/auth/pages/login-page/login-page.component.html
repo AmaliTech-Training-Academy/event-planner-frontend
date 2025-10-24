@@ -59,7 +59,11 @@
 
     <p class="signup-text">
       Don't have an account?
-      <a routerLink="/auth/signup">Sign Up</a>
+      <a [routerLink]="APP_ROUTES.SIGNUP">Sign Up</a>
     </p>
+
+    <a class="forgot-link" [routerLink]="APP_ROUTES.FORGOT_PASSWORD">
+      Forgot password?
+    </a>
   </div>
 </div>
