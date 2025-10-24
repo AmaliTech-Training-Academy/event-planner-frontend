@@ -34,10 +34,12 @@
 }
 
   </div>
-    <app-form-error
-      *ngIf="hasError()"
-      [message]="errorMessage()"
-      [showIcon]="true"
-      id="{{ label() + '-error' }}"
-    ></app-form-error>
+ @if (hasError()) {
+  <app-form-error
+    [message]="errorMessage()"
+    [showIcon]="true"
+    id="{{ label() + '-error' }}"
+  ></app-form-error>
+}
+
 </div>
