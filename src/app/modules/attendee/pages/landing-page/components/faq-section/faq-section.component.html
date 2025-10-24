@@ -1,0 +1,31 @@
+<section class="faq">
+  <div class="faq__container">
+    <div class="faq__header">
+      <h2 class="faq__title">{{ title }}</h2>
+      <p class="faq__subtitle">{{ subtitle }}</p>
+    </div>
+
+    <div class="faq__list">
+      @for (item of faqs(); track trackByFaqId($index, item)) {
+      <div class="faq__item" [class.faq__item--open]="item.isOpen">
+        <button
+          class="faq__question"
+          (click)="toggleFaq(item.id)"
+          type="button"
+          [attr.aria-expanded]="item.isOpen"
+          [attr.aria-controls]="'faq-answer-' + item.id"
+        >
+          <span>{{ item.question }}</span>
+          <img src="icons/add-icon.png" alt="add icon" class="faq__icon" />
+        </button>
+
+        @if (item.isOpen) {
+        <div class="faq__answer" [id]="'faq-answer-' + item.id" role="region">
+          <p>{{ item.answer }}</p>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+</section>
