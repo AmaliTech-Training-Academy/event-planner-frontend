@@ -4,9 +4,7 @@ import {
   input,
   signal,
   OnChanges,
-  SimpleChanges,
 } from '@angular/core';
-
 @Component({
   selector: 'app-form-error',
   standalone: true,
@@ -17,9 +15,9 @@ import {
 export class FormErrorComponent implements OnChanges {
   public message = input<string>('');
   public showIcon = input<boolean>(true);
-  public visible = signal<boolean>(false);
+  protected visible = signal<boolean>(false);
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.visible.set(!!this.message());
   }
 }

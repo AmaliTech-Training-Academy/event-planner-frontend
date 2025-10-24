@@ -7,11 +7,12 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormErrorComponent } from "../form-error/form-error.component";
+import { ButtonComponent } from "../button/button.component";
 
 @Component({
   selector: 'app-input',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorComponent, ButtonComponent],
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
   providers: [

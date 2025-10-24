@@ -19,14 +19,20 @@
       [class.error]="hasError()"
     />
 
-    @if (type() === 'password') {
-      <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
-        <img
-          [src]="showPassword() ? 'icons/eye-closed.svg' : 'icons/eye-open.svg'"
-          alt="Toggle Password"
-        />
-      </button>
-    }
+  @if (type() === 'password') {
+  <app-button
+    type="primary"
+    buttonType="button"
+    class="toggle-btn"
+    (click)="togglePasswordVisibility()"
+  >
+    <img
+      [src]="showPassword() ? 'icons/eye-closed.svg' : 'icons/eye-open.svg'"
+      alt="Toggle Password"
+    />
+  </app-button>
+}
+
   </div>
     <app-form-error
       *ngIf="hasError()"
