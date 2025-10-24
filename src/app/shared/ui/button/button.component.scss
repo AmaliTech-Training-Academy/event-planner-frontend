@@ -1,0 +1,57 @@
+@use 'typography' as *;
+@use 'colors' as *;
+@use 'variables' as *;
+
+button {
+  width: 100%;
+  padding: $spacing-3 $spacing-6;
+  border: none;
+  border-radius: $radius-3;
+  font-family: $font-lato;
+  font-weight: 600;
+  height: 44px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &.primary {
+    background-color: $orange-700;
+    color: $gray-50;
+
+    &:hover:not(:disabled) {
+      background-color: $orange-600;
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+  }
+
+  &.secondary {
+    background-color: $blue-500;
+    color: $gray-50;
+
+    &:hover:not(:disabled) {
+      background-color: $blue-400;
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
+  }
+  &.social{
+    background: transparent;
+    border: 1.5px solid $gray-400;
+  }
+}
