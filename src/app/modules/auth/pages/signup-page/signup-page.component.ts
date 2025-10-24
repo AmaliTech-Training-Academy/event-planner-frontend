@@ -44,6 +44,7 @@ export class SignupPageComponent {
   }
 
   protected onSubmit(): void {
+   
     if (this.signupForm.valid) {
       this.loading = true;
       const { fullName, email, password, confirmPassword } = this.signupForm.value;

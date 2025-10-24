@@ -8,30 +8,40 @@
         </div>
         <div class="form-container">
             <form [formGroup]="signupForm" method="post">
-                <app-input [errorMessage]="getErrorMessage(formTypes.FULL_NAME)" iconSrc="icons/user.png" type="text" [formControlName]="formTypes.FULL_NAME" placeholder="E.g., John Doe"></app-input>
-                <app-input [errorMessage]="getErrorMessage(formTypes.EMAIL)" iconSrc="icons/mail.png" type="email" [formControlName]="formTypes.EMAIL" placeholder="user@gmail.com"></app-input>
+                <app-input label="Full name" [required]="true" [errorMessage]="getErrorMessage(formTypes.FULL_NAME)" iconSrc="icons/user.png" type="text"
+                    [formControlName]="formTypes.FULL_NAME" placeholder="E.g., John Doe"></app-input>
+                <app-input label="Email Address" [required]="true" [errorMessage]="getErrorMessage(formTypes.EMAIL)" iconSrc="icons/mail.png" type="email"
+                    [formControlName]="formTypes.EMAIL" placeholder="user@gmail.com"></app-input>
 
                 <div class="row">
-                <app-input [errorMessage]="getErrorMessage(formTypes.PASSWORD)" iconSrc="icons/lock.png" type="password" [formControlName]="formTypes.PASSWORD" placeholder="********"></app-input>
-                <app-input [errorMessage]="getErrorMessage(formTypes.CONFIRM_PASSWORD)" iconSrc="icons/lock.png" type="password" [formControlName]="formTypes.CONFIRM_PASSWORD" placeholder="********"></app-input>
+                    <app-input label="Password" [required]="true" [errorMessage]="getErrorMessage(formTypes.PASSWORD)" iconSrc="icons/lock.png"
+                        type="password" [formControlName]="formTypes.PASSWORD" placeholder="********"></app-input>
+                    <app-input label="Confirm Password" [required]="true" [errorMessage]="getErrorMessage(formTypes.CONFIRM_PASSWORD)" iconSrc="icons/lock.png"
+                        type="password" [formControlName]="formTypes.CONFIRM_PASSWORD"
+                        placeholder="********"></app-input>
                 </div>
             </form>
             <div class="action-container">
-                <app-button type="primary">
+            
+                <app-button [disabled]="loading || signupForm.invalid" (onClick)="onSubmit()" type="primary">
                     Create Account
                 </app-button>
-                <!-- <button [disabled]="signupForm.invalid" (click)="onSubmit()" class="create-account">
-                    Create Account
-                </button> -->
+                
                 <div class="divider">
                     <hr>
                     <span>Or Sign Up with</span>
                     <hr>
                 </div>
                 <div class="socials-login">
-                    <button class="google"><img src="icons/google.svg" alt="google icon"></button>
-                    <button class="apple"><img src="icons/apple.svg" alt="apple icon"></button>
-                    <button class="facebook"><img src="icons/facebook.svg" alt="facebook icon"></button>
+                    <app-button type="social">
+                        <img src="icons/google.svg" alt="google icon">
+                    </app-button>
+                    <app-button type="social">
+                        <img src="icons/apple.svg" alt="google icon">
+                    </app-button>
+                    <app-button type="social">
+                        <img src="icons/facebook.svg" alt="google icon">
+                    </app-button>
                 </div>
 
                 <div class="secure-info">
@@ -42,7 +52,8 @@
                     <p>This is a secure, encrypted connection</p>
                 </div>
 
-                <p class="already-signin">Already have an account? <a [routerLink]="getLoginRoute" class="signin-cta">Sign
+                <p class="already-signin">Already have an account? <a [routerLink]="getLoginRoute"
+                        class="signin-cta">Sign
                         In</a></p>
 
             </div>

@@ -3,6 +3,7 @@
   [class.social]="type() === 'social'"
   [class.full-width]="fullWidth()"
   [disabled]="disabled()"
+  (click)="handleClick()"
 >
   <ng-content></ng-content>
 </button>
