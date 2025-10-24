@@ -17,9 +17,12 @@
                 </div>
             </form>
             <div class="action-container">
-                <button [disabled]="signupForm.invalid" (click)="onSubmit()" class="create-account">
+                <app-button type="primary">
                     Create Account
-                </button>
+                </app-button>
+                <!-- <button [disabled]="signupForm.invalid" (click)="onSubmit()" class="create-account">
+                    Create Account
+                </button> -->
                 <div class="divider">
                     <hr>
                     <span>Or Sign Up with</span>

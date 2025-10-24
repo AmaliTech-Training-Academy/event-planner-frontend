@@ -3,24 +3,18 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { finalize } from 'rxjs';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
 import { LogoComponent } from "../../components/logo/logo.component";
-import { ButtonComponent } from "../../../../shared/ui/button/button.component";
-import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-
-
-const FORM_TYPE = {
-  EMAIL: "email",
-  FULL_NAME: 'fullName',
-  PASSWORD: 'password',
-  CONFIRM_PASSWORD: "confirmPassword"
-} as const;
+import { FORM_TYPE } from '../../constants/signup.constants';
+import { InputComponent } from '../../../../shared/ui/input/input.component';
 
 
 @Component({
   selector: 'app-signup-page',
-  imports: [CommonModule, ReactiveFormsModule, LogoComponent, RouterModule, ButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, LogoComponent, RouterModule, ButtonComponent,InputComponent],
   templateUrl: './signup-page.component.html',
   styleUrl: './signup-page.component.scss'
 })
