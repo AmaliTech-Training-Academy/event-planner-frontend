@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_ENDPOINTS } from '../../constants/api-endpoints.constants';
 import { User } from '../../models/user.model';
+import { AuthResponseBody, OtpBodyData, RegisterBodyData } from '../../models/auth-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +16,10 @@ export class AuthBackendService {
   }
 
   public register(fullName: string, email: string, password: string, confirmPassword: string) {
-    return this.http.post(API_ENDPOINTS.AUTH_REGISTER, { fullName, email, password, confirmPassword })
+    return this.http.post<AuthResponseBody<RegisterBodyData>>(API_ENDPOINTS.AUTH_REGISTER, { fullName, email, password, confirmPassword })
   }
   public verifyEmail(otp: string, email: string) {
-    return this.http.post<{ access_token: string, refresh_token: string }>(API_ENDPOINTS.AUTH_VERIFY_OTP, { otp, email })
+    return this.http.post<AuthResponseBody<OtpBodyData>>(API_ENDPOINTS.AUTH_VERIFY_OTP, { otp, email })
   }
 
   public logout() {

@@ -10,8 +10,6 @@ export class AuthService {
 
     private _loggedIn$ = new BehaviorSubject<boolean>(false);
     private _userInfo$ = new BehaviorSubject<User | null>(null);
-    private _access_token: string | null = null
-    private _refresh_token: string | null = null
 
     constructor(private readonly authBackend: AuthBackendService, private readonly router: Router) { }
 
@@ -34,7 +32,7 @@ export class AuthService {
         return this.authBackend.register(fullName, email, password, confirmPassword)
             .pipe(
                 tap(() => {
-                    this.router.navigate([APP_ROUTES.VERIFY_EMAIL], {
+                    this.router.navigate([APP_ROUTES.LOGIN], {
                         queryParams: { email },
                     });
                 }), catchError(err => {
@@ -49,8 +47,6 @@ export class AuthService {
         return this.authBackend.verifyEmail(otp, email)
             .pipe(
                 tap((response) => {
-                    this._access_token = response.access_token;
-                    this._refresh_token = response.refresh_token;
                     this._loggedIn$.next(true);
                     this.router.navigate([APP_ROUTES.LANDING_PAGE]);
                 }),
@@ -67,8 +63,6 @@ export class AuthService {
                 tap(() => {
                     this._loggedIn$.next(false);
                     this._userInfo$.next(null);
-                    this._access_token = null;
-                    this._refresh_token = null;
                     this.router.navigate([APP_ROUTES.LOGIN]);
                 }),
                 catchError(err => {
@@ -98,14 +92,6 @@ export class AuthService {
 
     public currentUser(): User | null {
         return this._userInfo$.getValue()
-    }
-
-    public getAccessToken() {
-        return this._access_token;
-    }
-
-    public getRefreshToken() {
-        return this._refresh_token;
     }
 
 }
