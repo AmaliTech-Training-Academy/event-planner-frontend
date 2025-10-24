@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LogoComponent } from "../../components/logo/logo.component";
 import { RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
+import { AuthService } from '../../../../core/services/auth.service';
 import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
+import { LogoComponent } from "../../components/logo/logo.component";
 
 @Component({
   selector: 'app-signup-page',
@@ -12,18 +14,19 @@ import { passwordMatchValidator } from '../../../../shared/validators/password-m
   styleUrl: './signup-page.component.scss'
 })
 export class SignupPageComponent {
-  
+
   protected signupForm: FormGroup;
   protected showPassword: boolean = false;
   protected showConfirmPassword: boolean = false;
+  protected loading: boolean = false;
 
-  constructor(private readonly fb: FormBuilder) {
+  constructor(private readonly fb: FormBuilder, private readonly authService: AuthService) {
     this.signupForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
-    }, {  validators: passwordMatchValidator('password', 'confirmPassword'), });
+    }, { validators: passwordMatchValidator('password', 'confirmPassword'), });
   }
 
   protected toggleShowPassword(): void {
@@ -36,7 +39,10 @@ export class SignupPageComponent {
 
   protected onSubmit(): void {
     if (this.signupForm.valid) {
-      // signup service implimentation here
+      this.loading = true;
+      const { fullName, email, password, confirmPassword } = this.signupForm.value;
+      this.authService.register(fullName, email, password, confirmPassword)
+        .pipe(finalize(() => this.loading = false)).subscribe()
     } else {
       this.signupForm?.markAllAsTouched();
     }

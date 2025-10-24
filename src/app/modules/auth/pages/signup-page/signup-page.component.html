@@ -8,6 +8,7 @@
         </div>
         <div class="form-container">
             <form [formGroup]="signupForm" method="post">
+                <!-- <app-input iconSrc="icons/user.png" type="text" formControlName="fullName" placeholder="E.g., John Doe"></app-input> -->
                 <div class="field">
                     <label for="fullname">Full name<span>*</span></label>
                     <div class="input-container">
@@ -31,6 +32,8 @@
                     </div>
                     }
                 </div>
+                <!-- <app-input errorMessage="" iconSrc="icons/mail.png" type="email" formControlName="email" placeholder="user@gmail.com"></app-input> -->
+
                 <div class="field">
                     <label for="email">Email Address<span>*</span></label>
                     <div class="input-container">
@@ -51,8 +54,9 @@
                     </div>
                     }
                 </div>
-
                 <div class="row">
+                <!-- <app-input iconSrc="icons/lock.png" type="password" formControlName="password" placeholder="********"></app-input> -->
+
                     <div class="field">
                         <label for="password">Password<span>*</span></label>
                         <div class="input-container">
@@ -83,6 +87,8 @@
                         </div>
                         }
                     </div>
+                <!-- <app-input iconSrc="icons/lock.png" type="password" formControlName="confirmPassword" placeholder="********"></app-input> -->
+                    
                     <div class="field">
                         <label for="confirm-password">Confirm Password<span>*</span></label>
                         <div class="input-container">
@@ -115,7 +121,7 @@
                 </div>
             </form>
             <div class="action-container">
-                <button [disabled]="signupForm.invalid" (click)="toggleShowConfirmPassword()" class="create-account">
+                <button [disabled]="signupForm.invalid" (click)="onSubmit()" class="create-account">
                     Create Account
                 </button>
                 <div class="divider">
