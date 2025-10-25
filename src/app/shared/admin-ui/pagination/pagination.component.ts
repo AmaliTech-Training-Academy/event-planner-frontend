@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, output, computed, model } from '@angular/core';
+import { ButtonComponent } from "../../ui/button/button.component";
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss'],
 })

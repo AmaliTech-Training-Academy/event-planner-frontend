@@ -10,15 +10,16 @@
           alt="Search icon"
           class="data-table__search-icon"
         />
-        <app-input
-          placeholder="Search users..."
-          [value]="searchQuery()"
-          (valueChange)="updateSearch($event)"
-          iconSrc="assets/icons/search.svg"
-        />
+    <app-input
+  class="md"
+  placeholder="Search users..."
+  [value]="searchQuery()"
+  (valueChange)="updateSearch($event)"
+  iconSrc="icons/search-icon.png"
+/>
+
       </div>
       }
-
       <!-- Reusable Filter Select -->
       @for (filter of filters(); track filter.key) {
       <app-filter-select

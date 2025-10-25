@@ -22,12 +22,14 @@
   &__controls {
     display: flex;
     gap: $spacing-3;
-    align-items: center;
+    line-height: 48px;
+    flex: 0 0  70%;
 }
 
   &__search-box {
     position: relative;
-    flex: 0 0 25%;
+    flex: 0 0 30%;
+
   }
 
   &__search-input {

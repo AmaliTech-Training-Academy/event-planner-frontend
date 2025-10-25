@@ -29,6 +29,7 @@
       border-radius: $radius-3;
       font-family: $font-lato;
       transition: all 0.2s ease;
+      height: 48px;
 
       &:focus {
         border-color: $orange-500;
@@ -56,6 +57,24 @@
       border: none;
       background: none;
       cursor: pointer;
+    }
+
+    /* ✅ Optional size modifiers (non-breaking) */
+    &.sm input {
+      padding: $spacing-2 $spacing-3;
+      font-size: 0.875rem; // slightly smaller
+      height: 32px;
+    }
+
+    &.md input {
+      height: 48px;
+      padding-left: 2rem;
+    }
+
+    &.lg input {
+      padding: $spacing-4 $spacing-5;
+      font-size: 1rem;
+      height: 48px;
     }
   }
 

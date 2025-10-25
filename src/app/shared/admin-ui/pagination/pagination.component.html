@@ -4,40 +4,41 @@
   </div>
 
   <div class="pagination__controls">
-    <button
-      class="pagination__button pagination__button--nav"
+    <!-- Prev button -->
+    <app-button
+      type="social"
       [disabled]="currentPage() === 1"
-      [attr.aria-disabled]="currentPage() === 1"
       (click)="goToPage(currentPage() - 1)"
       aria-label="Previous page"
     >
       Prev
-    </button>
+    </app-button>
 
+    <!-- Page buttons -->
     @for (page of visiblePages(); track page) {
       @if (page === '...') {
         <span class="pagination__ellipsis">{{ page }}</span>
       } @else {
-        <button
-          class="pagination__button pagination__button--page"
-          [class.pagination__button--active]="page === currentPage()"
+        <app-button
+          type="social"
+          [extraClass]="page === currentPage() ? 'pagination__button--active' : ''"
           (click)="goToPage(page)"
           [attr.aria-label]="'Go to page ' + page"
           [attr.aria-current]="page === currentPage() ? 'page' : null"
         >
           {{ page }}
-        </button>
+        </app-button>
       }
     }
 
-    <button
-      class="pagination__button pagination__button--nav"
+    <!-- Next button -->
+    <app-button
+      type="social"
       [disabled]="currentPage() === totalPages()"
-      [attr.aria-disabled]="currentPage() === totalPages()"
       (click)="goToPage(currentPage() + 1)"
       aria-label="Next page"
     >
       Next
-    </button>
+    </app-button>
   </div>
 </nav>

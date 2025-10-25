@@ -30,7 +30,6 @@ import {
   ],
 })
 export class InputComponent {
-  // 🧱 Inputs
   public readonly type = input<'text' | 'email' | 'password'>('text');
   public readonly placeholder = input<string>('');
   public readonly label = input<string>('');
@@ -39,19 +38,18 @@ export class InputComponent {
   public readonly iconSrc = input<string | undefined>();
   public readonly required = input<boolean>(false);
   public readonly disabled = input<boolean>(false);
-
-  // ✅ Support both ngModel and direct [value] input
   public readonly value = input<string>('');
 
-  // 📤 Output for signal-style usage
+  /** ✅ New optional style controls */
+  public readonly size = input<'sm' | 'md' | 'lg'>('md');
+  public readonly extraClass = input<string | string[] | undefined>();
+
   public readonly valueChange = output<string>();
 
-  // ⚙️ Internal signals
   private readonly _internalValue = signal<string>('');
   private readonly _isFocused = signal(false);
   private readonly _showPassword = signal(false);
 
-  // 🧮 Computed
   public readonly hasError = computed(() => !!this.errorMessage());
   public readonly inputType = computed(() =>
     this.type() === 'password' && !this._showPassword() ? 'password' : 'text'
@@ -59,37 +57,28 @@ export class InputComponent {
   public readonly showPassword = computed(() => this._showPassword());
   public readonly isFocused = computed(() => this._isFocused());
 
-  // 🔄 ControlValueAccessor (for ngModel / reactive forms)
+  // ControlValueAccessor
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
   writeValue(value: string): void {
     this._internalValue.set(value ?? '');
   }
-
   registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
-
   registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
-    // Respect reactive forms disabling
-  }
-
-  // 🧭 Combined value getter
   public currentValue(): string {
-    // prefer external input() if bound, else use internal ngModel state
     return this.value() ?? this._internalValue();
   }
 
-  // 🎯 Event handlers
   public onInput(value: string): void {
     this._internalValue.set(value);
     this.onChange(value);
-    this.valueChange.emit(value); // support both ngModel + signal
+    this.valueChange.emit(value);
   }
 
   public onFocus(): void {
@@ -105,5 +94,12 @@ export class InputComponent {
     if (this.type() === 'password') {
       this._showPassword.update((v) => !v);
     }
+  }
+
+  /** ✅ Merge size + extraClass for flexible styling */
+  public getClasses(): string[] {
+    return [this.size(), this.extraClass()]
+      .flat()
+      .filter((cls): cls is string => !!cls && typeof cls === 'string');
   }
 }

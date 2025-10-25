@@ -15,6 +15,7 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   cursor: pointer;
   transition: all 0.2s ease;
   background: transparent;
+  height: 48px;
 
   &:disabled {
     opacity: 0.5;

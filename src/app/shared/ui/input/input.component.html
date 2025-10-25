@@ -12,7 +12,7 @@
     </label>
   }
 
-  <div class="input-wrapper">
+  <div class="input-wrapper" [ngClass]="getClasses()">
     @if (iconSrc()) {
       <img [src]="iconSrc()" alt="icon" class="input-icon" />
     }
@@ -39,8 +39,8 @@
         <img
           [src]="
             showPassword()
-              ? '/assets/icons/eye-close-icon.png'
-              : '/assets/icons/eye.png'
+              ? 'assets/icons/eye-close-icon.png'
+              : 'assets/icons/eye.png'
           "
           alt="Toggle Password"
         />
