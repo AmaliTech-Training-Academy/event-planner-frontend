@@ -40,15 +40,7 @@
             </div>
             @if (meetingType?.value === "in-person") {
             <div class="in-person-details" formGroupName="inPersonDetails">
-                <div class="field">
-                    <label for="event-location">Add event location</label>
-
-                    <div class="input-container">
-                        <img src="icons/pin.svg" alt="" srcset="">
-                        <input type="text" formControlName="location" name="location" id="event-location"
-                            placeholder="Type location here">
-                    </div>
-                </div>
+                <app-input placeholder="Type location here" iconSrc="icons/pin.svg" type="text" label="Add event location" formControlName="location"></app-input>
                 <div class="field">
                     <label for="description">Add event description</label>
                     <textarea name="description" formControlName="description" id="description"
