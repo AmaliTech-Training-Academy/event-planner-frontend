@@ -1,6 +1,11 @@
-import { Component, signal, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  signal,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 export interface MenuItem {
   readonly label: string;
@@ -16,11 +21,13 @@ export interface MenuSection {
 @Component({
   selector: 'app-admin-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NgOptimizedImage],
   templateUrl: './admin-sidebar.component.html',
   styleUrls: ['./admin-sidebar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminSidebarComponent {
+  // 🔒 private reactive state signals
   private readonly _menuSections = signal<ReadonlyArray<MenuSection>>([
     {
       title: 'Dashboard',
@@ -70,6 +77,7 @@ export class AdminSidebarComponent {
     route: '/admin/settings',
   });
 
+  // 🌐 public computed signals
   public readonly menuSections = computed(() => this._menuSections());
   public readonly settingsItem = computed(() => this._settingsItem());
 }

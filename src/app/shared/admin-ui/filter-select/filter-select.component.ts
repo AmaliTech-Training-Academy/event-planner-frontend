@@ -1,9 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+  signal,
+  computed,
+} from '@angular/core';
 
 interface FilterOption {
-  label: string;
-  value: string;
+  readonly label: string;
+  readonly value: string;
 }
 
 @Component({
@@ -12,27 +19,33 @@ interface FilterOption {
   imports: [CommonModule],
   templateUrl: './filter-select.component.html',
   styleUrls: ['./filter-select.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterSelectComponent {
-  public readonly options = input<FilterOption[]>([]);
+  // ✅ Inputs
+  public readonly options = input<ReadonlyArray<FilterOption>>([]);
   public readonly value = input<string>('all');
-  public readonly placeholder = input<string>('All');
+  public readonly placeholder = input<string>('All'); // ✅ Now declared as input
 
+  // ✅ Outputs
   public readonly valueChange = output<string>();
 
-  public readonly isOpen = signal(false);
+  // ✅ Reactive state
+  private readonly _isOpen = signal(false);
 
+  public readonly isOpen = computed(() => this._isOpen());
+  public readonly selectedLabel = computed(() => {
+    const selected = this.options()?.find((o) => o.value === this.value());
+    return selected?.label ?? this.placeholder();
+  });
+
+  // ✅ Methods
   public toggleDropdown(): void {
-    this.isOpen.update((v) => !v);
+    this._isOpen.update((open) => !open);
   }
 
   public selectOption(option: FilterOption): void {
     this.valueChange.emit(option.value);
-    this.isOpen.set(false);
-  }
-
-  public get selectedLabel(): string {
-    const selected = this.options().find((o) => o.value === this.value());
-    return selected ? selected.label : this.placeholder();
+    this._isOpen.set(false);
   }
 }

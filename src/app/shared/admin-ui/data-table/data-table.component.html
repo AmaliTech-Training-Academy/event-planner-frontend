@@ -10,13 +10,11 @@
           alt="Search icon"
           class="data-table__search-icon"
         />
-        <input
-          type="text"
+        <app-input
           placeholder="Search users..."
           [value]="searchQuery()"
-          (input)="updateSearch($any($event.target).value)"
-          class="data-table__search-input"
-          aria-label="Search users"
+          (valueChange)="updateSearch($event)"
+          iconSrc="assets/icons/search.svg"
         />
       </div>
       }
@@ -70,7 +68,7 @@
     </thead>
 
     <tbody class="data-table__tbody">
-      @for (item of paginatedDataSig(); track trackByIndex($index)) {
+      @for (item of paginatedData(); track trackByIndex($index)) {
       <tr class="data-table__tr">
         <!-- ✅ Checkbox column -->
         <td class="data-table__td data-table__td--checkbox">
@@ -166,16 +164,16 @@
   </table>
 
   <!-- ✅ No data -->
-  @if (filteredDataSig().length === 0) {
+  @if (filteredData().length === 0) {
   <div class="data-table__no-data">
     <img src="/images/table-empty.png" alt="No data found" />
   </div>
-  } @if (filteredDataSig().length > 0) {
+  } @if (filteredData().length > 0) {
   <app-pagination
-    [totalItems]="filteredDataSig().length"
+    [totalItems]="filteredData().length"
     [itemsPerPage]="itemsPerPage()"
     [currentPage]="currentPage()"
-    (currentPageChange)="currentPage.set($event)"
+    (currentPageChange)="setCurrentPage($event)"
   ></app-pagination>
 
   }

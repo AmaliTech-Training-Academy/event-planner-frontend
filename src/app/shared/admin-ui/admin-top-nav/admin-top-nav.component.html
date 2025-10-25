@@ -1,20 +1,27 @@
 <header class="admin-top-nav" role="banner">
   <div class="admin-top-nav__left">
     <img
-      [src]="logoSrcSig()"
-      [alt]="logoAltSig()"
+      ngSrc="{{ logoSrc }}"
+      width="32"
+      height="32"
+      [alt]="logoAlt"
       class="admin-top-nav__logo"
     />
-    <span class="admin-top-nav__page-title">{{ pageTitleSig() }}</span>
+    <span class="admin-top-nav__page-title">{{ pageTitle }}</span>
   </div>
 
   <div class="admin-top-nav__right">
     <button
       class="admin-top-nav__notifications"
       type="button"
-      [attr.aria-label]="'Notifications'"
+      aria-label="Notifications"
     >
-      <img src="icons/notification-icon.png" alt="Notifications" />
+      <img
+        ngSrc="icons/notification-icon.png"
+        width="20"
+        height="20"
+        alt="Notifications"
+      />
       @if (hasNotifications()) {
         <span class="admin-top-nav__badge">
           {{ notificationsCount }}
@@ -24,8 +31,10 @@
 
     <div class="admin-top-nav__user" [attr.aria-label]="userName">
       <img
-        [src]="avatarSrcSig()"
-        [alt]="userNameSig()"
+        ngSrc="{{ avatarSrc }}"
+        width="32"
+        height="32"
+        [alt]="userName"
         class="admin-top-nav__avatar"
       />
     </div>
