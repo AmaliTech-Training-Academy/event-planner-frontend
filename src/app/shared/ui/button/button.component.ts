@@ -29,13 +29,21 @@ export class ButtonComponent {
   public readonly extraClass = input<string | string[] | undefined>();
 
   public readonly classes = computed((): string[] => {
+    const extra = this.extraClass();
+
+    const normalizedExtra =
+      typeof extra === 'string'
+        ? extra.split(' ').filter(Boolean)
+        : Array.isArray(extra)
+        ? extra
+        : [];
+
     return [
-      this.type(), // e.g. "primary", "social"
-      this.color(), // e.g. "edit", "power-active"
-      this.extraClass(), // any external custom class
+      `app-button`, // ensure base class always present
+      `app-button--${this.type()}`, // consistent with type modifier pattern
+      this.color() ? `btn-${this.color()}` : '',
       this.fullWidth() ? 'full-width' : '',
-    ]
-      .flat()
-      .filter((cls): cls is string => !!cls && typeof cls === 'string');
+      ...normalizedExtra,
+    ].filter(Boolean);
   });
 }

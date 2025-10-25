@@ -58,12 +58,24 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
       cursor: not-allowed;
       opacity: 0.5;
     }
+    
   }
 
   /* 🌐 Full width (for layout) */
   &.full-width {
     width: 100%;
     display: block;
+  }
+    :where(.pagination__button--active) &,
+  &.pagination__button--active {
+    background: $gray-950;
+    border-color: $gray-950;
+    color: white;
+
+    &:hover {
+      background: $gray-900;
+      border-color: $gray-900;
+    }
   }
 }
 
