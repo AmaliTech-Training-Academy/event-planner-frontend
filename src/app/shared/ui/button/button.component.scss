@@ -4,12 +4,12 @@
 
 button {
   width: 100%;
-  padding: $spacing-3;
+  padding: $spacing-3 $spacing-6;
   border: none;
   border-radius: $radius-3;
   font-family: $font-lato;
   font-weight: 600;
-  height: 48px;
+  height: 44px;
   cursor: pointer;
   transition: all 0.2s ease;
 
@@ -75,33 +75,15 @@ button {
       transform: translateY(-2px);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
+    }
   }
-
-  &.action {
-    width: 30px;
-    height: 30px;
-    padding: 0.5rem;
-    border-radius: $radius-5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-
-    &.view {
-      background: $orange-700;
-      color: $gray-50;
-    }
-
-    &.edit {
-      border: 1.5px solid $gray-400;
-    }
-
-    &.delete {
-      border: 1.5px solid $gray-400;
-    }
-
-    &.power {
-      border: 1.5px solid $gray-400;
-    }
+  &.social{
+    background: transparent;
+    border: 1.5px solid $gray-400;
   }
 }
