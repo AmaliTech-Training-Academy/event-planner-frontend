@@ -1,10 +1,10 @@
 .admin-layout__main {
   display: flex;
-  gap: 40px; // Space between sidebar and main content
-  margin-left: 17.5rem; // Reserve space for fixed sidebar
+  gap: 40px;
+  margin-left: 17.5rem; 
   min-height: 100vh;
   flex-direction: column;
-  background-color: #f5f5f5; // optional background for layout
+  background-color: #f5f5f5;
 }
 
 .admin-layout__content {

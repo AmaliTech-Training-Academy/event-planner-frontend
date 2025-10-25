@@ -2,47 +2,26 @@
 @use 'colors' as *;
 @use 'variables' as *;
 
-button {
+/* --------------------------------------------- */
+/* 🎯 Base Button Styles (applies to most buttons) */
+/* --------------------------------------------- */
+button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   width: 100%;
   padding: $spacing-3 $spacing-6;
   border: none;
   border-radius: $radius-3;
   font-family: $font-lato;
   font-weight: 600;
-  height: 44px;
   cursor: pointer;
   transition: all 0.2s ease;
+  background: transparent;
 
- 
-  &.power {
-    border: 1.5px solid $green-500;
-    color: $gray-700;
-
-    &:hover:not(:disabled) {
-      background-color: rgba($green-500, 0.1);
-    }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
-  &.power-inactive {
-    border: 1.5px solid $green-600 !important;
-    background-color: transparent;
-    color: $gray-700;
-
-    &:hover:not(:disabled) {
-      background-color: rgba($green-600, 0.1);
-    }
-  }
-
-  &.power-active {
-    border: 1.5px solid $red-600 !important;
-    background-color: transparent;
-    color: $gray-700;
-
-    &:hover:not(:disabled) {
-      background-color: rgba($red-600, 0.1);
-    }
-  }
-
+  /* 🔸 Primary */
   &.primary {
     background-color: $orange-700;
     color: $gray-50;
@@ -50,13 +29,9 @@ button {
     &:hover:not(:disabled) {
       background-color: $orange-600;
     }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
   }
 
+  /* 🔹 Secondary */
   &.secondary {
     background-color: $blue-500;
     color: $gray-50;
@@ -66,7 +41,9 @@ button {
     }
   }
 
+  /* ⚪ Social */
   &.social {
+    background: transparent;
     color: $gray-900;
     border: 1.5px solid $gray-300;
 
@@ -79,11 +56,101 @@ button {
     &:disabled {
       cursor: not-allowed;
       opacity: 0.5;
-      transition: opacity 0.2s ease;
     }
   }
-  &.social{
-    background: transparent;
-    border: 1.5px solid $gray-400;
+
+  /* 🌐 Full width (for layout) */
+  &.full-width {
+    width: 100%;
+    display: block;
+  }
+}
+
+/* --------------------------------------------- */
+/* 🧩 Action / Icon Buttons (isolated styles) */
+/* --------------------------------------------- */
+button.app-button.edit,
+button.app-button.delete,
+button.app-button.view,
+button.app-button.power-active,
+button.app-button.power-inactive {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid $gray-300;
+  border-radius: 30%;
+  background-color: transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* ✏️ Edit Button */
+button.app-button.edit {
+
+  &:hover:not(:disabled) {
+    border-color: $blue-400;
+    background-color: $blue-100;
+  }
+}
+
+/* 🗑 Delete Button */
+button.app-button.delete {
+  background-color: $red-50;
+
+  &:hover:not(:disabled) {
+    border-color: $red-400;
+    background-color: $red-100;
+  }
+}
+
+/* 👁 View Button */
+button.app-button.view {
+  background-color: $orange-700;
+  border: transparent;
+  &:hover{
+    background-color: $orange-600 !important;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: $gray-400;
+    background-color: $gray-100;
+  }
+}
+
+/* ⚡ Power (Active/Inactive) */
+button.app-button.power-active {
+  border-color: $red-500;
+
+  &:hover:not(:disabled) {
+    background-color: $red-100;
+  }
+}
+
+button.app-button.power-inactive {
+  border-color: $green-500;
+
+  &:hover:not(:disabled) {
+    background-color: $green-100;
   }
 }
