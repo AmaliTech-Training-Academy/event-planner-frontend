@@ -9,23 +9,14 @@ import { Component, input, computed } from '@angular/core';
   styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent {
-  /** ✅ Core input variants (existing usage still valid) */
   public readonly type = input<'primary' | 'secondary' | 'social' | 'action'>(
     'primary'
   );
-
-  /** ✅ Support for disabled state */
   public readonly disabled = input(false);
-
-  /** ✅ Support for full width buttons */
   public readonly fullWidth = input(false);
-
-  /** ✅ New: optional color for contextual actions (edit, view, delete, power) */
   public readonly color = input<
     'view' | 'edit' | 'delete' | 'power' | 'inactive' | string | undefined
   >();
-
-  /** ✅ New: allows adding custom class names externally */
   public readonly extraClass = input<string | string[] | undefined>();
 
   public readonly classes = computed((): string[] => {
@@ -39,8 +30,8 @@ export class ButtonComponent {
         : [];
 
     return [
-      `app-button`, // ensure base class always present
-      `app-button--${this.type()}`, // consistent with type modifier pattern
+      `app-button`,
+      `app-button--${this.type()}`,
       this.color() ? `btn-${this.color()}` : '',
       this.fullWidth() ? 'full-width' : '',
       ...normalizedExtra,

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, output, computed, model } from '@angular/core';
+import { Component, input, output, computed, model, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonComponent } from "../../ui/button/button.component";
 
 @Component({
@@ -8,6 +8,7 @@ import { ButtonComponent } from "../../ui/button/button.component";
   imports: [CommonModule, ButtonComponent],
   templateUrl: './pagination.component.html',
   styleUrls: ['./pagination.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginationComponent {
   public readonly totalItems = input.required<number>();

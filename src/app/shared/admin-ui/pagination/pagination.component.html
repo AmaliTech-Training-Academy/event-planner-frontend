@@ -4,28 +4,28 @@
   </div>
 
   <div class="pagination__controls">
-    <!-- Prev button -->
-    <app-button
-      type="social"
-      [extraClass]="'pagination__button pagination__button--nav'"
-      [disabled]="currentPage() === 1"
-      (click)="goToPage(currentPage() - 1)"
-      aria-label="Previous page"
-    >
-      Prev
-    </app-button>
+    <ng-container *ngIf="currentPage() > 1">
+      <app-button
+        type="social"
+        extraClass="pagination__button pagination__button--nav"
+        (click)="goToPage(currentPage() - 1)"
+        aria-label="Previous page"
+      >
+        Prev
+      </app-button>
+    </ng-container>
 
-    <!-- Page buttons -->
-    @for (page of visiblePages(); track page) {
-      @if (page === '...') {
+    <ng-container *ngFor="let page of visiblePages()">
+      <ng-container *ngIf="page === '...'">
         <span class="pagination__ellipsis">{{ page }}</span>
-      } @else {
+      </ng-container>
+
+      <ng-container *ngIf="page !== '...'">
         <app-button
           type="social"
           [extraClass]="
-            page === currentPage()
-              ? 'pagination__button pagination__button--active'
-              : 'pagination__button pagination__button--page'
+            'pagination__button pagination__button--page' +
+            (page === currentPage() ? ' pagination__button--active' : '')
           "
           (click)="goToPage(page)"
           [attr.aria-label]="'Go to page ' + page"
@@ -33,14 +33,13 @@
         >
           {{ page }}
         </app-button>
-      }
-    }
+      </ng-container>
+    </ng-container>
 
-    <!-- Next button -->
     <app-button
-      type="secondary"
-      [extraClass]="'pagination__button pagination__button--nav'"
+      type="social"
       [disabled]="currentPage() === totalPages()"
+      extraClass="pagination__button pagination__button--nav"
       (click)="goToPage(currentPage() + 1)"
       aria-label="Next page"
     >

@@ -2,9 +2,6 @@
 @use 'colors' as *;
 @use 'variables' as *;
 
-/* --------------------------------------------- */
-/* 🎯 Base Button Styles (applies to most buttons) */
-/* --------------------------------------------- */
 button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   width: 100%;
   padding: $spacing-3 $spacing-6;
@@ -22,8 +19,7 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
     cursor: not-allowed;
   }
 
-  /* 🔸 Primary */
-  &.primary {
+  &.app-button--primary {
     background-color: $orange-700;
     color: $gray-50;
 
@@ -32,9 +28,7 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
     }
   }
 
-  /* 🔹 Secondary */
-  &.secondary {
-    background-color: $blue-500;
+  &.app-button--secondary {
     color: $gray-50;
 
     &:hover:not(:disabled) {
@@ -42,8 +36,7 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
     }
   }
 
-  /* ⚪ Social */
-  &.social {
+  &.app-button--social {
     background: transparent;
     color: $gray-900;
     border: 1.5px solid $gray-300;
@@ -58,15 +51,14 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
       cursor: not-allowed;
       opacity: 0.5;
     }
-    
   }
 
-  /* 🌐 Full width (for layout) */
   &.full-width {
     width: 100%;
     display: block;
   }
-    :where(.pagination__button--active) &,
+
+  :where(.pagination__button--active) &,
   &.pagination__button--active {
     background: $gray-950;
     border-color: $gray-950;
@@ -79,9 +71,6 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   }
 }
 
-/* --------------------------------------------- */
-/* 🧩 Action / Icon Buttons (isolated styles) */
-/* --------------------------------------------- */
 button.app-button.edit,
 button.app-button.delete,
 button.app-button.view,
@@ -118,16 +107,13 @@ button.app-button.power-inactive {
   }
 }
 
-/* ✏️ Edit Button */
 button.app-button.edit {
-
   &:hover:not(:disabled) {
     border-color: $blue-400;
     background-color: $blue-100;
   }
 }
 
-/* 🗑 Delete Button */
 button.app-button.delete {
   background-color: $red-50;
 
@@ -137,11 +123,11 @@ button.app-button.delete {
   }
 }
 
-/* 👁 View Button */
 button.app-button.view {
   background-color: $orange-700;
   border: transparent;
-  &:hover{
+
+  &:hover {
     background-color: $orange-600 !important;
   }
 
@@ -151,7 +137,6 @@ button.app-button.view {
   }
 }
 
-/* ⚡ Power (Active/Inactive) */
 button.app-button.power-active {
   border-color: $red-500;
 
