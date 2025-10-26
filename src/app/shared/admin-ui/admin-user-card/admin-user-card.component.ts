@@ -1,4 +1,4 @@
-import { Component, Input, signal, computed } from '@angular/core';
+import { Component, Input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface UserCardData {
@@ -18,12 +18,13 @@ export interface UserCardData {
   styleUrls: ['./admin-user-card.component.scss'],
 })
 export class AdminUserCardComponent {
-  @Input() data!: UserCardData;
+  @Input() public data!: UserCardData;
 
-  isPositive = computed(
-    () => this.data?.percentageChange && this.data.percentageChange > 0
+  public readonly isPositive = computed(
+    () => this.data?.percentageChange != null && this.data.percentageChange > 0
   );
-  isNegative = computed(
-    () => this.data?.percentageChange && this.data.percentageChange < 0
+
+  public readonly isNegative = computed(
+    () => this.data?.percentageChange != null && this.data.percentageChange < 0
   );
 }

@@ -19,9 +19,10 @@ export class ButtonComponent {
   >();
   public readonly extraClass = input<string | string[] | undefined>();
 
+  public readonly buttonType = input<'button' | 'submit' | 'reset'>('button');
+
   public readonly classes = computed((): string[] => {
     const extra = this.extraClass();
-
     const normalizedExtra =
       typeof extra === 'string'
         ? extra.split(' ').filter(Boolean)
