@@ -27,7 +27,6 @@ export interface MenuSection {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminSidebarComponent {
-  // 🔒 private reactive state signals
   private readonly _menuSections = signal<ReadonlyArray<MenuSection>>([
     {
       title: 'Dashboard',
@@ -77,7 +76,6 @@ export class AdminSidebarComponent {
     route: '/admin/settings',
   });
 
-  // 🌐 public computed signals
   public readonly menuSections = computed(() => this._menuSections());
   public readonly settingsItem = computed(() => this._settingsItem());
 }
