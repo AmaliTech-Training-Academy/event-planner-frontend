@@ -50,20 +50,6 @@ export class ForgotPasswordComponent implements OnInit {
       return;
     }
 
-    // this.isLoading = true;
-
-    // const email = this.email?.value;
-
-    // this.authService.forgotPassword(email)
-    //   .pipe(finalize(() => (this.isLoading = false)))
-    //   .subscribe({
-    //     next: () => {
-    //       this.isError = false;
-          
-    //     },
-    //     error: (error: any) => { 
-    //       this.isError = true;
-          
-    //     }
+    
     
   }}
