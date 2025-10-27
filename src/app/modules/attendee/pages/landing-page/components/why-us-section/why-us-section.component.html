@@ -1,0 +1,41 @@
+<section class="why-us">
+  <div class="why-us__container container">
+    <div class="why-us__content">
+      <span class="why-us__label">{{ sectionLabel }}</span>
+      <h2 class="why-us__title">{{ title }}</h2>
+
+      <div class="why-us__features">
+        @for (feature of features; track trackByFeature($index, feature)) {
+          <div class="why-us__feature">
+            <div class="why-us__check-icon">
+              <img
+                [ngSrc]="checkIcon"
+                alt="checkmark"
+                width="20"
+                height="20"
+                loading="lazy"
+              />
+            </div>
+            <span class="why-us__feature-text">{{ feature.text }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="why-us__image-wrapper">
+      <div class="why-us__phone-container">
+        <div class="why-us__phone-frame">
+          <div class="why-us__phone-notch"></div>
+          <img
+            [ngSrc]="phoneImage"
+            alt="Mobile app interface"
+            class="why-us__phone-image"
+            width="300"
+            height="600"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

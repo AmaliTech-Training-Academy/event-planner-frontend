@@ -31,14 +31,5 @@ export class ForgotPasswordComponent {
       this.forgotPasswordForm.markAllAsTouched();
       return;
     }
-
-    this.isLoading = true; 
-    const email = this.controls['email'].value;
-    
-    setTimeout(() => {
-      this.isLoading = false;
-      this.isError = false;
-      this.apiMessage = `An OTP has been sent to ${email}`;
-    }, 2000);
   }
 }
