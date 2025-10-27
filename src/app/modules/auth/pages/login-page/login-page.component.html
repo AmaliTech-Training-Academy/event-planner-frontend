@@ -5,25 +5,26 @@
     <p class="subtitle">Log In to your account</p>
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()">
-      <app-input
-        formControlName="email"
-        label="Email Address"
-        type="email"
-        placeholder="user@gmail.com"
-        [required]="true"
-        [errorMessage]="getFieldErrorMessage('email')"
-        [iconSrc]="'icons/mail.png'"
-      ></app-input>
+<app-input
+  formControlName="email"
+  label="Email Address"
+  type="email"
+  placeholder="user@gmail.com"
+  [required]="true"
+  [errorMessage]="hasFieldError('email') ? getFieldErrorMessage('email') : ''"
+  [iconSrc]="'icons/mail.png'"
+></app-input>
 
-      <app-input
-        formControlName="password"
-        label="Password"
-        type="password"
-        placeholder="••••••••"
-        [required]="true"
-        [errorMessage]="getFieldErrorMessage('password')"
-        [iconSrc]="'icons/lock.png'"
-      ></app-input>
+<app-input
+  formControlName="password"
+  label="Password"
+  type="password"
+  placeholder="••••••••"
+  [required]="true"
+  [errorMessage]="hasFieldError('password') ? getFieldErrorMessage('password') : ''"
+  [iconSrc]="'icons/lock.png'"
+></app-input>
+
 
       <div class="extras">
         <label class="custom-checkbox">
