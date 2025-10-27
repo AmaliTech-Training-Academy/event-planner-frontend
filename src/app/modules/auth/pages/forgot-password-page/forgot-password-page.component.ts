@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-forgot-password',
@@ -15,25 +17,32 @@ import { RouterLink } from '@angular/router';
   styleUrl: './forgot-password-page.component.scss'
 })
 export class ForgotPasswordComponent {
-  forgotPasswordForm: FormGroup;
-  loading = false;
-  message: string | null = null;
-  isError = false;
+  protected forgotPasswordForm: FormGroup;
+  protected loading = false;
+  protected message: string | null = null;
+  protected isError = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private readonly fb: FormBuilder, private readonly authService: AuthService) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
   }
 
-  get f() {
+  protected get f() {
     return this.forgotPasswordForm.controls;
   }
 
-  onSubmit() {
+  protected onSubmit() {
     if (this.forgotPasswordForm.invalid) {
       return;
     }
-    // Handle form submission logic here
+    this.loading = true;
+    const { email } = this.forgotPasswordForm.value;
+    this.authService.forgotPassword(email)
+      .pipe(finalize(() => this.loading = false)).subscribe({
+        error:(err) =>{
+          this.isError= true;
+        },
+      })
   }
 }

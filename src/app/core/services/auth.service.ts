@@ -56,6 +56,16 @@ export class AuthService {
                 })
             )
     }
+    
+    public forgotPassword(email: string) {
+        return this.authBackend.forgotPassword(email)
+            .pipe(
+                catchError(err => {
+                    //TODO: error handling implimentation goes here
+                    return of(err);
+                })
+            )
+    }
 
     public logout() {
         return this.authBackend.logout()
