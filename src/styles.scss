@@ -1,4 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+
+@use 'media_query' as *;
 @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
 *{
     box-sizing: border-box;
@@ -11,5 +13,23 @@
 html, body {
     height: 100%;
     scroll-behavior: smooth;
-    overflow-x: hidden;
+}
+
+.container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: auto 120px;
+
+  @include lg {
+    padding: 0 80px;
+  }
+
+  @include md {
+    padding: 0 48px;
+  }
+
+  @include sm {
+    padding: 0 24px;
+  }
 }
