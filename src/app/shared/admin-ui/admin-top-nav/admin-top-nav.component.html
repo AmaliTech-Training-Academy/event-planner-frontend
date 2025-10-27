@@ -11,9 +11,10 @@
   </div>
 
   <div class="admin-top-nav__right">
-    <button
-      class="admin-top-nav__notifications"
-      type="button"
+    <app-button
+      [buttonType]="'button'"
+      type="secondary"
+      [extraClass]="'admin-top-nav__notifications'"
       aria-label="Notifications"
     >
       <img
@@ -23,11 +24,11 @@
         alt="Notifications"
       />
       @if (hasNotifications()) {
-        <span class="admin-top-nav__badge">
-          {{ notificationsCount }}
-        </span>
+      <span class="admin-top-nav__badge">
+        {{ notificationsCount }}
+      </span>
       }
-    </button>
+    </app-button>
 
     <div class="admin-top-nav__user" [attr.aria-label]="userName">
       <img

@@ -1,14 +1,6 @@
 import { Component, Input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-export interface UserCardData {
-  title: string;
-  count: number;
-  percentageChange?: number;
-  icon: string;
-  bgColor: string;
-  iconColor: string;
-}
+import { UserCardData } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-admin-user-card',

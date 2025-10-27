@@ -8,11 +8,12 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { ButtonComponent } from "../../ui/button/button.component";
 
 @Component({
   selector: 'app-admin-top-nav',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule, NgOptimizedImage, ButtonComponent],
   templateUrl: './admin-top-nav.component.html',
   styleUrls: ['./admin-top-nav.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

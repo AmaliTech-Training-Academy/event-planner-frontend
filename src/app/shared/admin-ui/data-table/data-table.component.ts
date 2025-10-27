@@ -60,7 +60,6 @@ export interface TableFilter {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataTableComponent<T extends Record<string, any>> {
-  // 🧩 Inputs — plain since these are parent-driven, not internally reactive
   public readonly data = input.required<ReadonlyArray<T>>();
   public readonly columns = input.required<ReadonlyArray<TableColumn<T>>>();
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
@@ -73,10 +72,8 @@ export class DataTableComponent<T extends Record<string, any>> {
   }>();
   public readonly itemsPerPage = input<number>(10);
 
-  // 📤 Output
   public readonly rowExpanded = output<T>();
 
-  // ⚙️ Internal reactive state (signals)
   private readonly _activeFilters = signal<Map<string, string>>(new Map());
   private readonly _expandedRows = signal<Set<number>>(new Set());
   private readonly _selectedItems = signal<Set<T>>(new Set());
@@ -84,7 +81,6 @@ export class DataTableComponent<T extends Record<string, any>> {
   private readonly _currentPage = signal<number>(1);
   public readonly currentPage = computed(() => this._currentPage());
 
-  // ✅ Computed signals for derived data
   public readonly searchQuery = computed(() => this._searchQuery());
 
   public readonly filteredData = computed(() => {
@@ -117,7 +113,6 @@ export class DataTableComponent<T extends Record<string, any>> {
     return filtered.slice(start, start + perPage);
   });
 
-  // ✅ Selection methods
   public isSelected(item: T): boolean {
     return this._selectedItems().has(item);
   }
@@ -148,7 +143,6 @@ export class DataTableComponent<T extends Record<string, any>> {
     this._selectedItems.set(selected);
   }
 
-  // ✅ Actions and filters
   public executeAction(action: TableAction<T>, item: T): void {
     action.handler(item);
   }
@@ -170,7 +164,6 @@ export class DataTableComponent<T extends Record<string, any>> {
     this._currentPage.set(1);
   }
 
-  // ✅ Expand/collapse
   public toggleRow(index: number): void {
     const expanded = new Set(this._expandedRows());
     expanded.has(index) ? expanded.delete(index) : expanded.add(index);
@@ -181,7 +174,6 @@ export class DataTableComponent<T extends Record<string, any>> {
     return this._expandedRows().has(index);
   }
 
-  // ✅ Utilities
   public isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
     return ['role', 'status'].includes(String(key));
   }
@@ -210,7 +202,6 @@ export class DataTableComponent<T extends Record<string, any>> {
     return index;
   }
 
-  // 🔒 Private helper
   private _matchesSearch(item: T, query: string): boolean {
     return Object.values(item).some((value) =>
       String(value).toLowerCase().includes(query)

@@ -1,6 +1,7 @@
 @use 'colors' as *;
 @use 'typography' as *;
 @use 'variables' as *;
+@use 'media_query' as *;
 
 .modal-backdrop {
   position: fixed;
@@ -79,6 +80,25 @@
     margin-top: $spacing-4;
     padding-top: $spacing-4;
   }
+
+  // ✅ Responsive adjustments using mixins
+  @include md {
+    width: 95%;
+    padding: $spacing-5;
+
+    &__actions {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  @include sm {
+    width: 100%;
+    padding: $spacing-4;
+  }
 }
 
 // Close button (if needed)
@@ -102,21 +122,5 @@
   &:hover {
     background: $gray-100;
     color: $header-dark;
-  }
-}
-
-// Responsive
-@media (max-width: 768px) {
-  .modal {
-    width: 95%;
-    padding: $spacing-5;
-    
-    &__actions {
-      flex-direction: column;
-      
-      button {
-        width: 100%;
-      }
-    }
   }
 }

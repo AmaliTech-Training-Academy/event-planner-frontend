@@ -2,7 +2,6 @@
 import { Component, signal, inject } from '@angular/core';
 import {
   AdminUserCardComponent,
-  UserCardData,
 } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
@@ -11,19 +10,9 @@ import {
   TableAction,
   TableFilter,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
+import { User, UserCardData } from '../../../../core/models/user.model';
 
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  avatar?: string;
-  role: string;
-  status: string;
-  eventsOrganized: number;
-  eventsAttended: number;
-  joinedDate: string;
-  lastActive: string;
-}
+
 
 @Component({
   selector: 'app-user-management-page',
@@ -35,8 +24,7 @@ export interface User {
 export class UserManagementPageComponent {
   private _layoutService = inject(LayoutService);
 
-  // User overview cards
-  public userCards = signal<UserCardData[]>([
+  public readonly userCards = signal<UserCardData[]>([
     {
       title: 'Total Users',
       count: 2593,
@@ -68,13 +56,16 @@ export class UserManagementPageComponent {
     },
   ]);
 
-  // User data
   private _users = signal<User[]>([
     {
-      id: 1,
+      userId: 'U001',
       name: 'Sarah Wilson',
+      fullName: 'Sarah Wilson',
       email: 'sarah@example.com',
+      phone: '123-456-7890',
+      address: '123 Main St, Cityville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Organizer',
       status: 'Active',
       eventsOrganized: 3,
@@ -83,10 +74,14 @@ export class UserManagementPageComponent {
       lastActive: '2 hours ago',
     },
     {
-      id: 2,
+      userId: 'U002',
       name: 'John Smith',
+      fullName: 'John Smith',
       email: 'john@example.com',
+      phone: '234-567-8901',
+      address: '456 Elm St, Townsville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
@@ -95,10 +90,14 @@ export class UserManagementPageComponent {
       lastActive: '5 days ago',
     },
     {
-      id: 3,
+      userId: 'U003',
       name: 'Emily Johnson',
+      fullName: 'Emily Johnson',
       email: 'emily@example.com',
+      phone: '345-678-9012',
+      address: '789 Oak St, Villageville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Co-Organizer',
       status: 'Active',
       eventsOrganized: 2,
@@ -107,10 +106,14 @@ export class UserManagementPageComponent {
       lastActive: '1 hour ago',
     },
     {
-      id: 4,
+      userId: 'U004',
       name: 'Michael Brown',
+      fullName: 'Michael Brown',
       email: 'michael@example.com',
+      phone: '456-789-0123',
+      address: '321 Pine St, Hamletville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Venue Staff',
       status: 'Active',
       eventsOrganized: 0,
@@ -119,10 +122,14 @@ export class UserManagementPageComponent {
       lastActive: '30 minutes ago',
     },
     {
-      id: 5,
+      userId: 'U005',
       name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
       email: 'jessica@example.com',
+      phone: '567-890-1234',
+      address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
@@ -131,10 +138,14 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      id: 6,
+      userId: 'U006',
       name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
       email: 'jessica@example.com',
+      phone: '567-890-1234',
+      address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
@@ -143,10 +154,14 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      id: 7,
+      userId: 'U007',
       name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
       email: 'jessica@example.com',
+      phone: '567-890-1234',
+      address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
@@ -155,10 +170,14 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      id: 8,
+      userId: 'U008',
       name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
       email: 'jessica@example.com',
+      phone: '567-890-1234',
+      address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
@@ -167,10 +186,14 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      id: 9,
+      userId: 'U009',
       name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
       email: 'jessica@example.com',
+      phone: '567-890-1234',
+      address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
@@ -179,10 +202,14 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      id: 10,
+      userId: 'U010',
       name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
       email: 'jessica@example.com',
+      phone: '567-890-1234',
+      address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
@@ -191,10 +218,14 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      id: 11,
+      userId: 'U011',
       name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
       email: 'jessica@example.com',
+      phone: '567-890-1234',
+      address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
       role: 'Attendee',
       status: 'Inactive',
       eventsOrganized: 0,
@@ -277,25 +308,19 @@ export class UserManagementPageComponent {
   }
 
   private _toggleUserStatus(user: User): void {
-    const users = this._users();
-    const index = users.findIndex((u) => u.id === user.id);
-    if (index !== -1) {
-      const updatedUsers = [...users];
-      const currentStatus = updatedUsers[index].status;
-      updatedUsers[index] = {
-        ...updatedUsers[index],
-        status: currentStatus === 'Active' ? 'Inactive' : 'Active',
-      };
-      this._users.set(updatedUsers);
-      console.log(`User ${user.name} is now ${updatedUsers[index].status}`);
-    }
+    this._users.update((users) =>
+      users.map((u) =>
+        u.userId === user.userId
+          ? { ...u, status: u.status === 'Active' ? 'Inactive' : 'Active' }
+          : u
+      )
+    );
   }
 
   private _inviteUser(): void {
-    console.log('Inviting new user...');
+   
   }
 
   public onRowExpanded(user: User): void {
-    console.log('Expanded user row:', user);
   }
 }

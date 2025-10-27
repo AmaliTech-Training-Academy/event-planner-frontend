@@ -1,7 +1,12 @@
-import { Component } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Component, DestroyRef } from '@angular/core';
+import {
+  Router,
+  NavigationEnd,
+  ActivatedRoute,
+  RouterOutlet,
+} from '@angular/router';
 import { filter, map } from 'rxjs/operators';
-import { RouterOutlet } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AdminSidebarComponent } from '../../shared/admin-ui/admin-sidebar/admin-sidebar.component';
 import { AdminTopNavComponent } from '../../shared/admin-ui/admin-top-nav/admin-top-nav.component';
 import { LayoutService } from '../../core/services/layout.service';
@@ -15,19 +20,27 @@ import { LayoutService } from '../../core/services/layout.service';
 })
 export class AdminLayoutComponent {
   constructor(
-    public layoutService: LayoutService,
-    private router: Router,
-    private route: ActivatedRoute
+    public readonly layoutService: LayoutService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly destroyRef: DestroyRef
   ) {
     this.router.events
       .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        map(() => {
-          let child = this.route.firstChild;
-          while (child?.firstChild) child = child.firstChild;
-          return child?.snapshot.data['title'] || 'Dashboard';
-        })
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        ),
+        map(() => this.getDeepestChildTitle(this.route)),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((title) => this.layoutService.pageTitle.set(title));
+  }
+
+  private getDeepestChildTitle(route: ActivatedRoute): string {
+    let child = route.firstChild;
+    while (child?.firstChild) {
+      child = child.firstChild;
+    }
+    return child?.snapshot.data['title'] || 'Dashboard';
   }
 }

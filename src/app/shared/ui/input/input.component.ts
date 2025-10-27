@@ -40,7 +40,6 @@ export class InputComponent {
   public readonly disabled = input<boolean>(false);
   public readonly value = input<string>('');
 
-  /** ✅ New optional style controls */
   public readonly size = input<'sm' | 'md' | 'lg'>('md');
   public readonly extraClass = input<string | string[] | undefined>();
 
@@ -57,7 +56,6 @@ export class InputComponent {
   public readonly showPassword = computed(() => this._showPassword());
   public readonly isFocused = computed(() => this._isFocused());
 
-  // ControlValueAccessor
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
@@ -96,7 +94,6 @@ export class InputComponent {
     }
   }
 
-  /** ✅ Merge size + extraClass for flexible styling */
   public getClasses(): string[] {
     return [this.size(), this.extraClass()]
       .flat()

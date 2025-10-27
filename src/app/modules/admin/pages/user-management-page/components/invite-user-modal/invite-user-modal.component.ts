@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 import { FilterSelectComponent } from '../../../../../../shared/admin-ui/filter-select/filter-select.component';
+import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 
 @Component({
   selector: 'app-invite-user-modal',
@@ -23,29 +24,27 @@ import { FilterSelectComponent } from '../../../../../../shared/admin-ui/filter-
   styleUrls: ['./invite-user-modal.component.scss'],
 })
 export class InviteUserModalComponent {
-  @Output() close = new EventEmitter<void>();
+  @Output() public readonly close = new EventEmitter<void>();
 
-  public inviteForm: FormGroup;
-
-  constructor(private fb: FormBuilder) {
-    this.inviteForm = this.fb.group({
-      title: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      role: ['', Validators.required],
-      event: ['', Validators.required],
-      message: [''],
-    });
-  }
+  private readonly _fb = inject(FormBuilder);
+  public readonly inviteForm: FormGroup = this._fb.group({
+    title: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    role: ['', Validators.required],
+    event: ['', Validators.required],
+    message: [''],
+  });
 
   public onSubmit(): void {
     if (this.inviteForm.valid) {
       console.log('Inviting user:', this.inviteForm.value);
-      this.close.emit(); // close after submit
+      this.close.emit();
     } else {
       this.inviteForm.markAllAsTouched();
     }
   }
 
+  /** Called when user cancels invitation */
   public onCancel(): void {
     this.close.emit();
   }
