@@ -14,6 +14,7 @@ import { DividerComponent } from '../../../../shared/ui/divider/divider.componen
 import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
 import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { AuthService } from '../../../../core/services/auth.service'; 
 
 interface LoginForm {
   email: FormControl<string | null>;
@@ -42,16 +43,19 @@ export class LoginPageComponent {
   protected isPasswordHidden = signal(true);
   protected hasAttemptedSubmit = signal(false);
   protected isSubmitting = signal(false);
+  protected loginError = signal<string | null>(null);
 
   protected readonly APP_ROUTES = APP_ROUTES;
 
-  // ✅ Regular expressions
   private readonly emailRegex =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   private readonly passwordRegex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
-  constructor(private readonly fb: FormBuilder) {
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService
+  ) {
     this.form = this.createForm();
   }
 
@@ -85,7 +89,7 @@ export class LoginPageComponent {
       case !!errors?.['pattern'] && fieldName === 'email':
         return 'Please enter a valid email address';
       case !!errors?.['pattern'] && fieldName === 'password':
-        return 'Password must contain at least 8 characters, including one number, one letter, and one special character';
+        return 'Password must include at least 8 chars, one number & one special character';
       default:
         return 'Invalid input';
     }
@@ -102,21 +106,26 @@ export class LoginPageComponent {
     if (this.form?.invalid) return;
 
     this.isSubmitting.set(true);
+    this.loginError.set(null);
 
     const email = this.form?.value?.email ?? '';
     const password = this.form?.value?.password ?? '';
-    const remember = this.form?.value?.remember ?? false;
 
-    console.log('Submitting form with:', { email, password, remember });
-
-    // ✅ Placeholder for backend integration
-    // this.authService.login({ email, password }).subscribe({
-    //   next: (res) => { ... },
-    //   error: (err) => { ... },
-    //   complete: () => this.isSubmitting.set(false),
-    // });
-
-    setTimeout(() => this.isSubmitting.set(false), 1000); // simulate delay
+    this.authService.login(email, password).subscribe({
+      next: (response) => {
+        console.log('Login successful:', response);
+      },
+      error: (err) => {
+        console.error('Login failed:', err);
+        this.loginError.set(
+          err?.error?.message || 'Login failed. Please check your credentials.'
+        );
+        this.isSubmitting.set(false);
+      },
+      complete: () => {
+        this.isSubmitting.set(false);
+      },
+    });
   }
 
   private capitalize(text: string): string {
