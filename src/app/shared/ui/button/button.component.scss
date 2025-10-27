@@ -9,7 +9,7 @@ button {
   border-radius: $radius-3;
   font-family: $font-lato;
   font-weight: 600;
-  height: 44px;
+  background: transparent;
   cursor: pointer;
   transition: background-color 0.2s ease;
 
@@ -52,6 +52,5 @@ button {
   }
   &.social{
     background: transparent;
-    border: 1.5px solid $gray-400;
   }
 }
