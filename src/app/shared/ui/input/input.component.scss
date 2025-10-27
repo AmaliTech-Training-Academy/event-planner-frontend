@@ -69,6 +69,7 @@
       right: $spacing-3;
       top: 50%;
       transform: translateY(-50%);
+      right: 0;
       background: none;
       border: none;
       cursor: pointer;
@@ -83,9 +84,10 @@
         color: $gray-700;
       }
 
-      svg {
+      img {
         width: 20px;
         height: 20px;
+        display: block;
       }
     }
   }
