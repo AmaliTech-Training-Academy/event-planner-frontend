@@ -11,11 +11,10 @@ import { RouterLink } from '@angular/router';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { DividerComponent } from '../../../../shared/ui/divider/divider.component';
-import { CheckboxComponent } from '../../../../shared/ui/checkbox/checkbox.component';
 import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
-import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
 import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { CheckboxComponent } from '../../../../shared/ui/checkbox/checkbox.component';
 
 // Import reusable UI components
 
@@ -37,6 +36,7 @@ interface LoginForm {
     DividerComponent,
     SecureTextComponent,
     SocialLoginComponent,
+    CheckboxComponent,
   ],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
@@ -54,10 +54,16 @@ export class LoginPageComponent {
 
   private createForm(): FormGroup<LoginForm> {
     return this.fb.group({
-      email: this.fb.control('', [Validators.required, Validators.email]),
+      email: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/), // stricter email regex
+      ]),
       password: this.fb.control('', [
         Validators.required,
         Validators.minLength(8),
+        Validators.pattern(
+          /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/
+        ),
       ]),
       remember: this.fb.control(false),
     });
@@ -74,7 +80,13 @@ export class LoginPageComponent {
 
     if (field.errors['required'])
       return `${this.capitalize(fieldName)} is required`;
-    if (field.errors['email']) return 'Please enter a valid email address';
+
+    if (field.errors['email'] || field.errors['pattern']) {
+      if (fieldName === 'email') return 'Please enter a valid email address';
+      if (fieldName === 'password')
+        return 'Password must contain uppercase, lowercase, number, and special character';
+    }
+
     if (field.errors['minlength'])
       return `${this.capitalize(fieldName)} must be at least ${
         field.errors['minlength']?.requiredLength

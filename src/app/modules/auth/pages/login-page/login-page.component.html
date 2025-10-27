@@ -25,25 +25,26 @@
         [iconSrc]="'icons/lock.png'"
       ></app-input>
 
-      <div class="extras">
+         <div class="extras">
         <label class="custom-checkbox">
           <input
             type="checkbox"
             formControlName="remember"
             autocomplete="off"
+            aria-label="Remember me"
           />
           <span class="checkmark"></span>
           <span class="label-text">Remember me</span>
         </label>
 
-        <a class="forgot-link" routerLink="/auth/forgot-password">
+        <a class="forgot-link" href="#" routerLink="/auth/forgot-password">
           Forgot password?
         </a>
       </div>
 
       <app-button
-        buttonType="submit"
         type="primary"
+        buttonType="submit"
         [fullWidth]="true"
         [disabled]="form.invalid"
       >
@@ -61,9 +62,5 @@
       Don't have an account?
       <a [routerLink]="APP_ROUTES.SIGNUP">Sign Up</a>
     </p>
-
-    <a class="forgot-link" [routerLink]="APP_ROUTES.FORGOT_PASSWORD">
-      Forgot password?
-    </a>
   </div>
 </div>

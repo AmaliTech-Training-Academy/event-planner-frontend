@@ -1,4 +1,4 @@
-import { Component, input, signal, forwardRef } from '@angular/core';
+import { Component, Input, signal, forwardRef } from '@angular/core';
 import {
   ControlValueAccessor,
   NG_VALUE_ACCESSOR,
@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './checkbox.component.html',
-  styleUrls: ['./checkbox.component.scss'],
+  styleUrls:['./checkbox.component.scss'],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -22,23 +22,28 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class CheckboxComponent implements ControlValueAccessor {
-  public label = input<string>('');
+  @Input() label: string = '';
 
-  private _checked = signal<boolean>(false);
-  private _disabled = signal<boolean>(false);
+  // Use a different property name internally to avoid confusion
+  protected get labelText(): string {
+    return this.label;
+  }
+
+  protected _checked = signal<boolean>(false);
+  protected _disabled = signal<boolean>(false);
 
   private onChange: (value: boolean) => void = () => {};
-  private onTouched: () => void = () => {};
+ public onTouched: () => void = () => {};
 
   writeValue(value: boolean): void {
     this._checked.set(value ?? false);
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: boolean) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
@@ -61,6 +66,7 @@ export class CheckboxComponent implements ControlValueAccessor {
     }
   }
 
+  // Expose readonly signals
   public checked = this._checked.asReadonly();
   public disabled = this._disabled.asReadonly();
 }

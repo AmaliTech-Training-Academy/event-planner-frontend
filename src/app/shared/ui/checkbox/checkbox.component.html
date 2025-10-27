@@ -6,8 +6,16 @@
   tabindex="0"
   (click)="toggleCheck()"
   (keydown)="onKeyDown($event)"
+  (blur)="onTouched()"
   [class.disabled]="disabled()"
 >
-  <span class="checkmark" [class.checked]="checked()"></span>
-  <span class="label-text">{{ label() }}</span>
+  <div class="checkbox-box">
+    <img
+      *ngIf="checked()"
+      src="icons/check-mark.svg"
+      alt="Checked"
+      class="checkmark-icon"
+    />
+  </div>
+  <span class="label-text">{{ labelText }}</span>
 </div>
