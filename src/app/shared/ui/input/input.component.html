@@ -1,15 +1,6 @@
-<div
-  class="form-group"
-  [class.has-error]="hasError()"
-  [class.focused]="isFocused()"
->
+<div class="form-group" [class.has-error]="hasError()" [class.focused]="isFocused()">
   @if (label()) {
-    <label [attr.for]="formControlName()">
-      {{ label() }}
-      @if (required()) {
-        <span>*</span>
-      }
-    </label>
+    <label [attr.for]="label()">{{ label() }}</label>
   }
 
   <div class="input-wrapper" [ngClass]="getClasses()">
@@ -18,14 +9,13 @@
     }
 
     <input
-      [id]="formControlName()"
       [type]="inputType()"
       [placeholder]="placeholder()"
       [value]="currentValue()"
       (input)="onInput($any($event.target).value)"
       (focus)="onFocus()"
       (blur)="onBlur()"
-      [disabled]="disabled()"
+      [disabled]="isDisabled()"
       [class.error]="hasError()"
     />
 
@@ -47,4 +37,12 @@
       </button>
     }
   </div>
+ @if (hasError()) {
+  <app-form-error
+    [message]="errorMessage()"
+    [showIcon]="true"
+    id="{{ label() + '-error' }}"
+  ></app-form-error>
+}
+
 </div>

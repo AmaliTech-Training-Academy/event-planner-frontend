@@ -2,26 +2,35 @@
 @use 'colors' as *;
 @use 'variables' as *;
 
-.secure-text {
+:host {
+  display: block;
   margin-top: $spacing-4;
+}
+
+.secure-text {
   @include body-3;
   color: $gray-600;
+  text-align: center;
 
   p {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: $spacing-1;
+    gap: $spacing-1;
+    font-size: 14px;
 
-    .icon {
-      display: inline-block;
+    .secure-icon {
       width: 16px;
       height: 16px;
       margin-right: $spacing-1;
+      color: $gray-500;
     }
   }
 
   small {
     display: block;
+    font-size: 0.85rem;
+    color: $gray-500;
   }
 }
