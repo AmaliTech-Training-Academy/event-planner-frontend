@@ -13,9 +13,8 @@ import { ButtonComponent } from '../../ui/button/button.component';
 interface NavLink {
   label: string;
   path: string;
-  icon: string; 
+  icon: string;
 }
-
 
 @Component({
   selector: 'app-header',
@@ -41,4 +40,3 @@ export class HeaderComponent {
     this.isMenuOpen.set(false);
   }
 }
-
