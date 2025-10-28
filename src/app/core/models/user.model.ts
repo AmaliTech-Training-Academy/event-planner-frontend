@@ -1,3 +1,5 @@
+   // src/app/core/models/user.model.ts
+
 export interface User {
   userId: string;
   fullName: string;
