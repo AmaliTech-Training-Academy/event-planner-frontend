@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, Observable, of, tap } from 'rxjs';
+
+import { BehaviorSubject, catchError, Observable, of, tap, throwError } from 'rxjs';
 import { APP_ROUTES } from '../constants/app-routes.constants';
 import { User } from '../models/user.model';
 import { AuthBackendService } from './backend/auth-backend.service';
@@ -24,8 +25,8 @@ export class AuthService {
                     });
                 }),
                 catchError(err => {
-                    //TODO: error handling implimentation goes here
-                    return of(err);
+                    
+                    return throwError(() => err);
                 })
             );
     }
@@ -37,9 +38,10 @@ export class AuthService {
                     this.router.navigate([APP_ROUTES.VERIFY_EMAIL], {
                         queryParams: { email },
                     });
-                }), catchError(err => {
-                    //TODO: error handling implimentation goes here
-                    return of(err);
+                }), 
+                catchError(err => {
+                    
+                    return throwError(() => err);
                 })
             );
     }
@@ -55,10 +57,34 @@ export class AuthService {
                     this.router.navigate([APP_ROUTES.LANDING_PAGE]);
                 }),
                 catchError(err => {
-                    //TODO: error handling implimentation goes here
-                    return of(err);
+                   
+                    return throwError(() => err);
                 })
             )
+    }
+
+    public resendOtp(email: string) {
+      return this.authBackend.resendOtp(email)
+        .pipe(
+          tap(() => {
+            console.log('Resend OTP request successful');
+          }),
+          catchError(err => {
+            return throwError(() => err);
+          })
+        );
+    }
+
+    public resetPassword(otp: string, email: string, password: string) {
+      return this.authBackend.resetPassword(otp, email, password)
+          .pipe(
+              tap(() => {
+                  console.log('Password reset successful');
+              }),
+              catchError(err => {
+                  return throwError(() => err); 
+              })
+          );
     }
 
     public logout() {
@@ -72,8 +98,8 @@ export class AuthService {
                     this.router.navigate([APP_ROUTES.LOGIN]);
                 }),
                 catchError(err => {
-                    //TODO: error handling implimentation goes here
-                    return of(err);
+                   
+                    return throwError(() => err);
                 })
             );
     }
@@ -85,8 +111,8 @@ export class AuthService {
                     this._userInfo$.next(response?.data)
                 }),
                 catchError(err => {
-                    //TODO: error handling implimentation goes here
-                    return of(err);
+                   
+                    return throwError(() => err);
                 })
             );
     }
