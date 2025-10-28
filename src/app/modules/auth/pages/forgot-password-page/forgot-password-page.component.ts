@@ -34,5 +34,6 @@ export class ForgotPasswordComponent {
     if (this.forgotPasswordForm.invalid) {
       return;
     }
+    // Handle form submission logic here
   }
 }

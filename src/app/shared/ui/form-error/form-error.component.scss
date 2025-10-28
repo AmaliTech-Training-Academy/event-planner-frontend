@@ -1,6 +1,5 @@
 @use 'colors' as *;
 @use 'variables' as *;
-@use 'typography' as *;
 
 .error-message {
   @include body-3;

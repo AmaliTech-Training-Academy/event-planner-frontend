@@ -18,13 +18,11 @@ export class SocialLoginComponent {
   public getIconSrc(platform: SocialPlatform): string {
     switch (platform) {
       case 'google':
-        return 'icons/google-icon.png';
+        return 'assets/icons/google-icon.png';
       case 'facebook':
-        return 'icons/apple-icon.png';
-      
+        return 'assets/icons/facebook-icon.png';
       case 'twitter':
-        return 'icons/facebook-icon.png';
-
+        return 'assets/icons/twitter-icon.png';
       default:
         return '';
     }

@@ -1,4 +1,4 @@
-import { Component, effect, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -8,16 +8,6 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { InputComponent } from '../../../../shared/ui/input/input.component';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { DividerComponent } from '../../../../shared/ui/divider/divider.component';
-import { CheckboxComponent } from '../../../../shared/ui/checkbox/checkbox.component';
-import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
-import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
-import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
-import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-
-// Import reusable UI components
 
 interface LoginForm {
   email: FormControl<string | null>;
@@ -28,25 +18,14 @@ interface LoginForm {
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterLink,
-    InputComponent,
-    ButtonComponent,
-    DividerComponent,
-    SecureTextComponent,
-    SocialLoginComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
-  protected form: FormGroup<LoginForm>;
-  protected isPasswordHidden = signal(true);
-  protected hasAttemptedSubmit = signal(false);
-
-  protected readonly APP_ROUTES = APP_ROUTES;
+  form: FormGroup<LoginForm>;
+  isPasswordHidden = true;
+  isSubmitted = false;
 
   constructor(private readonly fb: FormBuilder) {
     this.form = this.createForm();
@@ -63,36 +42,40 @@ export class LoginPageComponent {
     });
   }
 
-  public hasFieldError(fieldName: keyof LoginForm): boolean {
-    const field = this.form.get(fieldName);
-    return !!(field?.invalid && (field.touched || this.hasAttemptedSubmit()));
+  get controls() {
+    return this.form.controls;
   }
 
-  public getFieldErrorMessage(fieldName: keyof LoginForm): string {
+  hasFieldError(fieldName: keyof LoginForm): boolean {
     const field = this.form.get(fieldName);
-    if (!field?.errors) return '';
+    return !!(field && field.invalid && (field.touched || this.isSubmitted));
+  }
+
+  getFieldErrorMessage(fieldName: keyof LoginForm): string {
+    const field = this.form.get(fieldName);
+    if (!field || !field.errors) return '';
 
     if (field.errors['required'])
       return `${this.capitalize(fieldName)} is required`;
     if (field.errors['email']) return 'Please enter a valid email address';
     if (field.errors['minlength'])
       return `${this.capitalize(fieldName)} must be at least ${
-        field.errors['minlength']?.requiredLength
+        field.errors['minlength'].requiredLength
       } characters`;
 
     return '';
   }
 
-  public togglePasswordVisibility(): void {
-    this.isPasswordHidden.update((value) => !value);
+  togglePasswordVisibility(): void {
+    this.isPasswordHidden = !this.isPasswordHidden;
   }
 
-  public handleSubmit(): void {
-    this.hasAttemptedSubmit.set(true);
+  handleSubmit(): void {
+    this.isSubmitted = true;
     this.form.markAllAsTouched();
 
     if (this.form.valid) {
-      // handle valid form submission
+    } else {
     }
   }
 
