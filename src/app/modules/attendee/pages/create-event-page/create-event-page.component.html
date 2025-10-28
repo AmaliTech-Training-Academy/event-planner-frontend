@@ -112,7 +112,7 @@
                             <p>Tickets</p>
                         </div>
                         <div class="right">
-                            <p>$50</p>
+                            <p>{{form.get('price')?.value | currency}}</p>
                             <button (click)="togglePriceModal()">
                                 <img src="icons/pencil.svg" alt="" class="preview">
                             </button>
@@ -173,11 +173,11 @@
                 <div class="content">
                     <div class="price-selection-container">
                         <div class="radio-container">
-                            <input type="radio" name="price-selection" id="price-selection-free">
+                            <input formControlName="priceType" value="free" type="radio"  id="price-selection-free">
                             <label for="price-selection-free">Free Entry</label>
                         </div>
                         <div class="radio-container">
-                            <input type="radio" name="price-selection" id="price-selection-paid">
+                            <input formControlName="priceType" value="paid" type="radio"  id="price-selection-paid">
                             <label for="price-selection-paid">Paid</label>
                         </div>
                     </div>
@@ -185,7 +185,7 @@
                         [type]="'text'" [placeholder]="'0.00'"></app-input>
                     <div class="field">
                         <label for="price-included">What’s included with this ticket?</label>
-                        <textarea name="price-included" id="price-included"
+                        <textarea formControlName="percs" name="price-included" id="price-included"
                             placeholder="Enter what’s included with this ticket"></textarea>
                     </div>
                     <app-button [fullWidth]="true" type="primary">Set Price</app-button>

@@ -34,16 +34,15 @@ export class CreateEventPageComponent implements OnInit {
   constructor(private readonly fb: FormBuilder) {
     this.form = fb.group({
       eventType: [EVENT_TYPE.SINGLE_DAY, [Validators.required]],
-      dates: this.fb.array([
-
-      ]),
+      dates: this.fb.array([]),
       meetingType: [MEETING_TYPE.IN_PERSON, [Validators.required]],
       flyer: ['', Validators.required],
       title: ['', Validators.required],
       capacity: [0],
       price: [0],
-      percs: ["", Validators.required]
-
+      percs: ["", Validators.required],
+      requireApproval: [false, Validators.required],
+      priceType: ['free', Validators.required],
     })
     this.eventDates.push(this.createDateGroup())
     this.form.addControl('inPersonDetails', this.createInPersonDetailGroup());
@@ -77,9 +76,26 @@ export class CreateEventPageComponent implements OnInit {
       }
     })
 
+    this.form.get('priceType')?.valueChanges.subscribe((type) => {
+      const priceControl = this.form.get('price');
+      const includedControl = this.form.get('percs');
+
+      if (type === 'free') {
+        priceControl?.disable({ emitEvent: false });
+        includedControl?.disable({ emitEvent: false });
+      } else {
+        priceControl?.enable({ emitEvent: false });
+        includedControl?.enable({ emitEvent: false });
+      }
+    });
+
   }
 
-  onVenueImageSelected(event: Event) {
+  togglePriging() {
+
+  }
+
+  protected onVenueImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
 
     if (!input.files?.length) return;
@@ -95,7 +111,7 @@ export class CreateEventPageComponent implements OnInit {
 
   }
 
-  onFlyerImageSelected(event: Event) {
+  protected onFlyerImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
@@ -112,11 +128,11 @@ export class CreateEventPageComponent implements OnInit {
   // }
 
 
-  get eventDates(): FormArray<FormGroup> {
+  protected get eventDates(): FormArray<FormGroup> {
     return this.form.get('dates') as FormArray<FormGroup>;
   }
 
-  get inPersonDetails() {
+  protected get inPersonDetails() {
     return this.form.get('inPersonDetails') as FormGroup;
   }
 
@@ -153,32 +169,32 @@ export class CreateEventPageComponent implements OnInit {
 
 
 
-  get startDateGroup(): FormGroup {
+  private get startDateGroup(): FormGroup {
     return this.eventDates.at(0) as FormGroup;
   }
 
 
-  get endDateGroup(): FormGroup | null {
+  private get endDateGroup(): FormGroup | null {
     return this.eventDates.length > 1 ? (this.eventDates.at(1) as FormGroup) : null;
   }
 
 
 
-  addDateGroup(): void {
+  private addDateGroup(): void {
     const label = this.eventDates.length === 0 ? 'startsAt' : 'endsAt';
     this.eventDates.push(this.createDateGroup(label));
   }
 
-  removeDateGroup(index: number): void {
+  private removeDateGroup(index: number): void {
     this.eventDates.removeAt(index);
   }
 
-  getDateControl(group: FormGroup, controlName: string): FormControl {
+  protected getDateControl(group: FormGroup, controlName: string): FormControl {
     return group.get(controlName) as FormControl;
   }
 
 
-  getImageSrc(image: any): string {
+  protected getImageSrc(image: any): string {
     if (image instanceof File) {
       return URL.createObjectURL(image);
     }
@@ -192,8 +208,23 @@ export class CreateEventPageComponent implements OnInit {
     this.showCapacityModal = !this.showCapacityModal;
   }
 
-  onToggle() {
+  protected onToggle() {
+    this.checked = !this.checked;
+    this.form.get('requireApproval')?.setValue(this.checked);
+    this.form.get('requireApproval')?.markAsTouched();
+    this.form.get('requireApproval')?.markAsDirty();
+  }
 
+
+  protected removeCapacityLimit(){
+    this.form.get('capacity')?.setValue(0);
+    this.form.get('capacity')?.markAsDirty();
+    this.form.get('capacity')?.markAllAsTouched();
+  }
+
+  setCapacityLimit(){
+    this.form.get('capacity')?.markAsDirty();
+    this.form.get('capacity')?.markAllAsTouched();
   }
 
 }
