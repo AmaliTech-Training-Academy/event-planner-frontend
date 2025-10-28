@@ -25,7 +25,7 @@ export class AuthService {
                     });
                 }),
                 catchError(err => {
-                    
+                  
                     return throwError(() => err);
                 })
             );
@@ -51,10 +51,7 @@ export class AuthService {
         return this.authBackend.verifyEmail(otp, email)
             .pipe(
                 tap((response) => {
-                    this._access_token = response.access_token;
-                    this._refresh_token = response.refresh_token;
-                    this._loggedIn$.next(true);
-                    this.router.navigate([APP_ROUTES.LANDING_PAGE]);
+                    this.router.navigate([APP_ROUTES.LOGIN]);
                 }),
                 catchError(err => {
                    
@@ -67,7 +64,7 @@ export class AuthService {
       return this.authBackend.resendOtp(email)
         .pipe(
           tap(() => {
-            console.log('Resend OTP request successful');
+           
           }),
           catchError(err => {
             return throwError(() => err);
@@ -75,17 +72,7 @@ export class AuthService {
         );
     }
 
-    public resetPassword(otp: string, email: string, password: string) {
-      return this.authBackend.resetPassword(otp, email, password)
-          .pipe(
-              tap(() => {
-                  console.log('Password reset successful');
-              }),
-              catchError(err => {
-                  return throwError(() => err); 
-              })
-          );
-    }
+    
 
     public logout() {
         return this.authBackend.logout()
@@ -98,7 +85,7 @@ export class AuthService {
                     this.router.navigate([APP_ROUTES.LOGIN]);
                 }),
                 catchError(err => {
-                   
+                    
                     return throwError(() => err);
                 })
             );

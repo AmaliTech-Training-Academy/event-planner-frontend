@@ -28,12 +28,14 @@ import { AuthService } from '../../../../core/services/auth.service';
 })
 export class VerifyEmailPageComponent implements OnInit, OnDestroy {
 
-  protected currentOtpValue: string = ''; 
-  protected isOtpReady: boolean = false; 
+ 
   protected isLoading: boolean = false; 
   protected apiMessage: string | null = null;
   protected isError: boolean = false;
 
+  
+  private currentOtpValue: string = ''; 
+  private isOtpReady: boolean = false;   
   private email: string | null = null;
   private routeSub: Subscription | null = null;
 
@@ -42,6 +44,7 @@ export class VerifyEmailPageComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute
   ) { }
 
+ 
   public ngOnInit(): void {
     this.routeSub = this.route.queryParamMap.subscribe(params => {
       this.email = params.get('email');
@@ -52,10 +55,12 @@ export class VerifyEmailPageComponent implements OnInit, OnDestroy {
     });
   }
 
+  
   public ngOnDestroy(): void {
     this.routeSub?.unsubscribe();
   }
 
+  
   protected onOtpChange(otpValue: string): void {
     this.currentOtpValue = otpValue;
     this.isOtpReady = otpValue.length === 6;
@@ -66,10 +71,12 @@ export class VerifyEmailPageComponent implements OnInit, OnDestroy {
     }
   }
 
+  
   protected isOtpComplete(): boolean {
     return this.isOtpReady;
   }
 
+  
   protected verifyAccount(): void {
     if (!this.isOtpComplete()) {
       this.apiMessage = 'Please enter the complete 6-digit OTP.';
@@ -103,6 +110,7 @@ export class VerifyEmailPageComponent implements OnInit, OnDestroy {
       });
   }
 
+ 
   protected resendOtp(): void {
     if(this.isLoading) return;
 
