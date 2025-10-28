@@ -1,0 +1,26 @@
+
+@use 'index' as *;
+
+
+
+.tab-toggle {
+  display: flex;
+  gap: $spacing-3;
+}
+
+.toggle-btn {
+  @include body-1;
+  font-weight: 600;
+  padding: $spacing-3 $spacing-5;
+  border: none;
+  background-color: transparent;
+  border-radius: $radius-3;
+  color: $paragraph-text;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &.active {
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+}
