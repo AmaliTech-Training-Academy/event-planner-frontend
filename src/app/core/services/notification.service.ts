@@ -6,14 +6,26 @@ import { Notification } from '../models/notifications.model';
   providedIn: 'root'
 })
 export class NotificationService {
-  
+
   private notifications = new BehaviorSubject<Notification | null>(null);
   public notification$ = this.notifications.asObservable();
 
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
+
   private show(notification: Notification) {
+
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+
     this.notifications.next(notification);
+
     if (notification.duration) {
-      setTimeout(() => this.clear(), notification.duration);
+      this.timeoutId = setTimeout(() => {
+        this.clear();
+        this.timeoutId = null;
+      }, notification.duration);
     }
   }
 
@@ -35,5 +47,9 @@ export class NotificationService {
 
   public clear() {
     this.notifications.next(null);
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
   }
 }
