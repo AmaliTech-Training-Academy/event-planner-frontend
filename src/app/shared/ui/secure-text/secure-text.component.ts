@@ -1,4 +1,4 @@
-import { Component, input, Input, signal } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-secure-text',
@@ -7,7 +7,7 @@ import { Component, input, Input, signal } from '@angular/core';
   styleUrls: ['./secure-text.component.scss'],
 })
 export class SecureTextComponent {
-  public text = input<string>('Secure login enabled');
-  public subText = input<string>('This is a secure, encrypted connection');
-  public iconSrc = input<string>('assets/icons/lock.svg');
+  public main = input<string>('Secure login enabled');
+  public sub = input<string>('This is a secure, encrypted connection');
+  public iconSrc = input<string>('icons/info.svg');
 }
