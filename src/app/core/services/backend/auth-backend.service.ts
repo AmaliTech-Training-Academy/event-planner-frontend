@@ -20,6 +20,10 @@ export class AuthBackendService {
   public verifyEmail(otp: string, email: string) {
     return this.http.post<{ access_token: string, refresh_token: string }>(API_ENDPOINTS.AUTH_VERIFY_OTP, { otp, email })
   }
+  public resetPassword(otp: string, email: string, password: string) {
+    const payload = { otp, email, password };
+    return this.http.post(API_ENDPOINTS.AUTH_RESET_PASSWORD, payload);
+  }
 
   public logout() {
     return this.http.post(API_ENDPOINTS.AUTH_LOGOUT, {})
