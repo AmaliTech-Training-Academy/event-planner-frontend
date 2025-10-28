@@ -1,0 +1,42 @@
+<div class="modal-backdrop" (click)="onCancel()"></div>
+
+<div class="modal">
+  <h3 class="modal__title">Invite New User</h3>
+
+  <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()">
+    <app-input formControlName="title" label="Invitation Title"></app-input>
+
+    <app-input type="email" label="Email" formControlName="email"></app-input>
+
+    <label>Select Role</label>
+<label>Select Role</label>
+<app-filter-select
+  formControlName="role"
+  [options]="roles"
+></app-filter-select>
+
+
+
+    <label>Select Event</label>
+<label>Select Role</label>
+<app-filter-select
+  formControlName="role"
+  [options]="roles"
+></app-filter-select>
+
+
+
+    <label>Type Message (Optional)</label>
+    <textarea formControlName="message"></textarea>
+
+    <div class="modal__actions">
+      <app-button type="secondary" (click)="onCancel()">Cancel</app-button>
+      <app-button
+        type="primary"
+        [disabled]="inviteForm.invalid"
+        (click)="onSubmit()"
+        >Send Invite</app-button
+      >
+    </div>
+  </form>
+</div>

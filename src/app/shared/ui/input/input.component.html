@@ -1,25 +1,23 @@
-@if (label) {
-  <label class="input-label">
-    {{ label }} 
-    @if (required) { <span>*</span> }
-  </label>
-}
-
-<div class="input-wrapper">
-  @if (iconSrc) {
-    <img [src]="iconSrc" alt="" class="input-icon" />
+<div class="form-group" [class.has-error]="hasError()" [class.focused]="isFocused()">
+  @if (label()) {
+    <label [attr.for]="label()">{{ label() }}</label>
   }
 
- <input
-  [type]="inputType()"
-  [placeholder]="placeholder"
-  [value]="value()"
-  (input)="onInput($event)"
-  (focus)="onFocus()"
-  (blur)="onBlur()"
-  [disabled]="disabled"
-  [attr.aria-invalid]="!!errorMessage"
-/>
+  <div class="input-wrapper" [ngClass]="getClasses()">
+    @if (iconSrc()) {
+      <img [src]="iconSrc()" alt="icon" class="input-icon" />
+    }
+
+    <input
+      [type]="inputType()"
+      [placeholder]="placeholder()"
+      [value]="currentValue()"
+      (input)="onInput($any($event.target).value)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      [disabled]="isDisabled()"
+      [class.error]="hasError()"
+    />
 
 
   @if (type === 'password') {
@@ -30,12 +28,24 @@
         [attr.aria-pressed]="showPassword()"
     >
         <img
-            [src]="showPassword() ? 'icons/eye-open.svg' : 'icons/eye-closed.svg'"
-            alt="{{ showPassword() ? 'Hide Password' : 'Show Password' }}"
+          [src]="
+            showPassword()
+              ? 'assets/icons/eye-close-icon.png'
+              : 'assets/icons/eye.png'
+          "
+          alt="Toggle Password"
         />
-    </button>
+      </button>
+    }
+  </div>
+ @if (hasError()) {
+  <app-form-error
+    [message]="errorMessage()"
+    [showIcon]="true"
+    id="{{ label() + '-error' }}"
+  ></app-form-error>
 }
-  
+
 </div>
 
 @if (errorMessage) {

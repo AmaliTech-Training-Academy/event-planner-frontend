@@ -1,8 +1,6 @@
 @use 'colors' as *;
 @use 'variables' as *;
-@use '../../../../styles/typography' as *;
-@use '../../../../styles/colors' as *;
-
+@use 'typography' as *;
 
 .error-message {
   @include body-3;
