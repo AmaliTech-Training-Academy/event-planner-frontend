@@ -1,11 +1,4 @@
-import { Component, input, signal, forwardRef } from '@angular/core';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { Component, input, output, signal, effect } from '@angular/core';
 
 @Component({
   selector: 'app-checkbox',
@@ -24,14 +17,24 @@ import { CommonModule } from '@angular/common';
 export class CheckboxComponent implements ControlValueAccessor {
   public label = input<string>('');
 
-  private _checked = signal<boolean>(false);
-  private _disabled = signal<boolean>(false);
+  public checked = input<boolean>(false);
+
+  public ariaLabel = input<string>(''); 
+
+  public checkedChange = output<boolean>();
 
   private onChange: (value: boolean) => void = () => {};
   private onTouched: () => void = () => {};
 
-  writeValue(value: boolean): void {
-    this._checked.set(value ?? false);
+  constructor() {
+    // Keep internal state in sync with external input()
+    effect(() => {
+      this._checked.set(this.checked());
+    });
+  }
+
+  public get isChecked(): boolean {
+    return this._checked();
   }
 
   registerOnChange(fn: any): void {
