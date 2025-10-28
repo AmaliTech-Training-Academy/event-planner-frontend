@@ -94,17 +94,22 @@ export class LoginPageComponent {
 
     this.authService.login(email, password).subscribe({
       next: () => {
-        this.router.navigate([APP_ROUTES.VERIFY_EMAIL], {
-          state: { email },
-        });
+        this.router.navigate([APP_ROUTES.DASHBOARD]);
       },
       error: (err) => {
-        this.loginError.set(
-          err?.error?.message || 'Login failed. Please check your credentials.'
-        );
+        if (err.status === 401) {
+          this.loginError.set('Invalid email or password.');
+        } else if (err.status === 403) {
+          this.loginError.set('Access denied. Please verify your email.');
+        } else {
+          this.loginError.set('Login failed. Please try again.');
+        }
+
         this.isSubmitting.set(false);
       },
-      complete: () => this.isSubmitting.set(false),
+      complete: () => {
+        this.isSubmitting.set(false);
+      },
     });
   }
 
