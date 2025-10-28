@@ -1,10 +1,18 @@
+@use 'media_query' as *;
 :host{
     flex:1;
 }
 .contianer {
     flex: 1;
     position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items:center;
+
+    gap: 0.625rem;
     app-time-zone-picker {
         position: absolute;
     }
+
+
 }

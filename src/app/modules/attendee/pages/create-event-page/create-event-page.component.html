@@ -1,7 +1,7 @@
 <form [formGroup]="form" method="post" class="wrapper">
     <div class="left-panel">
         <div class="title-container">
-            <input type="text" placeholder="Add Event Title" class="title">
+            <input type="text" formControlName="title" placeholder="Add Event Title" class="title">
             <div class="time-container">
                 <div class="day-container">
                     <p>Select event type:</p>
@@ -184,7 +184,7 @@
                     <app-input [iconSrc]="'icons/money.svg'" [label]="'Price'" [formControlName]="'price'"
                         [type]="'text'" [placeholder]="'0.00'"></app-input>
                     <div class="field">
-                        <label for="price">What’s included with this ticket?</label>
+                        <label for="price-included">What’s included with this ticket?</label>
                         <textarea name="price-included" id="price-included"
                             placeholder="Enter what’s included with this ticket"></textarea>
                     </div>
@@ -206,7 +206,7 @@
                             reached.
                         </p>
                     </div>
-                    <app-input type="text" placeholder="E.g., 20"></app-input>
+                    <app-input formControlName="capacity" type="text" placeholder="E.g., 20"></app-input>
                 </div>
                 <div class="actions">
                     <app-button type='social'>Remove Limit</app-button>

@@ -39,6 +39,7 @@ export class CreateEventPageComponent implements OnInit {
       ]),
       meetingType: [MEETING_TYPE.IN_PERSON, [Validators.required]],
       flyer: ['', Validators.required],
+      title: ['', Validators.required],
       capacity: [0],
       price: [0],
       percs: ["", Validators.required]

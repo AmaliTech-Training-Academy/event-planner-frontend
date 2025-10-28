@@ -1,10 +1,13 @@
 @use "typography" as *;
 @use "variables" as *;
 @use "theme" as *;
+@use "media_query" as *;
+
 :host {
     display: flex;
     flex: 1;
 }
+
 button {
     border-radius: 8px;
     border: 1px solid $general-stroke-light;
@@ -12,9 +15,34 @@ button {
     background: transparent;
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    align-items: center;
+    gap: 0.75rem;
     @include body-1;
     color: $paragraph-text;
     flex: 1;
     cursor: pointer;
+
+    @include md {
+        padding: $spacing-4 0.25rem;
+        @include body-3;
+
+    }
+
+    @include sm {
+        padding: $spacing-4;
+        @include body-3;
+    }
+
+    img {
+        $height_var: 1.5;
+        height: $height_var;
+        width: $height_var;
+
+        @include md {
+            $height_var: 1.25;
+
+        }
+
+    }
+
 }

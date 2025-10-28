@@ -1,15 +1,28 @@
 @use "typography" as *;
 @use "variables" as *;
 @use "theme" as *;
+@use "media_query" as *;
+
 
 .wrapper {
     padding: 0 7.5rem;
+    background: linear-gradient(180.65deg, #ffffff 88.1%, #999999 137.06%);
     display: flex;
     flex-direction: row;
     justify-content: center;
     gap: 7.875rem;
-    background: linear-gradient(180.65deg, #ffffff 88.1%, #999999 137.06%);
     margin: auto;
+
+    @include md {
+        gap: 1.25rem;
+        padding: 0 2rem;
+    }
+
+    @include sm {
+        gap: 1rem;
+        flex-direction: column;
+        padding: 0 1.5rem;
+    }
 
     .left-panel {
         display: flex;
@@ -17,6 +30,12 @@
         gap: 1.875rem;
         width: 589px;
         overflow: hidden;
+
+        @include sm {
+            width: 100%;
+        }
+
+
 
         .title-container {
             display: flex;
@@ -42,17 +61,62 @@
                 border-radius: $radius-4;
                 gap: $spacing-6;
 
+                @include md {
+                    padding: 2rem 0.5rem;
+                }
+
+                @include sm {
+                    padding: 2.125rem 1.25rem;
+                }
+
                 .day-container {
                     display: flex;
                     flex-direction: row;
                     gap: $spacing-4;
                     @include body-1;
 
+
+                    @include md {
+                        @include body-2;
+                        gap: $spacing-2;
+                    }
+
+                    @include sm {
+                        @include body-3;
+                        gap: $spacing-4;
+                    }
+
                     .radio-container {
                         display: flex;
                         flex-direction: row;
                         gap: $spacing-2;
                         align-items: center;
+
+                        input {
+                            width: 1.5rem;
+                            height: 1.5rem;
+
+                            @include md {
+                                width: 1.125rem;
+                                height: 1.125rem;
+                            }
+
+                            @include md {
+                                width: 1.125rem;
+                                height: 1.125rem;
+                            }
+                        }
+
+                        label {
+
+                            @include md {
+                                @include body-2;
+                            }
+
+                            @include sm {
+                                @include body-3;
+                            }
+                        }
                     }
                 }
 
@@ -80,6 +144,12 @@
             border-radius: $radius-4;
             padding: 84px $spacing-5;
             @include body-1;
+
+            @include md {
+                padding: 6.625rem .5rem;
+            }
+
+            @include md {}
 
             .meeting-contianer {
                 display: flex;
@@ -231,6 +301,12 @@
         display: flex;
         flex-direction: column;
         gap: 62px;
+
+        @include md {}
+
+        @include sm {
+            width: 100%;
+        }
 
         .flyer-container {
             overflow: hidden;
@@ -544,40 +620,43 @@
     padding: 24px;
     text-align: center;
 
-    .content{
+    .content {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 24px;
+
         img.icon {
             width: 56px;
             height: 56px;
         }
 
-        .info{
+        .info {
             display: flex;
-        flex-direction: column;
-        gap: 8px;
-            h3{
+            flex-direction: column;
+            gap: 8px;
+
+            h3 {
                 @include h-3;
                 color: $header-dark;
             }
 
-            p{
+            p {
                 @include body-1;
                 color: $paragraph-text;
             }
         }
     }
 
-    .actions{
+    .actions {
         display: flex;
         flex-direction: row;
         align-items: center;
         width: 100%;
         gap: 24px;
-        app-button{
-            flex:1;
+
+        app-button {
+            flex: 1;
         }
     }
 
