@@ -14,6 +14,15 @@
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
+        },
         "build": {
           "builder": "@ngx-env/builder:application",
           "options": {
@@ -38,7 +47,7 @@
             "styles": [
               "src/styles.scss"
             ],
-             "stylePreprocessorOptions": {
+            "stylePreprocessorOptions": {
               "includePaths": [
                 "src/styles"
               ]
@@ -106,7 +115,7 @@
                 "glob": "**/*",
                 "input": "public"
               },
-               {
+              {
                 "glob": "**/*",
                 "input": "src/assets"
               }
@@ -127,6 +136,7 @@
     }
   },
   "cli": {
-    "analytics": "ea47feb9-e4c6-457d-a27c-ad43f3ac69fe"
+    "analytics": "ea47feb9-e4c6-457d-a27c-ad43f3ac69fe",
+    "schematicCollections": ["angular-eslint"]
   }
 }
