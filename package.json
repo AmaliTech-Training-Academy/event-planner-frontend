@@ -12,9 +12,11 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{ts,html,scss}": [
-      "npm run lint -- --fix",
-      "npm run format"
+    "*.ts": [
+      "npm run lint -- --fix"
+    ],
+    "*.{html,scss,css,md,json}": [
+      "prettier --write"
     ]
   },
   "private": true,
