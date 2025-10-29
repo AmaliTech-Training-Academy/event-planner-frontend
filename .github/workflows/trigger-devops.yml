@@ -10,19 +10,53 @@ jobs:
   trigger-devops:
     runs-on: ubuntu-latest
     steps:
-    - name: Repository Dispatch
-      uses: peter-evans/repository-dispatch@v2
-      with:
-        token: ${{ secrets.DEVOPS_REPO_TOKEN }}
-        repository: AmaliTech-Training-Academy/gep-devops
-        event-type: frontend-deployment
-        client-payload: |
-          {
-            "ref": "${{ github.ref }}",
-            "sha": "${{ github.sha }}",
-            "repository": "${{ github.repository }}",
-            "actor": "${{ github.actor }}",
-            "event_name": "${{ github.event_name }}",
-            "branch": "${{ github.ref_name }}",
-            "environment": "${{ github.ref_name == 'prod' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}"
-          }
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get developer info
+        id: developer
+        run: |
+          AUTHOR_EMAIL=$(git log -1 --pretty=format:'%ae')
+          AUTHOR_NAME=$(git log -1 --pretty=format:'%an')
+
+          echo "email=$AUTHOR_EMAIL" >> $GITHUB_OUTPUT
+          echo "name=$AUTHOR_NAME" >> $GITHUB_OUTPUT
+
+          SLACK_USER="@${{ github.actor }}"
+          echo "slack_user=$SLACK_USER" >> $GITHUB_OUTPUT
+
+      - name: Notify Slack
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+          username: 'GitHub Actions'
+          text: |
+            🚀 Frontend Deployment triggered by ${{ steps.developer.outputs.slack_user }}
+            Branch: `${{ github.ref_name }}`
+            Environment: `${{ github.ref_name == 'prod' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}`
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.DEVOPS_REPO_TOKEN }}
+          repository: AmaliTech-Training-Academy/gep-devops
+          event-type: frontend-deployment
+          client-payload: |
+            {
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "repository": "${{ github.repository }}",
+              "actor": "${{ github.actor }}",
+              "event_name": "${{ github.event_name }}",
+              "branch": "${{ github.ref_name }}",
+              "environment": "${{ github.ref_name == 'prod' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}",
+              "developer_email": "${{ steps.developer.outputs.email }}",
+              "developer_name": "${{ steps.developer.outputs.name }}",
+              "developer_slack_user": "${{ steps.developer.outputs.slack_user }}"
+            }
