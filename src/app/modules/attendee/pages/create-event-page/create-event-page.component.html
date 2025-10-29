@@ -1,26 +1,26 @@
 <form [formGroup]="form" method="post" class="wrapper">
     <div class="left-panel">
         <div class="title-container">
-            <input type="text" formControlName="title" placeholder="Add Event Title" class="title">
+            <input type="text" [formControlName]="EVENT_FORM_FIELDS.TITLE" placeholder="Add Event Title" class="title">
             <div class="time-container">
                 <div class="day-container">
                     <p>Select event type:</p>
                     <div class="radio-container">
-                        <input value="day" formControlName="eventType" type="radio" id="day-event">
+                        <input [value]="EVENT_TYPES.SINGLE_DAY" [formControlName]="EVENT_FORM_FIELDS.EVENT_TYPE" type="radio" id="day-event">
                         <label for="day-event">Day Event</label>
                     </div>
                     <div class="radio-container">
-                        <input value="multi-day" formControlName="eventType" type="radio" id="multi-day-event">
+                        <input [value]="EVENT_TYPES.MULTI_DAY" [formControlName]="EVENT_FORM_FIELDS.EVENT_TYPE" type="radio" id="multi-day-event">
                         <label for="multi-day-event">Multi-day</label>
                     </div>
                 </div>
-                <div class="date-container" formArrayName="dates">
+                <div class="date-container" [formArrayName]="EVENT_FORM_FIELDS.DATES">
                     @for (dateGroup of eventDates.controls; track $index) {
                     <div class="row" [formGroupName]="$index">
-                        <app-event-date-picker [control]="getDateControl(dateGroup, 'date')"></app-event-date-picker>
-                        <app-event-time-picker [control]="getDateControl(dateGroup, 'time')"></app-event-time-picker>
+                        <app-event-date-picker [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.DATE)"></app-event-date-picker>
+                        <app-event-time-picker [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.TIME)"></app-event-time-picker>
                         <app-event-time-zone-picker
-                            [control]="getDateControl(dateGroup, 'timeZone')"></app-event-time-zone-picker>
+                            [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.TIME_ZONE)"></app-event-time-zone-picker>
                     </div>
                     }
                 </div>
@@ -30,33 +30,34 @@
             <div class="meeting-contianer">
                 <p>Select meeting type:</p>
                 <div class="radio-container">
-                    <input type="radio" value="virtual" formControlName="meetingType" id="virtual-meeting">
+                    <input type="radio" [value]="MEETING_TYPES.VIRTUAL" [formControlName]="EVENT_FORM_FIELDS.MEETING_TYPE" id="virtual-meeting">
                     <label for="virtual-meeting">Virtual</label>
                 </div>
                 <div class="radio-container">
-                    <input type="radio" value="in-person" formControlName="meetingType" id="inperson-meeting">
+                    <input type="radio" [value]="MEETING_TYPES.IN_PERSON" [formControlName]="EVENT_FORM_FIELDS.MEETING_TYPE" id="inperson-meeting">
                     <label for="inperson-meeting">In-person</label>
                 </div>
             </div>
-            @if (meetingType?.value === "in-person") {
-            <div class="in-person-details" formGroupName="inPersonDetails">
-                <app-input placeholder="Type location here" iconSrc="icons/pin.svg" type="text" label="Add event location" formControlName="location"></app-input>
+            @if (meetingType?.value === MEETING_TYPES.IN_PERSON) {
+            <div class="in-person-details" [formGroupName]="EVENT_FORM_FIELDS.IN_PERSON_DETAILS">
+                <app-input placeholder="Type location here" iconSrc="icons/pin.svg" type="text"
+                    label="Add event location" [formControlName]="EVENT_FORM_FIELDS.LOCATION"></app-input>
                 <div class="field">
                     <label for="description">Add event description</label>
-                    <textarea name="description" formControlName="description" id="description"
+                    <textarea name="description" [formControlName]="EVENT_FORM_FIELDS.DESCRIPTION" id="description"
                         placeholder="Type description here"></textarea>
                 </div>
                 <div class="upload-continer">
                     <div class="image-container">
                         <p>Upload up to 5 images of venue</p>
                         <div class="preview-container">
-                            @for (image of inPersonDetails.get('images')?.value; track $index) {
+                            @for (image of inPersonDetails.get(EVENT_FORM_FIELDS.IMAGES)?.value; track $index) {
                             <img [src]="getImageSrc(image)" alt="" class="preview" />
                             }
                             <input #venueFileInput type="file" accept="image/*" (change)="onVenueImageSelected($event)"
                                 multiple hidden />
                             <button type="button" (click)="venueFileInput.click()"
-                                [disabled]="inPersonDetails.get('images')?.value?.length >= 5">
+                                [disabled]="inPersonDetails.get(EVENT_FORM_FIELDS.IMAGES)?.value?.length >= 5">
                                 <img src="icons/add.svg" alt="" class="preview">
                             </button>
                         </div>
@@ -68,8 +69,8 @@
                 </div>
             </div>
             }
-            @if (meetingType?.value === "virtual") {
-            <div class="virtual-details" formGroupName="virtualDetails">
+            @if (meetingType?.value === MEETING_TYPES.VIRTUAL) {
+            <div class="virtual-details" [formGroupName]="EVENT_FORM_FIELDS.VIRTUAL_DETAILS">
                 <p>Choose Virtual Option</p>
                 <button type="button">
                     <img src="icons/cam_corder.svg" />
@@ -112,7 +113,7 @@
                             <p>Tickets</p>
                         </div>
                         <div class="right">
-                            <p>{{form.get('price')?.value | currency}}</p>
+                            <p>{{form.get(EVENT_FORM_FIELDS.PRICE)?.value | currency}}</p>
                             <button (click)="togglePriceModal()">
                                 <img src="icons/pencil.svg" alt="" class="preview">
                             </button>
@@ -124,8 +125,8 @@
                             <p>Require Approval</p>
                         </div>
                         <div class="right">
-                            <label class="toggle-switch">
-                                <input type="checkbox" [checked]="checked" (change)="onToggle()" />
+                            <label for="toggle" class="toggle-switch">
+                                <input id="toggle" type="checkbox" [checked]="checked" (change)="onToggle()" />
                                 <span class="slider"></span>
                             </label>
                         </div>
@@ -136,7 +137,7 @@
                             <p>Capacity</p>
                         </div>
                         <div class="right">
-                            <p>Unlimited</p>
+                            <p>{{form.get(EVENT_FORM_FIELDS.CAPACITY)?.value || 'Unlimited'}}</p>
                             <button (click)="toggleCapacityModal()">
                                 <img src="icons/pencil.svg" alt="" class="preview">
                             </button>
@@ -173,22 +174,22 @@
                 <div class="content">
                     <div class="price-selection-container">
                         <div class="radio-container">
-                            <input formControlName="priceType" value="free" type="radio"  id="price-selection-free">
+                            <input [formControlName]="EVENT_FORM_FIELDS.PRICE_TYPE" value="free" type="radio" id="price-selection-free">
                             <label for="price-selection-free">Free Entry</label>
                         </div>
                         <div class="radio-container">
-                            <input formControlName="priceType" value="paid" type="radio"  id="price-selection-paid">
+                            <input [formControlName]="EVENT_FORM_FIELDS.PRICE_TYPE" value="paid" type="radio" id="price-selection-paid">
                             <label for="price-selection-paid">Paid</label>
                         </div>
                     </div>
-                    <app-input [iconSrc]="'icons/money.svg'" [label]="'Price'" [formControlName]="'price'"
+                    <app-input [iconSrc]="'icons/money.svg'" [label]="'Price'" [formControlName]="EVENT_FORM_FIELDS.PRICE"
                         [type]="'text'" [placeholder]="'0.00'"></app-input>
                     <div class="field">
                         <label for="price-included">What’s included with this ticket?</label>
-                        <textarea formControlName="percs" name="price-included" id="price-included"
+                        <textarea [formControlName]="EVENT_FORM_FIELDS.PERCS" name="price-included" id="price-included"
                             placeholder="Enter what’s included with this ticket"></textarea>
                     </div>
-                    <app-button [fullWidth]="true" type="primary">Set Price</app-button>
+                    <app-button (onClick)="setPrice()" [fullWidth]="true" type="primary">Set Price</app-button>
                 </div>
 
             </div>
@@ -206,11 +207,11 @@
                             reached.
                         </p>
                     </div>
-                    <app-input formControlName="capacity" type="text" placeholder="E.g., 20"></app-input>
+                    <app-input [formControlName]="EVENT_FORM_FIELDS.CAPACITY" type="text" placeholder="E.g., 20"></app-input>
                 </div>
                 <div class="actions">
-                    <app-button type='social'>Remove Limit</app-button>
-                    <app-button>Set Capacity</app-button>
+                    <app-button (onClick)="removeCapacityLimit()" type='social'>Remove Limit</app-button>
+                    <app-button (onClick)="setCapacityLimit()">Set Capacity</app-button>
                 </div>
             </div>
         </app-modal-container>

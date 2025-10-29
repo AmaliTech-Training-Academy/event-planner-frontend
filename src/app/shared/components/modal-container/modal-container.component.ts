@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, output, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-modal-container',
@@ -7,8 +7,8 @@ import { Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } 
   styleUrl: './modal-container.component.scss'
 })
 export class ModalContainerComponent {
+  public readonly close = output<void>();
 
-  @Output() close = new EventEmitter<void>();
   @ViewChild('modalContent', { static: true }) modalContent!: ElementRef;
 
   protected closeModal() {

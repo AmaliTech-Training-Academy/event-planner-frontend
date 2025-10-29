@@ -1,21 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ModalContainerComponent } from "../../../../shared/components/modal-container/modal-container.component";
 import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 import { InputComponent } from "../../../../shared/ui/input/input.component";
 import { EventDatePickerComponent } from "../../components/event-date-picker/event-date-picker.component";
 import { EventTimePickerComponent } from "../../components/event-time-picker/event-time-picker.component";
 import { EventTimeZonePickerComponent } from "../../components/event-time-zone-picker/event-time-zone-picker.component";
+import { EventFormService } from '../../services/event-form.service';
+import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from './../../constants/event-form.constant';
 
-const EVENT_TYPE = {
-  SINGLE_DAY: 'day',
-  MULTI_DAY: 'multi-day',
-}
-const MEETING_TYPE = {
-  VIRTUAL: 'virtual',
-  IN_PERSON: 'in-person',
-}
 
 @Component({
   selector: 'app-create-event-page',
@@ -23,7 +17,7 @@ const MEETING_TYPE = {
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
-export class CreateEventPageComponent implements OnInit {
+export class CreateEventPageComponent implements OnInit, OnDestroy {
   protected form: FormGroup;
   protected checked: boolean = false;
   protected flyerPreview: string | null = null;
@@ -31,85 +25,50 @@ export class CreateEventPageComponent implements OnInit {
   protected showCapacityModal: boolean = false;
 
 
-  constructor(private readonly fb: FormBuilder) {
-    this.form = fb.group({
-      eventType: [EVENT_TYPE.SINGLE_DAY, [Validators.required]],
-      dates: this.fb.array([]),
-      meetingType: [MEETING_TYPE.IN_PERSON, [Validators.required]],
-      flyer: ['', Validators.required],
-      title: ['', Validators.required],
-      capacity: [0],
-      price: [0],
-      percs: ["", Validators.required],
-      requireApproval: [false, Validators.required],
-      priceType: ['free', Validators.required],
-    })
-    this.eventDates.push(this.createDateGroup())
-    this.form.addControl('inPersonDetails', this.createInPersonDetailGroup());
-
+  constructor(private eventFormService: EventFormService) {
+    this.form = this.eventFormService.getForm();
+    this.checked = this.eventFormService.requireApproval?.value;
   }
 
+    protected get EVENT_FORM_FIELDS() {
+    return FIELDS;
+  }
+
+  protected get MEETING_TYPES() {
+    return MEETING_TYPE;
+  }
+
+  protected get EVENT_TYPES() {
+    return EVENT_TYPE;
+  }
 
   ngOnInit(): void {
-
-    this.form.get('eventType')?.valueChanges.subscribe((type) => {
-      if (type === EVENT_TYPE.MULTI_DAY && this.eventDates.length < 2) {
-        this.addDateGroup();
-      }
-      else if (type === EVENT_TYPE.SINGLE_DAY && this.eventDates.length > 1) {
-        const startData = this.eventDates.at(0).value;
-        this.eventDates.clear();
-        this.eventDates.push(this.fb.group(startData));
-      }
-    });
-
-
-    this.meetingType?.valueChanges.subscribe((type) => {
-      this.form.removeControl('virtualDetails');
-      this.form.removeControl('inPersonDetails');
-
-      if (type === MEETING_TYPE.IN_PERSON) {
-        this.form.addControl('inPersonDetails', this.createInPersonDetailGroup());
-      }
-      else if (type === MEETING_TYPE.VIRTUAL) {
-        this.form.addControl('virtualDetails', this.createVirtualDetailGroup());
-      }
-    })
-
-    this.form.get('priceType')?.valueChanges.subscribe((type) => {
-      const priceControl = this.form.get('price');
-      const includedControl = this.form.get('percs');
-
-      if (type === 'free') {
-        priceControl?.disable({ emitEvent: false });
-        includedControl?.disable({ emitEvent: false });
-      } else {
-        priceControl?.enable({ emitEvent: false });
-        includedControl?.enable({ emitEvent: false });
-      }
-    });
-
+    this.eventFormService.registerValueChangeHandlers();
   }
 
-  togglePriging() {
 
+  ngOnDestroy(): void {
+    this.eventFormService.destroy();
   }
 
   protected onVenueImageSelected(event: Event) {
+
     const input = event.target as HTMLInputElement;
 
     if (!input.files?.length) return;
 
     const files = Array.from(input.files);
 
-    const currentImages = this.inPersonDetails.get('images')?.value || [];
+    const currentImages = this.eventFormService.venueImages?.value || [];
 
     const updatedImages = [...currentImages, ...files].slice(0, 5);
 
-    this.inPersonDetails.get('images')?.setValue(updatedImages);
-    this.inPersonDetails.get('images')?.markAsDirty();
+    this.eventFormService.venueImages?.setValue(updatedImages);
+    this.eventFormService.venueImages?.markAsDirty();
 
   }
+
+
 
   protected onFlyerImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -117,77 +76,25 @@ export class CreateEventPageComponent implements OnInit {
 
     const file = input.files[0];
 
-    this.form.get('flyer')?.setValue(file);
-    this.form.get('flyer')?.markAsDirty();
-
+    this.eventFormService.flyer?.setValue(file);
+    this.eventFormService.controlValueChanged(this.eventFormService.flyer);
     this.flyerPreview = URL.createObjectURL(file);
   }
 
-  // protected get eventDates(): FormArray {
-  //   return this.form.get('dates') as FormArray;
-  // }
 
 
   protected get eventDates(): FormArray<FormGroup> {
-    return this.form.get('dates') as FormArray<FormGroup>;
+    return this.eventFormService.eventDates;
   }
 
   protected get inPersonDetails() {
-    return this.form.get('inPersonDetails') as FormGroup;
+    return this.eventFormService.inPersonDetails;
   }
 
   protected get meetingType() {
-    return this.form.get('meetingType')
+    return this.eventFormService.meetingType;
   }
 
-  private createDateGroup(label?: 'startsAt' | 'endsAt'): FormGroup {
-    return this.fb.group({
-      label: [label || 'startsAt'],
-      date: ['', Validators.required],
-      time: ['', Validators.required],
-      timeZone: ['', Validators.required],
-    });
-  }
-
-  private createVirtualDetailGroup() {
-
-    return this.fb.group({
-      meetingLink: ['', Validators.required]
-    })
-
-  }
-
-  private createInPersonDetailGroup() {
-
-    return this.fb.group({
-      location: ['', Validators.required],
-      description: ['', Validators.required],
-      images: [[]],
-    })
-
-  }
-
-
-
-  private get startDateGroup(): FormGroup {
-    return this.eventDates.at(0) as FormGroup;
-  }
-
-
-  private get endDateGroup(): FormGroup | null {
-    return this.eventDates.length > 1 ? (this.eventDates.at(1) as FormGroup) : null;
-  }
-
-
-
-  private addDateGroup(): void {
-    const label = this.eventDates.length === 0 ? 'startsAt' : 'endsAt';
-    this.eventDates.push(this.createDateGroup(label));
-  }
-
-  private removeDateGroup(index: number): void {
-    this.eventDates.removeAt(index);
-  }
 
   protected getDateControl(group: FormGroup, controlName: string): FormControl {
     return group.get(controlName) as FormControl;
@@ -195,10 +102,7 @@ export class CreateEventPageComponent implements OnInit {
 
 
   protected getImageSrc(image: any): string {
-    if (image instanceof File) {
-      return URL.createObjectURL(image);
-    }
-    return image;
+    return this.eventFormService.getImageSrc(image);
   }
 
   protected togglePriceModal() {
@@ -210,21 +114,36 @@ export class CreateEventPageComponent implements OnInit {
 
   protected onToggle() {
     this.checked = !this.checked;
-    this.form.get('requireApproval')?.setValue(this.checked);
-    this.form.get('requireApproval')?.markAsTouched();
-    this.form.get('requireApproval')?.markAsDirty();
+    this.eventFormService.requireApproval?.setValue(this.checked);
+    this.eventFormService.controlValueChanged(this.eventFormService.requireApproval);
   }
 
 
-  protected removeCapacityLimit(){
-    this.form.get('capacity')?.setValue(0);
-    this.form.get('capacity')?.markAsDirty();
-    this.form.get('capacity')?.markAllAsTouched();
+  protected removeCapacityLimit() {
+    this.eventFormService.capacity?.setValue(0);
+    this.eventFormService.controlValueChanged(this.eventFormService.capacity);
+    this.toggleCapacityModal();
   }
 
-  setCapacityLimit(){
-    this.form.get('capacity')?.markAsDirty();
-    this.form.get('capacity')?.markAllAsTouched();
+  protected setCapacityLimit() {
+    this.eventFormService.controlValueChanged(this.eventFormService.capacity);
+    this.toggleCapacityModal();
+
+  }
+  protected setPrice() {
+    this.eventFormService.controlValueChanged(this.eventFormService.price);
+    this.togglePriceModal();
+  }
+
+
+  protected createEvent() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    // TODO: Implement event creation logic here
+    this.eventFormService.resetForm();
   }
 
 }

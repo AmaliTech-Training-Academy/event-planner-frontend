@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, output } from '@angular/core';
 
 @Component({
   selector: 'app-date-picker',
@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './date-picker.component.scss'
 })
 export class DatePickerComponent {
-  @Output() dateSelected = new EventEmitter<Date>();
+  public readonly dateSelected = output<Date>();
 
   private today = new Date();
   protected currentMonth = this.today.getMonth();

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, output } from '@angular/core';
 
 @Component({
   selector: 'app-time-picker',
@@ -8,7 +8,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class TimePickerComponent {
 
-  @Output() selectTime = new EventEmitter<string>();
+  public readonly selectTime = output<string>();
 
   protected readonly timeSlots: string[] = [
     "10:00",
@@ -21,8 +21,7 @@ export class TimePickerComponent {
     "01:30",
   ]
 
-
-  protected timeSelected(time:string){
+  protected timeSelected(time: string) {
     this.selectTime.emit(time);
   }
 

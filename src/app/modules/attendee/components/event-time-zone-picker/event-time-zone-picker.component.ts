@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, input } from '@angular/core';
 import { CreateEventDateComponent } from "../create-event-date/create-event-date.component";
 import { TimeZonePickerComponent } from "../../../../shared/components/time-zone-picker/time-zone-picker.component";
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { TimeZone } from '../../models/event.models';
   styleUrl: './event-time-zone-picker.component.scss'
 })
 export class EventTimeZonePickerComponent {
-  @Input({ required: false }) control?: FormControl;
+  public readonly control = input<FormControl | undefined>(undefined);
   protected selectedTimeZone: TimeZone | null = null
   protected isOpen: boolean = false;
 
@@ -24,10 +24,10 @@ export class EventTimeZonePickerComponent {
   protected selectTimeZone(timeZone: TimeZone) {
 
     this.selectedTimeZone = timeZone;
-    
-    if (this.control) {
-      this.control.setValue(timeZone.gmt);
-      this.control.markAsDirty();
+
+    if (this.control()) {
+      this.control()?.setValue(timeZone.gmt);
+      this.control()?.markAsDirty();
     }
 
     this.toggleState()

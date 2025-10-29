@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, input, Input, output, Output, signal } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-create-event-date',
@@ -10,18 +10,18 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 })
 export class CreateEventDateComponent {
 
-  protected currentValue:string = "";
+  protected currentValue: string = "";
 
-  @Input() icon: string = "";
-  @Input() title: string = "";
-  @Output() clicked = new EventEmitter<void>();
+  public readonly icon = input<string>('');
+  public readonly title = input<string>('');
+  public readonly clicked = output<void>();
 
 
-  private selectedState: boolean = false;
+  protected readonly selectedState = signal(false);
 
   protected clickedOn() {
-    this.selectedState = !this.selectedState;
-    this.clicked.emit()
+    this.selectedState.update(v => !v);
+    this.clicked.emit();
   }
 
 

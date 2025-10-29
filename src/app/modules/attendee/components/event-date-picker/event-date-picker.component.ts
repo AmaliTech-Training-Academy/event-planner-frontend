@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, input, Input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DatePickerComponent } from "../../../../shared/components/date-picker/date-picker.component";
 import { CreateEventDateComponent } from "../create-event-date/create-event-date.component";
@@ -10,8 +10,8 @@ import { CreateEventDateComponent } from "../create-event-date/create-event-date
   styleUrl: './event-date-picker.component.scss',
 })
 export class EventDatePickerComponent {
-  @Input({ required: false }) control?: FormControl;
 
+  public readonly control = input<FormControl | undefined>(undefined);
   protected isOpen: boolean = false;
   protected currentSelectedDate: Date | null = null;
 
@@ -24,11 +24,12 @@ export class EventDatePickerComponent {
   protected selectedDate(date: Date) {
     this.currentSelectedDate = date;
 
-    if (this.control) {
-      this.control.setValue(date);
-      this.control.markAsDirty();
-    }
 
+    if (this.control()) {
+      this.control()?.setValue(date);
+      this.control()?.markAsDirty();
+    }
+    
     this.isOpen = false;
   }
 
