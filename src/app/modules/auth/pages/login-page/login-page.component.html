@@ -38,14 +38,26 @@
         </a>
       </div>
 
-      <app-button
-        buttonType="submit"
-        type="primary"
-        [fullWidth]="true"
-        [disabled]="form.invalid"
-      >
-        Log In
-      </app-button>
+ <app-button
+  buttonType="submit"
+  type="primary"
+  [fullWidth]="true"
+  [disabled]="form.invalid || isSubmitting()"
+  [attr.aria-busy]="isSubmitting()"
+>
+  <ng-container *ngIf="!isSubmitting(); else loading">
+    Log In
+  </ng-container>
+
+  <ng-template #loading>
+    <span class="please-wait" aria-hidden="true">
+      Please wait<span class="dots"></span>
+    </span>
+    <span class="sr-only">Logging in, please wait</span>
+  </ng-template>
+</app-button>
+
+
     </form>
 
     <app-divider text="Or continue with"></app-divider>

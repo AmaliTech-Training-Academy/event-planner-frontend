@@ -15,13 +15,7 @@ import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-te
 import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '../../../../core/services/auth.service';
-import { tap, catchError, of } from 'rxjs';
-
-interface LoginForm {
-  email: FormControl<string | null>;
-  password: FormControl<string | null>;
-  remember: FormControl<boolean | null>;
-}
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login-page',
@@ -84,33 +78,29 @@ export class LoginPageComponent {
     this.hasAttemptedSubmit.set(true);
     this.form.markAllAsTouched();
 
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.isSubmitting()) return;
 
     this.isSubmitting.set(true);
     this.loginError.set(null);
 
-    const email = this.form.value.email ?? '';
-    const password = this.form.value.password ?? '';
+    const email = this.form.value?.email ?? '';
+    const password = this.form.value?.password ?? '';
 
-    this.authService.login(email, password).subscribe({
-      next: () => {
-        this.router.navigate([APP_ROUTES.DASHBOARD]);
-      },
-      error: (err) => {
-        if (err.status === 401) {
-          this.loginError.set('Invalid email or password.');
-        } else if (err.status === 403) {
-          this.loginError.set('Access denied. Please verify your email.');
-        } else {
-          this.loginError.set('Login failed. Please try again.');
-        }
-
-        this.isSubmitting.set(false);
-      },
-      complete: () => {
-        this.isSubmitting.set(false);
-      },
-    });
+    this.authService
+      .login(email, password)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {},
+        error: (err) => {
+          if (err?.status === 401) {
+            this.loginError.set('Invalid email or password.');
+          } else if (err?.status === 403) {
+            this.loginError.set('Access denied. Please verify your email.');
+          } else {
+            this.loginError.set('Login failed. Please try again.');
+          }
+        },
+      });
   }
 
   private capitalize(text: string): string {
@@ -118,6 +108,7 @@ export class LoginPageComponent {
   }
 
   public hasFieldError(fieldName: keyof LoginForm): boolean {
+    // ✅ optional chaining avoids runtime form errors
     const field = this.form?.get(fieldName);
     return !!(field?.invalid && (field?.touched || this.hasAttemptedSubmit()));
   }
@@ -126,7 +117,7 @@ export class LoginPageComponent {
     const field = this.form?.get(fieldName);
     if (!field?.errors) return '';
 
-    const errors = field?.errors;
+    const errors = field.errors;
     switch (true) {
       case !!errors?.['required']:
         return `${this.capitalize(fieldName)} is required`;
@@ -138,4 +129,10 @@ export class LoginPageComponent {
         return 'Invalid input';
     }
   }
+}
+
+interface LoginForm {
+  email: FormControl<string | null>;
+  password: FormControl<string | null>;
+  remember: FormControl<boolean | null>;
 }
