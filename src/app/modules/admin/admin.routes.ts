@@ -8,7 +8,7 @@ export const ADMIN_ROUTES: Routes = [
       import('../admin/pages/dashboard-page/dashboard-page.component').then(
         (m) => m.DashboardPageComponent
       ),
-    canActivate: [AdminGuard],
+    // canActivate: [AdminGuard],
   },
   {
     path: 'users',
@@ -16,7 +16,6 @@ export const ADMIN_ROUTES: Routes = [
       import(
         '../admin/pages/user-management-page/user-management-page.component'
       ).then((m) => m.UserManagementPageComponent),
-    canActivate: [AdminGuard],
+    // canActivate: [AdminGuard],
   },
 ];
-
