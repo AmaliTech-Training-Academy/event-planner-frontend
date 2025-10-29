@@ -1,4 +1,18 @@
-import { Component, input, output, signal, effect } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  effect,
+  forwardRef,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  NG_VALUE_ACCESSOR,
+  ControlValueAccessor,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-checkbox',
@@ -19,15 +33,17 @@ export class CheckboxComponent implements ControlValueAccessor {
 
   public checked = input<boolean>(false);
 
-  public ariaLabel = input<string>(''); 
+  public ariaLabel = input<string>('');
 
   public checkedChange = output<boolean>();
+
+  private _checked = signal<boolean>(false);
+  private _disabled = signal<boolean>(false);
 
   private onChange: (value: boolean) => void = () => {};
   private onTouched: () => void = () => {};
 
   constructor() {
-    // Keep internal state in sync with external input()
     effect(() => {
       this._checked.set(this.checked());
     });
@@ -35,6 +51,14 @@ export class CheckboxComponent implements ControlValueAccessor {
 
   public get isChecked(): boolean {
     return this._checked();
+  }
+
+  public get isDisabled(): boolean {
+    return this._disabled();
+  }
+
+  writeValue(value: boolean): void {
+    this._checked.set(value ?? false);
   }
 
   registerOnChange(fn: any): void {
@@ -55,6 +79,7 @@ export class CheckboxComponent implements ControlValueAccessor {
     this._checked.set(newValue);
     this.onChange(newValue);
     this.onTouched();
+    this.checkedChange.emit(newValue);
   }
 
   public onKeyDown(event: KeyboardEvent): void {
@@ -63,7 +88,4 @@ export class CheckboxComponent implements ControlValueAccessor {
       this.toggleCheck();
     }
   }
-
-  public checked = this._checked.asReadonly();
-  public disabled = this._disabled.asReadonly();
 }

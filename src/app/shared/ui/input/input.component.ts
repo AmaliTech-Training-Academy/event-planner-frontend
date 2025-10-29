@@ -12,12 +12,14 @@ import {
   FormsModule,
   ReactiveFormsModule,
   NG_VALUE_ACCESSOR,
+  ControlValueAccessor,
 } from '@angular/forms';
+import { FormErrorComponent } from "../form-error/form-error.component";
 
 @Component({
   selector: 'app-input',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorComponent, ButtonComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorComponent],
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,8 +31,7 @@ import {
     },
   ],
 })
-
-export class InputComponent {
+export class InputComponent implements ControlValueAccessor {
   public readonly type = input<'text' | 'email' | 'password'>('text');
   public readonly placeholder = input<string>('');
   public readonly label = input<string>('');
@@ -49,6 +50,7 @@ export class InputComponent {
   private readonly _internalValue = signal<string>('');
   private readonly _isFocused = signal(false);
   private readonly _showPassword = signal(false);
+  private _isDisabled = signal<boolean>(false);
 
   public readonly hasError = computed(() => !!this.errorMessage());
   public readonly inputType = computed(() =>
@@ -56,28 +58,9 @@ export class InputComponent {
   );
   public readonly showPassword = computed(() => this._showPassword());
   public readonly isFocused = computed(() => this._isFocused());
-  
-export class InputComponent implements ControlValueAccessor {
-  public type = input<'text' | 'email' | 'password'>('text');
-  public placeholder = input<string>('');
-  public label = input<string>('');
-  public errorMessage = input<string>('');
-  public iconSrc = input<string | undefined>();
-  public required = input<boolean>(false);
-  public disabled = input<boolean>(false);
-
-  private _value = signal<string>('');
-  private _isFocused = signal<boolean>(false);
-  private _showPassword = signal<boolean>(false);
-  private _isDisabled = signal<boolean>(false);
-
-  public hasError = computed(() => !!this.errorMessage());
-  public inputType = computed(() =>
-    this.type() === 'password' && !this._showPassword() ? 'password' : 'text'
+  public readonly isDisabled = computed(
+    () => this.disabled() || this._isDisabled()
   );
-  public isFocused = computed(() => this._isFocused());
-  public showPassword = computed(() => this._showPassword());
-  public isDisabled = computed(() => this.disabled() || this._isDisabled());
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
@@ -85,11 +68,17 @@ export class InputComponent implements ControlValueAccessor {
   writeValue(value: string): void {
     this._internalValue.set(value ?? '');
   }
+
   registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
+
   registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this._isDisabled.set(isDisabled);
   }
 
   public currentValue(): string {

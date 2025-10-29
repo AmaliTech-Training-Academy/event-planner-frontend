@@ -113,6 +113,9 @@ export class AuthService {
   public getUserRole(): Observable<'admin' | 'attendee' | null> {
     return this._userInfo$
       .asObservable()
-      .pipe(map((user) => user?.role ?? null));
+      .pipe(map((user) => {
+        if (!user?.role) return null;
+        return user.role === 'Organizer' ? 'admin' : 'attendee';
+      }));
   }
 }

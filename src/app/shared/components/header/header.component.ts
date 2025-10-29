@@ -1,13 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  LucideAngularModule,
-  Home,
-  Users,
-  Menu,
-  LucideIconData,
-} from 'lucide-angular';
+
 import { ButtonComponent } from '../../ui/button/button.component';
 
 interface NavLink {
