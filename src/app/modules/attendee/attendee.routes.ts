@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from '../../core/guards/auth.guard';
 
 export const ATTENDEE_ROUTES: Routes = [
   {
@@ -28,6 +29,7 @@ export const ATTENDEE_ROUTES: Routes = [
       import(
         '../attendee/pages/create-event-page/create-event-page.component'
       ).then((m) => m.CreateEventPageComponent),
+    canActivate: [AuthGuard],
   },
   {
     path: 'event/:id',
@@ -42,6 +44,7 @@ export const ATTENDEE_ROUTES: Routes = [
       import('../attendee/pages/profile-page/profile-page.component').then(
         (m) => m.ProfilePageComponent
       ),
+    canActivate: [AuthGuard],
   },
   {
     path: 'my-events',
@@ -49,5 +52,6 @@ export const ATTENDEE_ROUTES: Routes = [
       import('../attendee/pages/my-events-page/my-events-page.component').then(
         (m) => m.MyEventsPageComponent
       ),
+    canActivate: [AuthGuard],
   },
 ];

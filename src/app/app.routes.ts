@@ -3,7 +3,6 @@ import { AUTH_ROUTES } from './modules/admin/auth.routes';
 import { ATTENDEE_ROUTES } from './modules/attendee/attendee.routes';
 import { ADMIN_ROUTES } from './modules/admin/admin.routes';
 
-
 export const routes: Routes = [
   { path: '', redirectTo: 'app', pathMatch: 'full' },
   {
@@ -26,4 +25,11 @@ export const routes: Routes = [
       ),
     children: ADMIN_ROUTES,
   },
+  // {
+  //   path: '**',
+  //   loadComponent: () =>
+  //     import('./shared/pages/not-found-page/not-found-page.component').then(
+  //       (m) => m.NotFoundPageComponent
+  //     ),
+  // },
 ];
