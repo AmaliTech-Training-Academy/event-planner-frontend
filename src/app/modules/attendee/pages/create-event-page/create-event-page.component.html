@@ -6,19 +6,23 @@
                 <div class="day-container">
                     <p>Select event type:</p>
                     <div class="radio-container">
-                        <input [value]="EVENT_TYPES.SINGLE_DAY" [formControlName]="EVENT_FORM_FIELDS.EVENT_TYPE" type="radio" id="day-event">
+                        <input [value]="EVENT_TYPES.SINGLE_DAY" [formControlName]="EVENT_FORM_FIELDS.EVENT_TYPE"
+                            type="radio" id="day-event">
                         <label for="day-event">Day Event</label>
                     </div>
                     <div class="radio-container">
-                        <input [value]="EVENT_TYPES.MULTI_DAY" [formControlName]="EVENT_FORM_FIELDS.EVENT_TYPE" type="radio" id="multi-day-event">
+                        <input [value]="EVENT_TYPES.MULTI_DAY" [formControlName]="EVENT_FORM_FIELDS.EVENT_TYPE"
+                            type="radio" id="multi-day-event">
                         <label for="multi-day-event">Multi-day</label>
                     </div>
                 </div>
                 <div class="date-container" [formArrayName]="EVENT_FORM_FIELDS.DATES">
                     @for (dateGroup of eventDates.controls; track $index) {
                     <div class="row" [formGroupName]="$index">
-                        <app-event-date-picker [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.DATE)"></app-event-date-picker>
-                        <app-event-time-picker [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.TIME)"></app-event-time-picker>
+                        <app-event-date-picker
+                            [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.DATE)"></app-event-date-picker>
+                        <app-event-time-picker
+                            [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.TIME)"></app-event-time-picker>
                         <app-event-time-zone-picker
                             [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.TIME_ZONE)"></app-event-time-zone-picker>
                     </div>
@@ -30,11 +34,13 @@
             <div class="meeting-contianer">
                 <p>Select meeting type:</p>
                 <div class="radio-container">
-                    <input type="radio" [value]="MEETING_TYPES.VIRTUAL" [formControlName]="EVENT_FORM_FIELDS.MEETING_TYPE" id="virtual-meeting">
+                    <input type="radio" [value]="MEETING_TYPES.VIRTUAL"
+                        [formControlName]="EVENT_FORM_FIELDS.MEETING_TYPE" id="virtual-meeting">
                     <label for="virtual-meeting">Virtual</label>
                 </div>
                 <div class="radio-container">
-                    <input type="radio" [value]="MEETING_TYPES.IN_PERSON" [formControlName]="EVENT_FORM_FIELDS.MEETING_TYPE" id="inperson-meeting">
+                    <input type="radio" [value]="MEETING_TYPES.IN_PERSON"
+                        [formControlName]="EVENT_FORM_FIELDS.MEETING_TYPE" id="inperson-meeting">
                     <label for="inperson-meeting">In-person</label>
                 </div>
             </div>
@@ -62,10 +68,10 @@
                             </button>
                         </div>
                     </div>
-                    <button type="button">
+                    <a href='/app/define-venue-sections' class="define-venue-sections">
                         <p>Define venue section</p>
                         <img src="icons/arrow-right.svg" />
-                    </button>
+                    </a>
                 </div>
             </div>
             }
@@ -144,13 +150,15 @@
                         </div>
                     </li>
                     <li class="item">
-                        <div class="left">
-                            <img src="icons/user-circle.svg" alt="" class="preview">
-                            <p>Manage user roles</p>
-                        </div>
-                        <div class="right">
-                            <img src="icons/chevron-right.svg" alt="" class="preview">
-                        </div>
+                        <a href='/app/define-venue-sections'>
+                            <div class="left">
+                                <img src="icons/user-circle.svg" alt="" class="preview">
+                                <p>Manage user roles</p>
+                            </div>
+                            <div class="right">
+                                <img src="icons/chevron-right.svg" alt="" class="preview">
+                            </div>
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -174,16 +182,18 @@
                 <div class="content">
                     <div class="price-selection-container">
                         <div class="radio-container">
-                            <input [formControlName]="EVENT_FORM_FIELDS.PRICE_TYPE" value="free" type="radio" id="price-selection-free">
+                            <input [formControlName]="EVENT_FORM_FIELDS.PRICE_TYPE" value="free" type="radio"
+                                id="price-selection-free">
                             <label for="price-selection-free">Free Entry</label>
                         </div>
                         <div class="radio-container">
-                            <input [formControlName]="EVENT_FORM_FIELDS.PRICE_TYPE" value="paid" type="radio" id="price-selection-paid">
+                            <input [formControlName]="EVENT_FORM_FIELDS.PRICE_TYPE" value="paid" type="radio"
+                                id="price-selection-paid">
                             <label for="price-selection-paid">Paid</label>
                         </div>
                     </div>
-                    <app-input [iconSrc]="'icons/money.svg'" [label]="'Price'" [formControlName]="EVENT_FORM_FIELDS.PRICE"
-                        [type]="'text'" [placeholder]="'0.00'"></app-input>
+                    <app-input [iconSrc]="'icons/money.svg'" [label]="'Price'"
+                        [formControlName]="EVENT_FORM_FIELDS.PRICE" [type]="'text'" [placeholder]="'0.00'"></app-input>
                     <div class="field">
                         <label for="price-included">What’s included with this ticket?</label>
                         <textarea [formControlName]="EVENT_FORM_FIELDS.PERCS" name="price-included" id="price-included"
@@ -207,7 +217,8 @@
                             reached.
                         </p>
                     </div>
-                    <app-input [formControlName]="EVENT_FORM_FIELDS.CAPACITY" type="text" placeholder="E.g., 20"></app-input>
+                    <app-input [formControlName]="EVENT_FORM_FIELDS.CAPACITY" type="text"
+                        placeholder="E.g., 20"></app-input>
                 </div>
                 <div class="actions">
                     <app-button (onClick)="removeCapacityLimit()" type='social'>Remove Limit</app-button>

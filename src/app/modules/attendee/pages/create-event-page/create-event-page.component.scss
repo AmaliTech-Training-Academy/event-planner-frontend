@@ -3,7 +3,6 @@
 @use "theme" as *;
 @use "media_query" as *;
 
-
 .wrapper {
     padding: 0 7.5rem;
     background: linear-gradient(180.65deg, #ffffff 88.1%, #999999 137.06%);
@@ -35,8 +34,6 @@
         @include sm {
             width: 100%;
         }
-
-
 
         .title-container {
             display: flex;
@@ -76,7 +73,6 @@
                     gap: $spacing-4;
                     @include body-1;
 
-
                     @include md {
                         @include body-2;
                         gap: $spacing-2;
@@ -109,7 +105,6 @@
                         }
 
                         label {
-
                             @include md {
                                 @include body-2;
                             }
@@ -147,10 +142,11 @@
             @include body-1;
 
             @include md {
-                padding: 6.625rem .5rem;
+                padding: 6.625rem 0.5rem;
             }
 
-            @include md {}
+            @include md {
+            }
 
             .meeting-contianer {
                 display: flex;
@@ -261,11 +257,16 @@
                     }
                 }
 
-                button {
+                button,.define-venue-sections {
                     background-color: transparent;
                     @include secondary_btn;
                     justify-content: space-between;
                     padding: 14.5px 24px;
+                }
+
+                .define-venue-sections {
+                    text-decoration: none;
+                    color: $sub-header-dark;
                 }
             }
 
@@ -303,7 +304,8 @@
         flex-direction: column;
         gap: 62px;
 
-        @include md {}
+        @include md {
+        }
 
         @include sm {
             width: 100%;
@@ -416,7 +418,16 @@
                         justify-content: space-between;
                         padding: 8px;
                         border-bottom: 1px solid $general-stroke-light;
-
+                       
+                        a {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            text-decoration: none;
+                            flex: 1;
+                            justify-content: space-between;
+                        }
+                        
                         .left {
                             display: flex;
                             flex-direction: row;
@@ -491,11 +502,11 @@
         transition: 0.3s;
     }
 
-    input:checked+.slider {
+    input:checked + .slider {
         background-color: #4caf50;
     }
 
-    input:checked+.slider::before {
+    input:checked + .slider::before {
         transform: translateX(22px);
     }
 }
@@ -504,7 +515,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     gap: 24px;
     width: 588px;
     border-radius: 16px;
@@ -536,7 +547,7 @@
             align-items: center;
             gap: 8px;
 
-            background-color: #FFFFEA;
+            background-color: #ffffea;
             border-radius: 8px;
             padding: 6px 8px;
 
@@ -615,7 +626,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
     width: 588px;
     border-radius: 16px;
     padding: 24px;
@@ -660,5 +671,4 @@
             flex: 1;
         }
     }
-
 }
