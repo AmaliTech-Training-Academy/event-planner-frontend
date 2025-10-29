@@ -257,7 +257,8 @@
                     }
                 }
 
-                button,.define-venue-sections {
+                button,
+                .define-venue-sections {
                     background-color: transparent;
                     @include secondary_btn;
                     justify-content: space-between;
@@ -418,7 +419,7 @@
                         justify-content: space-between;
                         padding: 8px;
                         border-bottom: 1px solid $general-stroke-light;
-                       
+
                         a {
                             display: flex;
                             flex-direction: row;
@@ -427,7 +428,7 @@
                             flex: 1;
                             justify-content: space-between;
                         }
-                        
+
                         .left {
                             display: flex;
                             flex-direction: row;
@@ -670,5 +671,38 @@
         app-button {
             flex: 1;
         }
+    }
+}
+
+.zoom-connect {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    width: 588px;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    gap: 24px;
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+
+        h3 {
+            @include h-3;
+            color: $header-dark;
+        }
+
+        p {
+            @include body-1;
+            color: $paragraph-text;
+        }
+    }
+    
+    app-button {
+        width: 100%;
     }
 }

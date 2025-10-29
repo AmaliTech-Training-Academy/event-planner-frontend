@@ -78,11 +78,11 @@
             @if (meetingType?.value === MEETING_TYPES.VIRTUAL) {
             <div class="virtual-details" [formGroupName]="EVENT_FORM_FIELDS.VIRTUAL_DETAILS">
                 <p>Choose Virtual Option</p>
-                <button type="button">
+                <button (click)="toggleConnectZoomModal()" type="button">
                     <img src="icons/cam_corder.svg" />
                     <p>Create Zoom Meeting</p>
                 </button>
-                <button type="button">
+                <button (click)="toggleConnectZoomModal()" type="button">
                     <img src="icons/cam_corder.svg" />
                     <p>Use Existing Meeting</p>
                 </button>
@@ -228,7 +228,22 @@
         </app-modal-container>
         }
 
-    </div>
+        @if (connectZoomModal) {
+            <app-modal-container (close)="toggleConnectZoomModal()">
+                <div class="zoom-connect">
+                    <img src="icons/trend_up_circle.svg" alt="" srcset="" class="icon">
+    
+                    <div class="content">
+                        <h3>Connect to Zoom</h3>
+                        <p>Connect your account to the zoom platform to automatically create the meeting link for the event
+                        </p>
+                    </div>
+                    <app-button type="primary" [fullWidth]="true">Connect</app-button>
+                </div>
+            </app-modal-container>
+        }
 
+
+    </div>
 
 </form>

@@ -23,6 +23,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   protected flyerPreview: string | null = null;
   protected showPriceModal: boolean = false;
   protected showCapacityModal: boolean = false;
+  protected connectZoomModal: boolean = false;
 
 
   constructor(private eventFormService: EventFormService) {
@@ -133,6 +134,10 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   protected setPrice() {
     this.eventFormService.controlValueChanged(this.eventFormService.price);
     this.togglePriceModal();
+  }
+
+  protected toggleConnectZoomModal() {
+    this.connectZoomModal = !this.connectZoomModal;
   }
 
 
