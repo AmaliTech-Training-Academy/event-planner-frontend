@@ -1,11 +1,10 @@
-import { Component, input, signal, computed, forwardRef } from '@angular/core';
+import { Component, input, signal, computed, forwardRef, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  ControlValueAccessor,
+
   FormsModule,
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
-  NG_VALUE_ACCESSOR,
   ControlValueAccessor,
 } from '@angular/forms';
 import { FormErrorComponent } from "../form-error/form-error.component";
@@ -59,7 +58,7 @@ export class InputComponent implements ControlValueAccessor {
   private onTouched: () => void = () => {};
 
   writeValue(value: any): void {
-    this._value.set(value || '');
+    this.value();
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -93,12 +92,11 @@ export class InputComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
-  public value = this._value.asReadonly();
 
  
   public onValueChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this._value.set(value);
+    this.value();
     this.onChange(value);
   }
 }
