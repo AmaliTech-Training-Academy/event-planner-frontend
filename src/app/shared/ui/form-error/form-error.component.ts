@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   Component,
   input,
@@ -12,7 +12,7 @@ import {
   standalone: true,
   templateUrl: './form-error.component.html',
   styleUrls: ['./form-error.component.scss'],
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
 })
 export class FormErrorComponent implements OnChanges {
   public message = input<string>('');
