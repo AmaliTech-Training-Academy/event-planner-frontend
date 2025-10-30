@@ -8,94 +8,91 @@ import { ErrorHandlerService } from './error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-
-    private _loggedIn$ = new BehaviorSubject<boolean>(false);
-    private _userInfo$ = new BehaviorSubject<User | null>(null);
-    private _loadingStateSubject = new BehaviorSubject<boolean>(false);
-    public readonly loading$ = this._loadingStateSubject.asObservable();
-
+  private _loggedIn$ = new BehaviorSubject<boolean>(false);
+  private _userInfo$ = new BehaviorSubject<User | null>(null);
+  private _loadingStateSubject = new BehaviorSubject<boolean>(false);
+  public readonly loading$ = this._loadingStateSubject.asObservable();
 
 
-    constructor(private readonly authBackend: AuthBackendService, private readonly router: Router, private readonly errorHandlerService: ErrorHandlerService) { }
+  constructor(private readonly authBackend: AuthBackendService, private readonly router: Router, private readonly errorHandlerService: ErrorHandlerService) { }
 
-    public login(email: string, password: string) {
-        this.setLoading(true);
-        return this.authBackend.login(email, password)
-            .pipe(
-                tap(() => {
-                    this.router.navigate([APP_ROUTES.VERIFY_EMAIL], {
-                        queryParams: { email },
-                    });
-                }),
-                catchError(err => this.errorHandlerService.handle(err)),
-                finalize(() => this.setLoading(false))
-            );
-    }
+  public login(email: string, password: string) {
+    this.setLoading(true);
+    return this.authBackend.login(email, password)
+      .pipe(
+        tap(() => {
+          this.router.navigate([APP_ROUTES.VERIFY_EMAIL], {
+            queryParams: { email },
+          });
+        }),
+        catchError(err => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
+  }
 
-    public register(fullName: string, email: string, password: string, confirmPassword: string) {
-        this.setLoading(true);
-        return this.authBackend.register(fullName, email, password, confirmPassword)
-            .pipe(
-                tap(() => {
-                    this.router.navigate([APP_ROUTES.LOGIN], {
-                        queryParams: { email },
-                    });
-                }), catchError(err => this.errorHandlerService.handle(err)),
-                finalize(() => this.setLoading(false))
-            );
-    }
-
-
-    public verifyEmail(otp: string, email: string) {
-        this.setLoading(true);
-        return this.authBackend.verifyEmail(otp, email)
-            .pipe(
-                tap((response) => {
-                    this._loggedIn$.next(true);
-                    this.router.navigate([APP_ROUTES.LANDING_PAGE]);
-                }),
-                catchError(err => this.errorHandlerService.handle(err)),
-                finalize(() => this.setLoading(false))
-            )
-    }
-
-    public logout() {
-        this.setLoading(true);
-        return this.authBackend.logout()
-            .pipe(
-                tap(() => {
-                    this._loggedIn$.next(false);
-                    this._userInfo$.next(null);
-                    this.router.navigate([APP_ROUTES.LOGIN]);
-                }),
-                catchError(err => this.errorHandlerService.handle(err)),
-                finalize(() => this.setLoading(false))
-            );
-    }
-
-    public checkAuthUser(userId: string) {
-        this.setLoading(true);
-        return this.authBackend.checkAuthUser(userId)
-            .pipe(
-                tap(response => {
-                    this._userInfo$.next(response?.data)
-                }),
-                catchError(err => this.errorHandlerService.handle(err)),
-                finalize(() => this.setLoading(false))
-            );
-    }
+  public register(fullName: string, email: string, password: string, confirmPassword: string) {
+    this.setLoading(true);
+    return this.authBackend.register(fullName, email, password, confirmPassword)
+      .pipe(
+        tap(() => {
+          this.router.navigate([APP_ROUTES.LOGIN], {
+            queryParams: { email },
+          });
+        }), catchError(err => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
+  }
 
 
-    public isLoggedIn(): Observable<boolean> {
-        return this._loggedIn$.asObservable();
-    }
+  public verifyEmail(otp: string, email: string) {
+    this.setLoading(true);
+    return this.authBackend.verifyEmail(otp, email)
+      .pipe(
+        tap((response) => {
+          this._loggedIn$.next(true);
+          this.router.navigate([APP_ROUTES.LANDING_PAGE]);
+        }),
+        catchError(err => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      )
+  }
 
-    public currentUser(): User | null {
-        return this._userInfo$.getValue()
-    }
+  public logout() {
+    this.setLoading(true);
+    return this.authBackend.logout()
+      .pipe(
+        tap(() => {
+          this._loggedIn$.next(false);
+          this._userInfo$.next(null);
+          this.router.navigate([APP_ROUTES.LOGIN]);
+        }),
+        catchError(err => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
+  }
 
-    private setLoading(isLoading: boolean): void {
-        this._loadingStateSubject.next(isLoading);
-    }
+  public checkAuthUser(userId: string) {
+    this.setLoading(true);
+    return this.authBackend.checkAuthUser(userId)
+      .pipe(
+        tap(response => {
+          this._userInfo$.next(response?.data)
+        }),
+        catchError(err => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
+  }
+
+  public isLoggedIn(): Observable<boolean> {
+    return this._loggedIn$.asObservable();
+  }
+
+  public currentUser(): User | null {
+    return this._userInfo$.getValue()
+  }
+
+  private setLoading(isLoading: boolean): void {
+    this._loadingStateSubject.next(isLoading);
+  }
 
 }

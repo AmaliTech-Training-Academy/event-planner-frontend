@@ -1,7 +1,6 @@
 <button
-  [class.primary]="type() === 'primary'"
-  [class.social]="type() === 'social'"
-  [class.full-width]="fullWidth()"
+  [type]="buttonType()"
+  [ngClass]="classes()"
   [disabled]="disabled()"
   (click)="handleClick()"
 >

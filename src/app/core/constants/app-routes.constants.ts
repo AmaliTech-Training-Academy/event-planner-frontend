@@ -1,7 +1,9 @@
 export const APP_ROUTES = {
     LOGIN : "/auth/login",
-    SIGNUP : "/auth/signup",
+    SIGNUP: "/auth/signup",
+    FORGOT_PASSWORD: "/auth/forgot-password",
     LANDING_PAGE : "/",
     EXPLORE:"/app/explore",
-    VERIFY_EMAIL:'/auth/verify-email'
+    VERIFY_EMAIL:'/auth/verify-email',
+    ADMIN_LOGIN:'/auth/admin'
 }
