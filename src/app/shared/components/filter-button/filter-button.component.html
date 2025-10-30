@@ -1,0 +1,14 @@
+<button 
+  type="button" 
+  class="filter-button-wrapper" 
+  [class.is-placeholder]="isPlaceholder">
+  
+ 
+  <span>{{ text }}</span>
+
+  
+  @if (iconPath) {
+    <img [src]="iconPath" [alt]="text" class="filter-icon" />
+  }
+</button>
+
