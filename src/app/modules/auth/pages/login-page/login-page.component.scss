@@ -9,6 +9,7 @@
   align-items: center;
   min-height: 100vh;
   background-color: $gray-50;
+  position: relative;
   font-family: $font-lato;
 }
 
@@ -20,6 +21,7 @@
   width: 100%;
   max-width: 465px;
   text-align: center;
+  position: relative;
 }
 
 .app-name {
@@ -422,3 +424,4 @@ app-button > * {
   white-space: nowrap;
   border: 0;
 }
+

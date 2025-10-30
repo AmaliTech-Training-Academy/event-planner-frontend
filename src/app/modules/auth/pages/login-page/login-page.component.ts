@@ -6,16 +6,17 @@ import {
   ReactiveFormsModule,
   FormControl,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
-import { InputComponent } from '../../../../shared/ui/input/input.component';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { DividerComponent } from '../../../../shared/ui/divider/divider.component';
-import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
-import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
+
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '../../../../core/services/auth.service';
-import { finalize } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
+import { DividerComponent } from '../../../../shared/ui/divider/divider.component';
+import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
+import { InputComponent } from '../../../../shared/ui/input/input.component';
 
 @Component({
   selector: 'app-login-page',
@@ -24,11 +25,11 @@ import { finalize } from 'rxjs';
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    InputComponent,
     ButtonComponent,
+    SocialLoginComponent,
     DividerComponent,
     SecureTextComponent,
-    SocialLoginComponent,
+    InputComponent,
   ],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
@@ -40,7 +41,8 @@ export class LoginPageComponent {
   protected hasAttemptedSubmit = signal(false);
   protected isSubmitting = signal(false);
   protected loginError = signal<string | null>(null);
-
+  protected loading: boolean = false;
+  private subscription: Subscription = new Subscription();
   protected readonly APP_ROUTES = APP_ROUTES;
 
   private readonly emailRegex =
@@ -51,9 +53,17 @@ export class LoginPageComponent {
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+  private location: Location
   ) {
     this.form = this.createForm();
+  }
+  ngOnInit(): void {
+    this.subscription.add(
+      this.authService.loading$.subscribe((isLoading) => {
+        this.loading = isLoading;
+      })
+    );
   }
 
   private createForm(): FormGroup<LoginForm> {
@@ -74,8 +84,7 @@ export class LoginPageComponent {
     this.isPasswordHidden.update((v) => !v);
   }
 
-  public handleSubmit(): void {
-    this.hasAttemptedSubmit.set(true);
+  handleSubmit(): void {
     this.form.markAllAsTouched();
 
     if (this.form.invalid || this.isSubmitting()) return;
@@ -88,7 +97,7 @@ export class LoginPageComponent {
 
     this.authService
       .login(email, password)
-      .pipe(finalize(() => this.isSubmitting.set(false)))
+
       .subscribe({
         next: () => {},
         error: (err) => {
@@ -126,6 +135,13 @@ export class LoginPageComponent {
         return 'Password must include at least 8 chars, one number & one special character';
       default:
         return 'Invalid input';
+    }
+  }
+  goBack(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/']);
     }
   }
 }

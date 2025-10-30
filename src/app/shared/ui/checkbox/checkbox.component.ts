@@ -1,11 +1,18 @@
-import { Component, input, signal, forwardRef } from '@angular/core';
 import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
+  Component,
+  input,
+  output,
+  signal,
+  effect,
+  forwardRef,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
   FormsModule,
   ReactiveFormsModule,
+  NG_VALUE_ACCESSOR,
+  ControlValueAccessor,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-checkbox',
@@ -23,6 +30,10 @@ import { CommonModule } from '@angular/common';
 })
 export class CheckboxComponent implements ControlValueAccessor {
   public label = input<string>('');
+  public checked = input<boolean>(false);
+  public ariaLabel = input<string>('');
+
+  public checkedChange = output<boolean>();
 
   private _checked = signal<boolean>(false);
   private _disabled = signal<boolean>(false);
@@ -30,15 +41,32 @@ export class CheckboxComponent implements ControlValueAccessor {
   private onChange: (value: boolean) => void = () => {};
   private onTouched: () => void = () => {};
 
+  constructor() {
+    effect(() => {
+      const externalChecked = this.checked();
+      if (externalChecked !== this._checked()) {
+        this._checked.set(externalChecked);
+      }
+    });
+  }
+
+  public get isChecked(): boolean {
+    return this._checked();
+  }
+
+  public get isDisabled(): boolean {
+    return this._disabled();
+  }
+
   writeValue(value: boolean): void {
     this._checked.set(value ?? false);
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: boolean) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
@@ -52,6 +80,7 @@ export class CheckboxComponent implements ControlValueAccessor {
     this._checked.set(newValue);
     this.onChange(newValue);
     this.onTouched();
+    this.checkedChange.emit(newValue);
   }
 
   public onKeyDown(event: KeyboardEvent): void {
@@ -60,7 +89,4 @@ export class CheckboxComponent implements ControlValueAccessor {
       this.toggleCheck();
     }
   }
-
-  public checked = this._checked.asReadonly();
-  public disabled = this._disabled.asReadonly();
 }

@@ -24,7 +24,12 @@
       }
 
       <div class="header__actions">
-        <app-button type="social" routerLink="/auth/login">Sign In</app-button>
+        <app-button
+          type="secondary"
+          [extraClass]="'header__button'"
+          routerLink="/auth/login"
+          >Sign In</app-button
+        >
       </div>
     </nav>
 

@@ -1,13 +1,13 @@
 <div
   class="checkbox-wrapper"
   role="checkbox"
-  [attr.aria-checked]="checked()"
-  [attr.aria-disabled]="disabled()"
+  [attr.aria-checked]="isChecked"
+  [attr.aria-disabled]="isDisabled"
   tabindex="0"
   (click)="toggleCheck()"
   (keydown)="onKeyDown($event)"
-  [class.disabled]="disabled()"
+  [class.disabled]="isDisabled"
 >
-  <span class="checkmark" [class.checked]="checked()"></span>
+  <span class="checkmark" [class.checked]="isChecked"></span>
   <span class="label-text">{{ label() }}</span>
 </div>
