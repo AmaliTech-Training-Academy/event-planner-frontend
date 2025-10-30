@@ -1,4 +1,4 @@
-@use 'index' as *; // Imports variables, colors, typography, mixins
+@use 'index' as *; 
 @use 'sass:color';
 
 :host {
@@ -7,66 +7,66 @@
 
 .ticket-card {
   background-color: #fff;
-  border: 1px solid #E5E7EB; // $general-stroke-light
-  border-radius: 8px; // $radius-4
-  padding: 1.5rem; // $spacing-6
+  border: 1px solid #E5E7EB; 
+  border-radius: 8px; 
+  padding: 1.5rem; 
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .card-title {
-  // Standard CSS for h3
+ 
   font-family: "Lato", sans-serif;
-  font-size: 1.75rem; // ~h4
+  font-size: 1.75rem; 
   font-weight: 700;
-  color: #292929; // $header-dark
-  margin: 0 0 1rem 0; // $spacing-4 margin bottom
+  color: #292929;
+  margin: 0 0 1rem 0; 
 }
 
 .price {
-  // Standard CSS for h2
+  
   font-family: "Lato", sans-serif;
-  font-size: 2.25rem; // ~h3
+  font-size: 2.25rem;
   font-weight: 700;
-  color: #006adc; // Blue color for price
-  margin-bottom: 1.5rem; // $spacing-6
+  color: #006adc; 
+  margin-bottom: 1.5rem; 
 }
 
 .features-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 1.5rem 0; // $spacing-6 margin bottom
+  margin: 0 0 1.5rem 0; 
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; // $spacing-3
+  gap: 0.75rem; 
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem; // $spacing-2
-  // Standard CSS for body-1
+  gap: 0.5rem; 
+ 
   font-family: "Lato", sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  color: #656565; // $paragraph-text
+  color: #656565; 
 
   span {
-    color: #22c55e; // Green checkmark color
+    color: #22c55e; 
     font-size: 1.25rem;
     line-height: 1;
   }
 }
 
-// Make the reusable button component take full width
+
 app-button {
   width: 100%;
 
-  // Use ::ng-deep to style the button *inside* the component
+  
   ::ng-deep button {
     width: 100%;
-    // Ensure padding is consistent
-    padding-top: 0.75rem; // $spacing-3
-    padding-bottom: 0.75rem; // $spacing-3
+    
+    padding-top: 0.75rem; 
+    padding-bottom: 0.75rem; 
   }
 }
 

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common'; // For @if, @for
+import { CommonModule } from '@angular/common'; 
 
-// Define the interface for a single image
+
 export interface VenueImage {
   url: string;
   alt: string;
@@ -15,30 +15,26 @@ export interface VenueImage {
   styleUrl: './venue-image-slider.component.scss'
 })
 export class VenueImageSliderComponent implements OnChanges {
-  // --- Public API ---
+ 
   @Input() public images: VenueImage[] = [];
 
-  // --- Public Properties ---
+  
   public currentIndex: number = 0;
-  public visibleImagesCount: number = 4; // How many images to show at once
+  public visibleImagesCount: number = 4; 
   public slideWidthPercentage: number = 100 / this.visibleImagesCount;
 
-  // --- State for Disabling Buttons ---
+  
   public isPrevDisabled: boolean = true;
   public isNextDisabled: boolean = false;
 
   public ngOnChanges(changes: SimpleChanges): void {
-    // Recalculate when images are loaded
+   
     if (changes['images']) {
       this.updateButtonState();
     }
   }
 
-  // --- Public Methods ---
-
-  /**
-   * Go to the previous slide
-   */
+ 
   public prev(): void {
     if (this.currentIndex > 0) {
       this.currentIndex--;
@@ -46,12 +42,9 @@ export class VenueImageSliderComponent implements OnChanges {
     }
   }
 
-  /**
-   * Go to the next slide
-   */
+ 
   public next(): void {
-    // We can show 'visibleImagesCount' images, so the last "page"
-    // starts at total_images - visibleImagesCount
+   
     const maxIndex = this.images.length - this.visibleImagesCount;
     if (this.currentIndex < maxIndex) {
       this.currentIndex++;
@@ -59,9 +52,8 @@ export class VenueImageSliderComponent implements OnChanges {
     }
   }
 
-  /**
-   * Update the disabled state of the nav buttons
-   */
+
+   
   private updateButtonState(): void {
     const maxIndex = this.images.length - this.visibleImagesCount;
     this.isPrevDisabled = this.currentIndex === 0;

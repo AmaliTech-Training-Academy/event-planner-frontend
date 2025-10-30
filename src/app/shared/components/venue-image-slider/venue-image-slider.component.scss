@@ -68,41 +68,41 @@
 }
 
 .image-list-wrapper {
-  overflow: hidden; // This hides the other images
+  overflow: hidden; 
   width: 100%;
 }
 
 .image-list {
   display: flex;
   transition: transform 0.5s ease-in-out;
-  width: 100%; // This is relative to the wrapper
+  width: 100%; 
 }
 
 .image-slide {
   flex-shrink: 0;
-  // Show 4 images by default on desktop
-  width: 25%; // 100% / 4 images
-  padding-right: 1rem; // $spacing-4 (gap between images)
-  box-sizing: border-box; // Include padding in width calculation
+  
+  width: 25%; 
+  padding-right: 1rem;
+  box-sizing: border-box; 
 
   @media (max-width: 1023px) {
-    width: 33.333%; // Show 3 images on tablet
+    width: 33.333%; 
   }
 
   @media (max-width: 767px) {
-    width: 50%; // Show 2 images on mobile
+    width: 50%;
   }
 
   @media (max-width: 480px) {
-    width: 100%; // Show 1 image on small mobile
+    width: 100%; 
   }
 }
 
 .venue-image {
   width: 100%;
-  height: 150px; // Fixed height for gallery images
+  height: 150px; 
   object-fit: cover;
-  border-radius: 8px; // $radius-4
+  border-radius: 8px; 
   display: block;
 }
 
