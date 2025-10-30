@@ -28,7 +28,7 @@ export class InputComponent implements ControlValueAccessor {
   public readonly placeholder = input<string>('');
   public readonly label = input<string>('');
   public readonly formControlName = input<string>('');
-  public readonly errorMessage = input<string|null>('');
+  public readonly errorMessage = input<string>('');
   public readonly iconSrc = input<string | undefined>();
   public readonly required = input<boolean>(false);
   public readonly disabled = input<boolean>(false);
