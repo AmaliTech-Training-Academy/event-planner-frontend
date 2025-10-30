@@ -5,7 +5,6 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './event-card.component.html',
-  // Note: For a single file, the convention is 'styleUrl' (singular)
   styleUrl: './event-card.component.scss', 
   changeDetection: ChangeDetectionStrategy.OnPush
 })

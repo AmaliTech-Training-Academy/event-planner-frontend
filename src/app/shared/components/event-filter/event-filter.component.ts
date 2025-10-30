@@ -8,20 +8,19 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './event-filter.component.html',
   styleUrl: './event-filter.component.scss'
 })
-export {
-  // --- Outputs are part of the public API ---
+export class EventFilterComponent {
   @Output() public locationChange = new EventEmitter<string>();
   @Output() public eventTypeChange = new EventEmitter<string>();
   @Output() public dateChange = new EventEmitter<Date>();
 
   
-  // --- Template-bound properties must be public ---
+  
   public selectedLocation: string = '';
   public selectedEventType: string = 'all';
   public selectedDate: Date | null = null;
 
   
-  // --- Template-called methods must be public ---
+  
   public onLocationChange(): void {
     this.locationChange.emit(this.selectedLocation);
   }

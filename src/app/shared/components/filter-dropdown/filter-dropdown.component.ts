@@ -10,12 +10,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class FilterDropdownComponent {
   @Input() public options: string[] = [];
   
-  // --- FIX 1: Rename 'selected' to 'selectedOption' ---
+ 
   @Input() public selectedOption: string = ''; 
   
   @Output() public optionSelected = new EventEmitter<string>();
 
-  // --- FIX 2: Add the missing method ---
+  
   public onOptionSelect(option: string): void {
     this.optionSelected.emit(option);
   }
