@@ -99,4 +99,9 @@ export class InputComponent implements ControlValueAccessor {
     this.value();
     this.onChange(value);
   }
+  togglePasswordVisibility(): void {
+    this._showPassword.set(!this._showPassword());
+    this.onChange(this.currentValue());
+    this.valueChange.emit(this.currentValue());
+  }
 }
