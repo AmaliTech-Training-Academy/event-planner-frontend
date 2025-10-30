@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, input } from '@angular/core';
 
 @Component({
@@ -5,11 +6,8 @@ import { Component, input } from '@angular/core';
   standalone: true,
   templateUrl: './divider.component.html',
   styleUrls: ['./divider.component.scss'],
+  imports: [CommonModule],
 })
 export class DividerComponent {
- 
-  public readonly text = input<string | null>('or');
-
-
-  public readonly decorative = input<boolean>(false);
+  public text = input<string>('');
 }

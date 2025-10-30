@@ -1,15 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  signal,
-  input,
-  output,
-  forwardRef,
-} from '@angular/core';
+import { Component, input, signal, computed, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  ControlValueAccessor,
   FormsModule,
+  NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
   NG_VALUE_ACCESSOR,
   ControlValueAccessor,
@@ -22,7 +16,6 @@ import { FormErrorComponent } from "../form-error/form-error.component";
   imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorComponent],
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -65,8 +58,8 @@ export class InputComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
-  writeValue(value: string): void {
-    this._internalValue.set(value ?? '');
+  writeValue(value: any): void {
+    this._value.set(value || '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -100,15 +93,12 @@ export class InputComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
-  public togglePasswordVisibility(): void {
-    if (this.type() === 'password') {
-      this._showPassword.update((v) => !v);
-    }
-  }
+  public value = this._value.asReadonly();
 
-  public getClasses(): string[] {
-    return [this.size(), this.extraClass()]
-      .flat()
-      .filter((cls): cls is string => !!cls && typeof cls === 'string');
+ 
+  public onValueChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this._value.set(value);
+    this.onChange(value);
   }
 }

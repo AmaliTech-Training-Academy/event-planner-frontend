@@ -1,15 +1,5 @@
-
-@if (text()) {
- <div class="divider">
-  <div class="line"></div>
-  <span
-  class=""
-  [attr.aria-hidden]="decorative() ? 'true' : null"
-  >
-  <div class="line"></div>
-  {{ text() }}
-</span>
-<div class="line"></div>
- </div>
-}
-
+<div class="divider-container">
+  @if (text) {
+    <span>{{ text }}</span>
+  }
+</div>

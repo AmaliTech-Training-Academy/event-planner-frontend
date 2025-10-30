@@ -1,27 +1,21 @@
-@use 'typography' as *;
-@use 'colors' as *;
-@use 'variables' as *;
+@use 'index' as *; 
 
-button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
-  width: 100%;
-  padding: $spacing-3 $spacing-6;
-  border: none;
-  border-radius: $radius-3;
-  font-family: $font-lato;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: transparent;
-  height: 48px;
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+button {
+   
+    width: 100%;
+    padding: $spacing-3;
+    border: none;
+    border-radius: $radius-3;
+    font-family: $font-lato;
+    font-weight: 600;
+    cursor: pointer;
+  
 
-  &.app-button--primary {
-    background-color: $orange-700;
-    color: $gray-50;
+   
+    &.primary {
+        background-color: $orange-700;
+        color: $gray-50;
 
     &:hover:not(:disabled) {
       background-color: $orange-600;
@@ -33,21 +27,13 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
     display: none;
     color: $gray-50;
 
-    &:hover:not(:disabled) {
-      background-color: $blue-400;
-    }
-  }
+        &:hover:not(:disabled) {
+            background-color: $blue-400;
+        }
 
-  &.app-button--social {
-    background: transparent;
-    color: $gray-900;
-    border: 1.5px solid $gray-300;
-
-    &:hover:not(:disabled) {
-      background-color: $gray-100;
-      transform: translateY(-2px);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+        &:active:not(:disabled) {
+            transform: scale(0.98);
+        }
 
     &:disabled {
       cursor: not-allowed;

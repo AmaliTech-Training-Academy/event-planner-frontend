@@ -5,65 +5,289 @@
     <p class="subtitle">Log In to your account</p>
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()">
-      <app-input
-        formControlName="email"
-        label="Email Address"
-        type="email"
-        placeholder="user@gmail.com"
-        [required]="true"
-        [errorMessage]="getFieldErrorMessage('email')"
-        [iconSrc]="'icons/mail.png'"
-      ></app-input>
+      <!-- Email Field -->
+      <div class="form-group">
+        <label>Email Address<span>*</span></label>
+        <div class="input-wrapper" [class.has-error]="hasFieldError('email')">
+          <svg
+            class="input-icon"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M22 6L12 13L2 6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="user@gmail.com"
+            [class.error]="hasFieldError('email')"
+            autocomplete="off"
+          />
+        </div>
 
-      <app-input
-        formControlName="password"
-        label="Password"
-        type="password"
-        placeholder="••••••••"
-        [required]="true"
-        [errorMessage]="getFieldErrorMessage('password')"
-        [iconSrc]="'icons/lock.png'"
-      ></app-input>
+        <div class="error-message" *ngIf="hasFieldError('email')">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <line
+              x1="12"
+              y1="8"
+              x2="12"
+              y2="12"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <circle cx="12" cy="16" r="1" fill="currentColor" />
+          </svg>
+          {{ getFieldErrorMessage("email") }}
+        </div>
+      </div>
 
+      <!-- Password Field -->
+
+      <div class="form-group">
+        <label>Password<span>*</span></label>
+        <div
+          class="input-wrapper"
+          [class.has-error]="hasFieldError('password')"
+        >
+          <svg
+            class="input-icon"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              x="3"
+              y="11"
+              width="18"
+              height="11"
+              rx="2"
+              ry="2"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+
+          <div class="password-field">
+            <input
+              [type]="isPasswordHidden ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="••••••••"
+              [class.error]="hasFieldError('password')"
+            />
+            <button
+              type="button"
+              class="toggle-btn"
+              (click)="togglePasswordVisibility()"
+            >
+              <svg
+                *ngIf="isPasswordHidden"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="3"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <svg
+                *ngIf="!isPasswordHidden"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M17.94 17.94C16.2306 19.243 14.1491 19.9649 12 20C5 20 1 12 1 12C2.24389 9.68192 3.96914 7.65663 6.06 6.06M9.9 4.24C10.5883 4.0789 11.2931 3.99836 12 4C19 4 23 12 23 12C22.393 13.1356 21.6691 14.2048 20.84 15.19M14.12 14.12C13.8454 14.4148 13.5141 14.6512 13.1462 14.8151C12.7782 14.9791 12.3809 15.0673 11.9781 15.0744C11.5753 15.0815 11.1752 15.0074 10.8016 14.8565C10.4281 14.7056 10.0887 14.4811 9.80385 14.1962C9.51897 13.9113 9.29439 13.5719 9.14351 13.1984C8.99262 12.8248 8.91853 12.4247 8.92563 12.0219C8.93274 11.6191 9.02091 11.2218 9.18488 10.8538C9.34884 10.4859 9.58525 10.1546 9.88 9.88"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <line
+                  x1="1"
+                  y1="1"
+                  x2="23"
+                  y2="23"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="error-message" *ngIf="hasFieldError('password')">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="2"
+            />
+            <line
+              x1="12"
+              y1="8"
+              x2="12"
+              y2="12"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <circle cx="12" cy="16" r="1" fill="currentColor" />
+          </svg>
+          {{ getFieldErrorMessage("password") }}
+        </div>
+      </div>
+
+      <!-- Extras -->
       <div class="extras">
         <label class="custom-checkbox">
           <input
             type="checkbox"
             formControlName="remember"
             autocomplete="off"
+            aria-label="Remember me"
           />
           <span class="checkmark"></span>
           <span class="label-text">Remember me</span>
         </label>
 
-        <a class="forgot-link" routerLink="/auth/forgot-password">
+        <a class="forgot-link" href="#" routerLink="/auth/forgot-password">
           Forgot password?
         </a>
       </div>
 
-      <app-button
-        buttonType="submit"
-        type="primary"
-        [fullWidth]="true"
-        [disabled]="form.invalid"
-      >
+      <button type="submit" class="login-btn" [disabled]="form.invalid">
         Log In
-      </app-button>
+      </button>
     </form>
 
-    <app-divider text="Or continue with"></app-divider>
+    <div class="divider">Or continue with</div>
+    
+    <!-- Social Logins (unchanged) -->
+    <div class="social-login">
+      <!-- Google -->
+      <button type="button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.66 15.63 16.88 16.79 15.71 17.57V20.34H19.28C21.36 18.42 22.56 15.6 22.56 12.25Z"
+            fill="#4285F4" />
+          <path
+            d="M12 23C14.97 23 17.46 22.02 19.28 20.34L15.71 17.57C14.73 18.23 13.48 18.63 12 18.63C9.13 18.63 6.71 16.7 5.84 14.1H2.18V16.94C3.99 20.53 7.7 23 12 23Z"
+            fill="#34A853" />
+          <path
+            d="M5.84 14.1C5.62 13.44 5.49 12.73 5.49 12C5.49 11.27 5.62 10.56 5.84 9.9V7.06H2.18C1.43 8.55 1 10.22 1 12C1 13.78 1.43 15.45 2.18 16.94L5.84 14.1Z"
+            fill="#FBBC05" />
+          <path
+            d="M12 5.38C13.62 5.38 15.06 5.94 16.21 7.02L19.36 3.87C17.45 2.09 14.97 1 12 1C7.7 1 3.99 3.47 2.18 7.06L5.84 9.9C6.71 7.3 9.13 5.38 12 5.38Z"
+            fill="#EA4335" />
+        </svg>
+      </button>
 
-    <app-social-login></app-social-login>
+      <!-- Twitter & Facebook (unchanged) -->
+      <button type="button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M17.05 20.28C16.03 21.23 14.76 21.08 13.55 20.54C12.27 19.99 11.11 19.96 9.75 20.54C8.06 21.27 7.16 21.08 6.26 20.28C1.19 14.94 2.04 6.81 7.74 6.53C9.05 6.59 9.86 7.33 11.13 7.33C12.38 7.33 13.47 6.59 15.02 6.53C16.19 6.48 18.37 6.91 19.76 9.07C15.84 11.35 16.51 16.97 20.32 18.44C19.65 20.16 18.67 21.87 17.05 20.28ZM11.03 6.42C10.88 4.41 12.51 2.75 14.37 2.5C14.67 4.77 12.34 6.56 11.03 6.42Z"
+            fill="currentColor" />
+        </svg>
+      </button>
+      <button type="button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24V15.563H7.078V12.073H10.125V9.413C10.125 6.387 11.917 4.716 14.658 4.716C15.97 4.716 17.344 4.952 17.344 4.952V7.92H15.83C14.34 7.92 13.875 8.853 13.875 9.807V12.073H17.203L16.671 15.563H13.875V24C19.612 23.094 24 18.1 24 12.073Z"
+            fill="#1877F2" />
+        </svg>
+      </button>
+    </div>
 
-    <app-secure-text></app-secure-text>
+    <div class="secure-text">
+      <p>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          <path
+            d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Secure login enabled
+      </p>
+      <small>This is a secure, encrypted connection</small>
+    </div>
 
-    <p class="signup-text">
-      Don't have an account?
-      <a [routerLink]="APP_ROUTES.SIGNUP">Sign Up</a>
-    </p>
-
-    <a class="forgot-link" [routerLink]="APP_ROUTES.FORGOT_PASSWORD">
-      Forgot password?
-    </a>
+    <p class="signup-text">Don't have an account? <a href="#" routerLink="/auth/signup">Sign Up</a></p>
+  
   </div>
 </div>
+

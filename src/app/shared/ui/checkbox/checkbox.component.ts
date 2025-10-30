@@ -17,20 +17,11 @@ import {
 @Component({
   selector: 'app-checkbox',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './checkbox.component.html',
   styleUrls: ['./checkbox.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => CheckboxComponent),
-      multi: true,
-    },
-  ],
 })
-export class CheckboxComponent implements ControlValueAccessor {
+export class CheckboxComponent {
   public label = input<string>('');
-
   public checked = input<boolean>(false);
 
   public ariaLabel = input<string>('');
