@@ -64,7 +64,7 @@ export class VerifyEmailPageComponent implements OnInit {
 
     this.isLoading = true;
     this.apiMessage = null; 
-    console.log('Verifying account with OTP:', this.currentOtpValue);
+   
     
     
     setTimeout(() => {
