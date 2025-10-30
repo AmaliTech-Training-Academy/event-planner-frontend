@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_ENDPOINTS } from '../../constants/api-endpoints.constants';
-import { User } from '../../models/user.model';
 import { AuthResponseBody, OtpBodyData, RegisterBodyData } from '../../models/auth-response.model';
+import { User } from '../../models/user.model';
 
 @Injectable({
   providedIn: 'root'

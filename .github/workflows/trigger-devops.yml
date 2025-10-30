@@ -35,7 +35,7 @@ jobs:
           channel: '#deployments'
           username: 'GitHub Actions'
           text: |
-            🚀 Deployment triggered by ${{ steps.developer.outputs.slack_user }}
+            🚀 Frontend Deployment triggered by ${{ steps.developer.outputs.slack_user }}
             Branch: `${{ github.ref_name }}`
             Environment: `${{ github.ref_name == 'prod' && 'prod' || github.ref_name == 'staging' && 'staging' || 'dev' }}`
         env:
