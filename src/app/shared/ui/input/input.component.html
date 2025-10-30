@@ -1,7 +1,16 @@
-
-<div class="form-group" [class.has-error]="hasError()" [class.focused]="isFocused()">
+<div
+  class="input-field-group"
+  [class.has-error]="hasError()"
+  [class.focused]="isFocused()"
+  style="text-align: left;"
+>
   @if (label()) {
-    <label [attr.for]="label()">{{ label() }}</label>
+    <label class="input-label" [attr.for]="formControlName()">
+      {{ label() }}
+      @if (required()) {
+        <span>*</span>
+      }
+    </label>
   }
 
   <div class="input-wrapper">
@@ -13,7 +22,7 @@
       [type]="inputType()"
       [placeholder]="placeholder()"
       [value]="value()"
-      (input)="onInput($event)"
+      (input)="onValueChange($event)"
       (focus)="onFocus()"
       (blur)="onBlur()"
       [disabled]="isDisabled()"
@@ -21,7 +30,12 @@
     />
 
     @if (type() === 'password') {
-      <button type="button" (click)="togglePasswordVisibility()" class="toggle-btn">
+      <button
+        type="button"
+        class="toggle-password"
+        (click)="togglePasswordVisibility()"
+        aria-label="Toggle password visibility"
+      >
         <img
           [src]="showPassword() ? 'icons/eye-closed.svg' : 'icons/eye-open.svg'"
           alt="Toggle Password"
@@ -29,10 +43,11 @@
       </button>
     }
   </div>
-    <app-form-error
-      *ngIf="hasError()"
-      [message]="errorMessage()"
-      [showIcon]="true"
-      id="{{ label() + '-error' }}"
-    ></app-form-error>
+  @if (hasError() && errorMessage()) {
+   <app-form-error
+    [message]="errorMessage()"
+    [showIcon]="true"
+    id="{{ label() + '-error' }}"
+  ></app-form-error>
+  }
 </div>

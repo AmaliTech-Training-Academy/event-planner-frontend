@@ -1,0 +1,20 @@
+<section class="conference">
+  <div class="conference__container">
+    <div class="conference__header">
+      <h2 class="conference__title">{{ title }}</h2>
+      <p class="conference_subtitle">{{ subtitle }}</p>
+    </div>
+
+    <div class="conference__video-wrapper">
+      <div class="conference__video-container">
+        <img 
+          [ngSrc]="conferenceImage" 
+          alt="Professional woman in virtual conference call" 
+          class="conference__image"
+          width="1200"
+          height="675"
+          priority>
+      </div>
+    </div>
+  </div>
+</section>
