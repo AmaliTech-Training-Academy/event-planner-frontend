@@ -20,8 +20,8 @@ interface NavLink {
 export class HeaderComponent {
   public readonly navLinks = signal<NavLink[]>([
     { label: 'Home', path: '/', icon: 'icons/home-icon.png' },
-    { label: 'Explore Events', path: '/events', icon: 'icons/action-icon.png' },
-    { label: 'About Us', path: '/about', icon: 'icons/user-icon.png' },
+    { label: 'Explore Events', path: '/events', icon: 'icons/action.png' },
+    { label: 'About Us', path: '/about', icon: 'icons/users-icon.png' },
   ]);
 
   public readonly isMenuOpen = signal(false);
