@@ -1,0 +1,50 @@
+// We can use the 'index' file for variables if it's set up
+@use 'index' as *;
+@use 'sass:color';
+
+.help-card {
+  background-color: #fff;
+  border-radius: 8px; // Or $radius-4
+  border: 1px solid #E5E7EB; // Or $general-stroke-light
+  padding: 1.5rem; // Or $spacing-6
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 1.5rem; // Or $spacing-6 (Space between this and the ticket card)
+}
+
+.card-title {
+  // Standard CSS for h3
+  font-family: "Lato", sans-serif;
+  font-size: 1.75rem; // ~h4
+  font-weight: 700;
+  color: #292929; // Or $header-dark
+  margin: 0 0 1rem 0; // Or $spacing-4
+}
+
+.email-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem; // Or $spacing-2
+  text-decoration: none;
+  
+  // Standard CSS for body-1
+  font-family: "Lato", sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  
+  // --- FIX: Email color set to dark gray, not blue ---
+  color: #464646; // Or $sub-header-dark 
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #cc3f02; // Or $primary-color
+  }
+}
+
+.email-icon {
+  width: 1rem; // 16px
+  height: 1rem; // 16px
+  opacity: 0.8; // Match other icons
+}
+

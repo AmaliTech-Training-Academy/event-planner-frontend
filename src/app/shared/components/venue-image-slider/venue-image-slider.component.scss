@@ -1,0 +1,108 @@
+@use 'index' as *; // Assuming your index file is set up
+@use 'sass:color';
+
+:host {
+  display: block;
+  width: 100%;
+  margin-bottom: 2rem; // $spacing-7
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem; // $spacing-4
+}
+
+.slider-title {
+  // Standard CSS for h3/h4
+  font-family: "Lato", sans-serif;
+  font-size: 1.75rem; // ~h4
+  font-weight: 700;
+  color: #292929; // $header-dark
+}
+
+.slider-nav {
+  display: flex;
+  gap: 0.5rem; // $spacing-2
+}
+
+.nav-arrow {
+  background-color: #fff;
+  border: 1px solid #E5E7EB; // $general-stroke-light
+  border-radius: 50%; // Make it round
+  width: 40px;  // 2.5rem
+  height: 40px; // 2.5rem
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0; // Remove default padding
+
+  img {
+    width: 16px; // 1rem
+    height: 16px; // 1rem
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover {
+    border-color: #cc3f02; // $primary-color
+    // Use color.adjust instead of lighten()
+    box-shadow: 0 0 0 2px color.adjust(#cc3f02, $lightness: 30%);
+
+    img {
+      opacity: 1;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.image-gallery {
+  width: 100%;
+}
+
+.image-list-wrapper {
+  overflow: hidden; // This hides the other images
+  width: 100%;
+}
+
+.image-list {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%; // This is relative to the wrapper
+}
+
+.image-slide {
+  flex-shrink: 0;
+  // Show 4 images by default on desktop
+  width: 25%; // 100% / 4 images
+  padding-right: 1rem; // $spacing-4 (gap between images)
+  box-sizing: border-box; // Include padding in width calculation
+
+  @media (max-width: 1023px) {
+    width: 33.333%; // Show 3 images on tablet
+  }
+
+  @media (max-width: 767px) {
+    width: 50%; // Show 2 images on mobile
+  }
+
+  @media (max-width: 480px) {
+    width: 100%; // Show 1 image on small mobile
+  }
+}
+
+.venue-image {
+  width: 100%;
+  height: 150px; // Fixed height for gallery images
+  object-fit: cover;
+  border-radius: 8px; // $radius-4
+  display: block;
+}
+

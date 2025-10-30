@@ -1,1 +1,60 @@
-<p>event-page works!</p>
+
+
+<main class="event-page-content">
+ 
+  <a routerLink="/explore" class="back-link">
+    &larr; Back to event 
+  </a>
+
+  
+  <section class="hero-section">
+    <img [src]="eventDetails?.heroImageUrl" [alt]="eventDetails?.title" class="hero-image" />
+    <div class="hero-overlay">
+      <h1 class="hero-title">{{ eventDetails?.title }}</h1>
+      <div class="hero-details">
+        <span>{{ eventDetails?.date }}</span>
+        <span>{{ eventDetails?.location }}</span>
+      </div>
+      @if (eventDetails?.isPaid) {
+        <span class="hero-badge">Paid</span>
+      }
+    </div>
+  </section>
+
+  
+  <div class="content-grid">
+   
+    <div class="left-column">
+     
+      <section class="about-section">
+        <h2>About The Event</h2>
+        <p>{{ eventDetails?.description }}</p>
+        <div class="attendees-info">
+          
+          <img src="assets/icons/attendees.svg" alt="Attendees" class="attendees-icon" />
+          {{ eventDetails?.attendeesCount }} Attendees
+        </div>
+      </section>
+
+      
+      @if (venueImages && venueImages.length > 0) {
+        <app-venue-image-slider [images]="venueImages"></app-venue-image-slider>
+      }
+    </div>
+
+    
+    <div class="right-column">
+     
+      <app-ticket-card 
+        [ticketInfo]="ticketInfo" 
+        (registerClick)="onRegister()">
+      </app-ticket-card>
+
+      
+      <app-help-card [email]="helpEmail"></app-help-card>
+    </div>
+  </div>
+</main>
+
+
+

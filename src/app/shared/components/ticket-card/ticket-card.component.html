@@ -1,0 +1,28 @@
+@if (ticketInfo) {
+  <div class="ticket-card">
+    <h3 class="card-title">Get Your Tickets</h3>
+    
+    <!-- Price -->
+    <div class="price">
+      {{ ticketInfo.currency }}{{ ticketInfo.price }}
+    </div>
+    
+    <!-- Features List -->
+    <ul class="features-list">
+      @for (feature of ticketInfo.features; track $index) {
+        <li class="feature-item">
+          <span>&check;</span> <!-- HTML entity for checkmark -->
+          {{ feature }}
+        </li>
+      }
+    </ul>
+    
+    <!-- Register Button (using reusable component) -->
+    <app-button 
+      [type]="'primary'"
+      (click)="registerClick.emit()">
+      Register For Event
+    </app-button>
+  </div>
+}
+
