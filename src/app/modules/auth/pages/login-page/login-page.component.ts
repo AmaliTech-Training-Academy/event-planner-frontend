@@ -108,7 +108,6 @@ export class LoginPageComponent {
   }
 
   public hasFieldError(fieldName: keyof LoginForm): boolean {
-    // ✅ optional chaining avoids runtime form errors
     const field = this.form?.get(fieldName);
     return !!(field?.invalid && (field?.touched || this.hasAttemptedSubmit()));
   }
