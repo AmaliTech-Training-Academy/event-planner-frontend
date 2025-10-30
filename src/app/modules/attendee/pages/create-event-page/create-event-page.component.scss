@@ -4,12 +4,14 @@
 @use "media_query" as *;
 
 .wrapper {
-    padding: 0 7.5rem;
+    // padding: 0 7.5rem;
+    padding: 0 clamp(1.5rem, 6vw, 7.5rem);
     background: linear-gradient(180.65deg, #ffffff 88.1%, #999999 137.06%);
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 7.875rem;
+    // gap: 7.875rem;
+    gap: clamp(1rem, 4.54vw, 7.875rem);
 
     margin: auto;
 
@@ -28,11 +30,13 @@
         display: flex;
         flex-direction: column;
         gap: 1.875rem;
-        width: 589px;
+        max-width: 589px;
+        width: 100%;
         overflow: hidden;
 
         @include sm {
             width: 100%;
+            max-width: unset;
         }
 
         .title-container {
@@ -299,7 +303,8 @@
     }
 
     .right-panel {
-        width: 486px;
+        max-width: 486px;
+        width: 100%;
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -310,6 +315,7 @@
 
         @include sm {
             width: 100%;
+            max-width: unset;
         }
 
         .flyer-container {
@@ -701,7 +707,7 @@
             color: $paragraph-text;
         }
     }
-    
+
     app-button {
         width: 100%;
     }
