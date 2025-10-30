@@ -1,3 +1,5 @@
+import { USER_ROLES } from "../constants/user.constants";
+
 export interface User {
   userId: string;
   name: string;
@@ -7,7 +9,7 @@ export interface User {
   address: string;
   avatar: string;
   profileImageUrl: string;
-  role: 'Organizer' | 'Co-Organizer' | 'Attendee' | 'Venue Staff';
+  role: UserRole;
   status: 'Active' | 'Inactive';
   eventsOrganized: number;
   eventsAttended: number;
@@ -20,5 +22,8 @@ export interface UserCardData {
   icon: string;
   bgColor: string;
   iconColor: string;
-  percentageChange?: number; // optional
+  percentageChange?: number;
 }
+
+
+export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];

@@ -7,7 +7,7 @@ const BASE = `${environment.API_URL}/${API_VERSION}`;
 export const API_ENDPOINTS = {
     AUTH_LOGOUT: `${BASE}/auth/logout`,
     AUTH_LOGIN: `${BASE}/auth/login`,
-    AUTH_REGISTER: `${BASE}/auth/login`,
+    AUTH_REGISTER: `${BASE}/auth/register`,
     AUTH_VERIFY_OTP: `${BASE}/auth/verify-otp`,
     GET_USER: (userId: string): string => `${BASE}/users/${userId}`
-};
+}as const;

@@ -48,4 +48,11 @@
       </button>
     }
   </div>
+  @if (hasError() && errorMessage()) {
+   <app-form-error
+    [message]="errorMessage()"
+    [showIcon]="true"
+    id="{{ label() + '-error' }}"
+  ></app-form-error>
+  }
 </div>
