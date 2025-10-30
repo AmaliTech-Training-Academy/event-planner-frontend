@@ -24,7 +24,7 @@
 
     input {
       width: 100%;
-      padding: $spacing-3 $spacing-4;
+      padding: $spacing-3 $spacing-8;
       border: 1px solid $gray-300;
       border-radius: $radius-3;
       font-family: $font-lato;
@@ -46,6 +46,7 @@
       left: $spacing-3;
       width: 20px;
       height: 20px;
+    
     }
 
     .toggle-btn {
