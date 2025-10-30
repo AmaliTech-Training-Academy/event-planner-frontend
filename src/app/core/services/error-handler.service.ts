@@ -38,6 +38,7 @@ export class ErrorHandlerService {
         default:
           message = error.error?.message || `Unexpected error: ${error.status}`;
       }
+      
     }
 
     console.error('[HTTP Error]', message, error);
