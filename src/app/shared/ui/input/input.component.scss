@@ -1,76 +1,43 @@
-@use 'typography' as *;
-@use 'colors' as *;
-@use 'variables' as *;
+@use 'index' as *;
 
-.form-group {
-  margin-bottom: $spacing-4;
-  position: relative;
-
-  label {
-    @include body-2;
-    display: block;
-    margin-bottom: $spacing-1;
-    color: $gray-950;
-
+.input-field-group {
+  .input-label {
     span {
       color: $red-500;
+      background-color: transparent;
+      padding: 0;
+      margin-left: $spacing-1;
     }
   }
+}
 
-  .input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3; 
+  border: 1px solid $general-stroke-light;
+  background:#fff;
+  border-radius: 0.25rem;
+  padding: $spacing-3 $spacing-2;
+    height: 48px;
+    margin-top: .05rem;
 
-    input {
-      width: 100%;
-      padding: $spacing-3 $spacing-8;
-      border: 1px solid $gray-300;
-      border-radius: $radius-3;
-      font-family: $font-lato;
-      transition: all 0.2s ease;
+  input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0;
+    font-size: 1rem;
+    color: $gray-900;
 
-      &:focus {
-        border-color: $orange-500;
-        outline: none;
-      }
-
-      &.error {
-        border-color: $red-500;
-        background-color: rgba($red-50, 0.5);
-      }
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      transition: background-color 5000s ease-in-out 0s;
+      -webkit-text-fill-color: $gray-900 !important;
+      box-shadow: 0 0 0px 1000px white inset;
     }
-
-    .input-icon {
-      position: absolute;
-      left: $spacing-3;
-      width: 20px;
-      height: 20px;
-    
-    }
-
-    .toggle-btn {
-      position: absolute;
-      right: $spacing-3;
-      top: 50%;
-      transform: translateY(-50%);
-      border: none;
-      background: none;
-      cursor: pointer;
-    }
-  }
-
-  .error-message {
-    color: $red-600;
-    margin-top: $spacing-1;
-    @include body-3;
-  }
-
-  &.has-error input {
-    border-color: $red-500;
-  }
-
-  &.focused input {
-    border-color: $orange-500;
   }
 }

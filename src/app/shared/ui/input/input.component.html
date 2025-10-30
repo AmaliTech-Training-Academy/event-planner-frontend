@@ -1,15 +1,16 @@
 <div
-  class="form-group"
+  class="input-field-group"
   [class.has-error]="hasError()"
   [class.focused]="isFocused()"
+  style="text-align: left;"
 >
   @if (label()) {
-  <label class="form-label">
-    {{ label() }}
-    @if (required()) {
-    <span class="required">*</span>
-    }
-  </label>
+    <label class="input-label" [attr.for]="formControlName()">
+      {{ label() }}
+      @if (required()) {
+        <span>*</span>
+      }
+    </label>
   }
 
   <div class="input-wrapper">
@@ -21,7 +22,7 @@
       [type]="inputType()"
       [placeholder]="placeholder()"
       [value]="value()"
-      (input)="onInputChange($event)"
+      (input)="onValueChange($event)"
       (focus)="onFocus()"
       (blur)="onBlur()"
       [disabled]="isDisabled()"
@@ -30,17 +31,21 @@
     />
 
     @if (type() === 'password') {
-    <button
-      type="button"
-      class="toggle-btn"
-      (click)="togglePasswordVisibility()"
-      aria-label="Toggle password visibility"
-    >
-      <img
-        [src]="showPassword() ? 'icons/eye-closed.svg' : 'icons/eye-open.svg'"
-        alt="Toggle Password"
-      />
-    </button>
+      <button
+        type="button"
+        class="toggle-password"
+        (click)="togglePasswordVisibility()"
+        aria-label="Toggle password visibility"
+      >
+        <img
+          [src]="
+            showPassword()
+              ? '/assets/icons/eye-close-icon.png'
+              : '/assets/icons/eye.png'
+          "
+          alt="Toggle Password"
+        />
+      </button>
     }
   </div>
 

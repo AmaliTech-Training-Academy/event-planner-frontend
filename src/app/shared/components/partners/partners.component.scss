@@ -1,0 +1,58 @@
+@use 'typography' as *;
+@use 'colors' as *;
+@use 'variables' as *;
+.partners {
+  width: 100%;
+  overflow: hidden;
+  padding: $spacing-8 0;
+  border-top: $stroke-0 solid #e5e7eb;
+  border-bottom: $stroke-0 solid #e5e7eb;
+  background-color: #ffffff;
+
+  &__container {
+  
+  }
+
+  &__track {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-4;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      justify-content: center;
+      gap: $spacing-6;
+      
+    }
+  }
+
+  &__item {
+   display: grid;
+   place-items: center;
+   grid-template-columns: repeat(auto-fit, minmax(7, 1fr));
+   @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(4, 1fr));
+   }
+   @media (max-width: 457px) {
+    grid-template-columns: repeat(auto-fit, minmax(4, 1fr));
+   }
+
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__image {
+    height: 40px;
+    width: auto;
+    max-width: 100px;
+    object-fit: contain;
+    transition: filter 0.3s ease;
+
+    .partners__item:hover & {
+      filter: grayscale(0%);
+    }
+  }
+}
