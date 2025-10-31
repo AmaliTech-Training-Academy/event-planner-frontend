@@ -23,14 +23,13 @@
     }
 
     <input
-      [id]="formControlName()"
       [type]="inputType()"
       [placeholder]="placeholder()"
       [value]="currentValue()"
       (input)="onValueChange($event)"
       (focus)="onFocus()"
       (blur)="onBlur()"
-      [disabled]="disabled()"
+      [disabled]="isDisabled()"
       [class.error]="hasError()"
     />
 
