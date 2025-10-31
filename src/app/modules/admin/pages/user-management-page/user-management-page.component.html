@@ -1,1 +1,23 @@
-<p>user-management-page works!</p>
+<!-- user-management-page.component.html -->
+<div class="user-management-page">
+  <div class="user-management-page__cards">
+    @for (card of userCards(); track card.title) {
+    <app-admin-user-card [data]="card" />
+    }
+  </div>
+  <div class="user-management-page__table">
+    <app-data-table
+      [data]="users()"
+      [columns]="tableColumns"
+      [actions]="tableActions"
+      [filters]="tableFilters"
+      [searchable]="true"
+      [expandable]="false"
+      [primaryAction]="primaryAction"
+      (rowExpanded)="onRowExpanded($event)"
+    />
+  </div>
+  @if (isInviteModalOpen()) {
+  <app-invite-user-modal (close)="closeInviteModal()" />
+}
+</div>

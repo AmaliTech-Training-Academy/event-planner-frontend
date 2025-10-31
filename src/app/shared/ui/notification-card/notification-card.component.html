@@ -1,0 +1,8 @@
+<div class="alert" [ngClass]="notification?.type">
+    <div class="content">
+        <p>{{notification?.message}}</p>
+    </div>
+    <button (click)="close()">
+        <!-- <img src="icons/" alt="" srcset=""> -->
+    </button>
+</div>

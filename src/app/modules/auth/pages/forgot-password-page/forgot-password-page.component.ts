@@ -1,39 +1,84 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; 
-import { RouterLink } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
+import { InputComponent } from '../../../../shared/ui/input/input.component';
+import { LogoComponent } from '../../components/logo/logo.component';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterLink
-  ],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LogoComponent, FormErrorComponent, ButtonComponent, InputComponent],
   templateUrl: './forgot-password-page.component.html',
-  styleUrl: './forgot-password-page.component.scss'
+  styleUrls: ['./forgot-password-page.component.scss']
 })
-export class ForgotPasswordComponent {
-  forgotPasswordForm: FormGroup;
-  loading = false;
-  message: string | null = null;
-  isError = false;
+export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
-  constructor(private fb: FormBuilder) {
+  protected forgotPasswordForm!: FormGroup;
+  protected isLoading: boolean = false;
+  protected apiMessage: string | null = null;
+  protected isError: boolean = false;
+  private subscriptions: Subscription = new Subscription();
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService,
+    private readonly notificationService: NotificationService
+  ) { }
+
+  ngOnInit(): void {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
+
+    this.subscriptions = this.authService.loading$.subscribe(loading => {
+      this.isLoading = loading;
+    });
   }
 
-  get f() {
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  protected get f() {
     return this.forgotPasswordForm.controls;
   }
 
-  onSubmit() {
+  protected get email(): AbstractControl | null {
+    return this.forgotPasswordForm.get('email');
+  }
+
+  protected get APP_ROUTES() {
+    return APP_ROUTES;
+  }
+
+  protected onSubmit() {
     if (this.forgotPasswordForm.invalid) {
+      this.forgotPasswordForm.markAllAsTouched();
       return;
     }
-    // Handle form submission logic here
+    const { email } = this.forgotPasswordForm.value;
+
+    this.authService.forgotPassword(email).subscribe({
+      next: (response) => {
+        this.notificationService.success(response.description);
+      },
+      complete: () => {
+        this.forgotPasswordForm.reset();
+      }
+    })
+
   }
 }

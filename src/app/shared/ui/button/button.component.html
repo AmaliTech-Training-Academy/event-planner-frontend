@@ -1,8 +1,8 @@
 <button
-  [class.primary]="type === 'primary'"
-  [class.social]="type === 'social'"
-  [class.full-width]="_fullWidth()"
-  [disabled]="_disabled()"
+  [type]="buttonType()"
+  [ngClass]="classes()"
+  [disabled]="disabled()"
+  (click)="handleClick()"
 >
   <ng-content></ng-content>
 </button>

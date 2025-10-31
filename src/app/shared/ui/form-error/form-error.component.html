@@ -1,7 +1,7 @@
-@if (_visible()) {
+@if (visible()) {
   <div class="error-message">
     @if (showIcon()) {
-      <img src="assets/images/error-icon.png" alt="Error" />
+      <img src="icons/error-info.svg" alt="Error" />
     }
     <span>{{ message() }}</span>
   </div>
