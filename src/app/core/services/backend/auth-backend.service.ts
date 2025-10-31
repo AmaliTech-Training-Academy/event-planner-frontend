@@ -21,6 +21,9 @@ export class AuthBackendService {
   public verifyEmail(otp: string, email: string) {
     return this.http.post<AuthResponseBody<OtpBodyData>>(API_ENDPOINTS.AUTH_VERIFY_OTP, { otp, email })
   }
+  public forgotPassword(email: string) {
+    return this.http.post<AuthResponseBody<unknown>>(API_ENDPOINTS.AUTH_FORGOT_PASSWORD, { email })
+  }
 
   public logout() {
     return this.http.post(API_ENDPOINTS.AUTH_LOGOUT, {})
