@@ -85,10 +85,13 @@
           @if (column.key === 'name' && item['email']) {
           <div class="data-table__user-cell">
             <img
-              [ngSrc]="item['avatar']" 
-              alt="User avatar"
-              class="data-table__user-avatar"
-            />
+  [ngSrc]="item['avatar']"
+  alt="User avatar"
+  class="data-table__user-avatar"
+  width="40"
+  height="40"
+/>
+
             <div class="data-table__user-info">
               <p class="data-table__user-name">
                 {{ item[column.key] }}
