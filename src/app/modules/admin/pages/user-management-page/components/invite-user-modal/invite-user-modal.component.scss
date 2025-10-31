@@ -28,6 +28,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
+  max-height: 90vh;
+  overflow-y: auto;
 
   &__title {
     @include h-4;
@@ -81,6 +83,154 @@
     padding-top: $spacing-4;
   }
 
+  // ✅ Email Chips Styling
+  .email-chips-container {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+
+    .helper-text {
+      @include body-3;
+      color: $gray-500;
+      margin-top: $spacing-1;
+    }
+  }
+
+ // ✅ Email Chips Styling
+.email-chips-container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+
+  label {
+    @include body-2;
+    color: $header-dark;
+    font-weight: 500;
+    margin-bottom: $spacing-2;
+    display: block;
+  }
+
+  .helper-text {
+    @include body-3;
+    color: $gray-500;
+    margin-top: $spacing-1;
+  }
+
+  .error-message {
+    @include body-3;
+    margin-top: $spacing-1;
+  }
+}
+
+.email-chips-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-2;
+  padding: $spacing-3 $spacing-4;
+  border: 1px solid $general-stroke-light;
+  border-radius: $radius-3;
+  background: $gray-50;
+  min-height: 48px; // matches typical input height
+  align-items: center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  cursor: text;
+
+  &:focus-within {
+    border-color: $orange-600;
+    box-shadow: 0 0 0 3px rgba($orange-600, 0.1); // subtle focus ring
+  }
+
+  &.has-error {
+    
+    &:focus-within {
+    }
+  }
+
+  .email-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-2 $spacing-3;
+    background: $orange-100;
+    color: $orange-700;
+    border-radius: $radius-2;
+    @include body-2;
+    font-weight: 500;
+    animation: chipFadeIn 0.2s ease;
+    white-space: nowrap;
+
+    .chip-remove {
+      background: transparent;
+      border: none;
+      color: $orange-700;
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $radius-1;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $orange-200;
+        color: $orange-800;
+      }
+
+      &:focus {
+        outline: 2px solid $orange-600;
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  .email-input {
+    flex: 1 1 auto;
+    min-width: 180px;
+    max-width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    @include body-2;
+    color: $text-primary;
+    padding: $spacing-1 0;
+    line-height: 1.5;
+
+    &::placeholder {
+      color: $gray-400;
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+@keyframes chipFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+  @keyframes chipFadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
   // ✅ Responsive adjustments using mixins
   @include md {
     width: 95%;
@@ -93,11 +243,31 @@
         width: 100%;
       }
     }
+
+    .email-chips-wrapper {
+      .email-input {
+        min-width: 150px;
+      }
+    }
   }
 
   @include sm {
     width: 100%;
     padding: $spacing-4;
+
+    .email-chips-wrapper {
+      padding: $spacing-2 $spacing-3;
+
+      .email-chip {
+        padding: $spacing-1 $spacing-2;
+        font-size: 0.875rem;
+      }
+
+      .email-input {
+        min-width: 120px;
+        font-size: 0.875rem;
+      }
+    }
   }
 }
 

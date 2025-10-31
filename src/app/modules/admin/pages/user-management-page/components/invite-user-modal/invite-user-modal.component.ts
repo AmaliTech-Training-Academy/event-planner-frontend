@@ -1,12 +1,10 @@
-import { Component, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Output, EventEmitter, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
-  AbstractControl,
-  ValidationErrors,
   FormControl,
 } from '@angular/forms';
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
@@ -35,24 +33,15 @@ export class InviteUserModalComponent {
 
   private readonly _fb = inject(FormBuilder);
 
-  /** ✅ Email Regex Validator */
-  private static emailRegexValidator(
-    control: AbstractControl
-  ): ValidationErrors | null {
-    const email = control.value?.trim();
-    if (!email) return null;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email) ? null : { invalidEmail: true };
-  }
+  // Email chips management
+  public readonly emailChips = signal<string[]>([]);
+  public readonly emailInput = signal<string>('');
 
   /** ✅ Form Initialization */
   public readonly inviteForm: FormGroup<InviteUserForm> = this._fb.group({
     title: this._fb.control('', [Validators.required]),
-    email: this._fb.control('', [
-      Validators.required,
-      Validators.email,
-      InviteUserModalComponent.emailRegexValidator,
-    ]),
+    name: this._fb.control('', [Validators.required]),
+    email: this._fb.control(''),
     role: this._fb.control('', [Validators.required]),
     event: this._fb.control('', [Validators.required]),
     message: this._fb.control(''),
@@ -74,12 +63,72 @@ export class InviteUserModalComponent {
     { label: 'Community Meetup', value: 'community_meetup' },
   ];
 
+  /** ✅ Email Chip Methods */
+  public addEmailChip(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const email = input.value.trim();
+
+    if (
+      email &&
+      this.isValidEmail(email) &&
+      !this.emailChips().includes(email)
+    ) {
+      this.emailChips.update((chips) => [...chips, email]);
+      input.value = '';
+      this.emailInput.set('');
+    }
+  }
+
+  public onEmailKeyDown(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const email = input.value.trim();
+
+    if (event.key === 'Enter' || event.key === ',') {
+      event.preventDefault();
+      if (
+        email &&
+        this.isValidEmail(email) &&
+        !this.emailChips().includes(email)
+      ) {
+        this.emailChips.update((chips) => [...chips, email]);
+        input.value = '';
+        this.emailInput.set('');
+      }
+    } else if (
+      event.key === 'Backspace' &&
+      !email &&
+      this.emailChips().length > 0
+    ) {
+      // Remove last chip on backspace if input is empty
+      this.emailChips.update((chips) => chips.slice(0, -1));
+    }
+  }
+
+  public removeEmailChip(email: string): void {
+    this.emailChips.update((chips) => chips.filter((e) => e !== email));
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  }
+
   /** ✅ Handle Form Submission */
   public onSubmit(): void {
     this.inviteForm.markAllAsTouched();
+
+    // Check if we have at least one email chip
+    if (this.emailChips().length === 0) {
+      alert('Please add at least one email address');
+      return;
+    }
+
     if (this.inviteForm.invalid) return;
 
-    console.log('Inviting user:', this.inviteForm.value);
+    console.log('Inviting users:', {
+      ...this.inviteForm.value,
+      emails: this.emailChips(),
+    });
 
     // Emit success event to parent component
     this.success.emit();
@@ -114,6 +163,7 @@ export class InviteUserModalComponent {
 /** ✅ Strongly Typed Form Interface */
 interface InviteUserForm {
   title: FormControl<string | null>;
+  name: FormControl<string | null>;
   email: FormControl<string | null>;
   role: FormControl<string | null>;
   event: FormControl<string | null>;

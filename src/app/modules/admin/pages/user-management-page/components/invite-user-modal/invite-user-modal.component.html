@@ -12,21 +12,46 @@
       placeholder="Invitation Title"
       label="Invitation Title"
       [required]="true"
-      [errorMessage]="
-        hasError('title') ? getErrorMessage('title') : ''
-      "
+      [errorMessage]="hasError('title') ? getErrorMessage('title') : ''"
     ></app-input>
 
     <app-input
-      type="email"
-      label="Email"
-      formControlName="email"
-      placeholder="user@gmail.com"
+      formControlName="name"
+      placeholder="Full Name"
+      label="Name"
       [required]="true"
-      [errorMessage]="
-        hasError('email') ? getErrorMessage('email') : ''
-      "
+      [errorMessage]="hasError('name') ? getErrorMessage('name') : ''"
     ></app-input>
+
+    <div class="email-chips-container">
+      <label for="email">Email Addresses</label>
+      <div class="email-chips-wrapper">
+        @for (email of emailChips(); track email) {
+          <div class="email-chip">
+            <span>{{ email }}</span>
+            <button 
+              type="button" 
+              class="chip-remove" 
+              (click)="removeEmailChip(email)"
+              aria-label="Remove email"
+            >
+              ×
+            </button>
+          </div>
+        }
+        <input
+          type="email"
+          id="email"
+          class="email-input"
+          placeholder="user@gmail.com (Press Enter or comma to add)"
+          (keydown)="onEmailKeyDown($event)"
+          (blur)="addEmailChip($event)"
+        />
+      </div>
+      @if (emailChips().length === 0) {
+        <small class="helper-text">Add at least one email address</small>
+      }
+    </div>
 
     <label for="role">Select Role</label>
     <app-filter-select
@@ -35,9 +60,7 @@
       [options]="roles"
       placeholder="Select Role"
       size="lg"
-      [errorMessage]="
-        hasError('role') ? getErrorMessage('role') : ''
-      "
+      [errorMessage]="hasError('role') ? getErrorMessage('role') : ''"
     ></app-filter-select>
 
     <label for="event">Select Event</label>
@@ -47,9 +70,7 @@
       [options]="events"
       placeholder="Select Event"
       size="lg"
-      [errorMessage]="
-        hasError('event') ? getErrorMessage('event') : ''
-      "
+      [errorMessage]="hasError('event') ? getErrorMessage('event') : ''"
     ></app-filter-select>
 
     <label for="message">Type Message (Optional)</label>
@@ -63,7 +84,7 @@
       <app-button type="secondary" (click)="onCancel()">Cancel</app-button>
       <app-button
         type="primary"
-        [disabled]="inviteForm.invalid"
+        [disabled]="inviteForm.invalid || emailChips().length === 0"
         buttonType="submit"
       >
         Send Invite
