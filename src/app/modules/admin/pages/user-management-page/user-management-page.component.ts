@@ -10,18 +10,29 @@ import {
 } from '../../../../shared/admin-ui/data-table/data-table.component';
 import { User, UserCardData } from '../../../../core/models/user.model';
 import { USER_ROLES } from '../../../../core/constants/user.constants';
-import { InviteUserModalComponent } from "./components/invite-user-modal/invite-user-modal.component";
+import { InviteUserModalComponent } from './components/invite-user-modal/invite-user-modal.component';
+import { SuccessModalComponent } from './components/success-modal/success-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-management-page',
   standalone: true,
-  imports: [AdminUserCardComponent, DataTableComponent, InviteUserModalComponent],
+  imports: [
+    AdminUserCardComponent,
+    DataTableComponent,
+    InviteUserModalComponent,
+    SuccessModalComponent,
+  ],
   templateUrl: './user-management-page.component.html',
   styleUrls: ['./user-management-page.component.scss'],
 })
 export class UserManagementPageComponent {
   private _layoutService = inject(LayoutService);
-  isInviteModalOpen = signal(false);
+  private readonly router = inject(Router);
+
+  public isInviteModalOpen = signal(false);
+  public isSuccessModalOpen = signal(false);
+
   public readonly userCards = signal<UserCardData[]>([
     {
       title: 'Total Users',
@@ -304,13 +315,23 @@ export class UserManagementPageComponent {
   private _editUser(user: User): void {
     console.log('Editing user:', user);
   }
+
   openInviteModal() {
     this.isInviteModalOpen.set(true);
   }
 
   closeInviteModal() {
     this.isInviteModalOpen.set(false);
+    // Add a small delay to ensure the invite modal is fully closed before opening success modal
+    setTimeout(() => {
+      this.isSuccessModalOpen.set(true);
+    }, 100);
   }
+
+  public closeSuccessModal(): void {
+    this.isSuccessModalOpen.set(false);
+  }
+
   private _toggleUserStatus(user: User): void {
     this._users.update((users) =>
       users.map((u) =>
@@ -325,5 +346,19 @@ export class UserManagementPageComponent {
     this.openInviteModal();
   }
 
+  public goToDashboard(): void {
+    this.closeSuccessModal();
+    this.router.navigate(['/dashboard']);
+  }
+
   public onRowExpanded(user: User): void {}
+  public onInviteSuccess(): void {
+    // Close the invite modal
+    this.isInviteModalOpen.set(false);
+
+    // Show success modal after a small delay
+    setTimeout(() => {
+      this.isSuccessModalOpen.set(true);
+    }, 200);
+  }
 }

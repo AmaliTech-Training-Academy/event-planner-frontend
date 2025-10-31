@@ -1,0 +1,19 @@
+<div class="modal-backdrop" (click)="onClose()"></div>
+
+<div class="modal success-modal" role="dialog" aria-labelledby="successTitle">
+  <app-button type="social" class="close-btn" (click)="onClose()">
+    <img src="icons/close.png" alt="Close" />
+  </app-button>
+
+  <div class="success-content">
+    <div class="success-icon">
+      <img src="icons/success-icon.png" alt="Success" />
+    </div>
+
+    <h3 id="successTitle">Invitation Sent</h3>
+
+    <app-button type="secondary" (click)="onAction()">
+      Go to dashboard
+    </app-button>
+  </div>
+</div>

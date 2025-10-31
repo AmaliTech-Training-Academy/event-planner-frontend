@@ -14,10 +14,20 @@
       [searchable]="true"
       [expandable]="false"
       [primaryAction]="primaryAction"
+      
       (rowExpanded)="onRowExpanded($event)"
     />
   </div>
-  @if (isInviteModalOpen()) {
-  <app-invite-user-modal (close)="closeInviteModal()" />
+@if (isInviteModalOpen()) {
+  <app-invite-user-modal 
+    (close)="closeInviteModal()" 
+    (success)="onInviteSuccess()" />
 }
+
+@if (isSuccessModalOpen()) {
+  <app-success-modal 
+    (close)="closeSuccessModal()" 
+    (action)="goToDashboard()" />
+}
+
 </div>

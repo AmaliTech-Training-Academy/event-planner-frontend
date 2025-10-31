@@ -12,8 +12,8 @@ import {
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 import { FilterSelectComponent } from '../../../../../../shared/admin-ui/filter-select/filter-select.component';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
+import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/modal-header.component';
 import { USER_ROLES } from '../../../../../../core/constants/user.constants';
-import { ModalHeaderComponent } from "../../../../../../shared/ui/modal-header/modal-header.component";
 
 @Component({
   selector: 'app-invite-user-modal',
@@ -24,13 +24,14 @@ import { ModalHeaderComponent } from "../../../../../../shared/ui/modal-header/m
     InputComponent,
     FilterSelectComponent,
     ButtonComponent,
-    ModalHeaderComponent
-],
+    ModalHeaderComponent,
+  ],
   templateUrl: './invite-user-modal.component.html',
   styleUrls: ['./invite-user-modal.component.scss'],
 })
 export class InviteUserModalComponent {
   @Output() public readonly close = new EventEmitter<void>();
+  @Output() public readonly success = new EventEmitter<void>();
 
   private readonly _fb = inject(FormBuilder);
 
@@ -76,11 +77,12 @@ export class InviteUserModalComponent {
   /** ✅ Handle Form Submission */
   public onSubmit(): void {
     this.inviteForm.markAllAsTouched();
-
     if (this.inviteForm.invalid) return;
 
     console.log('Inviting user:', this.inviteForm.value);
-    this.close.emit();
+
+    // Emit success event to parent component
+    this.success.emit();
   }
 
   public onCancel(): void {

@@ -1,33 +1,33 @@
-<div class="modal-backdrop" (click)="onCancel()" aria-hidden="true"></div>
+<div class="modal-backdrop" (click)="onCancel()"></div>
 
-<div class="modal" role="dialog" aria-labelledby="inviteUserTitle">
-   <app-modal-header
-    [title]="'Invite New User'"
+<div class="modal">
+  <app-modal-header
+    title="Invite New User"
     (close)="onCancel()"
   ></app-modal-header>
 
-
-  <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" novalidate>
-    <!-- Invitation title -->
+  <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()">
     <app-input
       formControlName="title"
+      placeholder="Invitation Title"
       label="Invitation Title"
-      placeholder="Enter invitation title"
       [required]="true"
-      [errorMessage]="hasError('title') ? getErrorMessage('title') : ''"
+      [errorMessage]="
+        hasError('title') ? getErrorMessage('title') : ''
+      "
     ></app-input>
 
-    <!-- Email -->
     <app-input
       type="email"
+      label="Email"
       formControlName="email"
-      label="Email Address"
       placeholder="user@gmail.com"
       [required]="true"
-      [errorMessage]="hasError('email') ? getErrorMessage('email') : ''"
+      [errorMessage]="
+        hasError('email') ? getErrorMessage('email') : ''
+      "
     ></app-input>
 
-    <!-- Role selection -->
     <label for="role">Select Role</label>
     <app-filter-select
       id="role"
@@ -35,10 +35,11 @@
       [options]="roles"
       placeholder="Select Role"
       size="lg"
-      [errorMessage]="hasError('role') ? getErrorMessage('role') : ''"
+      [errorMessage]="
+        hasError('role') ? getErrorMessage('role') : ''
+      "
     ></app-filter-select>
 
-    <!-- Event selection -->
     <label for="event">Select Event</label>
     <app-filter-select
       id="event"
@@ -46,24 +47,24 @@
       [options]="events"
       placeholder="Select Event"
       size="lg"
-      [errorMessage]="hasError('event') ? getErrorMessage('event') : ''"
+      [errorMessage]="
+        hasError('event') ? getErrorMessage('event') : ''
+      "
     ></app-filter-select>
 
-    <!-- Optional message -->
     <label for="message">Type Message (Optional)</label>
     <textarea
       id="message"
       formControlName="message"
-      rows="4"
-      placeholder="Add a personal note..."
+      placeholder="Add a note for the invitee..."
     ></textarea>
 
     <div class="modal__actions">
       <app-button type="secondary" (click)="onCancel()">Cancel</app-button>
       <app-button
         type="primary"
-        buttonType="submit"
         [disabled]="inviteForm.invalid"
+        buttonType="submit"
       >
         Send Invite
       </app-button>
