@@ -15,7 +15,7 @@ import {
   imports: [CommonModule],
 })
 export class FormErrorComponent implements OnChanges {
-  public message = input<string|null>('');
+  public message = input<string | null>('');
   public showIcon = input<boolean>(true);
   public visible = signal(false);
 

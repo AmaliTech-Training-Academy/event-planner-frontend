@@ -42,17 +42,14 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   }
 
   &.app-button--secondary {
-    color: $gray-50;
+    border: 1.5px solid $gray-300;
 
-    &:hover:not(:disabled) {
-      background-color: $blue-400;
-    }
+   
   }
 
   &.app-button--social {
     background: transparent;
     color: $gray-900;
-    border: 1.5px solid $gray-300;
 
     &:hover:not(:disabled) {
       background-color: $gray-100;
@@ -164,4 +161,11 @@ button.app-button.power-inactive {
   &:hover:not(:disabled) {
     background-color: $green-100;
   }
+}
+
+button.app-button.back-button {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+  
 }
