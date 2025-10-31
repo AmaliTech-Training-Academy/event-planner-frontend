@@ -1,0 +1,100 @@
+<div class="container">
+    <div class="loaction-pinter">
+        <a href="">Create Event</a>
+        <img src="icons/chevron_right.svg" alt="chevron right icon" srcset="">
+        <a href="">Venue Sectioning & Ticketing</a>
+    </div>
+    <div class="header">
+        <h2>Layout Builder</h2>
+        <app-button type="secondary">
+            <div class="content">
+                <p>Save & Continue</p>
+                <img src="icons/arrow-right.png" alt="arrow right icon" srcset="">
+            </div>
+        </app-button>
+    </div>
+    <div class="content">
+        <section class="form-container">
+            <div class="draw-tools">
+                <p>Drawing Tools</p>
+
+                <div class="tools">
+                    @for (tool of tools; track tool.name) {
+                    <app-button type="plain">
+                        <div class="content">
+                            <img src="{{ tool.icon }}" alt="{{ tool.name }} icon" srcset="">
+                            <p>{{ tool.name }}</p>
+                        </div>
+                    </app-button>
+                    }
+                </div>
+            </div>
+            <form action="" method="post">
+                <p>Section Properties</p>
+
+                <div class="fields">
+                    <app-input label="Section Name" placeholder="Enter section name"></app-input>
+                    <app-input label="Capacity" placeholder="Enter capacity" type="number"></app-input>
+                    <app-input label="Price" placeholder="Enter price" type="number"></app-input>
+                    <div class="field">
+                        <label for="color"> What’s included in this?(Optional)</label>
+                        <app-rich-editor></app-rich-editor>
+                        </div>
+                        
+                    <div class="field">
+                        <label for="color"> Color</label>
+                        <div class="row">
+                            <div class="color-preview" [style.background-color]="'#FFFFFF'"></div>
+                            <app-input id="color" placeholder="#FFFFFF" label="" type="text"></app-input>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <app-button type="primary">
+                Save Section
+            </app-button>
+        </section>
+        <app-venue-layout-editor></app-venue-layout-editor>
+    </div>
+
+    <div class="sections-container">
+        <h3>Defined Sections</h3>
+
+        <table class="sections-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Capacity</th>
+                    <th>Price</th>
+                    <th>Color</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let section of definedSections">
+                    <td>{{ section.name }}</td>
+                    <td>{{ section.capacity }}</td>
+                    <td>${{ section.price }}</td>
+                    <td>
+                        <div class="color-indicator" [style.background-color]="section.color">
+                        </div>
+                    </td>
+                    <td class="actions-cell">
+                        <span class="action-link">
+                            <i class="fas fa-pen-to-square"></i> Edit
+                        </span>
+                        <span class="action-link delete">
+                            <i class="fas fa-trash"></i> Delete
+                        </span>
+                    </td>
+                </tr>
+
+                <tr *ngIf="definedSections.length === 0">
+                    <td colspan="5" class="empty-row">No sections defined yet.</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</div>
