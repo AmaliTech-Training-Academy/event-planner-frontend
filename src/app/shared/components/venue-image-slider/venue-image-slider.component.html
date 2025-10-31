@@ -4,32 +4,37 @@
     <h2 class="slider-title">Venue Images</h2>
     <div class="slider-nav">
       
+      
       <button 
         class="nav-arrow" 
         (click)="prev()"
         [disabled]="isPrevDisabled"
         aria-label="Previous image">
-        <img src="assets/icons/arrow-left.svg" alt="Previous" />
+     <img src="icons/chevron-left.png" alt="Previous" />
       </button>
       
+   
       <button 
         class="nav-arrow" 
         (click)="next()"
         [disabled]="isNextDisabled"
         aria-label="Next image">
-        <img src="assets/icons/arrow-right.svg" alt="Next" />
+        
+        <img src="icons/Nav.png" alt="Next" />
       </button>
     </div>
   </div>
 
- 
+  
   <div class="image-list-wrapper"> 
+    
     <div 
-      class="image-list"   that moves -->
+      class="image-list"
       [style.transform]="'translateX(' + (-currentIndex * slideWidthPercentage) + '%)'"> 
       
+     
       @for (image of images; track image.url) {
-       
+        
         <div class="image-slide"> 
           <img [src]="image.url" [alt]="image.alt" class="venue-image" />
         </div>
@@ -37,5 +42,4 @@
     </div>
   </div>
 </div>
-
 

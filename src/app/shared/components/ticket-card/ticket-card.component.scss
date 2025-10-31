@@ -1,4 +1,4 @@
-@use 'index' as *; 
+@use 'index' as *;
 @use 'sass:color';
 
 :host {
@@ -6,67 +6,57 @@
 }
 
 .ticket-card {
-  background-color: #fff;
-  border: 1px solid #E5E7EB; 
-  border-radius: 8px; 
-  padding: 1.5rem; 
+  background-color: $gray-50;
+  border: $stroke-0 solid $general-stroke-light;
+  border-radius: $radius-4;
+  padding: $spacing-6;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .card-title {
- 
-  font-family: "Lato", sans-serif;
-  font-size: 1.75rem; 
-  font-weight: 700;
-  color: #292929;
-  margin: 0 0 1rem 0; 
+  @include h-4;
+  color: $header-dark;
+  margin: 0 0 $spacing-4 0;
 }
 
 .price {
-  
-  font-family: "Lato", sans-serif;
+  font-family: $font-lato;
   font-size: 2.25rem;
   font-weight: 700;
-  color: #006adc; 
-  margin-bottom: 1.5rem; 
+  color: $blue-700;
+  margin-bottom: $spacing-6;
 }
 
 .features-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 1.5rem 0; 
+  margin: 0 0 $spacing-6 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; 
+  gap: $spacing-3;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem; 
- 
-  font-family: "Lato", sans-serif;
-  font-size: 1rem;
-  font-weight: 400;
-  color: #656565; 
+  gap: $spacing-2;
+  @include body-1;
+  color: $paragraph-text;
 
   span {
-    color: #22c55e; 
-    font-size: 1.25rem;
+    color: $green-600;
+    font-size: $spacing-5;
     line-height: 1;
   }
 }
 
-
 app-button {
   width: 100%;
 
-  
   ::ng-deep button {
     width: 100%;
-    
-    padding-top: 0.75rem; 
-    padding-bottom: 0.75rem; 
+    padding-top: $spacing-3;
+    padding-bottom: $spacing-3;
   }
 }
 
