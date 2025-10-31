@@ -13,7 +13,6 @@ export class AuthService {
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
-
   constructor(private readonly authBackend: AuthBackendService, private readonly router: Router, private readonly errorHandlerService: ErrorHandlerService) { }
 
   public login(email: string, password: string) {
@@ -81,6 +80,15 @@ export class AuthService {
         catchError(err => this.errorHandlerService.handle(err)),
         finalize(() => this.setLoading(false))
       );
+  }
+
+  public forgotPassword(email: string) {
+    this.setLoading(true);
+    return this.authBackend.forgotPassword(email)
+      .pipe(
+        catchError(err => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      )
   }
 
   public isLoggedIn(): Observable<boolean> {

@@ -1,5 +1,4 @@
-import { environment } from "../../../environments/environment";
-
+import { environment } from '../../../environments/environment';
 
 const API_VERSION = 'v1';
 const BASE = `${environment.API_URL}/${API_VERSION}`;
@@ -9,5 +8,6 @@ export const API_ENDPOINTS = {
     AUTH_LOGIN: `${BASE}/auth/login`,
     AUTH_REGISTER: `${BASE}/auth/register`,
     AUTH_VERIFY_OTP: `${BASE}/auth/verify-otp`,
+    AUTH_FORGOT_PASSWORD: `${BASE}/auth/forgot-password`,
     GET_USER: (userId: string): string => `${BASE}/users/${userId}`
 }as const;

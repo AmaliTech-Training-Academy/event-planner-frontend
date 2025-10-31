@@ -17,13 +17,20 @@ import {
 @Component({
   selector: 'app-checkbox',
   standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './checkbox.component.html',
   styleUrls: ['./checkbox.component.scss'],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => CheckboxComponent),
+      multi: true,
+    },
+  ],
 })
-export class CheckboxComponent {
+export class CheckboxComponent implements ControlValueAccessor {
   public label = input<string>('');
   public checked = input<boolean>(false);
-
   public ariaLabel = input<string>('');
 
   public checkedChange = output<boolean>();
@@ -36,7 +43,10 @@ export class CheckboxComponent {
 
   constructor() {
     effect(() => {
-      this._checked.set(this.checked());
+      const externalChecked = this.checked();
+      if (externalChecked !== this._checked()) {
+        this._checked.set(externalChecked);
+      }
     });
   }
 
@@ -52,11 +62,11 @@ export class CheckboxComponent {
     this._checked.set(value ?? false);
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: boolean) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 

@@ -1,7 +1,19 @@
-@use 'index' as *;
+@use 'typography' as *;
+@use 'colors' as *;
+@use 'variables' as *;
 
 .input-field-group {
+  margin-bottom: $spacing-4;
+  position: relative;
+  text-align: left;
+
   .input-label {
+    @include body-2;
+    font-weight: 400;
+    display: block;
+    margin-bottom: $spacing-2;
+    color: $gray-700;
+
     span {
       color: $red-500;
       background-color: transparent;
@@ -9,35 +21,164 @@
       margin-left: $spacing-1;
     }
   }
-}
 
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  gap: $spacing-3; 
-  border: 1px solid $general-stroke-light;
-  background:#fff;
-  border-radius: 0.25rem;
-  padding: $spacing-3 $spacing-2;
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid $general-stroke-light;
+    border-radius: $radius-4;
+    background-color: $white;
+    padding: 0 $spacing-3;
     height: 48px;
-    margin-top: .05rem;
+    transition: all 0.2s ease;
+ &.with-icon {
+    padding-left: $spacing-3;
+  }
 
-  input {
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-    padding: 0;
-    font-size: 1rem;
-    color: $gray-900;
+  &.no-icon {
+    padding-left: $spacing-4; 
+  }
 
-    &:-webkit-autofill,
-    &:-webkit-autofill:hover,
-    &:-webkit-autofill:focus,
-    &:-webkit-autofill:active {
-      transition: background-color 5000s ease-in-out 0s;
-      -webkit-text-fill-color: $gray-900 !important;
-      box-shadow: 0 0 0px 1000px white inset;
+    &:focus-within {
+      border-color: $orange-500;
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
+    }
+
+    .input-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    margin-right: $spacing-3;
+    color: $gray-400;
+  }
+    input {
+      flex: 1;
+      width: 100%;
+      padding: 0;
+      border: none;
+      background: transparent;
+      font-family: $font-lato;
+      font-size: 16px;
+      
+      color: $gray-900;
+      outline: none;
+
+      &::placeholder {
+        color: $gray-400;
+      }
+
+      &:focus {
+        outline: none;
+        background: transparent;
+      }
+
+      &[type="password"] {
+        letter-spacing: 0.125rem;
+      }
+
+    
+    }
+
+    .toggle-password {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: $spacing-1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $gray-400;
+      transition: color 0.2s ease;
+      margin-left: $spacing-2;
+
+      &:hover {
+        color: $gray-600;
+      }
+
+      img {
+        width: 20px;
+        height: 20px;
+        display: block;
+      }
     }
   }
+
+  &.has-error {
+    .input-wrapper {
+      border-color: $red-500;
+      background-color: rgba($red-50, 0.3);
+
+      &:focus-within {
+        border-color: $red-500;
+        box-shadow: 0 0 0 3px rgba($red-500, 0.1);
+      }
+    }
+
+    .input-icon {
+      color: $red-500;
+    }
+  }
+
+  &.focused {
+    .input-wrapper {
+      border-color: $orange-500;
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
+    }
+  }
+}
+
+// Form footer for Remember me and Forgot password
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $spacing-3;
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+
+    input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: $orange-500;
+    }
+
+    label {
+      @include body-2;
+      color: $gray-700;
+      cursor: pointer;
+      user-select: none;
+      margin: 0;
+    }
+  }
+
+  .forgot-password {
+    @include body-2;
+    color: $blue-600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-weight: 500;
+
+    &:hover {
+      color: $blue-700;
+      text-decoration: underline;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
 }

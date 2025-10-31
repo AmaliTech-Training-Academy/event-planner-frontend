@@ -13,7 +13,11 @@
     </label>
   }
 
-  <div class="input-wrapper">
+  <div
+    class="input-wrapper"
+    [class.with-icon]="iconSrc()"
+    [class.no-icon]="!iconSrc()"
+  >
     @if (iconSrc()) {
       <img [src]="iconSrc()" alt="icon" class="input-icon" />
     }
@@ -21,7 +25,7 @@
     <input
       [type]="inputType()"
       [placeholder]="placeholder()"
-      [value]="value()"
+      [value]="currentValue()"
       (input)="onValueChange($event)"
       (focus)="onFocus()"
       (blur)="onBlur()"
@@ -37,17 +41,22 @@
         aria-label="Toggle password visibility"
       >
         <img
-          [src]="showPassword() ? 'icons/eye-closed.svg' : 'icons/eye-open.svg'"
+          [src]="
+            showPassword()
+              ? 'icons/eye-close-icon.png'
+              : 'icons/eye-open.svg'
+          "
           alt="Toggle Password"
         />
       </button>
     }
   </div>
+
   @if (hasError() && errorMessage()) {
-   <app-form-error
-    [message]="errorMessage()"
-    [showIcon]="true"
-    id="{{ label() + '-error' }}"
-  ></app-form-error>
+    <app-form-error
+      [message]="errorMessage()"
+      [showIcon]="true"
+      id="{{ label() + '-error' }}"
+    ></app-form-error>
   }
 </div>
