@@ -1,18 +1,18 @@
 import {
   Component,
-  input,
-  output,
+  Input,
+  Output,
+  EventEmitter,
   signal,
-  effect,
   forwardRef,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
   FormsModule,
   ReactiveFormsModule,
-  NG_VALUE_ACCESSOR,
-  ControlValueAccessor,
 } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-checkbox',
@@ -29,31 +29,21 @@ import {
   ],
 })
 export class CheckboxComponent implements ControlValueAccessor {
-  public label = input<string>('');
-  public checked = input<boolean>(false);
-
-  public checkedChange = output<boolean>();
+  @Input() label: string = '';
+  @Input() ariaLabel: string = '';
+  @Output() checkedChange = new EventEmitter<boolean>();
 
   private _checked = signal<boolean>(false);
-  private _disabled = false;
+  private _disabled = signal<boolean>(false);
 
-  private onChange: (value: boolean) => void = () => {};
-  private onTouched: () => void = () => {};
-
-  constructor() {
-    effect(() => {
-      this._checked.set(this.checked());
-    });
-  }
-
-  public get isChecked(): boolean {
+  get isChecked(): boolean {
     return this._checked();
   }
-
-  public get isDisabled(): boolean {
-    return this._disabled;
+  get isDisabled(): boolean {
+    return this._disabled();
   }
 
+  // ControlValueAccessor implementation
   writeValue(value: boolean): void {
     this._checked.set(value ?? false);
   }
@@ -67,15 +57,26 @@ export class CheckboxComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this._disabled = isDisabled;
+    this._disabled.set(isDisabled);
   }
 
-  public toggle(): void {
-    if (this._disabled) return;
+  toggleCheck(): void {
+    if (this.isDisabled) return;
+
     const newValue = !this._checked();
     this._checked.set(newValue);
+    this.checkedChange.emit(newValue);
     this.onChange(newValue);
     this.onTouched();
-    this.checkedChange.emit(newValue);
   }
+
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.code === 'Space' || event.key === ' ') {
+      event.preventDefault();
+      this.toggleCheck();
+    }
+  }
+
+  protected onChange: (value: boolean) => void = () => {};
+  protected onTouched: () => void = () => {};
 }

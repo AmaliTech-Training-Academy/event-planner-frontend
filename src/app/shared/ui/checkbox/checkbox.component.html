@@ -1,5 +1,21 @@
-<label class="custom-checkbox">
-  <input type="checkbox" [checked]="checked()" (change)="toggle()" />
-  <span class="checkmark"></span>
-  <span class="label-text">{{ label() }}</span>
-</label>
+<div
+  class="checkbox-wrapper"
+  role="checkbox"
+  [attr.aria-checked]="isChecked"
+  [attr.aria-disabled]="isDisabled"
+  tabindex="0"
+  (click)="toggleCheck()"
+  (keydown)="onKeyDown($event)"
+  (blur)="onTouched()"
+  [class.disabled]="isDisabled"
+>
+  <div class="checkbox-box">
+    <img
+      *ngIf="isChecked"
+      src="icons/check-mark.svg"
+      alt="Checked"
+      class="checkmark-icon"
+    />
+  </div>
+  <span class="label-text">{{ label }}</span>
+</div>

@@ -72,17 +72,25 @@
       </div>
 
       <div class="admin-login__options">
-        <app-checkbox label="Remember me" formControlName="rememberMe" />
-        <a href="#" class="admin-login__forgot">Forgot password?</a>
+  <div class="extras">
+        <label class="custom-checkbox">
+          <input
+            type="checkbox"
+            formControlName="remember"
+            autocomplete="off"
+          />
+          <span class="checkmark"></span>
+          <span class="label-text">Remember me</span>
+        </label>
+
+        <a class="forgot-link" [routerLink]="APP_ROUTES.FORGOT_PASSWORD">
+          Forgot password?
+        </a>
       </div>
 
-      <button
-        type="submit"
-        class="admin-login__submit"
-        [disabled]="loginForm.invalid"
-      >
-        Sign In To Dashboard
-      </button>
+      </div>
+
+     <app-button type="primary" label="Sign In" [disabled]="!loginForm.valid">Sign In to Dashboard</app-button>
 
       <app-secure-text
         text="Secure login enabled"

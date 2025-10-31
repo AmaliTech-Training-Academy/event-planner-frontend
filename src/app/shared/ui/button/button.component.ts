@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input, computed } from '@angular/core';
+import { Component, input, computed, output } from '@angular/core';
 
 @Component({
   selector: 'app-button',
@@ -14,6 +14,14 @@ export class ButtonComponent {
   );
   public readonly disabled = input(false);
   public readonly fullWidth = input(false);
+  public readonly onClick = output<void>();
+
+  protected handleClick(): void {
+    if (this.disabled()) return;
+
+    this.onClick.emit();
+  }
+
   public readonly color = input<
     'view' | 'edit' | 'delete' | 'power' | 'inactive' | string | undefined
   >();

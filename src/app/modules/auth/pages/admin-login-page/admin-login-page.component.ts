@@ -8,9 +8,11 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
-import { CheckboxComponent } from '../../../../shared/ui/checkbox/checkbox.component';
-import { SecureTextComponent } from "../../../../shared/ui/secure-text/secure-text.component";
-import { ButtonComponent } from "../../../../shared/ui/button/button.component";
+import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { RouterLink } from '@angular/router';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+
 
 @Component({
   selector: 'app-admin-login',
@@ -19,15 +21,16 @@ import { ButtonComponent } from "../../../../shared/ui/button/button.component";
     CommonModule,
     ReactiveFormsModule,
     InputComponent,
-    CheckboxComponent,
     SecureTextComponent,
-    ButtonComponent
-],
+    ButtonComponent,
+    RouterLink,
+  ],
   templateUrl: './admin-login-page.component.html',
   styleUrls: ['./admin-login-page.component.scss'],
 })
 export class AdminLoginPageComponent {
   public loginForm: FormGroup;
+  protected readonly APP_ROUTES = APP_ROUTES;
 
   private readonly emailPattern =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
