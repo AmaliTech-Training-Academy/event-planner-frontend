@@ -5,16 +5,13 @@
             <div class="time-container">
                 <div class="day-container">
                     <p>Select event type:</p>
-                    <div class="radio-container">
-                        <input [value]="EVENT_TYPES.SINGLE_DAY" [formControlName]="EVENT_FORM_FIELDS.EVENT_TYPE"
-                            type="radio" id="day-event">
-                        <label for="day-event">Day Event</label>
-                    </div>
-                    <div class="radio-container">
-                        <input [value]="EVENT_TYPES.MULTI_DAY" [formControlName]="EVENT_FORM_FIELDS.EVENT_TYPE"
-                            type="radio" id="multi-day-event">
-                        <label for="multi-day-event">Multi-day</label>
-                    </div>
+                    <app-radio-button label="Day Event" id="day-event" [value]="EVENT_TYPES.SINGLE_DAY"
+                        [controlName]="EVENT_FORM_FIELDS.EVENT_TYPE">
+                    </app-radio-button>
+
+                    <app-radio-button label="Multi-day" id="multi-day-event" [value]="EVENT_TYPES.MULTI_DAY"
+                        [controlName]="EVENT_FORM_FIELDS.EVENT_TYPE">
+                    </app-radio-button>
                 </div>
                 <div class="date-container" [formArrayName]="EVENT_FORM_FIELDS.DATES">
                     @for (dateGroup of eventDates.controls; track $index) {
@@ -33,16 +30,13 @@
         <div class="event-info-container">
             <div class="meeting-contianer">
                 <p>Select meeting type:</p>
-                <div class="radio-container">
-                    <input type="radio" [value]="MEETING_TYPES.VIRTUAL"
-                        [formControlName]="EVENT_FORM_FIELDS.MEETING_TYPE" id="virtual-meeting">
-                    <label for="virtual-meeting">Virtual</label>
-                </div>
-                <div class="radio-container">
-                    <input type="radio" [value]="MEETING_TYPES.IN_PERSON"
-                        [formControlName]="EVENT_FORM_FIELDS.MEETING_TYPE" id="inperson-meeting">
-                    <label for="inperson-meeting">In-person</label>
-                </div>
+                <app-radio-button label="Virtual" id="virtual-meeting" [value]="MEETING_TYPES.VIRTUAL"
+                    [controlName]="EVENT_FORM_FIELDS.MEETING_TYPE">
+                </app-radio-button>
+
+                <app-radio-button label="In-person" id="inperson-meeting" [value]="MEETING_TYPES.IN_PERSON"
+                    [controlName]="EVENT_FORM_FIELDS.MEETING_TYPE">
+                </app-radio-button>
             </div>
             @if (meetingType?.value === MEETING_TYPES.IN_PERSON) {
             <div class="in-person-details" [formGroupName]="EVENT_FORM_FIELDS.IN_PERSON_DETAILS">
@@ -62,13 +56,14 @@
                             }
                             <input #venueFileInput type="file" accept="image/*" (change)="onVenueImageSelected($event)"
                                 multiple hidden />
-                            <button type="button" (click)="venueFileInput.click()"
-                                [disabled]="inPersonDetails.get(EVENT_FORM_FIELDS.IMAGES)?.value?.length >= 5">
+                            <app-button [disabled]="inPersonDetails.get(EVENT_FORM_FIELDS.IMAGES)?.value?.length >= 5"
+                                buttonType="button" type="plain" (onClick)="venueFileInput.click()">
                                 <img src="icons/add.svg" alt="" class="preview">
-                            </button>
+                            </app-button>
+
                         </div>
                     </div>
-                    <a href='/app/define-venue-sections' class="define-venue-sections">
+                    <a [href]='APP_ROUTE.VENUE_SECTION' class="define-venue-sections">
                         <p>Define venue section</p>
                         <img src="icons/arrow-right.svg" />
                     </a>
@@ -78,14 +73,18 @@
             @if (meetingType?.value === MEETING_TYPES.VIRTUAL) {
             <div class="virtual-details" [formGroupName]="EVENT_FORM_FIELDS.VIRTUAL_DETAILS">
                 <p>Choose Virtual Option</p>
-                <button (click)="toggleConnectZoomModal()" type="button">
-                    <img src="icons/cam_corder.svg" />
-                    <p>Create Zoom Meeting</p>
-                </button>
-                <button (click)="toggleConnectZoomModal()" type="button">
-                    <img src="icons/cam_corder.svg" />
-                    <p>Use Existing Meeting</p>
-                </button>
+                <app-button (click)="toggleConnectZoomModal()" type="plain">
+                    <div class="button-content">
+                        <img src="icons/cam_corder.svg" />
+                        <p>Create Zoom Meeting</p>
+                    </div>
+                </app-button>
+                <app-button (click)="toggleConnectZoomModal()" type="plain">
+                    <div class="button-content">
+                        <img src="icons/cam_corder.svg" />
+                        <p>Use Existing Meeting</p>
+                    </div>
+                </app-button>
             </div>
             }
         </div>
@@ -95,18 +94,19 @@
             <div class="flyer-preview">
                 <img [src]="flyerPreview || 'images/flyer.jpg'" alt="" class="flyer-preview">
 
-                <button type="button">
+                <app-button buttonType="button" type="plain">
                     <img src="icons/image.svg" alt="" class="preview">
-                </button>
+                </app-button>
             </div>
             <div class="change-flyer-container">
                 <input #flyerFileInput type="file" accept="image/*" (change)="onFlyerImageSelected($event)" hidden>
-
                 <div class="info">
                     <h5>Upload event flyer</h5>
                     <p>Accepted formats: PDF, JPG, PNG (max 10MB)</p>
                 </div>
-                <button (click)="flyerFileInput.click()" type="button">Change the picture</button>
+                <app-button buttonType="button" type="secondary" (onClick)="flyerFileInput.click()">
+                    Change the picture
+                </app-button>
             </div>
         </div>
         <div class="event-options-container">
@@ -120,9 +120,9 @@
                         </div>
                         <div class="right">
                             <p>{{form.get(EVENT_FORM_FIELDS.PRICE)?.value | currency}}</p>
-                            <button (click)="togglePriceModal()">
+                            <app-button buttonType="button" (onClick)="togglePriceModal()" type="plain">
                                 <img src="icons/pencil.svg" alt="" class="preview">
-                            </button>
+                            </app-button>
                         </div>
                     </li>
                     <li class="item">
@@ -144,13 +144,13 @@
                         </div>
                         <div class="right">
                             <p>{{form.get(EVENT_FORM_FIELDS.CAPACITY)?.value || 'Unlimited'}}</p>
-                            <button (click)="toggleCapacityModal()">
+                            <app-button buttonType="button" (onClick)="toggleCapacityModal()" type="plain">
                                 <img src="icons/pencil.svg" alt="" class="preview">
-                            </button>
+                            </app-button>
                         </div>
                     </li>
                     <li class="item">
-                        <a href='/app/define-venue-sections'>
+                        <a [href]='APP_ROUTE.MANAGE_EVENT_ROLES'>
                             <div class="left">
                                 <img src="icons/user-circle.svg" alt="" class="preview">
                                 <p>Manage user roles</p>
@@ -162,9 +162,9 @@
                     </li>
                 </ul>
             </div>
-            <button type="button" class="primary">
-                Create event
-            </button>
+            <app-button buttonType="button" type="primary" [fullWidth]="true" (onClick)="createEvent()">
+                Create Event
+            </app-button>
         </div>
 
         @if (showPriceModal) {
@@ -229,18 +229,18 @@
         }
 
         @if (connectZoomModal) {
-            <app-modal-container (close)="toggleConnectZoomModal()">
-                <div class="zoom-connect">
-                    <img src="icons/trend_up_circle.svg" alt="" srcset="" class="icon">
-    
-                    <div class="content">
-                        <h3>Connect to Zoom</h3>
-                        <p>Connect your account to the zoom platform to automatically create the meeting link for the event
-                        </p>
-                    </div>
-                    <app-button type="primary" [fullWidth]="true">Connect</app-button>
+        <app-modal-container (close)="toggleConnectZoomModal()">
+            <div class="zoom-connect">
+                <img src="icons/trend_up_circle.svg" alt="" srcset="" class="icon">
+
+                <div class="content">
+                    <h3>Connect to Zoom</h3>
+                    <p>Connect your account to the zoom platform to automatically create the meeting link for the event
+                    </p>
                 </div>
-            </app-modal-container>
+                <app-button type="primary" [fullWidth]="true">Connect</app-button>
+            </div>
+        </app-modal-container>
         }
 
 

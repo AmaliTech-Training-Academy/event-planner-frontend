@@ -4,26 +4,30 @@
 @use "media_query" as *;
 
 .wrapper {
-    // padding: 0 7.5rem;
     padding: 0 clamp(1.5rem, 6vw, 7.5rem);
     background: linear-gradient(180.65deg, #ffffff 88.1%, #999999 137.06%);
     display: flex;
     flex-direction: row;
     justify-content: center;
-    // gap: 7.875rem;
     gap: clamp(1rem, 4.54vw, 7.875rem);
+    padding-top: 43px;
+    padding-bottom: 151px;
 
     margin: auto;
 
     @include md {
         gap: 1.25rem;
         padding: 0 2rem;
+        padding-top: 18px;
+        padding-bottom: 134px;
     }
 
     @include sm {
         gap: 1rem;
         flex-direction: column;
         padding: 0 1.5rem;
+        padding-top: 51px;
+        padding-bottom: 149px;
     }
 
     .left-panel {
@@ -243,13 +247,14 @@
                             object-fit: cover;
                         }
 
-                        button {
+                        button,app-button {
                             border: 1px dashed $general-stroke-dark;
                             border-radius: $radius-4;
                             background-color: transparent;
                             width: 203px;
                             height: 112px;
                             display: flex;
+                            flex-shrink: 0;
                             align-items: center;
                             justify-content: center;
 
@@ -285,18 +290,29 @@
                     color: $sub-header-dark;
                 }
 
-                button {
+                app-button {
                     background-color: transparent;
-                    border: none;
-                    display: flex;
                     border: 1px solid $general-stroke-light;
-                    padding: 15px 8px;
-                    align-items: center;
-                    gap: 8px;
                     border-radius: 8px;
-                    cursor: pointer;
-                    @include body-2;
-                    color: $paragraph-text;
+                    padding: 15px 8px;
+                    display: flex;
+                    width: 100%;
+
+                    .button-content {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        gap: 0.5rem;
+                        cursor: pointer;
+                        @include body-2;
+                        color: $paragraph-text;
+                    }
+
+                    img {
+                        width: 1.25rem;
+                        height: 1.25rem;
+                    }
                 }
             }
         }
@@ -340,7 +356,7 @@
                     z-index: 1;
                 }
 
-                button {
+                app-button {
                     position: absolute;
                     bottom: 16px;
                     left: 16px;
@@ -383,15 +399,6 @@
                         color: $paragraph-text;
                         padding: 4px 8px;
                     }
-                }
-
-                button {
-                    @include secondary_btn;
-                    font-weight: bold;
-                    font-size: 16px;
-                    padding: 14.5px 0;
-                    flex: 1;
-                    color: $sub-header-dark;
                 }
             }
         }
@@ -638,6 +645,7 @@
     border-radius: 16px;
     padding: 24px;
     text-align: center;
+    gap: 40px;
 
     .content {
         display: flex;
@@ -664,6 +672,10 @@
                 @include body-1;
                 color: $paragraph-text;
             }
+        }
+
+        app-input {
+            width: 60%;
         }
     }
 

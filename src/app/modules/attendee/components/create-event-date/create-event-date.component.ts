@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, input, Input, output, Output, signal } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 
 @Component({
   selector: 'app-create-event-date',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ButtonComponent],
   templateUrl: './create-event-date.component.html',
   styleUrl: './create-event-date.component.scss'
 })

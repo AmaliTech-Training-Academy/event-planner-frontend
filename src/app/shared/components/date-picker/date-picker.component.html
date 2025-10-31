@@ -1,6 +1,7 @@
 <div class="calendar">
     <div class="header">
-        <p>{{getSelectedDate().getDate()}} <span>/</span> {{getSelectedDate().getMonth()+1}} <span>/</span> {{currentYear}}</p>
+        <p>{{getSelectedDate().getDate()}} <span>/</span> {{getSelectedDate().getMonth()+1}} <span>/</span>
+            {{currentYear}}</p>
     </div>
 
     <div class="actions">
@@ -20,16 +21,22 @@
     </div>
     <div class="table">
         <div class="weekdays">
-            <div class="cell" *ngFor="let day of ['Mo','Tu','We','Th','Fr','Sa','Su']">{{ day }}</div>
+            @for (day of ['Mo','Tu','We','Th','Fr','Sa','Su']; track $index) {
+            <div class="cell">{{ day }}</div>
+            }
         </div>
 
         <div class="days">
-            <div class="cell" *ngFor="let _ of [].constructor(firstDayOffset)"></div>
-            <div *ngFor="let day of daysInMonth" class="day cell"
+            @for (_ of [].constructor(firstDayOffset); track $index) {
+            <div class="cell"></div>
+            }
+            @for (day of daysInMonth; track $index) {
+            <div class="day cell"
                 [class.selected]="selectedDate?.getDate() === day && selectedDate?.getMonth() === currentMonth"
                 (click)="selectDate(day)">
                 {{ day }}
             </div>
+            }
         </div>
     </div>
 </div>

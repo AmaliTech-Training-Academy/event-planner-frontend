@@ -9,11 +9,13 @@ import { EventTimePickerComponent } from "../../components/event-time-picker/eve
 import { EventTimeZonePickerComponent } from "../../components/event-time-zone-picker/event-time-zone-picker.component";
 import { EventFormService } from '../../services/event-form.service';
 import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from './../../constants/event-form.constant';
+import { RadioButtonComponent } from "../../../../shared/ui/radio-button/radio-button.component";
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, ModalContainerComponent, InputComponent, ButtonComponent],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, ModalContainerComponent, InputComponent, ButtonComponent, RadioButtonComponent],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
@@ -26,7 +28,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   protected connectZoomModal: boolean = false;
 
 
-  constructor(private eventFormService: EventFormService) {
+  constructor(private readonly eventFormService: EventFormService) {
     this.form = this.eventFormService.getForm();
     this.checked = this.eventFormService.requireApproval?.value;
   }
@@ -41,6 +43,11 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
 
   protected get EVENT_TYPES() {
     return EVENT_TYPE;
+  }
+
+
+  protected get APP_ROUTE() {
+    return APP_ROUTES;
   }
 
   ngOnInit(): void {

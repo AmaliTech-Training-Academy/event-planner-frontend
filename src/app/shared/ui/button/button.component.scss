@@ -1,6 +1,7 @@
-@use 'typography' as *;
-@use 'colors' as *;
-@use 'variables' as *;
+@use "typography" as *;
+@use "colors" as *;
+@use "variables" as *;
+@use "theme" as *;
 
 button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   width: 100%;
@@ -19,6 +20,20 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
     cursor: not-allowed;
   }
 
+  &.app-button--plain {
+    background: transparent;
+    color: inherit;
+    width: fit-content;
+    height: fit-content;
+    padding: unset;
+    display: flex;
+    align-items: center;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
   &.app-button--primary {
     background-color: $orange-700;
     color: $gray-50;
@@ -29,11 +44,7 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   }
 
   &.app-button--secondary {
-    color: $gray-50;
-
-    &:hover:not(:disabled) {
-      background-color: $blue-400;
-    }
+    @include secondary_btn;
   }
 
   &.app-button--social {

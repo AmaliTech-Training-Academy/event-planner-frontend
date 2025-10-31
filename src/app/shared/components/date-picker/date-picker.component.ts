@@ -9,7 +9,6 @@ import { Component, output } from '@angular/core';
 })
 export class DatePickerComponent {
   public readonly dateSelected = output<Date>();
-
   private today = new Date();
   protected currentMonth = this.today.getMonth();
   protected currentYear = this.today.getFullYear();

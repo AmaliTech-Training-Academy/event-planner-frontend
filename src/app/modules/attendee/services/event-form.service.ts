@@ -10,7 +10,7 @@ export class EventFormService {
   private form: FormGroup;
   private subscription = new Subscription();
 
-    constructor(private fb: FormBuilder) {
+    constructor(private readonly fb: FormBuilder) {
     this.form = this.fb.group({
       [F.EVENT_TYPE]: [EVENT_TYPE.SINGLE_DAY, [Validators.required]],
       [F.DATES]: this.fb.array([]),
