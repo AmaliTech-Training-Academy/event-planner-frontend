@@ -21,7 +21,7 @@ export class ButtonComponent {
 
     this.onClick.emit();
   }
-
+  
   public readonly color = input<
     'view' | 'edit' | 'delete' | 'power' | 'inactive' | string | undefined
   >();
