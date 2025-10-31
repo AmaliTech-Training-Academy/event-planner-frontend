@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { EVENT_TYPE, MEETING_TYPE, PRICE_TYPE } from '../constants/event-form.constant';
-import { EVENT_FORM_FIELDS as F } from '../constants/event-form.constant';
+import { Subject, takeUntil } from 'rxjs';
+import { EVENT_TYPE, EVENT_FORM_FIELDS as F, MEETING_TYPE, PRICE_TYPE } from '../constants/event-form.constant';
 
 
 @Injectable({ providedIn: 'root' })
 export class EventFormService {
   private form: FormGroup;
-  private subscription = new Subscription();
+  private destroy$ = new Subject<void>();
 
-    constructor(private readonly fb: FormBuilder) {
+  constructor(private readonly fb: FormBuilder) {
     this.form = this.fb.group({
       [F.EVENT_TYPE]: [EVENT_TYPE.SINGLE_DAY, [Validators.required]],
       [F.DATES]: this.fb.array([]),
@@ -27,7 +26,7 @@ export class EventFormService {
     this.eventDates.push(this.createDateGroup());
     this.form.addControl(F.IN_PERSON_DETAILS, this.createInPersonDetailGroup());
   }
-  
+
   public getForm(): FormGroup {
     return this.form;
   }
@@ -89,7 +88,9 @@ export class EventFormService {
 
 
   public registerValueChangeHandlers() {
-    const eventTypeSub = this.form.get(F.EVENT_TYPE)?.valueChanges.subscribe((type) => {
+    this.form.get(F.EVENT_TYPE)?.valueChanges
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((type) => {
       if (type === EVENT_TYPE.MULTI_DAY && this.eventDates.length < 2) {
         this.addDateGroup();
       } else if (type === EVENT_TYPE.SINGLE_DAY && this.eventDates.length > 1) {
@@ -99,7 +100,9 @@ export class EventFormService {
       }
     });
 
-    const meetingTypeSub = this.meetingType?.valueChanges.subscribe((type) => {
+     this.meetingType?.valueChanges
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((type) => {
       this.form.removeControl(F.VIRTUAL_DETAILS);
       this.form.removeControl(F.IN_PERSON_DETAILS);
 
@@ -110,7 +113,9 @@ export class EventFormService {
       }
     });
 
-    const priceTypeSub = this.form.get(F.PRICE_TYPE)?.valueChanges.subscribe((type) => {
+    this.form.get(F.PRICE_TYPE)?.valueChanges
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((type) => {
       const priceControl = this.form.get(F.PRICE);
       const includedControl = this.form.get(F.PERCS);
 
@@ -126,11 +131,6 @@ export class EventFormService {
 
 
     this.form.get(F.PRICE_TYPE)?.setValue(PRICE_TYPE.FREE);
-
-
-    this.subscription.add(eventTypeSub);
-    this.subscription.add(meetingTypeSub);
-    this.subscription.add(priceTypeSub);
   }
 
   private addDateGroup(): void {
@@ -148,7 +148,8 @@ export class EventFormService {
 
 
   public destroy() {
-    this.subscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   public getDateControl(group: FormGroup, controlName: string): FormControl {
