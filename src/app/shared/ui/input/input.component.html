@@ -13,7 +13,11 @@
     </label>
   }
 
-  <div class="input-wrapper">
+  <div
+    class="input-wrapper"
+    [class.with-icon]="iconSrc()"
+    [class.no-icon]="!iconSrc()"
+  >
     @if (iconSrc()) {
       <img [src]="iconSrc()" alt="icon" class="input-icon" />
     }
@@ -22,7 +26,7 @@
       [id]="formControlName()"
       [type]="inputType()"
       [placeholder]="placeholder()"
-      [value]="value()"
+      [value]="currentValue()"
       (input)="onValueChange($event)"
       (focus)="onFocus()"
       (blur)="onBlur()"
@@ -40,19 +44,20 @@
         <img
           [src]="
             showPassword()
-              ? '/assets/icons/eye-close-icon.png'
-              : '/assets/icons/eye.png'
+              ? 'icons/eye-close-icon.png'
+              : 'icons/eye-open.svg'
           "
           alt="Toggle Password"
         />
       </button>
     }
   </div>
+
   @if (hasError() && errorMessage()) {
-   <app-form-error
-    [message]="errorMessage()"
-    [showIcon]="true"
-    id="{{ label() + '-error' }}"
-  ></app-form-error>
+    <app-form-error
+      [message]="errorMessage()"
+      [showIcon]="true"
+      id="{{ label() + '-error' }}"
+    ></app-form-error>
   }
 </div>

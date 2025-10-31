@@ -1,5 +1,4 @@
-import { environment } from "../../../environments/environment";
-
+import { environment } from '../../../environments/environment';
 
 const API_VERSION = 'v1';
 const BASE = `${environment.API_URL}/${API_VERSION}`;

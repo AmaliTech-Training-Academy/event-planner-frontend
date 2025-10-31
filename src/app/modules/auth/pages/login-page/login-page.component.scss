@@ -9,6 +9,7 @@
   align-items: center;
   min-height: 100vh;
   background-color: $gray-50;
+  position: relative;
   font-family: $font-lato;
 }
 
@@ -20,6 +21,7 @@
   width: 100%;
   max-width: 465px;
   text-align: center;
+  position: relative;
 }
 
 .app-name {
@@ -356,3 +358,70 @@ cursor: not-allowed;
 transition: opacity 0.2s ease;
 opacity: 0.5;
 }
+.please-wait {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  opacity: 0.9;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.dots::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  text-align: left;
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
+  100% {
+    content: '';
+  }
+}
+
+app-button {
+  position: relative;
+  overflow: hidden;
+}
+
+app-button > * {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+[aria-busy='true'] > *:not(.please-wait) {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+[aria-busy='false'] .please-wait {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+

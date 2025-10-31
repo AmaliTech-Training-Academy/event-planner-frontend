@@ -2,7 +2,6 @@
   @for (platform of platforms(); track platform) {
   <button class="social-login__btn" (click)="onClick(platform)">
     <img [src]="getIconSrc(platform)" [alt]="platform" />
-    <span>Continue with {{ platform }}</span>
   </button>
   }
 </div>

@@ -18,15 +18,4 @@ html, body {
   margin: 0 auto;
   padding: auto 120px;
 
-  @include lg {
-    padding: 0 80px;
-  }
-
-  @include md {
-    padding: 0 48px;
-  }
-
-  @include sm {
-    padding: 0 24px;
-  }
 }
