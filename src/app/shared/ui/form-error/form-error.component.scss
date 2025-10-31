@@ -1,8 +1,11 @@
 @use 'colors' as *;
 @use 'variables' as *;
+@use 'typography' as *;
+
+@use 'typography' as *; 
 
 .error-message {
-  @include body-3;
+  @include body-3; 
   color: $red-600;
   margin-top: $spacing-1;
   display: flex;

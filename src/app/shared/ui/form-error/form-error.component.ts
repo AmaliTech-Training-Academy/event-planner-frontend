@@ -15,11 +15,11 @@ import {
   imports: [CommonModule],
 })
 export class FormErrorComponent implements OnChanges {
-  public message = input<string>('');
+  public message = input<string | null>('');
   public showIcon = input<boolean>(true);
-  private _visible = signal(false);
+  public visible = signal(false);
 
   ngOnChanges(changes: SimpleChanges): void {
-    this._visible.set(!!this.message());
+    this.visible.set(!!this.message());
   }
 }
