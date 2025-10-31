@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorHandlerService {
 
-  constructor() {}
+  constructor(private readonly notificationService:NotificationService) {}
 
   handle(error: HttpErrorResponse) {
     let message = 'An unknown error occurred';
@@ -41,7 +42,7 @@ export class ErrorHandlerService {
       
     }
 
-    console.error('[HTTP Error]', message, error);
+    this.notificationService.error(message);
 
     return throwError(() => new Error(message));
   }
