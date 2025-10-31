@@ -1,5 +1,14 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  signal,
+  computed,
+  HostListener,
+} from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { ButtonComponent } from '../../ui/button/button.component';
 
 export interface VenueImage {
   url: string;
@@ -9,78 +18,59 @@ export interface VenueImage {
 @Component({
   selector: 'app-venue-image-slider',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [CommonModule, NgOptimizedImage, ButtonComponent],
   templateUrl: './venue-image-slider.component.html',
-  styleUrl: './venue-image-slider.component.scss'
+  styleUrl: './venue-image-slider.component.scss',
 })
-export class VenueImageSliderComponent implements OnInit, OnChanges {
+export class VenueImageSliderComponent implements OnChanges {
   @Input() images: VenueImage[] = [];
 
- 
-  public currentIndex = 0;
-  
-  
-  public slideWidthPercentage = 25; 
-  
-  public isPrevDisabled = true;
-  public isNextDisabled = false;
-  
-  
-  private slidesPerView = 4;
-  
- 
-  
-  public ngOnInit(): void {
+  protected currentIndex = signal(0);
+  protected slidesPerView = signal(4);
 
-    this.updateSliderState();
+  protected totalSlides = computed(() => this.images.length);
+  protected slideWidthPercentage = computed(() => 100 / this.slidesPerView());
+
+  protected isPrevDisabled = computed(() => this.currentIndex() === 0);
+  protected isNextDisabled = computed(() => {
+    return this.currentIndex() >= this.totalSlides() - this.slidesPerView();
+  });
+
+  constructor() {
+    this.updateSlidesPerView();
   }
-  public ngOnChanges(changes: SimpleChanges): void {
+
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['images']) {
-      this.currentIndex = 0; 
-      this.updateSliderState();
+      this.currentIndex.set(0);
     }
   }
 
-  
-  public next(): void {
-    const maxIndex = this.images.length - this.slidesPerView;
-    
-  
-    if (this.currentIndex < maxIndex) {
-      this.currentIndex++;
-      this.updateButtonState();
+  @HostListener('window:resize')
+  onResize(): void {
+    this.updateSlidesPerView();
+  }
+
+  private updateSlidesPerView(): void {
+    if (window.innerWidth < 480) {
+      this.slidesPerView.set(1);
+    } else if (window.innerWidth < 767) {
+      this.slidesPerView.set(2);
+    } else if (window.innerWidth < 1023) {
+      this.slidesPerView.set(3);
+    } else {
+      this.slidesPerView.set(4);
     }
   }
 
-  public prev(): void {
-   
-    if (this.currentIndex > 0) {
-      this.currentIndex--;
-      this.updateButtonState();
-    }
+  protected prev(): void {
+    this.currentIndex.update((prev) => Math.max(prev - 1, 0));
   }
 
-  
-  private updateSliderState(): void {
-   
-    this.slidesPerView = 4; 
-    
-    
-    this.slideWidthPercentage = 100 / this.slidesPerView;
-
-    this.updateButtonState();
-  }
-
-  
-  private updateButtonState(): void {
-   
-    this.isPrevDisabled = this.currentIndex === 0;
-    
-    
-    const maxIndex = this.images.length - this.slidesPerView;
-
-   
-    this.isNextDisabled = this.currentIndex >= maxIndex;
+  protected next(): void {
+    this.currentIndex.update((prev) =>
+      Math.min(prev + 1, this.totalSlides() - this.slidesPerView())
+    );
   }
 }
 
