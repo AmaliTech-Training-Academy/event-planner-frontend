@@ -1,8 +1,9 @@
-// checkbox.component.ts
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
+  Output,
   forwardRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -29,42 +30,40 @@ import {
   ],
 })
 export class CheckboxComponent implements ControlValueAccessor {
-  @Input() public label: string = '';
-  @Input() public ariaLabel: string = '';
+  @Input() label: string = '';
+  @Input() ariaLabel: string = '';
+  @Input() checked: boolean = false;
+  @Input() disabled: boolean = false;
 
-  protected value: boolean = false;
-  protected isDisabled: boolean = false;
+  @Output() checkedChange = new EventEmitter<boolean>();
 
-  // ControlValueAccessor callbacks
   private _onChange: (value: boolean) => void = () => {};
   private _onTouched: () => void = () => {};
 
-  // ControlValueAccessor implementation
-  public writeValue(value: boolean): void {
-    this.value = value ?? false;
+  writeValue(value: boolean): void {
+    this.checked = value ?? false;
   }
 
-  public registerOnChange(fn: (value: boolean) => void): void {
+  registerOnChange(fn: (value: boolean) => void): void {
     this._onChange = fn;
   }
 
-  public registerOnTouched(fn: () => void): void {
+  registerOnTouched(fn: () => void): void {
     this._onTouched = fn;
   }
 
-  public setDisabledState(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 
-  // Handle input change
-  protected onInputChange(event: Event): void {
+  onInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.value = input.checked;
-    this._onChange(this.value);
+    this.checked = input.checked;
+    this._onChange(this.checked);
+    this.checkedChange.emit(this.checked);
   }
 
-  // Handle blur
-  protected onBlur(): void {
+  onBlur(): void {
     this._onTouched();
   }
 }

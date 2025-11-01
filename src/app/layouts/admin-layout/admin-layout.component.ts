@@ -15,7 +15,7 @@ import { AdminLoginPageComponent } from "../../modules/auth/pages/admin-login-pa
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [RouterOutlet, AdminSidebarComponent, AdminTopNavComponent, AdminLoginPageComponent],
+  imports: [RouterOutlet, AdminSidebarComponent, AdminTopNavComponent],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
 })

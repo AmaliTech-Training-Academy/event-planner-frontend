@@ -1,9 +1,9 @@
-<label class="checkbox-wrapper" [class.disabled]="isDisabled">
+<label class="checkbox-wrapper" [class.disabled]="disabled">
   <input
     type="checkbox"
     class="checkbox-input"
-    [checked]="value"
-    [disabled]="isDisabled"
+    [checked]="checked"
+    [disabled]="disabled"
     [attr.aria-label]="ariaLabel || label"
     (change)="onInputChange($event)"
     (blur)="onBlur()"

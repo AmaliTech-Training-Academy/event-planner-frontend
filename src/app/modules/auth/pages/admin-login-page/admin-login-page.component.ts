@@ -1,6 +1,8 @@
 // admin-login-page.component.ts
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
+
 import {
   FormBuilder,
   FormControl,
@@ -32,6 +34,7 @@ interface LoginForm {
     ButtonComponent,
     CheckboxComponent,
     RouterLink,
+    NgOptimizedImage,
   ],
   templateUrl: './admin-login-page.component.html',
   styleUrls: ['./admin-login-page.component.scss'],

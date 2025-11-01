@@ -18,7 +18,6 @@ export interface PhoneCountry {
   providedIn: 'root',
 })
 export class PhoneService {
-  
   getPopularCountries(): PhoneCountry[] {
     return [
       { value: 'GH', label: '+233 (Ghana)', code: '+233' },
@@ -34,12 +33,8 @@ export class PhoneService {
     ];
   }
 
-  /**
-   * Get all countries with their calling codes
-   */
   getAllCountries(): PhoneCountry[] {
-    const countries = getCountries();
-    return countries
+    return getCountries()
       .map((country) => ({
         value: country,
         label: `+${getCountryCallingCode(country)} (${this.getCountryName(
@@ -50,10 +45,7 @@ export class PhoneService {
       .sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  /**
-   * Validate phone number for a specific country
-   */
-  isValid(phoneNumber: string, countryCode: CountryCode): boolean {
+  isValidNumber(phoneNumber: string, countryCode: CountryCode): boolean {
     try {
       return isValidPhoneNumber(phoneNumber, countryCode);
     } catch {
@@ -61,10 +53,10 @@ export class PhoneService {
     }
   }
 
-  /**
-   * Parse phone number and return phone object
-   */
-  parse(phoneNumber: string, countryCode: CountryCode): PhoneNumber | null {
+  parseNumber(
+    phoneNumber: string,
+    countryCode: CountryCode
+  ): PhoneNumber | null {
     try {
       return parsePhoneNumber(phoneNumber, countryCode);
     } catch {
@@ -72,71 +64,59 @@ export class PhoneService {
     }
   }
 
-  /**
-   * Format phone number to international format (e.g., +233 24 123 4567)
-   */
-  formatInternational(phoneNumber: string, countryCode: CountryCode): string {
-    try {
-      const parsed = parsePhoneNumber(phoneNumber, countryCode);
-      return parsed ? parsed.formatInternational() : phoneNumber;
-    } catch {
-      return phoneNumber;
-    }
+  formatToInternational(phoneNumber: string, countryCode: CountryCode): string {
+    return this.tryFormat(phoneNumber, countryCode, (p) =>
+      p.formatInternational()
+    );
   }
 
-  /**
-   * Format phone number to national format (e.g., 024 123 4567)
-   */
-  formatNational(phoneNumber: string, countryCode: CountryCode): string {
-    try {
-      const parsed = parsePhoneNumber(phoneNumber, countryCode);
-      return parsed ? parsed.formatNational() : phoneNumber;
-    } catch {
-      return phoneNumber;
-    }
+  formatToNational(phoneNumber: string, countryCode: CountryCode): string {
+    return this.tryFormat(phoneNumber, countryCode, (p) => p.formatNational());
   }
 
-  /**
-   * Format phone number to E.164 format (e.g., +233241234567)
-   */
-  formatE164(phoneNumber: string, countryCode: CountryCode): string {
-    try {
-      const parsed = parsePhoneNumber(phoneNumber, countryCode);
-      return parsed ? parsed.number : phoneNumber;
-    } catch {
-      return phoneNumber;
-    }
+  formatToE164(phoneNumber: string, countryCode: CountryCode): string {
+    return this.tryFormat(phoneNumber, countryCode, (p) => p.number);
   }
 
-  /**
-   * Get phone number type (MOBILE, FIXED_LINE, etc.)
-   */
-  getType(phoneNumber: string, countryCode: CountryCode): string | undefined {
+  getNumberType(
+    phoneNumber: string,
+    countryCode: CountryCode
+  ): string | undefined {
     try {
       const parsed = parsePhoneNumber(phoneNumber, countryCode);
-      return parsed ? parsed.getType() : undefined;
+      return parsed?.getType();
     } catch {
       return undefined;
     }
   }
 
-  /**
-   * Extract country code from phone number
-   */
-  extractCountryCode(phoneNumber: string): CountryCode | undefined {
+  extractCountryFromNumber(phoneNumber: string): CountryCode | undefined {
     try {
-      const parsed = parsePhoneNumber(phoneNumber);
-      return parsed ? parsed.country : undefined;
+      return parsePhoneNumber(phoneNumber)?.country;
     } catch {
       return undefined;
     }
   }
 
-  /**
-   * Get country name from country code
-   */
+  cleanNumber(phoneNumber: string): string {
+    return phoneNumber.replace(/[^\d+]/g, '');
+  }
+
+  private tryFormat(
+    phoneNumber: string,
+    countryCode: CountryCode,
+    formatter: (p: PhoneNumber) => string
+  ): string {
+    try {
+      const parsed = parsePhoneNumber(phoneNumber, countryCode);
+      return parsed ? formatter(parsed) : phoneNumber;
+    } catch {
+      return phoneNumber;
+    }
+  }
+
   private getCountryName(countryCode: CountryCode): string {
-    const countryNames: { [key: string]: string } = {
+    const countryNames: Record<string, string> = {
       GH: 'Ghana',
       NG: 'Nigeria',
       KE: 'Kenya',
@@ -147,15 +127,7 @@ export class PhoneService {
       CA: 'Canada',
       IN: 'India',
       AU: 'Australia',
-      // Add more as needed
     };
     return countryNames[countryCode] || countryCode;
-  }
-
-  /**
-   * Clean phone number (remove spaces, dashes, etc.)
-   */
-  cleanPhoneNumber(phoneNumber: string): string {
-    return phoneNumber.replace(/[^\d+]/g, '');
   }
 }

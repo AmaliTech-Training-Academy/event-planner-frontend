@@ -18,43 +18,32 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
-import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/modal-header.component';
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 
 @Component({
   selector: 'app-edit-user-profile',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    ModalHeaderComponent,
-    InputComponent,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, InputComponent, ButtonComponent],
   templateUrl: './edit-user-profile.component.html',
   styleUrl: './edit-user-profile.component.scss',
 })
 export class EditUserProfileComponent implements OnInit {
-  @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<any>();
-  @Input() userData?: any;
-  editingSection: 'basic' | 'contact' | null = null;
+  @Input() public userData?: any;
+  @Output() public close = new EventEmitter<void>();
+  @Output() public save = new EventEmitter<any>();
+  @Output() public toggleStatus = new EventEmitter<'Active' | 'Inactive'>();
 
-  // Start editing a section
-  startEditing(section: 'basic' | 'contact') {
-    this.editingSection = section;
-    this.profileForm.enable();
-  }
-  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('fileInput') private _fileInput!: ElementRef<HTMLInputElement>;
 
-  profileForm: FormGroup;
-  profileImage = signal(
+  public profileForm: FormGroup;
+  public editingSection: 'basic' | 'contact' | null = null;
+
+  public profileImage = signal(
     'https://ui-avatars.com/api/?name=User&background=FF6B35&color=fff&size=128'
   );
 
-  // your phone code list (kept exactly)
-  phoneCodes = [
+  public readonly phoneCodes = [
     { value: 'GH', label: '+233 (Ghana)', code: '+233' },
     { value: 'NG', label: '+234 (Nigeria)', code: '+234' },
     { value: 'US', label: '+1 (United States)', code: '+1' },
@@ -67,33 +56,72 @@ export class EditUserProfileComponent implements OnInit {
     { value: 'AU', label: '+61 (Australia)', code: '+61' },
   ];
 
-  constructor(private fb: FormBuilder) {
-    this.profileForm = this.fb.group({
+  constructor(private readonly _fb: FormBuilder) {
+    this.profileForm = this._fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       phoneCode: ['GH'],
-      phoneNumber: ['', [this.phoneNumberValidator.bind(this)]],
+      phoneNumber: ['', [this._phoneNumberValidator.bind(this)]],
       address: [''],
     });
   }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     if (this.userData) {
       this.profileForm.patchValue(this.userData);
-      if (this.userData.profileImage) {
+      if (this.userData?.profileImage) {
         this.profileImage.set(this.userData.profileImage);
       }
     }
 
-    // Revalidate phone number when phoneCode changes
     this.profileForm.get('phoneCode')?.valueChanges.subscribe(() => {
       this.profileForm.get('phoneNumber')?.updateValueAndValidity();
     });
   }
 
-  // ✅ fixed phone number validator
-  phoneNumberValidator(control: AbstractControl): ValidationErrors | null {
+  public startEditing(section: 'basic' | 'contact'): void {
+    this.editingSection = section;
+    this.profileForm.enable();
+  }
+
+  public cancelEditing(): void {
+    this.editingSection = null;
+    if (this.userData) {
+      this.profileForm.patchValue(this.userData);
+    }
+    this.profileForm.markAsPristine();
+    this.profileForm.markAsUntouched();
+  }
+
+  public saveSectionChanges(): void {
+    if (!this.profileForm.valid) return;
+
+    const countryCode = this.profileForm.get('phoneCode')?.value as CountryCode;
+    const phoneNumber = this.profileForm.get('phoneNumber')?.value;
+    let formattedPhone = phoneNumber;
+
+    try {
+      const phoneObj = parsePhoneNumber(phoneNumber, countryCode);
+      if (phoneObj?.isValid()) {
+        formattedPhone = phoneObj.number;
+      }
+    } catch {
+    }
+
+    const formData = {
+      ...this.profileForm.value,
+      phoneNumber: formattedPhone,
+      profileImage: this.profileImage(),
+    };
+
+    this.save.emit(formData);
+    this.editingSection = null;
+  }
+
+  private _phoneNumberValidator(
+    control: AbstractControl
+  ): ValidationErrors | null {
     const phoneNumber = control.value;
     if (!phoneNumber) return null;
 
@@ -103,7 +131,7 @@ export class EditUserProfileComponent implements OnInit {
 
     try {
       const phoneObj = parsePhoneNumber(phoneNumber, countryCode);
-      if (!phoneObj.isValid()) {
+      if (!phoneObj?.isValid()) {
         return { invalidPhone: 'Invalid phone number for selected country' };
       }
       return null;
@@ -112,8 +140,7 @@ export class EditUserProfileComponent implements OnInit {
     }
   }
 
-  // ✅ URL validator (unchanged)
-  urlValidator(control: AbstractControl): ValidationErrors | null {
+  private _urlValidator(control: AbstractControl): ValidationErrors | null {
     const url = control.value;
     if (!url) return null;
 
@@ -124,61 +151,59 @@ export class EditUserProfileComponent implements OnInit {
       : { invalidUrl: 'Please enter a valid URL' };
   }
 
-  triggerFileInput() {
-    this.fileInput.nativeElement.click();
+  public triggerFileInput(): void {
+    this._fileInput?.nativeElement.click();
   }
 
-  // remove phoneService formatting (not available)
-  onPhoneInput(event: Event) {
+  public onImageSelect(event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.profileForm.get('phoneNumber')?.setValue(input.value, {
-      emitEvent: false,
-    });
-  }
+    const file = input?.files?.[0];
+    if (!file) return;
 
-  onImageSelect(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          this.profileImage.set(e.target.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
     }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (result) {
+        this.profileImage.set(result as string);
+      }
+    };
+    reader.readAsDataURL(file);
   }
 
-  hasError(fieldName: string): boolean {
+  public onPhoneInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input?.value ?? '';
+    this.profileForm.get('phoneNumber')?.setValue(value, { emitEvent: false });
+  }
+
+  public hasError(fieldName: string): boolean {
     const field = this.profileForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
+    return !!(field?.invalid && (field.dirty || field.touched));
   }
 
-  getErrorMessage(fieldName: string): string {
+  public getErrorMessage(fieldName: string): string {
     const field = this.profileForm.get(fieldName);
     if (!field) return '';
 
     if (field.hasError('required')) {
-      return `${this.getFieldLabel(fieldName)} is required`;
+      return `${this._getFieldLabel(fieldName)} is required`;
     }
     if (field.hasError('email')) {
       return 'Please enter a valid email address';
     }
     if (field.hasError('minlength')) {
       const minLength = field.getError('minlength')?.requiredLength;
-      return `${this.getFieldLabel(
+      return `${this._getFieldLabel(
         fieldName
       )} must be at least ${minLength} characters`;
     }
@@ -191,7 +216,7 @@ export class EditUserProfileComponent implements OnInit {
     return '';
   }
 
-  private getFieldLabel(fieldName: string): string {
+  private _getFieldLabel(fieldName: string): string {
     const labels: Record<string, string> = {
       fullName: 'Full Name',
       username: 'Username',
@@ -202,69 +227,37 @@ export class EditUserProfileComponent implements OnInit {
     return labels[fieldName] || fieldName;
   }
 
-  @Output() toggleStatus = new EventEmitter<'Active' | 'Inactive'>();
-
-  toggleUserStatus() {
+  public toggleUserStatus(): void {
     const newStatus =
       this.userData?.status === 'Active' ? 'Inactive' : 'Active';
     this.toggleStatus.emit(newStatus);
   }
 
-  onSubmit() {
-    if (this.profileForm.valid) {
-      const countryCode = this.profileForm.get('phoneCode')
-        ?.value as CountryCode;
-      const phoneNumber = this.profileForm.get('phoneNumber')?.value;
-      let formattedPhone = phoneNumber;
+  public onSubmit(): void {
+    if (!this.profileForm.valid) return;
 
-      try {
-        const phoneObj = parsePhoneNumber(phoneNumber, countryCode);
-        if (phoneObj.isValid()) {
-          formattedPhone = phoneObj.number; // E.164
-        }
-      } catch (e) {
-        console.warn('Phone format error:', e);
+    const countryCode = this.profileForm.get('phoneCode')?.value as CountryCode;
+    const phoneNumber = this.profileForm.get('phoneNumber')?.value;
+    let formattedPhone = phoneNumber;
+
+    try {
+      const phoneObj = parsePhoneNumber(phoneNumber, countryCode);
+      if (phoneObj?.isValid()) {
+        formattedPhone = phoneObj.number;
       }
-
-      const formData = {
-        ...this.profileForm.value,
-        phoneNumber: formattedPhone,
-        profileImage: this.profileImage(),
-      };
-      this.save.emit(formData);
+    } catch (e) {
+      console.warn('Phone format error:', e);
     }
-  }
-  cancelEditing() {
-    this.editingSection = null;
-    this.profileForm.patchValue(this.userData);
-    this.profileForm.markAsPristine();
-    this.profileForm.markAsUntouched();
-  }
-  saveSectionChanges() {
-    if (this.profileForm.valid) {
-      const countryCode = this.profileForm.get('phoneCode')
-        ?.value as CountryCode;
-      const phoneNumber = this.profileForm.get('phoneNumber')?.value;
-      let formattedPhone = phoneNumber;
 
-      try {
-        const phoneObj = parsePhoneNumber(phoneNumber, countryCode);
-        if (phoneObj.isValid()) {
-          formattedPhone = phoneObj.number;
-        }
-      } catch {}
-
-      const formData = {
-        ...this.profileForm.value,
-        phoneNumber: formattedPhone,
-        profileImage: this.profileImage(),
-      };
-
-      this.save.emit(formData);
-      this.editingSection = null;
-    }
+    const formData = {
+      ...this.profileForm.value,
+      phoneNumber: formattedPhone,
+      profileImage: this.profileImage(),
+    };
+    this.save.emit(formData);
   }
-  onCancel() {
+
+  public onCancel(): void {
     this.close.emit();
   }
 }

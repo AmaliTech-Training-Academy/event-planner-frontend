@@ -1,30 +1,23 @@
 <div class="modal-backdrop" (click)="onCancel()"></div>
 
 <div class="modal modal--large">
-  <app-modal-header
-    title="Edit Profile"
-    subtitle="Update your personal information"
-    (close)="onCancel()"
-  ></app-modal-header>
-
   <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-    <!-- Profile Picture Section -->
     <div class="profile-section">
       <div class="profile-avatar">
         <img [src]="profileImage()" alt="Profile picture" />
-        <button
-          type="button"
-          class="avatar-edit-btn"
+        <app-button
+          type="secondary"
+          extraClass="avatar-edit-btn"
           (click)="triggerFileInput()"
         >
-          <span class="edit-icon">📷</span>
-        </button>
+          📷
+        </app-button>
         <input
           #fileInput
           type="file"
           accept="image/*"
           (change)="onImageSelect($event)"
-          style="display: none"
+          hidden
         />
       </div>
       <div class="profile-info">
@@ -78,23 +71,20 @@
       <!-- Section Action Buttons -->
       <div class="section-actions">
         @if (editingSection !== 'basic') {
-          <app-button
-            type="secondary"
-            (click)="startEditing('basic')"
-          >
-            Edit
-          </app-button>
+        <app-button type="secondary" (click)="startEditing('basic')">
+          Edit
+        </app-button>
         } @else {
-          <app-button type="secondary" (click)="cancelEditing()">
-            Cancel
-          </app-button>
-          <app-button
-            type="primary"
-            [disabled]="profileForm.invalid"
-            (click)="saveSectionChanges()"
-          >
-            Save Changes
-          </app-button>
+        <app-button type="secondary" (click)="cancelEditing()"
+          >Cancel</app-button
+        >
+        <app-button
+          type="primary"
+          [disabled]="profileForm.invalid"
+          (click)="saveSectionChanges()"
+        >
+          Save Changes
+        </app-button>
         }
       </div>
     </div>
@@ -106,7 +96,6 @@
       <div class="form-row form-row--phone">
         <div class="phone-group">
           <div class="phone-input-wrapper">
-            
             <select
               id="phoneCode"
               formControlName="phoneCode"
@@ -144,41 +133,38 @@
       <!-- Section Action Buttons -->
       <div class="section-actions">
         @if (editingSection !== 'contact') {
-          <app-button
-            type="secondary"
-            (click)="startEditing('contact')"
-          >
-            Edit
-          </app-button>
+        <app-button type="secondary" (click)="startEditing('contact')">
+          Edit
+        </app-button>
         } @else {
-          <app-button type="secondary" (click)="cancelEditing()">
-            Cancel
-          </app-button>
-          <app-button
-            type="primary"
-            [disabled]="profileForm.invalid"
-            (click)="saveSectionChanges()"
-          >
-            Save Changes
-          </app-button>
+        <app-button type="secondary" (click)="cancelEditing()"
+          >Cancel</app-button
+        >
+        <app-button
+          type="primary"
+          [disabled]="profileForm.invalid"
+          (click)="saveSectionChanges()"
+        >
+          Save Changes
+        </app-button>
         }
       </div>
     </div>
 
- <!-- Activation Control -->
-<div class="profile-status-action">
-  <app-button
-    [extraClass]="
-      userData?.status === 'Active' ? 'state-action deactivate' : 'state-action activate'
-    "
-    (click)="toggleUserStatus()"
-  >
-    {{ userData?.status === 'Active' ? 'Deactivate User' : 'Activate User' }}
-  </app-button>
-</div>
-
-
-
-
+    <!-- Activation Control -->
+    <div class="profile-status-action">
+      <app-button
+        [extraClass]="
+          userData?.status === 'Active'
+            ? 'state-action deactivate'
+            : 'state-action activate'
+        "
+        (click)="toggleUserStatus()"
+      >
+        {{
+          userData?.status === "Active" ? "Deactivate User" : "Activate User"
+        }}
+      </app-button>
+    </div>
   </form>
 </div>
