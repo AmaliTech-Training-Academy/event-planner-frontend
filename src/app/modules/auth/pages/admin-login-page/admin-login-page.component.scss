@@ -142,7 +142,7 @@
 
   &__submit {
     width: 100%;
-    padding: $spacing-3 + 0.125rem; // 0.875rem
+    padding: $spacing-3 + 0.125rem; 
     background: $orange-600;
     color: $gray-50;
     border: none;
@@ -182,7 +182,7 @@
   &__security-text {
     display: flex;
     flex-direction: column;
-    gap: $spacing-0 + 0.125rem; // 0.125rem
+    gap: $spacing-0 + 0.125rem; 
   }
 
   &__security-title {
@@ -250,7 +250,6 @@
       }
     }
 
-    // Checked state
     input:checked ~ .checkmark {
       border-color: $red-300;
 

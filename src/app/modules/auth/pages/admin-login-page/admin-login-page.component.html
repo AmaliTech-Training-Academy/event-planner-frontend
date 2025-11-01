@@ -1,31 +1,33 @@
+<!-- admin-login-page.component.html -->
 <div class="admin-login">
   <div class="admin-login__background">
     <img
       src="images/Card.png"
-      alt=""
+      alt="Chart background decoration"
       class="admin-login__bg-image admin-login__bg-image--chart"
     />
     <img
       src="images/card1.png"
-      alt=""
+      alt="Active card background decoration"
       class="admin-login__bg-image admin-login__bg-image--active"
     />
     <img
       src="images/card2.png"
-      alt=""
+      alt="New card background decoration"
       class="admin-login__bg-image admin-login__bg-image--new"
     />
     <img
       src="images/card5.png"
-      alt=""
+      alt="Visits card background decoration"
       class="admin-login__bg-image admin-login__bg-image--visits"
     />
     <img
       src="images/Block.png"
-      alt=""
+      alt="Views block background decoration"
       class="admin-login__bg-image admin-login__bg-image--views"
     />
   </div>
+
   <div class="admin-login__card">
     <div class="admin-login__header">
       <h1 class="admin-login__brand">Event Hub</h1>
@@ -72,25 +74,26 @@
       </div>
 
       <div class="admin-login__options">
-  <div class="extras">
-        <label class="custom-checkbox">
-          <input
-            type="checkbox"
-            formControlName="remember"
-            autocomplete="off"
+        <div class="extras">
+          <app-checkbox
+            label="Remember me"
+            formControlName="rememberMe"
+            ariaLabel="Remember me for future logins"
           />
-          <span class="checkmark"></span>
-          <span class="label-text">Remember me</span>
-        </label>
 
-        <a class="forgot-link" [routerLink]="APP_ROUTES.FORGOT_PASSWORD">
-          Forgot password?
-        </a>
+          <a class="forgot-link" [routerLink]="APP_ROUTES.FORGOT_PASSWORD">
+            Forgot password?
+          </a>
+        </div>
       </div>
 
-      </div>
-
-     <app-button type="primary" label="Sign In" [disabled]="!loginForm.valid">Sign In to Dashboard</app-button>
+      <app-button
+        type="primary"
+        label="Sign In to Dashboard"
+        [disabled]="!loginForm.valid || isSubmitting()"
+      >
+        Sign In to Dashboard
+      </app-button>
 
       <app-secure-text
         text="Secure login enabled"

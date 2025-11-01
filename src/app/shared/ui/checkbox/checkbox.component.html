@@ -1,21 +1,15 @@
-<div
-  class="checkbox-wrapper"
-  role="checkbox"
-  [attr.aria-checked]="isChecked"
-  [attr.aria-disabled]="isDisabled"
-  tabindex="0"
-  (click)="toggleCheck()"
-  (keydown)="onKeyDown($event)"
-  (blur)="onTouched()"
-  [class.disabled]="isDisabled"
->
-  <div class="checkbox-box">
-    <img
-      *ngIf="isChecked"
-      src="icons/check-mark.svg"
-      alt="Checked"
-      class="checkmark-icon"
-    />
-  </div>
-  <span class="label-text">{{ label }}</span>
-</div>
+<label class="checkbox-wrapper" [class.disabled]="isDisabled">
+  <input
+    type="checkbox"
+    class="checkbox-input"
+    [checked]="value"
+    [disabled]="isDisabled"
+    [attr.aria-label]="ariaLabel || label"
+    (change)="onInputChange($event)"
+    (blur)="onBlur()"
+  />
+  <span class="checkbox-box">
+    <span class="checkmark"></span>
+  </span>
+  <span class="label-text" *ngIf="label">{{ label }}</span>
+</label>
