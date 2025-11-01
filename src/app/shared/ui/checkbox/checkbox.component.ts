@@ -30,40 +30,40 @@ import {
   ],
 })
 export class CheckboxComponent implements ControlValueAccessor {
-  @Input() label: string = '';
-  @Input() ariaLabel: string = '';
-  @Input() checked: boolean = false;
-  @Input() disabled: boolean = false;
+  @Input() public label: string = '';
+  @Input() public ariaLabel: string = '';
+  @Input() public checked: boolean = false;
+  @Input() public disabled: boolean = false;
 
-  @Output() checkedChange = new EventEmitter<boolean>();
+  @Output() public checkedChange = new EventEmitter<boolean>();
 
   private _onChange: (value: boolean) => void = () => {};
   private _onTouched: () => void = () => {};
 
-  writeValue(value: boolean): void {
+  public writeValue(value: boolean): void {
     this.checked = value ?? false;
   }
 
-  registerOnChange(fn: (value: boolean) => void): void {
+  public registerOnChange(fn: (value: boolean) => void): void {
     this._onChange = fn;
   }
 
-  registerOnTouched(fn: () => void): void {
+  public registerOnTouched(fn: () => void): void {
     this._onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  public setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
   }
 
-  onInputChange(event: Event): void {
+  public onInputChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.checked = input.checked;
     this._onChange(this.checked);
     this.checkedChange.emit(this.checked);
   }
 
-  onBlur(): void {
+  public onBlur(): void {
     this._onTouched();
   }
 }

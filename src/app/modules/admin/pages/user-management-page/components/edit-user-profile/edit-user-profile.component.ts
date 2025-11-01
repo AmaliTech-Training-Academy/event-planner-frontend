@@ -36,14 +36,13 @@ export class EditUserProfileComponent implements OnInit {
 
   @ViewChild('fileInput') private _fileInput!: ElementRef<HTMLInputElement>;
 
-  public profileForm: FormGroup;
-  public editingSection: 'basic' | 'contact' | null = null;
+  protected profileForm: FormGroup;
+  protected editingSection: 'basic' | 'contact' | null = null;
 
-  public profileImage = signal(
-    'https://ui-avatars.com/api/?name=User&background=FF6B35&color=fff&size=128'
+  protected profileImage = signal(
   );
 
-  public readonly phoneCodes = [
+  protected readonly phoneCodes = [
     { value: 'GH', label: '+233 (Ghana)', code: '+233' },
     { value: 'NG', label: '+234 (Nigeria)', code: '+234' },
     { value: 'US', label: '+1 (United States)', code: '+1' },
@@ -80,12 +79,12 @@ export class EditUserProfileComponent implements OnInit {
     });
   }
 
-  public startEditing(section: 'basic' | 'contact'): void {
+  protected startEditing(section: 'basic' | 'contact'): void {
     this.editingSection = section;
     this.profileForm.enable();
   }
 
-  public cancelEditing(): void {
+  protected cancelEditing(): void {
     this.editingSection = null;
     if (this.userData) {
       this.profileForm.patchValue(this.userData);
@@ -94,7 +93,7 @@ export class EditUserProfileComponent implements OnInit {
     this.profileForm.markAsUntouched();
   }
 
-  public saveSectionChanges(): void {
+  protected saveSectionChanges(): void {
     if (!this.profileForm.valid) return;
 
     const countryCode = this.profileForm.get('phoneCode')?.value as CountryCode;
@@ -151,11 +150,11 @@ export class EditUserProfileComponent implements OnInit {
       : { invalidUrl: 'Please enter a valid URL' };
   }
 
-  public triggerFileInput(): void {
+  protected triggerFileInput(): void {
     this._fileInput?.nativeElement.click();
   }
 
-  public onImageSelect(event: Event): void {
+  protected onImageSelect(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input?.files?.[0];
     if (!file) return;
@@ -180,18 +179,18 @@ export class EditUserProfileComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  public onPhoneInput(event: Event): void {
+  protected onPhoneInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     const value = input?.value ?? '';
     this.profileForm.get('phoneNumber')?.setValue(value, { emitEvent: false });
   }
 
-  public hasError(fieldName: string): boolean {
+  protected hasError(fieldName: string): boolean {
     const field = this.profileForm.get(fieldName);
     return !!(field?.invalid && (field.dirty || field.touched));
   }
 
-  public getErrorMessage(fieldName: string): string {
+  protected getErrorMessage(fieldName: string): string {
     const field = this.profileForm.get(fieldName);
     if (!field) return '';
 
@@ -227,13 +226,13 @@ export class EditUserProfileComponent implements OnInit {
     return labels[fieldName] || fieldName;
   }
 
-  public toggleUserStatus(): void {
+  protected toggleUserStatus(): void {
     const newStatus =
       this.userData?.status === 'Active' ? 'Inactive' : 'Active';
     this.toggleStatus.emit(newStatus);
   }
 
-  public onSubmit(): void {
+  protected onSubmit(): void {
     if (!this.profileForm.valid) return;
 
     const countryCode = this.profileForm.get('phoneCode')?.value as CountryCode;
@@ -257,7 +256,7 @@ export class EditUserProfileComponent implements OnInit {
     this.save.emit(formData);
   }
 
-  public onCancel(): void {
+  protected onCancel(): void {
     this.close.emit();
   }
 }
