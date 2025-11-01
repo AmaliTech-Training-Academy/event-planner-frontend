@@ -1,18 +1,17 @@
-// user-management-page.component.ts
-import { Component, signal, inject } from '@angular/core';
-import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { USER_ROLES } from '../../../../core/constants/user.constants';
+import { User, UserCardData } from '../../../../core/models/user.model';
 import { LayoutService } from '../../../../core/services/layout.service';
+import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import {
   DataTableComponent,
-  TableColumn,
   TableAction,
+  TableColumn,
   TableFilter,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
-import { User, UserCardData } from '../../../../core/models/user.model';
-import { USER_ROLES } from '../../../../core/constants/user.constants';
 import { InviteUserModalComponent } from './components/invite-user-modal/invite-user-modal.component';
 import { SuccessModalComponent } from './components/success-modal/success-modal.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-management-page',
@@ -25,13 +24,14 @@ import { Router } from '@angular/router';
   ],
   templateUrl: './user-management-page.component.html',
   styleUrls: ['./user-management-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserManagementPageComponent {
-  private _layoutService = inject(LayoutService);
-  private readonly router = inject(Router);
+export class UserManagementPageComponent implements OnInit {
+  private readonly _layoutService = inject(LayoutService);
+  private readonly _router = inject(Router);
 
-  public isInviteModalOpen = signal(false);
-  public isSuccessModalOpen = signal(false);
+  public readonly isInviteModalOpen = signal<boolean>(false);
+  public readonly isSuccessModalOpen = signal<boolean>(false);
 
   public readonly userCards = signal<UserCardData[]>([
     {
@@ -65,7 +65,7 @@ export class UserManagementPageComponent {
     },
   ]);
 
-  private _users = signal<User[]>([
+  private readonly _users = signal<User[]>([
     {
       userId: 'U001',
       name: 'Sarah Wilson',
@@ -146,108 +146,11 @@ export class UserManagementPageComponent {
       joinedDate: '2024-01-25',
       lastActive: '2 weeks ago',
     },
-    {
-      userId: 'U006',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '567-890-1234',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U007',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '567-890-1234',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U008',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '567-890-1234',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U009',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '567-890-1234',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U010',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '567-890-1234',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U011',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '567-890-1234',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
   ]);
 
-  public users = this._users.asReadonly();
+  public readonly users = this._users.asReadonly();
 
-  // Table columns
-  public tableColumns: TableColumn<User>[] = [
+  public readonly tableColumns: TableColumn<User>[] = [
     { key: 'name', header: 'User', sortable: true },
     { key: 'role', header: 'Role(s)', filterable: true },
     { key: 'status', header: 'Status', filterable: true },
@@ -255,8 +158,7 @@ export class UserManagementPageComponent {
     { key: 'eventsAttended', header: 'Events Attended', sortable: true },
   ];
 
-  // Table actions
-  public tableActions: TableAction<User>[] = [
+  public readonly tableActions: TableAction<User>[] = [
     {
       icon: 'icons/view-icon.png',
       label: 'View User Details',
@@ -277,8 +179,7 @@ export class UserManagementPageComponent {
     },
   ];
 
-  // Table filters
-  public tableFilters: TableFilter[] = [
+  public readonly tableFilters: TableFilter[] = [
     {
       key: 'role',
       placeholder: 'All Roles',
@@ -299,13 +200,46 @@ export class UserManagementPageComponent {
     },
   ];
 
-  public primaryAction = {
+  public readonly primaryAction = {
     label: 'Invite User',
-    handler: () => this._inviteUser(),
+    handler: () => this._openInviteModal(),
   };
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this._layoutService.pageTitle.set('User Management');
+  }
+
+  public openInviteModal(): void {
+    this.isInviteModalOpen.set(true);
+  }
+
+  public closeInviteModal(): void {
+    this.isInviteModalOpen.set(false);
+  }
+
+  public closeSuccessModal(): void {
+    this.isSuccessModalOpen.set(false);
+  }
+
+  public onInviteSuccess(): void {
+    this.closeInviteModal();
+
+    setTimeout(() => {
+      this.isSuccessModalOpen.set(true);
+    }, 200);
+  }
+
+  public goToDashboard(): void {
+    this.closeSuccessModal();
+    this._router.navigate(['/dashboard']);
+  }
+
+  public onRowExpanded(user: User): void {
+    console.log('Row expanded:', user);
+  }
+
+  private _openInviteModal(): void {
+    this.openInviteModal();
   }
 
   private _viewUser(user: User): void {
@@ -316,22 +250,6 @@ export class UserManagementPageComponent {
     console.log('Editing user:', user);
   }
 
-  openInviteModal() {
-    this.isInviteModalOpen.set(true);
-  }
-
-  closeInviteModal() {
-    this.isInviteModalOpen.set(false);
-    // Add a small delay to ensure the invite modal is fully closed before opening success modal
-    setTimeout(() => {
-      this.isSuccessModalOpen.set(true);
-    }, 100);
-  }
-
-  public closeSuccessModal(): void {
-    this.isSuccessModalOpen.set(false);
-  }
-
   private _toggleUserStatus(user: User): void {
     this._users.update((users) =>
       users.map((u) =>
@@ -340,25 +258,6 @@ export class UserManagementPageComponent {
           : u
       )
     );
-  }
-
-  private _inviteUser(): void {
-    this.openInviteModal();
-  }
-
-  public goToDashboard(): void {
-    this.closeSuccessModal();
-    this.router.navigate(['/dashboard']);
-  }
-
-  public onRowExpanded(user: User): void {}
-  public onInviteSuccess(): void {
-    // Close the invite modal
-    this.isInviteModalOpen.set(false);
-
-    // Show success modal after a small delay
-    setTimeout(() => {
-      this.isSuccessModalOpen.set(true);
-    }, 200);
+    
   }
 }
