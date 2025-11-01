@@ -1,0 +1,156 @@
+<div class="modal-backdrop" (click)="onCancel()"></div>
+
+<div class="modal modal--large">
+  <app-modal-header
+    title="Edit Profile"
+    subtitle="Update your personal information"
+    (close)="onCancel()"
+  ></app-modal-header>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <!-- Profile Picture Section -->
+    <div class="profile-section">
+      <div class="profile-avatar">
+        <img [src]="profileImage()" alt="Profile picture" />
+        <button type="button" class="avatar-edit-btn" (click)="triggerFileInput()">
+          <span class="edit-icon">📷</span>
+        </button>
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          (change)="onImageSelect($event)"
+          style="display: none;"
+        />
+      </div>
+      <div class="profile-info">
+        <h3>{{ profileForm.get('fullName')?.value || 'Your Name' }}</h3>
+        <p>Update your profile information</p>
+      </div>
+    </div>
+
+    <!-- Basic Information -->
+    <div class="form-section">
+      <h4 class="section-title">Basic Information</h4>
+      
+      <div class="form-row">
+        <app-input
+          formControlName="fullName"
+          placeholder="Full Name"
+          label="Full Name"
+          [required]="true"
+          [errorMessage]="hasError('fullName') ? getErrorMessage('fullName') : ''"
+        ></app-input>
+      </div>
+
+      <div class="form-row">
+        <app-input
+          formControlName="username"
+          placeholder="Username"
+          label="Username"
+          [required]="true"
+          [errorMessage]="hasError('username') ? getErrorMessage('username') : ''"
+        ></app-input>
+      </div>
+
+      <div class="form-row">
+        <app-input
+          formControlName="email"
+          placeholder="user@example.com"
+          label="Email Address"
+          type="email"
+          [required]="true"
+          [errorMessage]="hasError('email') ? getErrorMessage('email') : ''"
+        ></app-input>
+      </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="form-section">
+      <h4 class="section-title">Contact Information</h4>
+      
+      <div class="form-row form-row--phone">
+        <div class="phone-group">
+          <label for="phoneCode">Phone Number</label>
+          <div class="phone-input-wrapper">
+        <select
+            id="phoneCode"
+            formControlName="phoneCode"
+            class="form-select phone-code-select"
+          >
+            @for (country of phoneCodes; track country.value) {
+              <option [value]="country.value">{{ country.code }}</option>
+            }
+          </select>
+            <app-input
+              formControlName="phoneNumber"
+              placeholder="000000000"
+              type="text"
+              class="phone-number"
+              [errorMessage]="hasError('phoneNumber') ? getErrorMessage('phoneNumber') : ''"
+            ></app-input>
+          </div>
+          @if (profileForm.get('phoneNumber')?.valid && profileForm.get('phoneNumber')?.value) {
+            <small class="phone-preview">{{ getFormattedPhoneNumber() }}</small>
+          }
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="address">Address</label>
+        <textarea
+          id="address"
+          formControlName="address"
+          placeholder="123 Main Street, City, State, 12345"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Social Links (Optional) -->
+    <div class="form-section">
+      <h4 class="section-title">Social Links <span class="optional">(Optional)</span></h4>
+      
+      <div class="social-links">
+        <div class="social-input">
+          <span class="social-icon">🌐</span>
+          <app-input
+            formControlName="website"
+            placeholder="https://yourwebsite.com"
+            label="Website"
+          ></app-input>
+        </div>
+
+        <div class="social-input">
+          <span class="social-icon">📘</span>
+          <app-input
+            formControlName="facebook"
+            placeholder="facebook.com/username"
+            label="Facebook"
+          ></app-input>
+        </div>
+
+        <div class="social-input">
+          <span class="social-icon">📸</span>
+          <app-input
+            formControlName="instagram"
+            placeholder="instagram.com/username"
+            label="Instagram"
+          ></app-input>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="modal__actions">
+      <app-button type="secondary" (click)="onCancel()">Cancel</app-button>
+      <app-button
+        type="primary"
+        [disabled]="profileForm.invalid || !profileForm.dirty"
+        buttonType="submit"
+      >
+        Save Changes
+      </app-button>
+    </div>
+  </form>
+</div>
