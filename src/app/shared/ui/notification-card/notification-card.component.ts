@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NotificationService } from '../../../core/services/notification.service';
-import { Notification } from '../../../core/models/notifications.model';
+import { Notification, NotificationType } from '../../../core/models/notifications.model';
 import { Subscription } from 'rxjs';
 import { NgClass } from '@angular/common';
+import { ButtonComponent } from "../button/button.component";
 @Component({
   selector: 'app-notification-card',
-  imports: [NgClass],
+  imports: [NgClass, ButtonComponent],
   templateUrl: './notification-card.component.html',
   styleUrl: './notification-card.component.scss'
 })
@@ -22,7 +23,8 @@ export class NotificationCardComponent implements OnInit, OnDestroy {
       )
     )
   }
-  
+
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
