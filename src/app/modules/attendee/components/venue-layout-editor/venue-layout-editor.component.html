@@ -1,1 +1,14 @@
-<p>venue-layout-editor works!</p>
+<div class="canvas-wrapper" #canvasWrapper>
+    <canvas id="venueCanvas"></canvas>
+</div>
+
+<div class="upload-section">
+    <div class="description">
+        <h6>Upload Venue Layout</h6>
+        <p>Accepted formats: PDF, JPG, PNG (max 10MB)</p>
+    </div>
+    <input type="file" #fileInput (change)="onFileSelected($event)" accept=".jpg, .png" hidden />
+    <app-button type="secondary" (click)="fileInput.click()">
+        Change Image
+    </app-button>
+</div>

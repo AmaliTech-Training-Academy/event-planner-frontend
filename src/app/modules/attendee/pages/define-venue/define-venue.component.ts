@@ -12,6 +12,8 @@ interface Section {
   color: string;
 }
 
+
+
 @Component({
   selector: 'app-define-venue',
   imports: [ButtonComponent, CommonModule, VenueLayoutEditorComponent, InputComponent, RichEditorComponent],
@@ -28,16 +30,16 @@ export class DefineVenueComponent {
 
   tools = [
     {
-      name: 'rectangle',
-      icon: 'icons/rectangle-tool-icon.svg'
+      name: 'Rectangle',
+      icon: 'icons/rectangle_tool.svg'
     },
     {
-      name: 'polygon',
-      icon: 'icons/polygon-tool-icon.svg'
+      name: 'Polygon',
+      icon: 'icons/polygon_tool.svg'
     },
     {
-      name: 'circle',
-      icon: 'icons/circle-tool-icon.svg'
+      name: 'Circle',
+      icon: 'icons/circle_tool.svg'
     }
   ]
 
