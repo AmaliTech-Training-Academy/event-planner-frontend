@@ -1,28 +1,29 @@
-@if (ticketInfo) {
-  <div class="ticket-card">
-    <h3 class="card-title">Get Your Tickets</h3>
-    
-   
-    <div class="price">
-      {{ ticketInfo.currency }}{{ ticketInfo.price }}
-    </div>
-    
-    
-    <ul class="features-list">
-      @for (feature of ticketInfo.features; track $index) {
-        <li class="feature-item">
-          <span>&check;</span> 
-          {{ feature }}
-        </li>
-      }
-    </ul>
-    
-   
-    <app-button 
-      [type]="'primary'"
-      (click)="registerClick.emit()">
-      Register For Event
-    </app-button>
+@if (ticketInfo(); as ticket) {
+<div class="ticket-card">
+  <h3 class="card-title">{{ ticket.title }}</h3>
+
+  <div class="price">
+    {{ ticket.currency }}{{ ticket.price }}
   </div>
+
+  <ul class="features-list">
+    @for (feature of ticket.features; track $index) {
+    <li class="feature-item">
+     
+      <img
+        src="icons/checkmark.png"
+        alt=""
+        class="check-icon"
+        aria-hidden="true"
+      />
+      <span>{{ feature }}</span>
+    </li>
+    }
+  </ul>
+
+  <app-button type="primary" (click)="registerClick.emit()">
+    Buy {{ ticket.title }}
+  </app-button>
+</div>
 }
 
