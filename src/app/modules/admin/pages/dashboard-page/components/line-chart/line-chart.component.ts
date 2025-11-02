@@ -20,10 +20,18 @@ export interface TimeSeriesDataPoint {
   value: number;
 }
 
-/**
- * Represents the structure of tooltip formatter parameters from ECharts.
- * Used as a workaround since ECharts doesn't properly export tooltip parameter types.
- */
+export interface LineSeriesConfig {
+  name: string;
+  data: TimeSeriesDataPoint[];
+  color: string;
+  showArea?: boolean;
+  lineStyle?: 'solid' | 'dashed' | 'dotted';
+  areaGradient?: {
+    start: string;
+    end: string;
+  };
+}
+
 interface TooltipFormatterParams {
   seriesName: string;
   value: number;
@@ -38,20 +46,6 @@ const GRID_CONFIG = {
   bottom: '10%',
   top: '10%',
   containLabel: true,
-} as const;
-
-const LINE_CHART_CONFIG = {
-  colors: {
-    thisYear: '#FF6B35',
-    lastYear: '#6B7280',
-  },
-  lineWidth: 2,
-  areaGradient: {
-    thisYear: {
-      start: 'rgba(255, 107, 53, 0.2)',
-      end: 'rgba(255, 107, 53, 0.05)',
-    },
-  },
 } as const;
 
 const DEFAULT_X_AXIS: Omit<XAXisComponentOption, 'data'> = {
@@ -94,8 +88,16 @@ const DEFAULT_Y_AXIS: YAXisComponentOption = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineChartComponent implements OnInit, OnChanges {
+  @Input() public seriesConfig: LineSeriesConfig[] = [];
+
   @Input() public thisYearData: TimeSeriesDataPoint[] = [];
   @Input() public lastYearData: TimeSeriesDataPoint[] = [];
+
+  @Input() public chartTitle?: string;
+  @Input() public showLegend: boolean = true;
+  @Input() public height: string = '400px';
+  @Input() public animationDuration: number = 800;
+  @Input() public smooth: boolean = true;
 
   public readonly isLoading = signal(false);
   public readonly chartOptions = signal<EChartsOption>({});
@@ -105,49 +107,117 @@ export class LineChartComponent implements OnInit, OnChanges {
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    if (changes['thisYearData'] || changes['lastYearData']) {
+    if (
+      changes['seriesConfig'] ||
+      changes['thisYearData'] ||
+      changes['lastYearData']
+    ) {
       this._updateChartOptions();
     }
   }
 
   private _updateChartOptions(): void {
-    if (!this.thisYearData?.length && !this.lastYearData?.length) {
+    const series = this._getSeriesData();
+
+    if (!series.length) {
       this._setEmptyState();
       return;
     }
 
-    const months = this.thisYearData?.map((d) => d.month) ?? [];
-    const thisYearValues = this.thisYearData?.map((d) => d.value) ?? [];
-    const lastYearValues = this.lastYearData?.map((d) => d.value) ?? [];
+    const months = this._extractMonths(series);
+    const chartSeries = series.map((config) => this._createSeries(config));
 
     const options: EChartsOption = {
+      title: this.chartTitle
+        ? {
+            text: this.chartTitle,
+            left: 'left',
+            textStyle: { color: '#374151', fontSize: 16, fontWeight: 600 },
+          }
+        : undefined,
       grid: GRID_CONFIG,
+      legend: this.showLegend
+        ? {
+            bottom: 0,
+            left: 'center',
+            textStyle: { color: '#6B7280' },
+          }
+        : undefined,
       xAxis: {
         ...DEFAULT_X_AXIS,
         data: months,
       } as XAXisComponentOption,
       yAxis: DEFAULT_Y_AXIS,
-      series: [
-        this._createThisYearSeries(thisYearValues),
-        this._createLastYearSeries(lastYearValues),
-      ],
+      series: chartSeries,
       tooltip: this._createTooltipConfig(),
     };
 
     this.chartOptions.set(options);
   }
-  private _createThisYearSeries(data: number[]) {
-    return {
-      name: 'This year',
+
+  private _getSeriesData(): LineSeriesConfig[] {
+    if (this.seriesConfig?.length) {
+      return this.seriesConfig;
+    }
+
+    const legacySeries: LineSeriesConfig[] = [];
+
+    if (this.thisYearData?.length) {
+      legacySeries.push({
+        name: 'This year',
+        data: this.thisYearData,
+        color: '#FF6B35',
+        showArea: true,
+        lineStyle: 'solid',
+        areaGradient: {
+          start: 'rgba(255, 107, 53, 0.2)',
+          end: 'rgba(255, 107, 53, 0.05)',
+        },
+      });
+    }
+
+    if (this.lastYearData?.length) {
+      legacySeries.push({
+        name: 'Last year',
+        data: this.lastYearData,
+        color: '#6B7280',
+        showArea: false,
+        lineStyle: 'dashed',
+      });
+    }
+
+    return legacySeries;
+  }
+
+  private _extractMonths(series: LineSeriesConfig[]): string[] {
+    const firstSeries = series[0];
+    return firstSeries?.data?.map((d) => d.month) ?? [];
+  }
+
+  private _createSeries(config: LineSeriesConfig) {
+    const values = config.data.map((d) => d.value);
+    const lineStyleMap = {
+      solid: 'solid' as const,
+      dashed: 'dashed' as const,
+      dotted: 'dotted' as const,
+    };
+
+    const series: any = {
+      name: config.name,
       type: 'line' as const,
-      data,
-      smooth: true,
+      data: values,
+      smooth: this.smooth,
       symbol: 'none',
+      animationDuration: this.animationDuration,
       lineStyle: {
-        color: LINE_CHART_CONFIG.colors.thisYear,
-        width: LINE_CHART_CONFIG.lineWidth,
+        color: config.color,
+        width: 2,
+        type: lineStyleMap[config.lineStyle ?? 'solid'],
       },
-      areaStyle: {
+    };
+
+    if (config.showArea && config.areaGradient) {
+      series.areaStyle = {
         color: {
           type: 'linear' as const,
           x: 0,
@@ -155,27 +225,14 @@ export class LineChartComponent implements OnInit, OnChanges {
           x2: 0,
           y2: 1,
           colorStops: [
-            { offset: 0, color: LINE_CHART_CONFIG.areaGradient.thisYear.start },
-            { offset: 1, color: LINE_CHART_CONFIG.areaGradient.thisYear.end },
+            { offset: 0, color: config.areaGradient.start },
+            { offset: 1, color: config.areaGradient.end },
           ],
         },
-      },
-    };
-  }
+      };
+    }
 
-  private _createLastYearSeries(data: number[]) {
-    return {
-      name: 'Last year',
-      type: 'line' as const,
-      data,
-      smooth: true,
-      symbol: 'none',
-      lineStyle: {
-        color: LINE_CHART_CONFIG.colors.lastYear,
-        width: LINE_CHART_CONFIG.lineWidth,
-        type: 'dashed' as const,
-      },
-    };
+    return series;
   }
 
   private _setEmptyState(): void {
@@ -196,11 +253,7 @@ export class LineChartComponent implements OnInit, OnChanges {
       borderColor: '#E5E7EB',
       borderWidth: 1,
       textStyle: { color: '#374151' },
-      /**
-       * Note: Using 'unknown' type because ECharts doesn't export the correct
-       * TooltipFormatterCallback parameter type. This is a type-safe alternative
-       * to 'any' that forces explicit casting and documents expected structure.
-       */
+
       formatter: ((params: unknown) => {
         const paramsArray = params as TooltipFormatterParams[];
         return this._formatTooltip(paramsArray);

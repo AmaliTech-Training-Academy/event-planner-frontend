@@ -21,10 +21,7 @@ export interface TrafficByDevice {
   color: string;
 }
 
-/**
- * Represents the structure of tooltip formatter parameters from ECharts.
- * Used as a workaround since ECharts doesn't properly export tooltip parameter types.
- */
+
 interface TooltipFormatterParams {
   color: string;
   value: number;

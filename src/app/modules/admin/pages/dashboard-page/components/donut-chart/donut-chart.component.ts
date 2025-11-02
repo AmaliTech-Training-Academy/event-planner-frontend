@@ -17,10 +17,6 @@ export interface UserStatistics {
   color: string;
 }
 
-/**
- * Represents the structure of tooltip formatter parameters from ECharts.
- * Used as a workaround since ECharts doesn't properly export tooltip parameter types.
- */
 interface TooltipFormatterParams {
   name: string;
   value: number;
@@ -139,11 +135,7 @@ export class DonutChartComponent implements OnInit, OnChanges {
     return {
       trigger: 'item',
       className: 'chart-tooltip',
-      /**
-       * Note: Using 'unknown' type because ECharts doesn't export the correct
-       * TooltipFormatterCallback parameter type. This is a type-safe alternative
-       * to 'any' that forces explicit casting and documents expected structure.
-       */
+
       formatter: ((params: unknown) => {
         const typedParams = params as TooltipFormatterParams;
         return this._formatTooltip(typedParams);
