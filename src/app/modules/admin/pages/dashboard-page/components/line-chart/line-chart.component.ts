@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  ChangeDetectionStrategy,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { EChartsOption } from 'echarts';
@@ -12,50 +19,29 @@ export interface TimeSeriesDataPoint {
   selector: 'app-line-chart',
   standalone: true,
   imports: [CommonModule, NgxEchartsModule],
-  template: `
-    <div class="line-chart">
-      <div
-        echarts
-        [options]="chartOptions()"
-        [loading]="isLoading()"
-        class="chart"
-      ></div>
-    </div>
-  `,
-  styles: [
-    `
-      .line-chart {
-        width: 100%;
-        height: 100%;
-        min-height: 350px;
-      }
-
-      .chart {
-        width: 100%;
-        height: 100%;
-      }
-    `,
-  ],
+  templateUrl: './line-chart.component.html',
+  styleUrls: ['./line-chart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LineChartComponent implements OnInit {
-  @Input() thisYearData: TimeSeriesDataPoint[] = [];
-  @Input() lastYearData: TimeSeriesDataPoint[] = [];
+export class LineChartComponent implements OnInit, OnChanges {
+  @Input() public thisYearData: TimeSeriesDataPoint[] = [];
+  @Input() public lastYearData: TimeSeriesDataPoint[] = [];
 
   public readonly isLoading = signal(false);
   public readonly chartOptions = signal<EChartsOption>({});
 
-  ngOnInit() {
-    this.updateChartOptions();
+  public ngOnInit(): void {
+    this._updateChartOptions();
   }
 
-  ngOnChanges() {
-    this.updateChartOptions();
+  public ngOnChanges(): void {
+    this._updateChartOptions();
   }
 
-  private updateChartOptions() {
-    const months = this.thisYearData.map((d) => d.month);
-    const thisYearValues = this.thisYearData.map((d) => d.value);
-    const lastYearValues = this.lastYearData.map((d) => d.value);
+  private _updateChartOptions(): void {
+    const months = this.thisYearData?.map((d) => d.month) ?? [];
+    const thisYearValues = this.thisYearData?.map((d) => d.value) ?? [];
+    const lastYearValues = this.lastYearData?.map((d) => d.value) ?? [];
 
     this.chartOptions.set({
       grid: {
@@ -70,9 +56,7 @@ export class LineChartComponent implements OnInit {
         data: months,
         boundaryGap: false,
         axisLine: {
-          lineStyle: {
-            color: '#E5E7EB',
-          },
+          lineStyle: { color: '#E5E7EB' },
         },
         axisLabel: {
           color: '#6B7280',
@@ -81,27 +65,16 @@ export class LineChartComponent implements OnInit {
       },
       yAxis: {
         type: 'value',
-        axisLine: {
-          show: false,
-        },
-        axisTick: {
-          show: false,
-        },
+        axisLine: { show: false },
+        axisTick: { show: false },
         splitLine: {
-          lineStyle: {
-            color: '#F3F4F6',
-            type: 'solid',
-          },
+          lineStyle: { color: '#F3F4F6', type: 'solid' },
         },
         axisLabel: {
           color: '#6B7280',
           fontSize: 12,
-          formatter: (value: number) => {
-            if (value >= 1000) {
-              return `${(value / 1000).toFixed(0)}K`;
-            }
-            return value.toString();
-          },
+          formatter: (value: number) =>
+            value >= 1000 ? `${(value / 1000).toFixed(0)}K` : value.toString(),
         },
       },
       series: [
@@ -111,10 +84,7 @@ export class LineChartComponent implements OnInit {
           data: thisYearValues,
           smooth: true,
           symbol: 'none',
-          lineStyle: {
-            color: '#FF6B35',
-            width: 2,
-          },
+          lineStyle: { color: '#FF6B35', width: 2 },
           areaStyle: {
             color: {
               type: 'linear',
@@ -123,14 +93,8 @@ export class LineChartComponent implements OnInit {
               x2: 0,
               y2: 1,
               colorStops: [
-                {
-                  offset: 0,
-                  color: 'rgba(255, 107, 53, 0.2)',
-                },
-                {
-                  offset: 1,
-                  color: 'rgba(255, 107, 53, 0.05)',
-                },
+                { offset: 0, color: 'rgba(255, 107, 53, 0.2)' },
+                { offset: 1, color: 'rgba(255, 107, 53, 0.05)' },
               ],
             },
           },
@@ -153,20 +117,19 @@ export class LineChartComponent implements OnInit {
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderColor: '#E5E7EB',
         borderWidth: 1,
-        textStyle: {
-          color: '#374151',
-        },
+        textStyle: { color: '#374151' },
         formatter: (params: any) => {
-          let result = `<div style="font-weight: 600; margin-bottom: 8px;">${params[0].axisValue}</div>`;
+          if (!params?.length) return '';
+          let result = `<div style="font-weight: 600; margin-bottom: 8px;">${params[0]?.axisValue}</div>`;
           params.forEach((param: any) => {
-            const color = param.color.colorStops
+            const color = param?.color?.colorStops
               ? param.color.colorStops[0].color
-              : param.color;
+              : param?.color;
             result += `
               <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
                 <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${color};"></span>
                 <span style="color: #6B7280;">${param.seriesName}:</span>
-                <span style="font-weight: 600;">${param.value.toLocaleString()}</span>
+                <span style="font-weight: 600;">${param.value?.toLocaleString?.()}</span>
               </div>
             `;
           });
