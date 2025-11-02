@@ -1,1 +1,17 @@
-<p>dashboard-page works!</p>
+<!-- dashboard-page.component.html -->
+<div class="dashboard-page">
+  <div class="dashboard-page__cards">
+    @for (card of dashboardCards(); track card.title) {
+      <app-admin-user-card [data]="card" />
+    }
+  </div>
+
+  <!-- Charts and insights section -->
+  <div class="dashboard-page__charts">
+    <!-- Later we’ll place: -->
+    <!-- <app-total-users-chart /> -->
+    <!-- <app-traffic-by-website /> -->
+    <!-- <app-traffic-by-device /> -->
+    <!-- <app-user-statistics /> -->
+  </div>
+</div>

@@ -1,0 +1,23 @@
+/* dashboard-page.component.scss */
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
+
+  &__cards {
+    display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  }
+
+  &__charts {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
