@@ -8,12 +8,63 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsModule } from 'ngx-echarts';
-import { EChartsOption } from 'echarts';
+import type {
+  EChartsOption,
+  XAXisComponentOption,
+  YAXisComponentOption,
+} from 'echarts';
 
 export interface TrafficByDevice {
   device: string;
   value: number;
   color: string;
+}
+
+const GRID_CONFIG = {
+  left: '3%',
+  right: '4%',
+  bottom: '15%',
+  top: '10%',
+  containLabel: true,
+} as const;
+
+const DEFAULT_X_AXIS: XAXisComponentOption = {
+  type: 'category',
+  axisLine: { lineStyle: { color: '#E5E7EB' } },
+  axisTick: { show: false },
+  axisLabel: { color: '#6B7280', fontSize: 12, interval: 0, rotate: 0 },
+};
+
+const DEFAULT_Y_AXIS: YAXisComponentOption = {
+  type: 'value',
+  axisLine: { show: false },
+  axisTick: { show: false },
+  splitLine: { lineStyle: { color: '#F3F4F6', type: 'solid' } },
+  axisLabel: {
+    color: '#6B7280',
+    fontSize: 12,
+    formatter: (value: number | string) => {
+      const numValue = typeof value === 'string' ? parseFloat(value) : value;
+      return numValue >= 1000
+        ? `${(numValue / 1000).toFixed(0)}K`
+        : numValue.toString();
+    },
+  },
+};
+
+const DEFAULT_TOOLTIP = (color: string, value: number, axisValue: string) => `
+  <div class="tooltip-title">${axisValue}</div>
+  <div class="tooltip-content">
+    <span class="tooltip-dot" style="background: ${color}"></span>
+    <span>Traffic:</span>
+    <span class="tooltip-value">${value.toLocaleString()}</span>
+  </div>
+`;
+
+interface TooltipFormatterParams {
+  color: string;
+  value: number;
+  axisValue: string;
 }
 
 @Component({
@@ -39,7 +90,6 @@ export class BarChartComponent implements OnInit, OnChanges {
     }
   }
 
-
   private setChartData(): void {
     if (!this.data || this.data.length === 0) {
       this.chartOptions.set({
@@ -57,49 +107,19 @@ export class BarChartComponent implements OnInit, OnChanges {
     const values = this.data.map((d) => d.value);
     const colors = this.data.map((d) => d.color);
 
-    this.chartOptions.set({
-      grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '15%',
-        top: '10%',
-        containLabel: true,
-      },
+    const options: EChartsOption = {
+      grid: GRID_CONFIG,
       xAxis: {
-        type: 'category',
+        ...DEFAULT_X_AXIS,
         data: devices,
-        axisLine: { lineStyle: { color: '#E5E7EB' } },
-        axisTick: { show: false },
-        axisLabel: {
-          color: '#6B7280',
-          fontSize: 12,
-          interval: 0,
-          rotate: 0,
-        },
       },
-      yAxis: {
-        type: 'value',
-        axisLine: { show: false },
-        axisTick: { show: false },
-        splitLine: {
-          lineStyle: { color: '#F3F4F6', type: 'solid' },
-        },
-        axisLabel: {
-          color: '#6B7280',
-          fontSize: 12,
-          formatter: (value: number) =>
-            value >= 1000 ? `${(value / 1000).toFixed(0)}K` : value.toString(),
-        },
-      },
+      yAxis: DEFAULT_Y_AXIS,
       series: [
         {
           type: 'bar',
-          data: values.map((value, index) => ({
-            value,
-            itemStyle: {
-              color: colors[index],
-              borderRadius: [8, 8, 0, 0],
-            },
+          data: values.map((v, i) => ({
+            value: v,
+            itemStyle: { color: colors[i], borderRadius: [8, 8, 0, 0] },
           })),
           barWidth: '40%',
           animationDuration: 800,
@@ -114,24 +134,16 @@ export class BarChartComponent implements OnInit, OnChanges {
         textStyle: { color: '#374151' },
         axisPointer: {
           type: 'shadow',
-          shadowStyle: { color: 'rgba(0, 0, 0, 0.05)' },
+          shadowStyle: { color: 'rgba(0,0,0,0.05)' },
         },
-        formatter: (params: any) => {
-          const param = params[0];
-          return `
-            <div style="font-weight: 600; margin-bottom: 8px;">${
-              param.axisValue
-            }</div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="width: 10px; height: 10px; border-radius: 50%; background: ${
-                param.color
-              }; display: inline-block;"></span>
-              <span style="color: #6B7280;">Traffic:</span>
-              <span style="font-weight: 600;">${param.value.toLocaleString()}</span>
-            </div>
-          `;
-        },
+        formatter: ((params: unknown) => {
+          const typedParams = params as TooltipFormatterParams[];
+          const param = typedParams[0];
+          return DEFAULT_TOOLTIP(param.color, param.value, param.axisValue);
+        }) as never,
       },
-    });
+    };
+
+    this.chartOptions.set(options);
   }
 }

@@ -45,9 +45,7 @@ export class DonutChartComponent implements OnInit, OnChanges {
     const chartData = this.data.map((item) => ({
       name: item.category,
       value: item.percentage,
-      itemStyle: {
-        color: item.color,
-      },
+      itemStyle: { color: item.color },
     }));
 
     this.chartOptions.set({
@@ -75,18 +73,8 @@ export class DonutChartComponent implements OnInit, OnChanges {
       ],
       tooltip: {
         trigger: 'item',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderColor: '#E5E7EB',
-        borderWidth: 1,
-        textStyle: { color: '#374151' },
-        formatter: (params: any) => `
-          <div style="font-weight: 600; margin-bottom: 8px;">${params.name}</div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${params.color};"></span>
-            <span style="color: #6B7280;">Percentage:</span>
-            <span style="font-weight: 600;">${params.value}%</span>
-          </div>
-        `,
+        className: 'chart-tooltip',
+        formatter: (params: any) => this.formatTooltip(params),
       },
       media: [
         {
@@ -97,5 +85,18 @@ export class DonutChartComponent implements OnInit, OnChanges {
         },
       ],
     });
+  }
+
+  private formatTooltip(params: any): string {
+    return `
+    <div class="tooltip-content">
+      <div class="tooltip-title">${params.name}</div>
+      <div class="tooltip-row">
+        <span class="tooltip-dot" style="background:${params.color}"></span>
+        <span class="tooltip-label">Percentage:</span>
+        <span class="tooltip-value">${params.value}%</span>
+      </div>
+    </div>
+  `;
   }
 }

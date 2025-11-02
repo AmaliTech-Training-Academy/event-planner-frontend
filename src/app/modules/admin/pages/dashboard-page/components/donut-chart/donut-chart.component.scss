@@ -68,3 +68,35 @@
           min-height: 250px;
         }
       }
+      .chart-tooltip {
+  .tooltip-content {
+    font-family: inherit;
+    color: #374151;
+  }
+
+  .tooltip-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .tooltip-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tooltip-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .tooltip-label {
+    color: #6b7280;
+  }
+
+  .tooltip-value {
+    font-weight: 600;
+  }
+}
