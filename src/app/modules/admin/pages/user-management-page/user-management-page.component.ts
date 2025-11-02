@@ -19,6 +19,7 @@ import {
 import { InviteUserModalComponent } from './components/invite-user-modal/invite-user-modal.component';
 import { SuccessModalComponent } from './components/success-modal/success-modal.component';
 import { EditUserProfileComponent } from './components/edit-user-profile/edit-user-profile.component';
+import { ViewUserProfileComponent } from './components/view-user-profile/view-user-profile.component';
 
 @Component({
   selector: 'app-user-management-page',
@@ -29,6 +30,7 @@ import { EditUserProfileComponent } from './components/edit-user-profile/edit-us
     InviteUserModalComponent,
     SuccessModalComponent,
     EditUserProfileComponent,
+    ViewUserProfileComponent
   ],
   templateUrl: './user-management-page.component.html',
   styleUrls: ['./user-management-page.component.scss'],
@@ -41,6 +43,7 @@ export class UserManagementPageComponent implements OnInit {
   public readonly isSuccessModalOpen = signal<boolean>(false);
   public readonly isEditModalOpen = signal<boolean>(false);
   public readonly selectedUser = signal<User | null>(null);
+  public readonly isViewModalOpen = signal<boolean>(false);
   public readonly userCards = signal<UserCardData[]>([
     {
       title: 'Total Users',
@@ -259,6 +262,21 @@ export class UserManagementPageComponent implements OnInit {
 
   private _viewUser(user: User): void {
     console.log('Viewing user:', user);
+    this.selectedUser.set(user);
+
+    Promise.resolve().then(() => {
+      this.isViewModalOpen.set(true);
+    });
+  }
+
+  public closeViewModal(): void {
+    this.isViewModalOpen.set(false);
+    this.selectedUser.set(null);
+  }
+
+  public onToggleUserStatus(user: User): void {
+    this._toggleUserStatus(user);
+    this.closeViewModal();
   }
 
   private _editUser(user: User): void {

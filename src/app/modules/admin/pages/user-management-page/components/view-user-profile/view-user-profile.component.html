@@ -1,0 +1,115 @@
+<div class="modal-backdrop" (click)="onClose()"></div>
+
+<div class="modal modal--profile">
+  <app-modal-header
+    title="User Profile Information"
+    (close)="onClose()"
+  ></app-modal-header>
+
+  <div class="modal__content">
+    <!-- Profile Section -->
+    <div class="profile-section">
+      <div class="profile-avatar">
+        <img [src]="profileImage()" alt="Profile picture" />
+        <div
+          class="status-badge"
+          [class.status-badge--active]="isActive()"
+          [class.status-badge--inactive]="!isActive()"
+        >
+          {{ userData?.status }}
+        </div>
+      </div>
+      <div class="profile-info">
+        <h3>{{ userData?.fullName || "N/A" }}</h3>
+        <p class="user-role">{{ userData?.role }}</p>
+        <p class="user-id">User ID: {{ userData?.userId }}</p>
+      </div>
+    </div>
+
+    <!-- Basic Information Section -->
+    <div class="info-section">
+      <h4 class="section-title">Basic Information</h4>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <label class="info-label">Full Name</label>
+          <p class="info-value">{{ userData?.fullName || "N/A" }}</p>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">Email Address</label>
+          <p class="info-value">{{ userData?.email || "N/A" }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Information Section -->
+    <div class="info-section">
+      <h4 class="section-title">Contact Information</h4>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <label class="info-label">Phone Number</label>
+          <p class="info-value">{{ getPhoneDisplay() }}</p>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">Address</label>
+          <p class="info-value">{{ userData?.address || "N/A" }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Information Section -->
+    <div class="info-section">
+      <h4 class="section-title">Activity Information</h4>
+
+      <div class="info-grid info-grid--three">
+        <div class="info-item">
+          <label class="info-label">Events Organized</label>
+          <p class="info-value info-value--highlight">
+            {{ userData?.eventsOrganized || 0 }}
+          </p>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">Events Attended</label>
+          <p class="info-value info-value--highlight">
+            {{ userData?.eventsAttended || 0 }}
+          </p>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">Last Active</label>
+          <p class="info-value">{{ userData?.lastActive || "N/A" }}</p>
+        </div>
+      </div>
+
+      <div class="info-grid info-grid--two">
+        <div class="info-item">
+          <label class="info-label">Joined Date</label>
+          <p class="info-value">{{ userData?.joinedDate || "N/A" }}</p>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">Account Status</label>
+          <p
+            class="info-value"
+            [class.info-value--success]="isActive()"
+            [class.info-value--danger]="!isActive()"
+          >
+            {{ userData?.status || "N/A" }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Actions -->
+  <div class="modal__actions">
+    <app-button type="secondary" (click)="onClose()"> Close </app-button>
+    <app-button [type]="statusButtonType()" (click)="onToggleStatus()">
+      {{ statusButtonText() }}
+    </app-button>
+  </div>
+</div>

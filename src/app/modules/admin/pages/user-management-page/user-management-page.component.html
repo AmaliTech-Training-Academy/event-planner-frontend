@@ -39,4 +39,11 @@
     }}
   </div>
   }
+  @if (isViewModalOpen() && selectedUser()) {
+  <app-view-user-profile
+    [userData]="selectedUser()!"
+    (close)="closeViewModal()"
+    (toggleStatus)="onToggleUserStatus($event)"
+  />
+}
 </div>
