@@ -5,6 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -20,6 +21,17 @@ export interface TrafficByDevice {
   color: string;
 }
 
+/**
+ * Represents the structure of tooltip formatter parameters from ECharts.
+ * Used as a workaround since ECharts doesn't properly export tooltip parameter types.
+ */
+interface TooltipFormatterParams {
+  color: string;
+  value: number;
+  axisValue: string;
+}
+
+// --- Chart Config Constants ---
 const GRID_CONFIG = {
   left: '3%',
   right: '4%',
@@ -43,7 +55,7 @@ const DEFAULT_Y_AXIS: YAXisComponentOption = {
   axisLabel: {
     color: '#6B7280',
     fontSize: 12,
-    formatter: (value: number | string) => {
+    formatter: (value: number | string): string => {
       const numValue = typeof value === 'string' ? parseFloat(value) : value;
       return numValue >= 1000
         ? `${(numValue / 1000).toFixed(0)}K`
@@ -52,7 +64,11 @@ const DEFAULT_Y_AXIS: YAXisComponentOption = {
   },
 };
 
-const DEFAULT_TOOLTIP = (color: string, value: number, axisValue: string) => `
+const DEFAULT_TOOLTIP = (
+  color: string,
+  value: number,
+  axisValue: string
+): string => `
   <div class="tooltip-title">${axisValue}</div>
   <div class="tooltip-content">
     <span class="tooltip-dot" style="background: ${color}"></span>
@@ -61,45 +77,33 @@ const DEFAULT_TOOLTIP = (color: string, value: number, axisValue: string) => `
   </div>
 `;
 
-interface TooltipFormatterParams {
-  color: string;
-  value: number;
-  axisValue: string;
-}
-
 @Component({
   selector: 'app-bar-chart',
   standalone: true,
   imports: [CommonModule, NgxEchartsModule],
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BarChartComponent implements OnInit, OnChanges {
-  @Input() data: TrafficByDevice[] = [];
+  @Input() public data: TrafficByDevice[] = [];
 
   public readonly isLoading = signal(false);
   public readonly chartOptions = signal<EChartsOption>({});
 
-  ngOnInit(): void {
-    this.setChartData();
+  public ngOnInit(): void {
+    this._setChartData();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  public ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && !changes['data'].firstChange) {
-      this.setChartData();
+      this._setChartData();
     }
   }
 
-  private setChartData(): void {
-    if (!this.data || this.data.length === 0) {
-      this.chartOptions.set({
-        title: {
-          text: 'No data available',
-          left: 'center',
-          top: 'center',
-          textStyle: { color: '#9CA3AF', fontSize: 14 },
-        },
-      });
+  private _setChartData(): void {
+    if (!this.data?.length) {
+      this._setEmptyState();
       return;
     }
 
@@ -126,24 +130,44 @@ export class BarChartComponent implements OnInit, OnChanges {
           animationEasing: 'cubicOut',
         },
       ],
-      tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderColor: '#E5E7EB',
-        borderWidth: 1,
-        textStyle: { color: '#374151' },
-        axisPointer: {
-          type: 'shadow',
-          shadowStyle: { color: 'rgba(0,0,0,0.05)' },
-        },
-        formatter: ((params: unknown) => {
-          const typedParams = params as TooltipFormatterParams[];
-          const param = typedParams[0];
-          return DEFAULT_TOOLTIP(param.color, param.value, param.axisValue);
-        }) as never,
-      },
+      tooltip: this._createTooltipConfig(),
     };
 
     this.chartOptions.set(options);
+  }
+
+  private _setEmptyState(): void {
+    this.chartOptions.set({
+      title: {
+        text: 'No data available',
+        left: 'center',
+        top: 'center',
+        textStyle: { color: '#9CA3AF', fontSize: 14 },
+      },
+    });
+  }
+
+  private _createTooltipConfig(): EChartsOption['tooltip'] {
+    return {
+      trigger: 'axis',
+      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+      borderColor: '#E5E7EB',
+      borderWidth: 1,
+      textStyle: { color: '#374151' },
+      axisPointer: {
+        type: 'shadow',
+        shadowStyle: { color: 'rgba(0,0,0,0.05)' },
+      },
+      /**
+       * Note: Using 'unknown' type because ECharts doesn't export the correct
+       * TooltipFormatterCallback parameter type. This is a type-safe alternative
+       * to 'any' that forces explicit casting and documents expected structure.
+       */
+      formatter: ((params: unknown) => {
+        const typedParams = params as TooltipFormatterParams[];
+        const param = typedParams[0];
+        return DEFAULT_TOOLTIP(param.color, param.value, param.axisValue);
+      }) as never,
+    };
   }
 }
