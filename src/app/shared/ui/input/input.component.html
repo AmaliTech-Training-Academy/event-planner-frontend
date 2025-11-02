@@ -19,7 +19,7 @@
     [class.no-icon]="!iconSrc()"
   >
     @if (iconSrc()) {
-      <img [src]="iconSrc()" alt="icon" class="input-icon" />
+    <img [src]="iconSrc()" alt="icon" class="input-icon" />
     }
 
     <input
@@ -31,6 +31,7 @@
       (blur)="onBlur()"
       [disabled]="isDisabled()"
       [class.error]="hasError()"
+      class="form-input"
     />
 
     @if (type() === 'password') {
