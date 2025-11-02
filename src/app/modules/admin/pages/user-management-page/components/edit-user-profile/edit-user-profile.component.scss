@@ -14,14 +14,23 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
 }
 
 .modal {
-  background: white;
+  background: $gray-50;
   border-radius: $radius-4;
-  padding: 0;
+  padding: $spacing-6;
   width: 90%;
-  max-width: 480px;
+  max-width: 600px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   position: absolute;
   top: 50%;
@@ -29,69 +38,25 @@
   transform: translate(-50%, -50%);
   z-index: 1001;
   max-height: 90vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  overflow-y: auto;
 
-  &--profile {
-    max-width: 480px;
-  }
-
-  &__header {
-    padding: $spacing-5 $spacing-6;
-    border-bottom: 1px solid $general-stroke-light;
-    flex-shrink: 0;
-
-    h2 {
-      @include h-6;
-      color: $header-dark;
-      margin: 0;
-      font-weight: 600;
-    }
-  }
-
-  &__close {
-    position: absolute;
-    top: $spacing-5;
-    right: $spacing-5;
-    background: transparent;
-    border: none;
-    font-size: 24px;
-    color: $gray-500;
-    cursor: pointer;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: $radius-2;
-    transition: all 0.2s ease;
-    z-index: 10;
-    line-height: 1;
-
-    &:hover {
-      background: $gray-100;
-      color: $header-dark;
-    }
+  &--large {
+    max-width: 700px;
   }
 
   form {
-    padding: $spacing-5 $spacing-6;
     display: flex;
     flex-direction: column;
-    gap: $spacing-5;
-    overflow-y: auto;
-    flex: 1;
+    gap: $spacing-6;
   }
 
   &__actions {
     display: flex;
     gap: $spacing-3;
     justify-content: flex-end;
-    padding: $spacing-4 $spacing-6;
+    margin-top: $spacing-3;
+    padding-top: $spacing-5;
     border-top: 1px solid $general-stroke-light;
-    flex-shrink: 0;
-    background: white;
   }
 }
 
@@ -99,15 +64,16 @@
 .profile-section {
   display: flex;
   align-items: center;
-  gap: $spacing-4;
-  padding-bottom: $spacing-4;
-  border-bottom: 1px solid $general-stroke-light;
+  gap: $spacing-5;
+  padding: $spacing-2;
+  border-radius: $radius-3;
+  margin-bottom: $spacing-3;
 }
 
 .profile-avatar {
   position: relative;
-  width: 64px;
-  height: 64px;
+  width: 96px;
+  height: 96px;
   flex-shrink: 0;
 
   img {
@@ -115,18 +81,18 @@
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid $gray-200;
+    border: 3px solid $gray-50;
   }
 
   .avatar-edit-btn {
     position: absolute;
-    bottom: -2px;
-    right: -2px;
-    width: 24px;
-    height: 24px;
+    bottom: 0;
+    right: 0;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: $orange-600;
-    border: 2px solid white;
+    border: 3px solid $gray-50;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -134,7 +100,7 @@
     transition: all 0.2s ease;
 
     .edit-icon {
-      font-size: 12px;
+      font-size: 16px;
       filter: grayscale(1) brightness(2);
     }
 
@@ -149,14 +115,14 @@
   flex: 1;
 
   h3 {
-    @include body-1;
+    @include h-5;
     color: $header-dark;
     margin: 0 0 $spacing-1 0;
     font-weight: 600;
   }
 
   p {
-    @include body-3;
+    @include body-2;
     color: $gray-600;
     margin: 0;
   }
@@ -169,36 +135,91 @@
   gap: $spacing-4;
 
   .section-title {
-    @include body-2;
+    @include h-6;
     color: $header-dark;
     font-weight: 600;
     margin: 0 0 $spacing-3 0;
+    padding-bottom: $spacing-2;
+    border-bottom: 1px solid $general-stroke-light;
+
+    .optional {
+      @include body-3;
+      color: $gray-500;
+      font-weight: 400;
+    }
   }
 }
 
-.form-group {
+.form-row {
   display: flex;
   flex-direction: column;
   gap: $spacing-2;
 
-  label {
-    @include body-3;
-    color: $gray-700;
-    font-weight: 500;
-    margin: 0;
+  &--phone {
+    .phone-group {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-2;
+
+      label {
+        @include body-2;
+        color: $header-dark;
+        font-weight: 500;
+      }
+    }
+
+  .phone-input-wrapper {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: $spacing-3;
+
+  select.phone-code,
+  app-input {
+    max-height: 48px;
+    height: 48px;
   }
 
-  .form-input {
+  select.phone-code {
     @include body-2;
-    width: 100%;
-    padding: 12px $spacing-4;
-    border: 1px solid $general-stroke-light;
+    padding: 0 $spacing-4;
     border-radius: $radius-3;
-    background: white;
+    border: 1px solid $general-stroke-light;
+    background: $gray-50;
     color: $text-primary;
     font-family: inherit;
     outline: none;
-    transition: all 0.2s ease;
+    cursor: pointer;
+    appearance: none; // remove default arrow
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:focus {
+      border-color: $orange-600;
+      box-shadow: 0 0 0 3px rgba($orange-600, 0.1);
+    }
+  }
+}
+
+  }
+
+  label {
+    @include body-2;
+    color: $header-dark;
+    font-weight: 500;
+    display: block;
+  }
+
+  textarea {
+    @include body-2;
+    width: 100%;
+    padding: $spacing-3 $spacing-4;
+    border: 1px solid $general-stroke-light;
+    border-radius: $radius-3;
+    background: $gray-50;
+    color: $text-primary;
+    resize: vertical;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease;
 
     &::placeholder {
       color: $gray-400;
@@ -208,77 +229,34 @@
       border-color: $orange-600;
       box-shadow: 0 0 0 3px rgba($orange-600, 0.1);
     }
-
-    &:disabled {
-      background: $gray-100;
-      cursor: not-allowed;
-    }
   }
+}
 
-  .form-select {
-    @include body-2;
-    padding: 12px $spacing-4;
-    border: 1px solid $general-stroke-light;
-    border-radius: $radius-3;
-    background: white;
-    color: $text-primary;
-    font-family: inherit;
-    outline: none;
-    transition: all 0.2s ease;
-    cursor: pointer;
+// Social Links
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
 
-    &:focus {
-      border-color: $orange-600;
-      box-shadow: 0 0 0 3px rgba($orange-600, 0.1);
-    }
+.social-input {
+  display: flex;
+  align-items: flex-end;
+  gap: $spacing-3;
 
-    &:disabled {
-      background: $gray-100;
-      cursor: not-allowed;
-    }
-  }
-
-  .phone-input-group {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: $spacing-3;
-
-    .phone-code-select {
-      font-weight: 500;
-    }
-
-    .phone-input {
-      // Inherits styles from .form-input
-    }
-  }
-
-  .error-text {
-    @include body-3;
-    color: $red-600;
-    margin: 0;
+  .social-icon {
+    font-size: 24px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
-    gap: $spacing-1;
-
-    &::before {
-      content: '⚠';
-      font-size: 14px;
-    }
+    justify-content: center;
+    flex-shrink: 0;
+    margin-bottom: 8px;
   }
 
-  .success-text {
-    @include body-3;
-    color: $green-600;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: $spacing-1;
-    font-weight: 500;
-
-    &::before {
-      content: '✓';
-      font-weight: bold;
-    }
+  app-input {
+    flex: 1;
   }
 }
 
@@ -286,23 +264,10 @@
 @include md {
   .modal {
     width: 95%;
-    
-    &__header {
-      padding: $spacing-4 $spacing-5;
-    }
-
-    &__close {
-      top: $spacing-4;
-      right: $spacing-4;
-    }
-
-    form {
-      padding: $spacing-4 $spacing-5;
-    }
+    padding: $spacing-5;
 
     &__actions {
       flex-direction: column;
-      padding: $spacing-4 $spacing-5;
 
       button {
         width: 100%;
@@ -313,78 +278,60 @@
   .profile-section {
     flex-direction: column;
     text-align: center;
-    padding: $spacing-4 0;
+  }
+
+  .form-row--phone {
+    .phone-input-wrapper {
+      grid-template-columns: 120px 1fr;
+    }
+  }
+
+  .social-input {
+    .social-icon {
+      display: none;
+    }
   }
 }
 
 @include sm {
   .modal {
     width: 100%;
-    max-height: 95vh;
-    border-radius: $radius-3;
-    
-    &__header {
-      padding: $spacing-4;
-
-      h2 {
-        font-size: 1rem;
-      }
-    }
-
-    &__close {
-      top: $spacing-3;
-      right: $spacing-3;
-      width: 24px;
-      height: 24px;
-      font-size: 20px;
-    }
-
-    form {
-      padding: $spacing-4;
-      gap: $spacing-4;
-    }
-
-    &__actions {
-      padding: $spacing-3 $spacing-4;
-    }
+    padding: $spacing-4;
   }
 
   .profile-avatar {
-    width: 56px;
-    height: 56px;
+    width: 96px;
+    height: 96px;
 
     .avatar-edit-btn {
-      width: 22px;
-      height: 22px;
+      width: 28px;
+      height: 28px;
 
       .edit-icon {
-        font-size: 11px;
+        font-size: 14px;
       }
     }
   }
 
-  .form-group {
-    .form-input {
-      padding: 10px $spacing-3;
-      font-size: 0.9375rem;
-    }
-
-    .form-select {
-      padding: 10px $spacing-3;
-      font-size: 0.9375rem;
-    }
-
-    .phone-input-group {
+  .form-row--phone {
+    .phone-input-wrapper {
       grid-template-columns: 100px 1fr;
       gap: $spacing-2;
     }
   }
-
-  .form-section {
+}
+.section-actions{
+    width: fit-content;
+    margin-left: auto;
+    display: flex;
     gap: $spacing-3;
+}
 
-    .section-title {
-      margin-bottom: $spacing-2;
-    }
-  }
+
+.profile-status-action {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $spacing-6;
+
+
 }
