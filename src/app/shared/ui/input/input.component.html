@@ -1,41 +1,25 @@
-<div
-  class="input-field-group"
-  [class.has-error]="hasError()"
-  [class.focused]="isFocused()"
-  [class.disabled]="isDisabled()"
->
-  @if (label()) {
-  <label class="input-label" [attr.for]="formControlName()">
-    {{ label() }}
-    @if (required()) {
-    <span class="required">*</span>
-    }
+<div class="input-field-group" [class.has-error]="hasError()">
+  <label *ngIf="label" class="input-label">
+    {{ label }}
+    <span *ngIf="required" class="required">*</span>
   </label>
-  }
 
-  <div
-    class="input-wrapper"
-    [class.with-icon]="!!iconSrc()"
-    [class.no-icon]="!iconSrc()"
-  >
-    @if (iconSrc()) {
-    <img [src]="iconSrc()" alt="icon" class="input-icon" />
-    }
+  <div class="input-wrapper" [class.with-icon]="iconSrc">
+    <img *ngIf="iconSrc" [src]="iconSrc" alt="icon" class="input-icon" />
 
     <input
       [type]="inputType()"
-      [placeholder]="placeholder()"
-      [value]="currentValue()"
-      (input)="onValueChange($event)"
+      [placeholder]="placeholder"
+      [value]="_value()"
+      (input)="onInput($event)"
       (focus)="onFocus()"
       (blur)="onBlur()"
-      [disabled]="isDisabled()"
-      [class.error]="hasError()"
+      [disabled]="disabled"
       class="form-input"
     />
 
-    @if (type() === 'password') {
     <button
+      *ngIf="type === 'password'"
       type="button"
       class="toggle-password"
       (click)="togglePasswordVisibility()"
@@ -43,19 +27,18 @@
     >
       <img
         [src]="
-          showPassword() ? 'icons/eye-close-icon.png' : 'icons/eye-open.svg'
+          showPassword()
+            ? 'icons/eye-close-icon.png'
+            : 'icons/eye-open.svg'
         "
         alt=""
       />
     </button>
-    }
   </div>
 
-  @if (hasError() && errorMessage()) {
   <app-form-error
-    [message]="errorMessage()"
+    *ngIf="hasError() && errorMessage"
+    [message]="errorMessage"
     [showIcon]="true"
-    [attr.id]="formControlName() + '-error'"
   ></app-form-error>
-  }
 </div>

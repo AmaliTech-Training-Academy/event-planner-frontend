@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { USER_ROLES } from '../../../../core/constants/user.constants';
 import { User, UserCardData } from '../../../../core/models/user.model';
@@ -12,6 +18,7 @@ import {
 } from '../../../../shared/admin-ui/data-table/data-table.component';
 import { InviteUserModalComponent } from './components/invite-user-modal/invite-user-modal.component';
 import { SuccessModalComponent } from './components/success-modal/success-modal.component';
+import { EditUserProfileComponent } from './components/edit-user-profile/edit-user-profile.component';
 
 @Component({
   selector: 'app-user-management-page',
@@ -21,10 +28,10 @@ import { SuccessModalComponent } from './components/success-modal/success-modal.
     DataTableComponent,
     InviteUserModalComponent,
     SuccessModalComponent,
+    EditUserProfileComponent,
   ],
   templateUrl: './user-management-page.component.html',
   styleUrls: ['./user-management-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserManagementPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
@@ -32,7 +39,8 @@ export class UserManagementPageComponent implements OnInit {
 
   public readonly isInviteModalOpen = signal<boolean>(false);
   public readonly isSuccessModalOpen = signal<boolean>(false);
-
+  public readonly isEditModalOpen = signal<boolean>(false);
+  public readonly selectedUser = signal<User | null>(null);
   public readonly userCards = signal<UserCardData[]>([
     {
       title: 'Total Users',
@@ -71,7 +79,7 @@ export class UserManagementPageComponent implements OnInit {
       name: 'Sarah Wilson',
       fullName: 'Sarah Wilson',
       email: 'sarah@example.com',
-      phone: '123-456-7890',
+      phone: '+233501234567',
       address: '123 Main St, Cityville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -87,7 +95,7 @@ export class UserManagementPageComponent implements OnInit {
       name: 'John Smith',
       fullName: 'John Smith',
       email: 'john@example.com',
-      phone: '234-567-8901',
+      phone: '+233501234567',
       address: '456 Elm St, Townsville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -103,7 +111,7 @@ export class UserManagementPageComponent implements OnInit {
       name: 'Emily Johnson',
       fullName: 'Emily Johnson',
       email: 'emily@example.com',
-      phone: '345-678-9012',
+      phone: '+233501234567',
       address: '789 Oak St, Villageville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -119,7 +127,7 @@ export class UserManagementPageComponent implements OnInit {
       name: 'Michael Brown',
       fullName: 'Michael Brown',
       email: 'michael@example.com',
-      phone: '456-789-0123',
+      phone: '+233501234567',
       address: '321 Pine St, Hamletville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -135,7 +143,7 @@ export class UserManagementPageComponent implements OnInit {
       name: 'Jessica Davis',
       fullName: 'Jessica Davis',
       email: 'jessica@example.com',
-      phone: '567-890-1234',
+      phone: '+233501234567',
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -199,6 +207,13 @@ export class UserManagementPageComponent implements OnInit {
       ],
     },
   ];
+  constructor() {
+    effect(() => {
+      const user = this.selectedUser();
+      const isOpen = this.isEditModalOpen();
+      console.log('[Debug] Modal state:', { isOpen, user });
+    });
+  }
 
   public readonly primaryAction = {
     label: 'Invite User',
@@ -247,7 +262,73 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   private _editUser(user: User): void {
-    console.log('Editing user:', user);
+    console.log('[UserManagement] BEFORE - selectedUser:', this.selectedUser());
+    console.log(
+      '[UserManagement] BEFORE - isEditModalOpen:',
+      this.isEditModalOpen()
+    );
+    console.log('[UserManagement] Setting user:', user);
+
+    // set selected user first
+    this.selectedUser.set(user);
+
+    console.log(
+      '[UserManagement] AFTER SET - selectedUser:',
+      this.selectedUser()
+    );
+
+    // open modal in next microtask to avoid lifecycle timing races
+    Promise.resolve().then(() => {
+      this.isEditModalOpen.set(true);
+      console.log(
+        '[UserManagement] AFTER PROMISE - isEditModalOpen:',
+        this.isEditModalOpen()
+      );
+      console.log(
+        '[UserManagement] AFTER PROMISE - selectedUser:',
+        this.selectedUser()
+      );
+    });
+  }
+
+  public closeEditModal(): void {
+    this.isEditModalOpen.set(false);
+    this.selectedUser.set(null);
+  }
+
+  public onSaveEdit(formData: any): void {
+    console.log('[UserManagement] Form data received:', formData);
+
+    const selectedUserId = this.selectedUser()?.userId;
+    if (!selectedUserId) {
+      console.error('[UserManagement] No selected user!');
+      return;
+    }
+
+    this._users.update((users) =>
+      users.map((u) => {
+        if (u.userId === selectedUserId) {
+          return {
+            ...u,
+            fullName: formData.fullName,
+            name: formData.fullName, // Update both name and fullName
+            email: formData.email,
+            phone: `${formData.countryCode}${formData.phoneNumber}`,
+            address: formData.address,
+            profileImageUrl:
+              formData.profileImageUrl ||
+              formData.profileImage ||
+              u.profileImageUrl,
+            avatar:
+              formData.profileImageUrl || formData.profileImage || u.avatar,
+          };
+        }
+        return u;
+      })
+    );
+
+    console.log('[UserManagement] Users updated:', this._users());
+    this.closeEditModal();
   }
 
   private _toggleUserStatus(user: User): void {
@@ -258,6 +339,5 @@ export class UserManagementPageComponent implements OnInit {
           : u
       )
     );
-    
   }
 }

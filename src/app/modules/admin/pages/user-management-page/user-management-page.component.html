@@ -1,7 +1,7 @@
 <div class="user-management-page">
   <div class="user-management-page__cards">
     @for (card of userCards(); track card.title) {
-      <app-admin-user-card [data]="card" />
+    <app-admin-user-card [data]="card" />
     }
   </div>
 
@@ -19,16 +19,24 @@
   </div>
 
   @if (isInviteModalOpen()) {
-    <app-invite-user-modal 
-      (close)="closeInviteModal()" 
-      (success)="onInviteSuccess()"
-    />
-  }
-
-  @if (isSuccessModalOpen()) {
-    <app-success-modal 
-      (close)="closeSuccessModal()" 
-      (action)="goToDashboard()"
-    />
+  <app-invite-user-modal
+    (close)="closeInviteModal()"
+    (success)="onInviteSuccess()"
+  />
+  } @if (isSuccessModalOpen()) {
+  <app-success-modal (close)="closeSuccessModal()" (action)="goToDashboard()" />
+  } @if (isEditModalOpen() && selectedUser()) {
+  <app-edit-user-profile
+    [userData]="selectedUser()!"
+    (close)="closeEditModal()"
+    (save)="onSaveEdit($event)"
+  />
+  } @else {
+  <!-- Add this to see what's happening -->
+  <div style="display: none">
+    Debug: Modal={{ isEditModalOpen() }}, User={{
+      selectedUser()?.name || "null"
+    }}
+  </div>
   }
 </div>
