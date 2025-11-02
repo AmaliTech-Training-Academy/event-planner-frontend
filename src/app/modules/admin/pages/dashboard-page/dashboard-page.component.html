@@ -1,17 +1,92 @@
-<!-- dashboard-page.component.html -->
 <div class="dashboard-page">
+  <!-- Cards Section -->
   <div class="dashboard-page__cards">
     @for (card of dashboardCards(); track card.title) {
       <app-admin-user-card [data]="card" />
     }
   </div>
 
-  <!-- Charts and insights section -->
+  <!-- Charts Section -->
   <div class="dashboard-page__charts">
-    <!-- Later we’ll place: -->
-    <!-- <app-total-users-chart /> -->
-    <!-- <app-traffic-by-website /> -->
-    <!-- <app-traffic-by-device /> -->
-    <!-- <app-user-statistics /> -->
+    <!-- Top Section: Line Chart + Traffic by Website -->
+    <div class="charts-row charts-row--main">
+      <!-- Line Chart Card -->
+      <div class="chart-card chart-card--large">
+        <div class="chart-card__header">
+          <div class="chart-tabs">
+            <button 
+              class="chart-tab" 
+              [class.chart-tab--active]="activeChartTab() === 'users'"
+              (click)="switchChartTab('users')"
+            >
+              Total Users
+            </button>
+            <button 
+              class="chart-tab" 
+              [class.chart-tab--active]="activeChartTab() === 'events'"
+              (click)="switchChartTab('events')"
+            >
+              Total Events
+            </button>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item">
+              <span class="legend-dot legend-dot--orange"></span>
+              This year
+            </span>
+            <span class="legend-item">
+              <span class="legend-dot legend-dot--gray"></span>
+              Last year
+            </span>
+          </div>
+        </div>
+        <div class="chart-card__body">
+          @if (activeChartTab() === 'users') {
+            <app-line-chart
+              [thisYearData]="totalUsersData()"
+              [lastYearData]="totalEventsData()"
+            />
+          } @else {
+            <app-line-chart
+              [thisYearData]="totalEventsData()"
+              [lastYearData]="totalUsersData()"
+            />
+          }
+        </div>
+      </div>
+
+      <!-- Traffic by Website Card -->
+      <div class="chart-card chart-card--sidebar">
+        <div class="chart-card__header">
+          <h3 class="chart-card__title">Traffic by Website</h3>
+        </div>
+        <div class="chart-card__body">
+          <app-traffic-list [data]="trafficByWebsite()" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Section: Bar Chart + Donut Chart -->
+    <div class="charts-row charts-row--split">
+      <!-- Traffic by Device Card -->
+      <div class="chart-card">
+        <div class="chart-card__header">
+          <h3 class="chart-card__title">Traffic by Device</h3>
+        </div>
+        <div class="chart-card__body">
+          <app-bar-chart [data]="trafficByDevice()" />
+        </div>
+      </div>
+
+      <!-- User Statistics Card -->
+      <div class="chart-card">
+        <div class="chart-card__header">
+          <h3 class="chart-card__title">User Statistics</h3>
+        </div>
+        <div class="chart-card__body">
+          <app-donut-chart [data]="userStatistics()" />
+        </div>
+      </div>
+    </div>
   </div>
 </div>
