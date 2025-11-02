@@ -8,14 +8,13 @@ import { HelpCardComponent } from '../../../../shared/components/help-card/help-
 import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
 import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
-
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import {
   EventDetails,
   TicketInfo,
   VenueImage,
   VenueSection,
 } from '../../../../core/models/event.model';
-
 
 import {
   MOCK_EVENT_DETAILS,
@@ -51,8 +50,9 @@ export class EventPageComponent implements OnInit {
   public helpEmail = signal<string>('');
   public showDatePicker = signal(false);
   public showRegistrationModal = signal(false);
-  public selectedTicketName = signal<string>('');
+ public selectedTicket = signal<TicketInfo | null>(null);
 
+ protected readonly routes = APP_ROUTES;
   public ngOnInit(): void {
     this.loadEventData();
   }
@@ -65,18 +65,20 @@ export class EventPageComponent implements OnInit {
     this.helpEmail.set(MOCK_HELP_EMAIL);
   }
 
-  protected onRegister(ticketName: string): void {
-    this.selectedTicketName.set(ticketName);
+  
+  protected onRegister(ticket: TicketInfo): void {
+    this.selectedTicket.set(ticket);
     this.showRegistrationModal.set(true);
   }
 
   protected onCancelRegistration(): void {
     this.showRegistrationModal.set(false);
+    this.selectedTicket.set(null); 
   }
 
   protected onSubmitRegistration(formData: any): void {
-    console.log('Registration Submitted', formData);
-    this.showRegistrationModal.set(false);
+   this.showRegistrationModal.set(false);
+    this.selectedTicket.set(null); 
   }
 
   protected toggleDatePicker(): void {
@@ -90,8 +92,7 @@ export class EventPageComponent implements OnInit {
       year: 'numeric',
     });
 
-   
-    this.eventDetails.update(details => {
+    this.eventDetails.update((details) => {
       if (details) {
         return { ...details, date: formattedDate };
       }
@@ -101,3 +102,4 @@ export class EventPageComponent implements OnInit {
     this.showDatePicker.set(false);
   }
 }
+

@@ -1,8 +1,5 @@
 @use 'sass:color';
 
-
-
-
 :host {
   display: block;
   position: fixed;
@@ -31,8 +28,9 @@
   max-width: 500px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
-  @include sm {
-    padding: 2rem 1rem;
-  }
+ @media (min-width: 640px) {
+  padding: 2rem 1rem;
+}
+
 }
 

@@ -1,13 +1,13 @@
-import { Component, input, output, computed, signal } from '@angular/core';
+import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-import { RegistrationInfo } from '../../../core/models/event.model';
-
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
-import { ButtonComponent } from '../../ui/button/button.component';
 import { InputComponent } from '../../ui/input/input.component';
 import { QuantityInputComponent } from '../../ui/quantity-input/quantity-input.component';
+import { ButtonComponent } from '../../ui/button/button.component';
+
+
+import { RegistrationInfo } from '../../../core/models/event.model';
 
 @Component({
   selector: 'app-registration-modal',
@@ -16,26 +16,25 @@ import { QuantityInputComponent } from '../../ui/quantity-input/quantity-input.c
     CommonModule,
     FormsModule,
     ModalComponent,
-    ButtonComponent,
     InputComponent,
     QuantityInputComponent,
+    ButtonComponent,
   ],
   templateUrl: './registration-modal.component.html',
   styleUrl: './registration-modal.component.scss',
 })
 export class RegistrationModalComponent {
   public registrationInfo = input.required<RegistrationInfo>();
+  public cancelRegistration = output<void>();
+  public submitRegistration = output<any>();
 
-  public readonly cancelRegistration = output<void>();
-  public readonly submitRegistration = output<any>();
+ 
+  protected fullName = '';
+  protected email = '';
+  protected ticketCount = 1;
 
-  protected fullName = signal('');
-  protected email = signal('');
-  protected ticketCount = signal(1);
-
-  protected ticketLabel = computed(() => {
-    return `Number of ${this.registrationInfo().ticketName}s`;
-  });
+  
+  protected isPaid = computed(() => this.registrationInfo().ticketPrice > 0);
 
   protected onCancel(): void {
     this.cancelRegistration.emit();
@@ -43,10 +42,9 @@ export class RegistrationModalComponent {
 
   protected onSubmit(): void {
     this.submitRegistration.emit({
-      fullName: this.fullName(),
-      email: this.email(),
-      tickets: this.ticketCount(),
-      ticketType: this.registrationInfo().ticketName,
+      fullName: this.fullName,
+      email: this.email,
+      tickets: this.isPaid() ? this.ticketCount : 1, 
     });
   }
 }

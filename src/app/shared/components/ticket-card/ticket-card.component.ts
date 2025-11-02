@@ -1,18 +1,13 @@
 import {
   Component,
-  ChangeDetectionStrategy,
   input,
   output,
+  computed,
+  ChangeDetectionStrategy, 
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../../ui/button/button.component';
-
-export interface TicketInfo {
-  title: string; 
-  price: number;
-  currency: string;
-  features: string[];
-}
+import { TicketInfo } from '../../../core/models/event.model';
 
 @Component({
   selector: 'app-ticket-card',
@@ -20,16 +15,11 @@ export interface TicketInfo {
   imports: [CommonModule, ButtonComponent],
   templateUrl: './ticket-card.component.html',
   styleUrl: './ticket-card.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush, 
 })
 export class TicketCardComponent {
-  
-  public readonly ticketInfo = input.required<TicketInfo>();
-
-  public readonly registerClick = output<void>();
-
-  protected onRegisterClick(): void {
-    this.registerClick.emit();
-  }
+  public ticketInfo = input.required<TicketInfo>();
+  public registerClick = output<void>();
+  protected isFree = computed(() => this.ticketInfo().price === 0);
 }
 

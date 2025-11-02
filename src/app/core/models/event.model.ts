@@ -1,10 +1,16 @@
-import { VenueImage } from '../../shared/components/venue-image-slider/venue-image-slider.component';
-import { TicketInfo } from '../../shared/components/ticket-card/ticket-card.component';
-import { VenueSection } from '../../shared/components/venue-section-card/venue-section-card.component';
 
 
-export type{ VenueImage, TicketInfo, VenueSection };
 
+
+
+export interface VenueSection {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  availability: string;
+  availabilityType: 'full' | 'available';
+}
 export interface EventDetails {
   id: string;
   title: string;
@@ -20,4 +26,18 @@ export interface EventDetails {
 export interface RegistrationInfo {
   eventName: string;
   ticketName: string;
+   ticketPrice: number;
+}
+
+export interface VenueImage {
+  url: string;
+  alt: string;
+}
+
+export interface TicketInfo {
+  title: string;
+  price: number;
+  currency?: string;
+  features: string[];
+  buttonText: string; 
 }

@@ -18,11 +18,6 @@ import { CommonModule } from '@angular/common';
 export class ModalComponent {
   public readonly closeModal = output<void>();
 
-  // We no longer need the ViewChild or the complex logic
-
-  /**
-   * This method is now only called when the backdrop itself is clicked.
-   */
   protected onBackdropClick(): void {
     this.closeModal.emit();
   }

@@ -1,66 +1,68 @@
-
 <app-modal (closeModal)="onCancel()">
-  
-  <div class="registration-modal-content">
-   
-    <div class="modal-header">
-      <h2 class="modal-title">{{ registrationInfo().eventName }}</h2>
-      <app-button
-        type="secondary"
-        variant="icon"
-        (click)="onCancel()"
-        aria-label="Close modal"
+ 
+  <div class="modal-header">
+    <h2 class="modal-title">{{ registrationInfo().eventName }}</h2>
+    <app-button
+      type="secondary"
+      variant="icon"
+      (click)="onCancel()"
+      aria-label="Close modal"
+    >
+      <svg
+        icon
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        width="24"
+        height="24"
       >
-       
-        <svg
-          icon
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
+        <path
           stroke-linecap="round"
           stroke-linejoin="round"
-        >
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </app-button>
-    </div>
+          d="M6 18 18 6M6 6l12 12"
+        />
+      </svg>
+    </app-button>
+  </div>
+
+  
+  <form (ngSubmit)="onSubmit()" class="registration-form">
+    <app-input
+      label="Full Name"
+      placeholder="Enter your full name"
+      [(ngModel)]="fullName"
+      name="fullName"
+      [required]="true"
+    ></app-input>
+
+    <app-input
+      label="Email"
+      type="email"
+      placeholder="user@eventhub.com"
+      [(ngModel)]="email"
+      name="email"
+      [required]="true"
+    ></app-input>
 
     
-    <form (ngSubmit)="onSubmit()" class="registration-form">
-      <app-input
-        label="Full Name"
-        placeholder="Enter your full name"
-        [(ngModel)]="fullName"
-        name="fullName"
-        [required]="true"
-      ></app-input>
+    @if (isPaid()) {
+    <div class="quantity-group">
+      <label class="form-label"
+        >Number of {{ registrationInfo().ticketName }}s</label
+      >
+      <app-quantity-input
+        [(ngModel)]="ticketCount"
+        name="ticketCount"
+      ></app-quantity-input>
+    </div>
+    }
 
-      <app-input
-        label="Email"
-        type="email"
-        placeholder="user@eventhub.com"
-        [(ngModel)]="email"
-        name="email"
-        [required]="true"
-      ></app-input>
-
-      <div class="quantity-group">
-        <label class="form-label">{{ ticketLabel() }}</label>
-        <app-quantity-input
-          [(ngModel)]="ticketCount"
-          name="ticketCount"
-        ></app-quantity-input>
-      </div>
-
-      <app-button type="primary" [buttonType]="'submit'">
-        Proceed to Payment
-      </app-button>
-    </form>
-  </div>
+    
+    <app-button type="primary" [buttonType]="'submit'">
+      @if (isPaid()) { Proceed to Payment } @else { Register for Event }
+    </app-button>
+  </form>
 </app-modal>
 

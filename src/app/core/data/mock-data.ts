@@ -53,11 +53,12 @@ export const MOCK_VENUE_SECTIONS: VenueSection[] = [
 
 export const MOCK_TICKETS: TicketInfo[] = [
   {
-    title: 'Regular Ticket',
-    price: 10,
-    currency: '$',
+    title: 'Get Your Free Ticket',
+    price: 0,
     features: ['Limited conference access', 'Workshop materials'],
+    buttonText: 'Register for Event', 
   },
+ 
   {
     title: 'VIP Ticket',
     price: 50,
@@ -67,8 +68,8 @@ export const MOCK_TICKETS: TicketInfo[] = [
       'Workshop materials',
       'Networking events',
     ],
+    buttonText: 'Buy VIP Ticket', 
   },
 ];
-
 export const MOCK_HELP_EMAIL: string = 'support@techevent.com';
 

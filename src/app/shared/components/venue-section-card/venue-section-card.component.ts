@@ -5,16 +5,7 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-
-
-export interface VenueSection {
-  id: string; 
-  name: string;
-  price: number;
-  imageUrl: string;
-  availability: string; 
-  availabilityType: 'full' | 'available';
-}
+import { VenueSection } from '../../../core/models/event.model';
 
 @Component({
   selector: 'app-venue-section-card',
