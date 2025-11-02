@@ -1,0 +1,72 @@
+@use "typography" as *;
+@use "variables" as *;
+@use "theme" as *;
+
+.flyer-container {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .flyer-preview {
+                position: relative;
+                width: 100%;
+                height: 572px;
+                overflow: hidden;
+                border-radius: 16px;
+                box-shadow: 0px 4px 8px -2px #00000040;
+
+                img.preview {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    position: relative;
+                    z-index: 1;
+                }
+
+                app-button {
+                    position: absolute;
+                    bottom: 16px;
+                    left: 16px;
+                    background-color: #fff;
+                    height: 48px;
+                    width: 48px;
+                    border-radius: 50%;
+                    border: none;
+                    z-index: 2;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+
+                    img {
+                        width: 24px;
+                        height: 24px;
+                    }
+                }
+            }
+
+            .change-flyer-container {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-end;
+
+                .info {
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+
+                    h5 {
+                        @include h-6;
+                        font-weight: bold;
+                        padding: 4px 8px;
+                    }
+
+                    p {
+                        @include body-2;
+                        color: $paragraph-text;
+                        padding: 4px 8px;
+                    }
+                }
+            }
+        }

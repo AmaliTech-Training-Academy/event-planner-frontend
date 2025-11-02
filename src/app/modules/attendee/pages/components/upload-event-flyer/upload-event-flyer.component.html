@@ -1,0 +1,19 @@
+<div class="flyer-container">
+    <div class="flyer-preview">
+        <img [src]="flyerPreview() || 'images/flyer.jpg'" alt="" class="flyer-preview">
+
+        <app-button buttonType="button" type="plain">
+            <img src="icons/image.svg" alt="" class="preview">
+        </app-button>
+    </div>
+    <div class="change-flyer-container">
+        <input #flyerFileInput type="file" accept="image/*" (change)="onFlyerImageSelected($event)" hidden>
+        <div class="info">
+            <h5>Upload event flyer</h5>
+            <p>Accepted formats: PDF, JPG, PNG (max 10MB)</p>
+        </div>
+        <app-button buttonType="button" type="secondary" (onClick)="flyerFileInput.click()">
+            Change the picture
+        </app-button>
+    </div>
+</div>

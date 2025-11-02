@@ -1,21 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ModalContainerComponent } from "../../../../shared/components/modal-container/modal-container.component";
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 import { InputComponent } from "../../../../shared/ui/input/input.component";
+import { RadioButtonComponent } from "../../../../shared/ui/radio-button/radio-button.component";
 import { EventDatePickerComponent } from "../../components/event-date-picker/event-date-picker.component";
 import { EventTimePickerComponent } from "../../components/event-time-picker/event-time-picker.component";
 import { EventTimeZonePickerComponent } from "../../components/event-time-zone-picker/event-time-zone-picker.component";
 import { EventFormService } from '../../services/event-form.service';
+import { ConnectZoomModalComponent } from "../components/connect-zoom-modal/connect-zoom-modal.component";
+import { SetCapacityModalComponent } from "../components/set-capacity-modal/set-capacity-modal.component";
+import { SetPriceModalComponent } from "../components/set-price-modal/set-price-modal.component";
+import { UploadEventFlyerComponent } from "../components/upload-event-flyer/upload-event-flyer.component";
 import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from './../../constants/event-form.constant';
-import { RadioButtonComponent } from "../../../../shared/ui/radio-button/radio-button.component";
-import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { EventOptionsContainerComponent } from "../components/event-options-container/event-options-container.component";
+import { RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, ModalContainerComponent, InputComponent, ButtonComponent, RadioButtonComponent],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, InputComponent, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
