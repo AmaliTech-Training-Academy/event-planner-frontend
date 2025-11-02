@@ -1,0 +1,42 @@
+<div class="calendar">
+    <div class="header">
+        <p>{{getSelectedDate().getDate()}} <span>/</span> {{getSelectedDate().getMonth()+1}} <span>/</span>
+            {{currentYear}}</p>
+    </div>
+
+    <div class="actions">
+        <div class="right">
+            <button (click)="selectToday()">Today</button>
+            <button (click)="selectLast()">Last selection</button>
+        </div>
+        <div class="left">
+            <button class="nav" (click)="prevMonth()">
+                <img src="icons/chevron-left.svg" alt="" />
+            </button>
+            <span>{{ monthName }}</span>
+            <button class="nav" (click)="nextMonth()">
+                <img src="icons/chevron-right.svg" alt="" />
+            </button>
+        </div>
+    </div>
+    <div class="table">
+        <div class="weekdays">
+            @for (day of ['Mo','Tu','We','Th','Fr','Sa','Su']; track $index) {
+            <div class="cell">{{ day }}</div>
+            }
+        </div>
+
+        <div class="days">
+            @for (_ of [].constructor(firstDayOffset); track $index) {
+            <div class="cell"></div>
+            }
+            @for (day of daysInMonth; track $index) {
+            <div class="day cell"
+                [class.selected]="selectedDate?.getDate() === day && selectedDate?.getMonth() === currentMonth"
+                (click)="selectDate(day)">
+                {{ day }}
+            </div>
+            }
+        </div>
+    </div>
+</div>

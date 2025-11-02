@@ -9,7 +9,7 @@ import { Component, input, computed, output } from '@angular/core';
   styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent {
-  public readonly type = input<'primary' | 'secondary' | 'social' | 'action'>(
+  public readonly type = input<'primary' | 'secondary' | 'social' | 'action' | 'plain'>(
     'primary'
   );
   public readonly disabled = input(false);
@@ -21,7 +21,7 @@ export class ButtonComponent {
 
     this.onClick.emit();
   }
-
+  
   public readonly color = input<
     'view' | 'edit' | 'delete' | 'power' | 'inactive' | string | undefined
   >();

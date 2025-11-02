@@ -1,0 +1,282 @@
+@use "typography" as *;
+@use "colors" as *;
+@use "variables" as *;
+@use "media_query" as *;
+
+.admin-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-4;
+  backdrop-filter: blur(0px);
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.85);
+
+  &__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  &__bg-image {
+    position: absolute;
+    opacity: 0.45;
+    background-size: cover;
+
+    &--chart {
+      top: 0%;
+      left: 0%;
+      width: 28%;
+    }
+
+    &--active {
+      top: 0%;
+      left: 35%;
+      width: 30%;
+    }
+
+    &--new {
+      left: 70%;
+      top: 0%;
+      width: 30%;
+    }
+
+    &--visits {
+      top: 32%;
+      height: 220px;
+      left: 0%;
+      width: 100%;
+      object-fit: cover;
+      opacity: 0.35;
+    }
+
+    &--views {
+      bottom: 0%;
+      width: 100%;
+      height: 400px;
+    }
+  }
+
+  &__card {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: $radius-7;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    padding: $spacing-8;
+    position: relative;
+    z-index: 1;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-7;
+  }
+
+  &__brand {
+    color: $orange-600;
+    @include body-2;
+    font-weight: 600;
+    margin-bottom: $spacing-2;
+  }
+
+  &__title {
+    @include h-3;
+    color: $header-dark;
+    margin-bottom: $spacing-1;
+  }
+
+  &__subtitle {
+    color: $paragraph-text;
+    @include body-2;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-5;
+    max-width: 465px;
+  }
+
+  &__options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    @include body-2;
+  }
+
+  &__checkbox {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    cursor: pointer;
+    color: $sub-header-dark;
+
+    input[type="checkbox"] {
+      width: $spacing-4;
+      height: $spacing-4;
+      cursor: pointer;
+      accent-color: $orange-600;
+    }
+  }
+
+  &__forgot {
+    color: $link-color;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $blue-700;
+    }
+  }
+
+  &__submit {
+    width: 100%;
+    padding: $spacing-3 + 0.125rem; 
+    background: $orange-600;
+    color: $gray-50;
+    border: none;
+    border-radius: $radius-4;
+    @include body-1;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover:not(:disabled) {
+      background: $orange-700;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__security {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-4;
+    background: $gray-100;
+    border-radius: $radius-4;
+    margin-top: $spacing-2;
+  }
+
+  &__security-icon {
+    width: $spacing-5;
+    height: $spacing-5;
+    color: $green-600;
+    flex-shrink: 0;
+  }
+
+  &__security-text {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-0 + 0.125rem; 
+  }
+
+  &__security-title {
+    @include body-3;
+    font-weight: 600;
+    color: $sub-header-dark;
+  }
+
+  &__security-subtitle {
+    @include body-3;
+    color: $paragraph-text;
+  }
+
+  @include sm {
+    &__card {
+      padding: $spacing-6;
+    }
+
+    &__title {
+      @include h-5;
+    }
+  }
+  .extras {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+
+  .custom-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    gap: 0.5rem;
+
+    input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .checkmark {
+      height: 18px;
+      width: 18px;
+      border-radius: 44%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      border: 1px solid $gray-300; 
+      background-color: transparent;
+
+      &::after {
+        content: '';
+        width: 8px;
+        height: 2px;
+        background-color: $gray-300; 
+        border-radius: 1px;
+        transform: scaleX(1);
+        transition: all 0.25s ease;
+      }
+    }
+
+    input:checked ~ .checkmark {
+      border-color: $red-300;
+
+      &::after {
+        background-color: $red-300;
+      }
+    }
+
+    .label-text {
+      font-size: 0.875rem;
+      color: $gray-900;
+    }
+
+    &:hover .checkmark {
+      border-color: $red-500;
+    }
+  }
+
+  .forgot-link {
+    font-size: 0.875rem;
+    color: $blue-700;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $blue-900;
+    }
+  }
+}
+}

@@ -23,7 +23,6 @@
     }
 
     <input
-      [id]="formControlName()"
       [type]="inputType()"
       [placeholder]="placeholder()"
       [value]="currentValue()"
@@ -32,7 +31,7 @@
       (blur)="onBlur()"
       [disabled]="isDisabled()"
       [class.error]="hasError()"
-      [attr.aria-describedby]="hasError() ? formControlName() + '-error' : null"
+      class="form-input"
     />
 
     @if (type() === 'password') {

@@ -10,6 +10,7 @@ import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { passwordMatchValidator } from '../../../../shared/validators/password-match.validator';
 import { LogoComponent } from "../../components/logo/logo.component";
 import { FORM_TYPE } from '../../constants/signup.constants';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 
 @Component({
@@ -27,7 +28,7 @@ export class SignupPageComponent implements OnInit , OnDestroy {
   private subscription: Subscription = new Subscription();
 
 
-  constructor(private readonly fb: FormBuilder, private readonly authService: AuthService, private readonly router: Router) {
+  constructor(private readonly fb: FormBuilder, private readonly authService: AuthService, private readonly notificationService: NotificationService) {
     this.signupForm = this.fb.group({
       [FORM_TYPE.FULL_NAME]: ['', [Validators.required, Validators.minLength(3)]],
       [FORM_TYPE.EMAIL]: ['', [Validators.required, Validators.email]],
@@ -56,7 +57,11 @@ export class SignupPageComponent implements OnInit , OnDestroy {
     if (this.signupForm.valid) {
       this.loading = true;
       const { fullName, email, password, confirmPassword } = this.signupForm.value;
-      this.authService.register(fullName, email, password, confirmPassword).subscribe()
+      this.authService.register(fullName, email, password, confirmPassword).subscribe({
+        next: () => {
+          this.notificationService.success('Registration successful! Login to continue.');
+        }
+      })
     } else {
       this.signupForm?.markAllAsTouched();
     }

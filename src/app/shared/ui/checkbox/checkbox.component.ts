@@ -1,17 +1,17 @@
 import {
+  ChangeDetectionStrategy,
   Component,
-  input,
-  output,
-  signal,
-  effect,
+  EventEmitter,
+  Input,
+  Output,
   forwardRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  FormsModule,
-  ReactiveFormsModule,
-  NG_VALUE_ACCESSOR,
   ControlValueAccessor,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
 } from '@angular/forms';
 
 @Component({
@@ -20,6 +20,7 @@ import {
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './checkbox.component.html',
   styleUrls: ['./checkbox.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -29,64 +30,40 @@ import {
   ],
 })
 export class CheckboxComponent implements ControlValueAccessor {
-  public label = input<string>('');
-  public checked = input<boolean>(false);
-  public ariaLabel = input<string>('');
+  @Input() public label: string = '';
+  @Input() public ariaLabel: string = '';
+  @Input() public checked: boolean = false;
+  @Input() public disabled: boolean = false;
 
-  public checkedChange = output<boolean>();
+  @Output() public checkedChange = new EventEmitter<boolean>();
 
-  private _checked = signal<boolean>(false);
-  private _disabled = signal<boolean>(false);
+  private _onChange: (value: boolean) => void = () => {};
+  private _onTouched: () => void = () => {};
 
-  private onChange: (value: boolean) => void = () => {};
-  private onTouched: () => void = () => {};
-
-  constructor() {
-    effect(() => {
-      const externalChecked = this.checked();
-      if (externalChecked !== this._checked()) {
-        this._checked.set(externalChecked);
-      }
-    });
+  public writeValue(value: boolean): void {
+    this.checked = value ?? false;
   }
 
-  public get isChecked(): boolean {
-    return this._checked();
+  public registerOnChange(fn: (value: boolean) => void): void {
+    this._onChange = fn;
   }
 
-  public get isDisabled(): boolean {
-    return this._disabled();
+  public registerOnTouched(fn: () => void): void {
+    this._onTouched = fn;
   }
 
-  writeValue(value: boolean): void {
-    this._checked.set(value ?? false);
+  public setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
   }
 
-  registerOnChange(fn: (value: boolean) => void): void {
-    this.onChange = fn;
+  public onInputChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.checked = input.checked;
+    this._onChange(this.checked);
+    this.checkedChange.emit(this.checked);
   }
 
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this._disabled.set(isDisabled);
-  }
-
-  public toggleCheck(): void {
-    if (this._disabled()) return;
-    const newValue = !this._checked();
-    this._checked.set(newValue);
-    this.onChange(newValue);
-    this.onTouched();
-    this.checkedChange.emit(newValue);
-  }
-
-  public onKeyDown(event: KeyboardEvent): void {
-    if (event.code === 'Space' || event.key === ' ') {
-      event.preventDefault();
-      this.toggleCheck();
-    }
+  public onBlur(): void {
+    this._onTouched();
   }
 }

@@ -1,0 +1,57 @@
+@use 'index' as *;
+@use 'sass:color';
+
+.filter-input-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  border-radius: $radius-4;
+  background-color: $gray-50;
+  border: $stroke-0 solid $gray-200;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &.search-wrapper {
+    flex-grow: 1.5;
+  }
+
+  &:focus-within {
+    box-shadow: 0 0 0 3px color.adjust($primary-color, $lightness: 40%, $alpha: -0.5);
+    border-color: $primary-color;
+  }
+}
+
+.filter-icon {
+  position: absolute;
+  left: $spacing-3;
+  top: 50%;
+  transform: translateY(-50%);
+  width: $spacing-4;
+  height: $spacing-4;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.7;
+}
+
+.filter-search {
+  @include body-1;
+  color: $header-dark;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 1.4;
+  height: 48px;
+  background-color: transparent;
+  border: none;
+  padding: $spacing-3 $spacing-4 $spacing-3 calc(#{$spacing-3} + #{$spacing-4} + #{$spacing-2});
+
+  &::placeholder {
+    color: $gray-600;
+    opacity: 1;
+  }
+
+  &:focus,
+  &:focus-within {
+    outline: none;
+  }
+}
