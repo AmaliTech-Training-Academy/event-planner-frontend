@@ -1,1 +1,14 @@
-<p>traffic-list works!</p>
+<div class="traffic-list">
+      @for (item of data; track item?.website) {
+      <div class="traffic-item">
+        <span class="traffic-item__label">{{ item?.website }}</span>
+        <div class="traffic-item__bar">
+          <div
+            class="traffic-item__progress"
+            [style.width.%]="item?.percentage"
+            [style.background-color]="item?.color"
+          ></div>
+        </div>
+      </div>
+      }
+    </div>
