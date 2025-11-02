@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { EChartsOption } from 'echarts';
@@ -15,23 +22,37 @@ export interface TrafficByDevice {
   imports: [CommonModule, NgxEchartsModule],
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss'],
-
 })
-export class BarChartComponent implements OnInit {
+export class BarChartComponent implements OnInit, OnChanges {
   @Input() data: TrafficByDevice[] = [];
 
   public readonly isLoading = signal(false);
   public readonly chartOptions = signal<EChartsOption>({});
 
-  ngOnInit() {
-    this.updateChartOptions();
+  ngOnInit(): void {
+    this.setChartData();
   }
 
-  ngOnChanges() {
-    this.updateChartOptions();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] && !changes['data'].firstChange) {
+      this.setChartData();
+    }
   }
 
-  private updateChartOptions() {
+
+  private setChartData(): void {
+    if (!this.data || this.data.length === 0) {
+      this.chartOptions.set({
+        title: {
+          text: 'No data available',
+          left: 'center',
+          top: 'center',
+          textStyle: { color: '#9CA3AF', fontSize: 14 },
+        },
+      });
+      return;
+    }
+
     const devices = this.data.map((d) => d.device);
     const values = this.data.map((d) => d.value);
     const colors = this.data.map((d) => d.color);
@@ -47,14 +68,8 @@ export class BarChartComponent implements OnInit {
       xAxis: {
         type: 'category',
         data: devices,
-        axisLine: {
-          lineStyle: {
-            color: '#E5E7EB',
-          },
-        },
-        axisTick: {
-          show: false,
-        },
+        axisLine: { lineStyle: { color: '#E5E7EB' } },
+        axisTick: { show: false },
         axisLabel: {
           color: '#6B7280',
           fontSize: 12,
@@ -64,27 +79,16 @@ export class BarChartComponent implements OnInit {
       },
       yAxis: {
         type: 'value',
-        axisLine: {
-          show: false,
-        },
-        axisTick: {
-          show: false,
-        },
+        axisLine: { show: false },
+        axisTick: { show: false },
         splitLine: {
-          lineStyle: {
-            color: '#F3F4F6',
-            type: 'solid',
-          },
+          lineStyle: { color: '#F3F4F6', type: 'solid' },
         },
         axisLabel: {
           color: '#6B7280',
           fontSize: 12,
-          formatter: (value: number) => {
-            if (value >= 1000) {
-              return `${(value / 1000).toFixed(0)}K`;
-            }
-            return value.toString();
-          },
+          formatter: (value: number) =>
+            value >= 1000 ? `${(value / 1000).toFixed(0)}K` : value.toString(),
         },
       },
       series: [
@@ -98,9 +102,8 @@ export class BarChartComponent implements OnInit {
             },
           })),
           barWidth: '40%',
-          label: {
-            show: false,
-          },
+          animationDuration: 800,
+          animationEasing: 'cubicOut',
         },
       ],
       tooltip: {
@@ -108,14 +111,10 @@ export class BarChartComponent implements OnInit {
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
         borderColor: '#E5E7EB',
         borderWidth: 1,
-        textStyle: {
-          color: '#374151',
-        },
+        textStyle: { color: '#374151' },
         axisPointer: {
           type: 'shadow',
-          shadowStyle: {
-            color: 'rgba(0, 0, 0, 0.05)',
-          },
+          shadowStyle: { color: 'rgba(0, 0, 0, 0.05)' },
         },
         formatter: (params: any) => {
           const param = params[0];
@@ -124,9 +123,9 @@ export class BarChartComponent implements OnInit {
               param.axisValue
             }</div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: ${
                 param.color
-              };"></span>
+              }; display: inline-block;"></span>
               <span style="color: #6B7280;">Traffic:</span>
               <span style="font-weight: 600;">${param.value.toLocaleString()}</span>
             </div>

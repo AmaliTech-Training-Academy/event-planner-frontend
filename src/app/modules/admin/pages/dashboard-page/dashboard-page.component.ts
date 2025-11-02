@@ -20,20 +20,21 @@ import {
   UserStatistics,
 } from './components/donut-chart/donut-chart.component';
 import { TrafficListComponent } from './components/traffic-list/traffic-list.component';
+import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 
 interface DashboardCard {
-  title: string;
-  count: number;
-  percentageChange?: number;
-  icon: string;
-  bgColor: string;
-  iconColor: string;
+  readonly title: string;
+  readonly count: number;
+  readonly percentageChange?: number;
+  readonly icon: string;
+  readonly bgColor: string;
+  readonly iconColor: string;
 }
 
 interface TrafficByWebsite {
-  website: string;
-  percentage: number;
-  color: string;
+  readonly website: string;
+  readonly percentage: number;
+  readonly color: string;
 }
 
 @Component({
@@ -45,13 +46,14 @@ interface TrafficByWebsite {
     BarChartComponent,
     DonutChartComponent,
     TrafficListComponent,
-  ],
+    ButtonComponent
+],
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPageComponent implements OnInit {
-  private readonly _layoutService: LayoutService = inject(LayoutService);
+  private readonly _layoutService = inject(LayoutService);
 
   public readonly dashboardCards = signal<DashboardCard[]>([
     {
@@ -86,7 +88,6 @@ export class DashboardPageComponent implements OnInit {
     },
   ]);
 
-  // Chart data
   public readonly totalUsersData = signal<TimeSeriesDataPoint[]>([
     { month: 'Jan', value: 12000 },
     { month: 'Feb', value: 8000 },
@@ -132,7 +133,6 @@ export class DashboardPageComponent implements OnInit {
     { category: 'Other', percentage: 11.2, color: '#9CA3AF' },
   ]);
 
-  // Active tab for chart toggle
   public readonly activeChartTab = signal<'users' | 'events'>('users');
 
   public ngOnInit(): void {

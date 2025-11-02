@@ -1,33 +1,31 @@
 <div class="dashboard-page">
-  <!-- Cards Section -->
   <div class="dashboard-page__cards">
     @for (card of dashboardCards(); track card.title) {
       <app-admin-user-card [data]="card" />
     }
   </div>
 
-  <!-- Charts Section -->
   <div class="dashboard-page__charts">
-    <!-- Top Section: Line Chart + Traffic by Website -->
     <div class="charts-row charts-row--main">
-      <!-- Line Chart Card -->
       <div class="chart-card chart-card--large">
         <div class="chart-card__header">
           <div class="chart-tabs">
-            <button 
-              class="chart-tab" 
-              [class.chart-tab--active]="activeChartTab() === 'users'"
-              (click)="switchChartTab('users')"
-            >
-              Total Users
-            </button>
-            <button 
-              class="chart-tab" 
-              [class.chart-tab--active]="activeChartTab() === 'events'"
-              (click)="switchChartTab('events')"
-            >
-              Total Events
-            </button>
+          <app-button
+  type="plain"
+  [extraClass]="['chart-tab', activeChartTab() === 'users' ? 'chart-tab--active' : '']"
+  (onClick)="switchChartTab('users')"
+>
+  Total Users
+</app-button>
+
+<app-button
+  type="plain"
+  [extraClass]="['chart-tab', activeChartTab() === 'events' ? 'chart-tab--active' : '']"
+  (onClick)="switchChartTab('events')"
+>
+  Total Events
+</app-button>
+
           </div>
           <div class="chart-legend">
             <span class="legend-item">
@@ -55,7 +53,6 @@
         </div>
       </div>
 
-      <!-- Traffic by Website Card -->
       <div class="chart-card chart-card--sidebar">
         <div class="chart-card__header">
           <h3 class="chart-card__title">Traffic by Website</h3>
@@ -66,9 +63,7 @@
       </div>
     </div>
 
-    <!-- Bottom Section: Bar Chart + Donut Chart -->
     <div class="charts-row charts-row--split">
-      <!-- Traffic by Device Card -->
       <div class="chart-card">
         <div class="chart-card__header">
           <h3 class="chart-card__title">Traffic by Device</h3>
@@ -78,7 +73,6 @@
         </div>
       </div>
 
-      <!-- User Statistics Card -->
       <div class="chart-card">
         <div class="chart-card__header">
           <h3 class="chart-card__title">User Statistics</h3>
