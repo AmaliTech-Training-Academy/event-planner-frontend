@@ -1,85 +1,157 @@
-import { Component } from '@angular/core';
+import { CommonModule, Location } from '@angular/common';
+import { Component, signal } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
   FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
-interface LoginForm {
-  email: FormControl<string | null>;
-  password: FormControl<string | null>;
-  remember: FormControl<boolean | null>;
-}
+import { Subscription } from 'rxjs';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { AuthService } from '../../../../core/services/auth.service';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { DividerComponent } from '../../../../shared/ui/divider/divider.component';
+import { InputComponent } from '../../../../shared/ui/input/input.component';
+import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
+import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    ButtonComponent,
+    SocialLoginComponent,
+    DividerComponent,
+    SecureTextComponent,
+    InputComponent,
+  ],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
-  form: FormGroup<LoginForm>;
-  isPasswordHidden = true;
-  isSubmitted = false;
+  protected form: FormGroup<LoginForm>;
 
-  constructor(private readonly fb: FormBuilder) {
+  protected isPasswordHidden = signal(true);
+  protected hasAttemptedSubmit = signal(false);
+  protected isSubmitting = signal(false);
+  protected loginError = signal<string | null>(null);
+  protected loading: boolean = false;
+  private subscription: Subscription = new Subscription();
+  protected readonly APP_ROUTES = APP_ROUTES;
+
+  private readonly emailRegex =
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  private readonly passwordRegex =
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly location: Location,
+    private readonly notificationService: NotificationService
+  ) {
     this.form = this.createForm();
+  }
+  ngOnInit(): void {
+    this.subscription.add(
+      this.authService.loading$.subscribe((isLoading) => {
+        this.loading = isLoading;
+      })
+    );
   }
 
   private createForm(): FormGroup<LoginForm> {
     return this.fb.group({
-      email: this.fb.control('', [Validators.required, Validators.email]),
+      email: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(this.emailRegex),
+      ]),
       password: this.fb.control('', [
         Validators.required,
-        Validators.minLength(8),
+        Validators.pattern(this.passwordRegex),
       ]),
       remember: this.fb.control(false),
     });
   }
 
-  get controls() {
-    return this.form.controls;
-  }
-
-  hasFieldError(fieldName: keyof LoginForm): boolean {
-    const field = this.form.get(fieldName);
-    return !!(field && field.invalid && (field.touched || this.isSubmitted));
-  }
-
-  getFieldErrorMessage(fieldName: keyof LoginForm): string {
-    const field = this.form.get(fieldName);
-    if (!field || !field.errors) return '';
-
-    if (field.errors['required'])
-      return `${this.capitalize(fieldName)} is required`;
-    if (field.errors['email']) return 'Please enter a valid email address';
-    if (field.errors['minlength'])
-      return `${this.capitalize(fieldName)} must be at least ${
-        field.errors['minlength'].requiredLength
-      } characters`;
-
-    return '';
-  }
-
-  togglePasswordVisibility(): void {
-    this.isPasswordHidden = !this.isPasswordHidden;
+  public togglePasswordVisibility(): void {
+    this.isPasswordHidden.update((v) => !v);
   }
 
   handleSubmit(): void {
-    this.isSubmitted = true;
     this.form.markAllAsTouched();
 
-    if (this.form.valid) {
-    } else {
-    }
+    if (this.form.invalid || this.isSubmitting()) return;
+
+    this.isSubmitting.set(true);
+    this.loginError.set(null);
+
+    const email = this.form.value?.email ?? '';
+    const password = this.form.value?.password ?? '';
+
+    this.authService
+      .login(email, password)
+
+      .subscribe({
+        next: () => {
+          this.notificationService.success("Credentials authenticated! Please provide the 2FA code sent to your email.");
+        },
+        error: (err) => {
+          if (err?.status === 401) {
+            this.loginError.set('Invalid email or password.');
+          } else if (err?.status === 403) {
+            this.loginError.set('Access denied. Please verify your email.');
+          } else {
+            this.loginError.set('Login failed. Please try again.');
+          }
+        },
+      });
   }
 
   private capitalize(text: string): string {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+    return text?.charAt(0)?.toUpperCase() + text?.slice(1);
   }
+
+  public hasFieldError(fieldName: keyof LoginForm): boolean {
+    const field = this.form?.get(fieldName);
+    return !!(field?.invalid && (field?.touched || this.hasAttemptedSubmit()));
+  }
+
+  public getFieldErrorMessage(fieldName: keyof LoginForm): string {
+    const field = this.form?.get(fieldName);
+    if (!field?.errors) return '';
+
+    const errors = field.errors;
+    switch (true) {
+      case !!errors?.['required']:
+        return `${this.capitalize(fieldName)} is required`;
+      case !!errors?.['pattern'] && fieldName === 'email':
+        return 'Please enter a valid email address';
+      case !!errors?.['pattern'] && fieldName === 'password':
+        return 'Password must include at least 8 chars, one number & one special character';
+      default:
+        return 'Invalid input';
+    }
+  }
+  goBack(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+}
+
+interface LoginForm {
+  email: FormControl<string | null>;
+  password: FormControl<string | null>;
+  remember: FormControl<boolean | null>;
 }

@@ -1,0 +1,8 @@
+# Global code ownership - jaakumasi is the reviewer
+* @jaakumasi
+
+# DevOps files - only devops team reviews
+/.github/ @mangucletus @kistlerk19 @jsabrokwah
+/docker* @mangucletus @kistlerk19 @jsabrokwah
+*.yml @mangucletus @kistlerk19 @jsabrokwah
+*.yaml @mangucletus @kistlerk19 @jsabrokwah

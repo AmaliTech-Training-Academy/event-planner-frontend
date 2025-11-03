@@ -1,0 +1,42 @@
+@use 'index' as *;
+@use 'sass:color';
+
+.help-card {
+  background-color: $gray-50; 
+  border-radius: $radius-4; 
+  border: $stroke-0 solid $general-stroke-light; 
+  padding: $spacing-6; 
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.card-title {
+  @include h-4; 
+  color: $header-dark; 
+  margin: 0 0 $spacing-4 0; 
+}
+
+.email-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-2; 
+  text-decoration: none;
+  
+  @include body-1; 
+  font-weight: 500;
+  
+  color: $sub-header-dark; 
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $primary-color; 
+  }
+}
+
+.email-icon {
+  width: $spacing-4; 
+  height: $spacing-4; 
+  opacity: 0.8; 
+}
+

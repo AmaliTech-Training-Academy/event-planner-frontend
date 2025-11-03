@@ -1,0 +1,43 @@
+<header class="admin-top-nav" role="banner">
+  <div class="admin-top-nav__left">
+    <img
+      ngSrc="{{ logoSrc }}"
+      width="32"
+      height="32"
+      [alt]="logoAlt"
+      class="admin-top-nav__logo"
+    />
+    <span class="admin-top-nav__page-title">{{ pageTitle }}</span>
+  </div>
+
+  <div class="admin-top-nav__right">
+    <app-button
+      [buttonType]="'button'"
+      type="social"
+      [extraClass]="'admin-top-nav__notifications'"
+      aria-label="Notifications"
+    >
+      <img
+        ngSrc="icons/notification-icon.png"
+        width="20"
+        height="20"
+        alt="Notifications"
+      />
+      @if (hasNotifications()) {
+      <span class="admin-top-nav__badge">
+        {{ notificationsCount }}
+      </span>
+      }
+    </app-button>
+
+    <div class="admin-top-nav__user" [attr.aria-label]="userName">
+      <img
+        ngSrc="{{ avatarSrc }}"
+        width="32"
+        height="32"
+        [alt]="userName"
+        class="admin-top-nav__avatar"
+      />
+    </div>
+  </div>
+</header>

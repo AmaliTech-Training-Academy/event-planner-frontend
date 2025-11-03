@@ -1,1 +1,121 @@
-<p>admin-login-page works!</p>
+<div class="admin-login">
+  <div class="admin-login__background">
+    <img
+      ngSrc="images/Card.png"
+      alt="Chart background decoration"
+      class="admin-login__bg-image admin-login__bg-image--chart"
+      width="400"
+      height="400"
+      priority
+    />
+
+    <img
+      ngSrc="images/card1.png"
+      alt="Active card background decoration"
+      class="admin-login__bg-image admin-login__bg-image--active"
+      width="400"
+      height="400"
+    />
+
+    <img
+      ngSrc="images/card2.png"
+      alt="New card background decoration"
+      class="admin-login__bg-image admin-login__bg-image--new"
+      width="400"
+      height="400"
+    />
+
+    <img
+      ngSrc="images/card5.png"
+      alt="Visits card background decoration"
+      class="admin-login__bg-image admin-login__bg-image--visits"
+      width="400"
+      height="400"
+      loading="lazy"
+    />
+
+    <img
+      ngSrc="images/Block.png"
+      alt="Views block background decoration"
+      class="admin-login__bg-image admin-login__bg-image--views"
+      width="400"
+      height="400"
+      loading="lazy"
+    />
+  </div>
+
+  <div class="admin-login__card">
+    <div class="admin-login__header">
+      <h1 class="admin-login__brand">Event Hub</h1>
+      <h2 class="admin-login__title">Admin Portal</h2>
+      <p class="admin-login__subtitle">Sign in to your admin account</p>
+    </div>
+
+    <form
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+      class="admin-login__form"
+    >
+      <div class="admin-login__form-group">
+        <app-input
+          type="email"
+          label="Email Address"
+          placeholder="admin@sikaborn.com"
+          formControlName="email"
+          iconSrc="icons/mail.png"
+          [required]="true"
+          [errorMessage]="
+            loginForm.get('email')?.touched && loginForm.get('email')?.invalid
+              ? getErrorMessage('email')
+              : ''
+          "
+        />
+      </div>
+
+      <div class="admin-login__form-group">
+        <app-input
+          type="password"
+          label="Password"
+          placeholder="••••••••••"
+          formControlName="password"
+          iconSrc="icons/lock.png"
+          [required]="true"
+          [errorMessage]="
+            loginForm.get('password')?.touched &&
+            loginForm.get('password')?.invalid
+              ? getErrorMessage('password')
+              : ''
+          "
+        />
+      </div>
+
+      <div class="admin-login__options">
+        <div class="extras">
+          <app-checkbox
+            label="Remember me"
+            formControlName="rememberMe"
+            ariaLabel="Remember me for future logins"
+          />
+
+          <a class="forgot-link" [routerLink]="APP_ROUTES.FORGOT_PASSWORD">
+            Forgot password?
+          </a>
+        </div>
+      </div>
+
+      <app-button
+        type="primary"
+        label="Sign In to Dashboard"
+        [disabled]="!loginForm.valid || isSubmitting()"
+      >
+        Sign In to Dashboard
+      </app-button>
+
+      <app-secure-text
+        text="Secure login enabled"
+        subText="This is a secure, encrypted connection"
+        iconSrc="icons/info.svg"
+      />
+    </form>
+  </div>
+</div>
