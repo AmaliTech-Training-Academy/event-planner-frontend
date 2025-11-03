@@ -1,22 +1,30 @@
 <div class="modal-backdrop" (click)="onClose()"></div>
 
 <div class="modal modal--profile">
-  <app-modal-header title="User Profile Information" (close)="onClose()" />
+  <app-modal-header
+    title="User Profile Information"
+    (close)="onClose()"
+  ></app-modal-header>
 
-  <div class="modal__content">
-    @if (userData(); as user) {
+  <div class="modal__content" *ngIf="userData() as user">
     <div class="profile-section">
       <div class="profile-avatar">
-        <img [src]="profileImage()" alt="Profile picture" />
+        <img
+          [ngSrc]="profileImage()"
+          alt="Profile picture"
+          width="128"
+          height="128"
+          priority
+        />
         <app-button
-         type="plain"
+          type="plain"
           [extraClass]="'status-button'"
           size="small"
           class="status-button"
         >
           <span class="button-content">
             <img
-              [src]="statusIcon()"
+              [ngSrc]="statusIcon()"
               alt="Status icon"
               class="status-icon"
               width="16"
@@ -26,11 +34,12 @@
         </app-button>
       </div>
       <div class="profile-info">
-        <h3>Edit Profile</h3>
-        <p class="user-role">Update your personal information</p>
+        <h3>{{ fullName() }}</h3>
+        <p class="user-role">{{ user.role }}</p>
       </div>
     </div>
 
+    ```
     <div class="info-section">
       <h4 class="section-title">Basic Information</h4>
       <div class="info-grid">
@@ -58,10 +67,11 @@
         </div>
       </div>
     </div>
-    }
+    ```
   </div>
 
   <div class="modal__actions">
+    <app-button type="secondary" (click)="onEdit()"> Edit Profile </app-button>
     <app-button
       [type]="isActive() ? 'danger' : 'success'"
       (click)="onToggleStatus()"

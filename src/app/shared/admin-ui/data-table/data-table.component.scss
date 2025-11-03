@@ -5,6 +5,7 @@
 .data-table {
   background: #F8F9FA;
   border-radius: $radius-4;
+  box-shadow: 0 0 15px rgb(0 0 0 /15%);
 
   &__header {
     display: flex;

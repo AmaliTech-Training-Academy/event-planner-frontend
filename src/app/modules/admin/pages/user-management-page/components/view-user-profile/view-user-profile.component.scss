@@ -24,7 +24,7 @@
 
 .modal {
   background: white;
-  width: 90%;
+  width: 100%;
   max-width: 700px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   position: absolute;
@@ -264,4 +264,9 @@
   .info-grid {
     gap: $spacing-3;
   }
+}
+.edit-button {
+  margin-left: auto;
+  width: fit-content;
+  margin-top: $spacing-4;
 }

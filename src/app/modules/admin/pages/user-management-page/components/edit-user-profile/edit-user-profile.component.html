@@ -10,7 +10,16 @@
     <div class="modal__content">
       <div class="profile-section">
         <div class="profile-avatar">
-          <img [src]="profileImage()" class="profile-picture" alt="Profile picture" />
+          <!-- Optimized profile image -->
+          <img
+            [ngSrc]="profileImage()"
+            width="128"
+            height="128"
+            class="profile-picture"
+            alt="Profile picture"
+            priority
+          />
+
           <app-button
             type="plain"
             [extraClass]="'status-button'"
@@ -19,12 +28,13 @@
             (click)="triggerFileInput()"
           >
             <span class="button-content">
+              <!-- Optimized status icon -->
               <img
-                [src]="statusIcon"
-                alt="Status icon"
-                class="status-icon"
+                [ngSrc]="statusIcon"
                 width="16"
                 height="16"
+                class="status-icon"
+                alt="Status icon"
               />
             </span>
           </app-button>
@@ -37,6 +47,7 @@
             style="display: none"
           />
         </div>
+
         <div class="profile-info">
           <h3>Edit Profile</h3>
           <p>Update your personal information</p>

@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { USER_ROLES } from '../../../../core/constants/user.constants';
 import { User, UserCardData } from '../../../../core/models/user.model';
@@ -30,7 +24,7 @@ import { ViewUserProfileComponent } from './components/view-user-profile/view-us
     InviteUserModalComponent,
     SuccessModalComponent,
     EditUserProfileComponent,
-    ViewUserProfileComponent
+    ViewUserProfileComponent,
   ],
   templateUrl: './user-management-page.component.html',
   styleUrls: ['./user-management-page.component.scss'],
@@ -39,12 +33,15 @@ export class UserManagementPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   private readonly _router = inject(Router);
 
-  public readonly isInviteModalOpen = signal<boolean>(false);
-  public readonly isSuccessModalOpen = signal<boolean>(false);
-  public readonly isEditModalOpen = signal<boolean>(false);
-  public readonly selectedUser = signal<User | null>(null);
-  public readonly isViewModalOpen = signal<boolean>(false);
-  public readonly userCards = signal<UserCardData[]>([
+  // Modal states
+  protected readonly isInviteModalOpen = signal<boolean>(false);
+  protected readonly isSuccessModalOpen = signal<boolean>(false);
+  protected readonly isEditModalOpen = signal<boolean>(false);
+  protected readonly isViewModalOpen = signal<boolean>(false);
+  protected readonly selectedUser = signal<User | null>(null);
+
+  // Data
+  protected readonly userCards = signal<UserCardData[]>([
     {
       title: 'Total Users',
       count: 2593,
@@ -159,9 +156,10 @@ export class UserManagementPageComponent implements OnInit {
     },
   ]);
 
-  public readonly users = this._users.asReadonly();
+  protected readonly users = this._users.asReadonly();
 
-  public readonly tableColumns: TableColumn<User>[] = [
+  // Table configuration
+  protected readonly tableColumns: TableColumn<User>[] = [
     { key: 'name', header: 'User', sortable: true },
     { key: 'role', header: 'Role(s)', filterable: true },
     { key: 'status', header: 'Status', filterable: true },
@@ -169,7 +167,7 @@ export class UserManagementPageComponent implements OnInit {
     { key: 'eventsAttended', header: 'Events Attended', sortable: true },
   ];
 
-  public readonly tableActions: TableAction<User>[] = [
+  protected readonly tableActions: TableAction<User>[] = [
     {
       icon: 'icons/view-icon.png',
       label: 'View User Details',
@@ -190,7 +188,7 @@ export class UserManagementPageComponent implements OnInit {
     },
   ];
 
-  public readonly tableFilters: TableFilter[] = [
+  protected readonly tableFilters: TableFilter[] = [
     {
       key: 'role',
       placeholder: 'All Roles',
@@ -210,6 +208,12 @@ export class UserManagementPageComponent implements OnInit {
       ],
     },
   ];
+
+  protected readonly primaryAction = {
+    label: 'Invite User',
+    handler: () => this._openInviteModal(),
+  };
+
   constructor() {
     effect(() => {
       const user = this.selectedUser();
@@ -218,28 +222,24 @@ export class UserManagementPageComponent implements OnInit {
     });
   }
 
-  public readonly primaryAction = {
-    label: 'Invite User',
-    handler: () => this._openInviteModal(),
-  };
-
-  public ngOnInit(): void {
+  ngOnInit(): void {
     this._layoutService.pageTitle.set('User Management');
   }
 
-  public openInviteModal(): void {
+  // Invite Modal handlers
+  protected openInviteModal(): void {
     this.isInviteModalOpen.set(true);
   }
 
-  public closeInviteModal(): void {
+  protected closeInviteModal(): void {
     this.isInviteModalOpen.set(false);
   }
 
-  public closeSuccessModal(): void {
+  protected closeSuccessModal(): void {
     this.isSuccessModalOpen.set(false);
   }
 
-  public onInviteSuccess(): void {
+  protected onInviteSuccess(): void {
     this.closeInviteModal();
 
     setTimeout(() => {
@@ -247,74 +247,39 @@ export class UserManagementPageComponent implements OnInit {
     }, 200);
   }
 
-  public goToDashboard(): void {
+  protected goToDashboard(): void {
     this.closeSuccessModal();
     this._router.navigate(['/dashboard']);
   }
 
-  public onRowExpanded(user: User): void {
-    console.log('Row expanded:', user);
-  }
-
-  private _openInviteModal(): void {
-    this.openInviteModal();
-  }
-
-  private _viewUser(user: User): void {
-    console.log('Viewing user:', user);
-    this.selectedUser.set(user);
-
-    Promise.resolve().then(() => {
-      this.isViewModalOpen.set(true);
-    });
-  }
-
-  public closeViewModal(): void {
+  // View Modal handlers
+  protected closeViewModal(): void {
     this.isViewModalOpen.set(false);
     this.selectedUser.set(null);
   }
 
-  public onToggleUserStatus(user: User): void {
+  protected onEditFromView(): void {
+    // Transition from view to edit mode
+    this.isViewModalOpen.set(false);
+
+    // Use microtask to ensure clean modal transition
+    Promise.resolve().then(() => {
+      this.isEditModalOpen.set(true);
+    });
+  }
+
+  protected onToggleUserStatus(user: User): void {
     this._toggleUserStatus(user);
     this.closeViewModal();
   }
 
-  private _editUser(user: User): void {
-    console.log('[UserManagement] BEFORE - selectedUser:', this.selectedUser());
-    console.log(
-      '[UserManagement] BEFORE - isEditModalOpen:',
-      this.isEditModalOpen()
-    );
-    console.log('[UserManagement] Setting user:', user);
-
-    // set selected user first
-    this.selectedUser.set(user);
-
-    console.log(
-      '[UserManagement] AFTER SET - selectedUser:',
-      this.selectedUser()
-    );
-
-    // open modal in next microtask to avoid lifecycle timing races
-    Promise.resolve().then(() => {
-      this.isEditModalOpen.set(true);
-      console.log(
-        '[UserManagement] AFTER PROMISE - isEditModalOpen:',
-        this.isEditModalOpen()
-      );
-      console.log(
-        '[UserManagement] AFTER PROMISE - selectedUser:',
-        this.selectedUser()
-      );
-    });
-  }
-
-  public closeEditModal(): void {
+  // Edit Modal handlers
+  protected closeEditModal(): void {
     this.isEditModalOpen.set(false);
     this.selectedUser.set(null);
   }
 
-  public onSaveEdit(formData: any): void {
+  protected onSaveEdit(formData: any): void {
     console.log('[UserManagement] Form data received:', formData);
 
     const selectedUserId = this.selectedUser()?.userId;
@@ -329,16 +294,12 @@ export class UserManagementPageComponent implements OnInit {
           return {
             ...u,
             fullName: formData.fullName,
-            name: formData.fullName, // Update both name and fullName
+            name: formData.fullName,
             email: formData.email,
-            phone: `${formData.countryCode}${formData.phoneNumber}`,
+            phone: formData.phoneNumber,
             address: formData.address,
-            profileImageUrl:
-              formData.profileImageUrl ||
-              formData.profileImage ||
-              u.profileImageUrl,
-            avatar:
-              formData.profileImageUrl || formData.profileImage || u.avatar,
+            profileImageUrl: formData.profileImage || u.profileImageUrl,
+            avatar: formData.profileImage || u.avatar,
           };
         }
         return u;
@@ -347,6 +308,40 @@ export class UserManagementPageComponent implements OnInit {
 
     console.log('[UserManagement] Users updated:', this._users());
     this.closeEditModal();
+  }
+
+  // Table handlers
+  protected onRowExpanded(user: User): void {
+    console.log('Row expanded:', user);
+  }
+
+  // Private action handlers
+  private _openInviteModal(): void {
+    this.openInviteModal();
+  }
+
+  private _viewUser(user: User): void {
+    console.log('Viewing user:', user);
+    this.selectedUser.set(user);
+
+    Promise.resolve().then(() => {
+      this.isViewModalOpen.set(true);
+    });
+  }
+
+  private _editUser(user: User): void {
+    console.log('[UserManagement] Editing user:', user);
+
+    // Close view modal if it's open
+    if (this.isViewModalOpen()) {
+      this.closeViewModal();
+    }
+
+    this.selectedUser.set(user);
+
+    Promise.resolve().then(() => {
+      this.isEditModalOpen.set(true);
+    });
   }
 
   private _toggleUserStatus(user: User): void {

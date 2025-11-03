@@ -31,19 +31,12 @@
     (close)="closeEditModal()"
     (save)="onSaveEdit($event)"
   />
-  } @else {
-  <!-- Add this to see what's happening -->
-  <div style="display: none">
-    Debug: Modal={{ isEditModalOpen() }}, User={{
-      selectedUser()?.name || "null"
-    }}
-  </div>
-  }
-  @if (isViewModalOpen() && selectedUser()) {
+  } @if (isViewModalOpen() && selectedUser()) {
   <app-view-user-profile
     [userData]="selectedUser()!"
     (close)="closeViewModal()"
     (toggleStatus)="onToggleUserStatus($event)"
+    (edit)="onEditFromView()"
   />
-}
+  }
 </div>

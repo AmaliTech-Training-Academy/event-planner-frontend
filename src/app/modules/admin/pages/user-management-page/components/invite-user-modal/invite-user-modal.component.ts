@@ -33,11 +33,9 @@ export class InviteUserModalComponent {
 
   private readonly _fb = inject(FormBuilder);
 
-  // Email chips management
   public readonly emailChips = signal<string[]>([]);
   public readonly emailInput = signal<string>('');
 
-  /** ✅ Form Initialization */
   public readonly inviteForm: FormGroup<InviteUserForm> = this._fb.group({
     title: this._fb.control('', [Validators.required]),
     name: this._fb.control('', [Validators.required]),
@@ -47,7 +45,6 @@ export class InviteUserModalComponent {
     message: this._fb.control(''),
   });
 
-  /** ✅ Select Options */
   public readonly roles = [
     { label: USER_ROLES.ORGANIZER, value: USER_ROLES.ORGANIZER },
     { label: USER_ROLES.CO_ORGANIZER, value: USER_ROLES.CO_ORGANIZER },
@@ -63,14 +60,13 @@ export class InviteUserModalComponent {
     { label: 'Community Meetup', value: 'community_meetup' },
   ];
 
-  /** ✅ Email Chip Methods */
   public addEmailChip(event: Event): void {
     const input = event.target as HTMLInputElement;
     const email = input.value.trim();
 
     if (
       email &&
-      this.isValidEmail(email) &&
+      this._isValidEmail(email) &&
       !this.emailChips().includes(email)
     ) {
       this.emailChips.update((chips) => [...chips, email]);
@@ -87,7 +83,7 @@ export class InviteUserModalComponent {
       event.preventDefault();
       if (
         email &&
-        this.isValidEmail(email) &&
+        this._isValidEmail(email) &&
         !this.emailChips().includes(email)
       ) {
         this.emailChips.update((chips) => [...chips, email]);
@@ -99,7 +95,6 @@ export class InviteUserModalComponent {
       !email &&
       this.emailChips().length > 0
     ) {
-      // Remove last chip on backspace if input is empty
       this.emailChips.update((chips) => chips.slice(0, -1));
     }
   }
@@ -108,16 +103,14 @@ export class InviteUserModalComponent {
     this.emailChips.update((chips) => chips.filter((e) => e !== email));
   }
 
-  private isValidEmail(email: string): boolean {
+  private _isValidEmail(email: string): boolean {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
   }
 
-  /** ✅ Handle Form Submission */
   public onSubmit(): void {
     this.inviteForm.markAllAsTouched();
 
-    // Check if we have at least one email chip
     if (this.emailChips().length === 0) {
       alert('Please add at least one email address');
       return;
@@ -130,7 +123,6 @@ export class InviteUserModalComponent {
       emails: this.emailChips(),
     });
 
-    // Emit success event to parent component
     this.success.emit();
   }
 
@@ -138,7 +130,6 @@ export class InviteUserModalComponent {
     this.close.emit();
   }
 
-  /** ✅ Reusable Error Helpers */
   public hasError(controlName: keyof InviteUserForm): boolean {
     const control = this.inviteForm.get(controlName);
     return !!(control?.invalid && control?.touched);
@@ -149,18 +140,17 @@ export class InviteUserModalComponent {
     if (!control?.errors) return '';
 
     if (control.errors['required'])
-      return `${this.capitalize(controlName)} is required`;
+      return `${this._capitalize(controlName)} is required`;
     if (control.errors['email'] || control.errors['invalidEmail'])
       return 'Please enter a valid email address';
     return 'Invalid input';
   }
 
-  private capitalize(text: string): string {
+  private _capitalize(text: string): string {
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
 }
 
-/** ✅ Strongly Typed Form Interface */
 interface InviteUserForm {
   title: FormControl<string | null>;
   name: FormControl<string | null>;
