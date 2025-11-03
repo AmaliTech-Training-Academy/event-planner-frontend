@@ -11,7 +11,7 @@ import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from '../../../
   imports: [ButtonComponent, CommonModule, RouterLink, NgOptimizedImage],
   templateUrl: './event-options-container.component.html',
   styleUrl: './event-options-container.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
 })
 export class EventOptionsContainerComponent {
 
