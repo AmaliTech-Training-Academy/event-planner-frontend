@@ -4,10 +4,10 @@ import {
   ViewChildren,
   ElementRef,
   signal,
-  Input, // ADDED: For length
-  Output, // ADDED: For events
-  EventEmitter, // ADDED: For events
-  OnInit, // ADDED: For initialization logic
+  Input,
+  Output, 
+  EventEmitter, 
+  OnInit, 
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,21 +21,21 @@ import { FormsModule } from '@angular/forms';
 })
 export class OtpInputComponent implements OnInit {
   
-  // 1. INPUT: Receives the length from the parent component
+  
   @Input() length: number = 6; 
 
-  // 2. OUTPUT: Emits the full OTP string whenever any digit changes
+ 
   @Output() otpChange = new EventEmitter<string>();
 
-  // Internal state is now dynamically sized based on @Input() length
+ 
   protected otpDigits = signal<string[]>([]);
 
-  // View Children access (kept private as best practice)
+ 
   @ViewChildren('otpInput') private inputs?: QueryList<
     ElementRef<HTMLInputElement>
   >;
 
-  // Initialize the signal array based on the input length
+  
   ngOnInit(): void {
     this.otpDigits.set(new Array(this.length).fill(''));
   }
@@ -58,7 +58,7 @@ export class OtpInputComponent implements OnInit {
       return digits;
     });
 
-    // 3. EMIT: Emit the full OTP value to the parent component
+    
     this.otpChange.emit(this.getOtpValue());
 
     if (value && index < this.length - 1) {
@@ -86,11 +86,11 @@ export class OtpInputComponent implements OnInit {
       return arr;
     });
 
-    // Focus on the next logical input after pasting
+    
     const nextIndex = Math.min(digits.length, this.length - 1);
     this.inputs?.toArray()[nextIndex]?.nativeElement.focus();
     
-    // 3. EMIT: Emit the full OTP value after pasting
+    
     this.otpChange.emit(this.getOtpValue());
   }
 
