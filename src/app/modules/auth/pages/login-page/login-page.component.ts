@@ -1,22 +1,23 @@
+import { CommonModule, Location } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import {
   FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
   FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
-import { CommonModule, Location } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
+import { Subscription } from 'rxjs';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '../../../../core/services/auth.service';
-import { finalize, Subscription } from 'rxjs';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
 import { DividerComponent } from '../../../../shared/ui/divider/divider.component';
-import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
+import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-text.component';
+import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-login-page',
@@ -54,7 +55,8 @@ export class LoginPageComponent {
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
     private readonly router: Router,
-  private location: Location
+    private readonly location: Location,
+    private readonly notificationService: NotificationService
   ) {
     this.form = this.createForm();
   }
@@ -99,7 +101,9 @@ export class LoginPageComponent {
       .login(email, password)
 
       .subscribe({
-        next: () => {},
+        next: () => {
+          this.notificationService.success("Credentials authenticated! Please provide the 2FA code sent to your email.");
+        },
         error: (err) => {
           if (err?.status === 401) {
             this.loginError.set('Invalid email or password.');
