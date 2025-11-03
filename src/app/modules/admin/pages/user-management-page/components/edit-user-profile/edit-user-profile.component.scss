@@ -238,15 +238,9 @@
   .profile-avatar {
     width: 64px;
     height: 64px;
+    position:relative;
 
-    .avatar-edit-btn {
-      width: 24px;
-      height: 24px;
-
-      .edit-icon {
-        font-size: 12px;
-      }
-    }
+   
   }
 
   .form-row {
@@ -373,7 +367,7 @@
   .profile-avatar {
     position: relative;
 
-    img {
+    img.profile-picture {
       width: 80px;
       height: 80px;
       border-radius: 50%;

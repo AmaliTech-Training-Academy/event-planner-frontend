@@ -43,17 +43,16 @@
   }
 
   &__actions {
+    background-color: transparent;
     display: flex;
     gap: $spacing-3;
     justify-content: flex-start;
     padding: $spacing-5 $spacing-6;
     border-top: 1px solid $general-stroke-light;
     flex-shrink: 0;
-    background: white;
   }
 }
 
-// Profile Section
 .profile-section {
   display: flex;
   align-items: center;
@@ -113,10 +112,9 @@
   }
 
   .user-role {
-    @include body-3;
-    color: $orange-600;
+    @include body-2;
     margin: 0 0 4px 0;
-    font-weight: 500;
+    font-weight: 400;
   }
 
   .user-id {

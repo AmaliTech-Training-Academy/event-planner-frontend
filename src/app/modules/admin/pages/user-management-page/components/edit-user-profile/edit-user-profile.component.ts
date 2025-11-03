@@ -8,6 +8,7 @@ import {
   ElementRef,
   OnChanges,
   SimpleChanges,
+  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -66,7 +67,7 @@ export class EditUserProfileComponent implements OnChanges {
   @Input() userData?: any;
   private _hasPrefilled = false;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-
+  protected readonly statusIcon = 'icons/camera.png';
   profileForm: FormGroup;
   profileImage = signal(
     'https://ui-avatars.com/api/?name=User&background=FF6B35&color=fff&size=128'

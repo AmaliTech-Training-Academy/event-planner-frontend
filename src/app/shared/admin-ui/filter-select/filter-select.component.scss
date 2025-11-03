@@ -8,6 +8,9 @@
   gap: $spacing-2;
   width: 130px;
   position: relative;
+  @media(max-width:1280px) {
+    width: 240px;
+  }
 
   &__dropdown {
     @include body-2;
@@ -106,7 +109,8 @@
 }
 
 .filter-select--md {
-  width: 130px;
+  width: 240px;
+  
 
   .filter-select__dropdown {
     height: 48px;

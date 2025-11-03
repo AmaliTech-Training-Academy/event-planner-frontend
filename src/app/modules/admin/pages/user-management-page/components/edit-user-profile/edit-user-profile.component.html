@@ -10,14 +10,25 @@
     <div class="modal__content">
       <div class="profile-section">
         <div class="profile-avatar">
-          <img [src]="profileImage()" alt="Profile picture" />
-          <button
-            type="button"
-            class="avatar-edit-btn"
+          <img [src]="profileImage()" class="profile-picture" alt="Profile picture" />
+          <app-button
+            type="plain"
+            [extraClass]="'status-button'"
+            size="small"
+            class="status-button"
             (click)="triggerFileInput()"
           >
-            <span class="edit-icon">📷</span>
-          </button>
+            <span class="button-content">
+              <img
+                [src]="statusIcon"
+                alt="Status icon"
+                class="status-icon"
+                width="16"
+                height="16"
+              />
+            </span>
+          </app-button>
+
           <input
             #fileInput
             type="file"
