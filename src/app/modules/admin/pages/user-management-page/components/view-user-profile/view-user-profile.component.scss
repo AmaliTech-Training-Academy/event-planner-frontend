@@ -75,6 +75,7 @@
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid $gray-200;
+    
   }
 
   .status-badge {
@@ -82,7 +83,7 @@
     bottom: -4px;
     right: -4px;
     padding: 4px 8px;
-    border-radius: 12px;
+    border-radius: 12px;    
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;

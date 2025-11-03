@@ -1,27 +1,33 @@
 <div class="modal-backdrop" (click)="onClose()"></div>
 
 <div class="modal modal--profile">
-  <app-modal-header
-    title="User Profile Information"
-    (close)="onClose()"
-  ></app-modal-header>
+  <app-modal-header title="User Profile Information" (close)="onClose()" />
 
   <div class="modal__content">
+    @if (userData(); as user) {
     <div class="profile-section">
       <div class="profile-avatar">
         <img [src]="profileImage()" alt="Profile picture" />
-        <div
-          class="status-badge"
-          [class.status-badge--active]="isActive()"
-          [class.status-badge--inactive]="!isActive()"
+        <app-button
+         type="social"
+          [extraClass]="'status-button'"
+          size="small"
+          class="status-button"
         >
-          {{ userData?.status }}
-        </div>
+          <span class="button-content">
+            <img
+              [src]="statusIcon()"
+              alt="Status icon"
+              class="status-icon"
+              width="16"
+              height="16"
+            />
+          </span>
+        </app-button>
       </div>
       <div class="profile-info">
-        <h3>{{ userData?.fullName || 'N/A' }}</h3>
-        <p class="user-role">{{ userData?.role }}</p>
-        <p class="user-id">User ID: {{ userData?.userId }}</p>
+        <h3>Edit Profile</h3>
+        <p class="user-role">Update your personal information</p>
       </div>
     </div>
 
@@ -30,11 +36,11 @@
       <div class="info-grid">
         <div class="info-item">
           <label class="info-label">Full Name</label>
-          <p class="info-value">{{ userData?.fullName || 'N/A' }}</p>
+          <p class="info-value">{{ fullName() }}</p>
         </div>
         <div class="info-item">
           <label class="info-label">Email Address</label>
-          <p class="info-value">{{ userData?.email || 'N/A' }}</p>
+          <p class="info-value">{{ email() }}</p>
         </div>
       </div>
     </div>
@@ -44,23 +50,23 @@
       <div class="info-grid">
         <div class="info-item">
           <label class="info-label">Phone Number</label>
-          <p class="info-value">{{ getPhoneDisplay() }}</p>
+          <p class="info-value">{{ phoneDisplay() }}</p>
         </div>
         <div class="info-item">
           <label class="info-label">Address</label>
-          <p class="info-value">{{ userData?.address || 'N/A' }}</p>
+          <p class="info-value">{{ address() }}</p>
         </div>
       </div>
     </div>
+    }
   </div>
 
   <div class="modal__actions">
     <app-button
-  [type]="isActive() ? 'danger' : 'success'"
-  (click)="onToggleStatus()"
->
-  {{ statusButtonText() }}
-</app-button>
-
+      [type]="isActive() ? 'danger' : 'success'"
+      (click)="onToggleStatus()"
+    >
+      {{ statusButtonText() }}
+    </app-button>
   </div>
 </div>
