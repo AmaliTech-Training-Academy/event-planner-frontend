@@ -4,7 +4,7 @@ import {
   ViewChildren,
   ElementRef,
   signal,
-  Input, 
+  Input,
   Output, 
   EventEmitter, 
   OnInit, 
@@ -22,19 +22,22 @@ import { FormsModule } from '@angular/forms';
 export class OtpInputComponent implements OnInit {
   
   
+  
   @Input() length: number = 6; 
 
-  
+ 
   @Output() otpChange = new EventEmitter<string>();
 
  
+ 
   protected otpDigits = signal<string[]>([]);
 
-  
+ 
   @ViewChildren('otpInput') private inputs?: QueryList<
     ElementRef<HTMLInputElement>
   >;
 
+  
   
   ngOnInit(): void {
     this.otpDigits.set(new Array(this.length).fill(''));
@@ -58,6 +61,7 @@ export class OtpInputComponent implements OnInit {
       return digits;
     });
 
+    
     
     this.otpChange.emit(this.getOtpValue());
 
@@ -87,10 +91,11 @@ export class OtpInputComponent implements OnInit {
     });
 
     
+    
     const nextIndex = Math.min(digits.length, this.length - 1);
     this.inputs?.toArray()[nextIndex]?.nativeElement.focus();
     
-   
+    
     this.otpChange.emit(this.getOtpValue());
   }
 
