@@ -7,9 +7,7 @@ import { Component, input } from '@angular/core';
   styleUrls: ['./divider.component.scss'],
 })
 export class DividerComponent {
- 
   public readonly text = input<string | null>('or');
-
 
   public readonly decorative = input<boolean>(false);
 }

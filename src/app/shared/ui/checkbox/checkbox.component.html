@@ -1,13 +1,15 @@
-<div
-  class="checkbox-wrapper"
-  role="checkbox"
-  [attr.aria-checked]="checked()"
-  [attr.aria-disabled]="disabled()"
-  tabindex="0"
-  (click)="toggleCheck()"
-  (keydown)="onKeyDown($event)"
-  [class.disabled]="disabled()"
->
-  <span class="checkmark" [class.checked]="checked()"></span>
-  <span class="label-text">{{ label() }}</span>
-</div>
+<label class="checkbox-wrapper" [class.disabled]="disabled">
+  <input
+    type="checkbox"
+    class="checkbox-input"
+    [checked]="checked"
+    [disabled]="disabled"
+    [attr.aria-label]="ariaLabel || label"
+    (change)="onInputChange($event)"
+    (blur)="onBlur()"
+  />
+  <span class="checkbox-box">
+    <span class="checkmark"></span>
+  </span>
+  <span class="label-text" *ngIf="label">{{ label }}</span>
+</label>

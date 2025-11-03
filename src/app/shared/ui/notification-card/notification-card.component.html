@@ -1,0 +1,12 @@
+<div class="alert" [ngClass]="notification?.type">
+    <app-button type="plain" (onClick)="close()">
+        @if(notification?.type === 'success'){
+        <img src="icons/close_green.svg" alt="Success" srcset="">
+        } @else if(notification?.type === 'error') {
+        <img src="icons/close_red.svg" alt="Error" srcset="">
+        }
+    </app-button>
+    <div class="content">
+        <p>{{notification?.message}}</p>
+    </div>
+</div>

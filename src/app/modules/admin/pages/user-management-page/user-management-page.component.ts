@@ -1,8 +1,6 @@
 // user-management-page.component.ts
 import { Component, signal, inject } from '@angular/core';
-import {
-  AdminUserCardComponent,
-} from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
+import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   DataTableComponent,
@@ -11,8 +9,7 @@ import {
   TableFilter,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
 import { User, UserCardData } from '../../../../core/models/user.model';
-
-
+import { USER_ROLES } from '../../../../core/constants/user.constants';
 
 @Component({
   selector: 'app-user-management-page',
@@ -66,7 +63,7 @@ export class UserManagementPageComponent {
       address: '123 Main St, Cityville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Organizer',
+      role: USER_ROLES.ORGANIZER,
       status: 'Active',
       eventsOrganized: 3,
       eventsAttended: 10,
@@ -82,7 +79,7 @@ export class UserManagementPageComponent {
       address: '456 Elm St, Townsville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Attendee',
+      role: USER_ROLES.ATTENDEE,
       status: 'Inactive',
       eventsOrganized: 0,
       eventsAttended: 2,
@@ -98,7 +95,7 @@ export class UserManagementPageComponent {
       address: '789 Oak St, Villageville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Co-Organizer',
+      role: USER_ROLES.CO_ORGANIZER,
       status: 'Active',
       eventsOrganized: 2,
       eventsAttended: 6,
@@ -114,7 +111,7 @@ export class UserManagementPageComponent {
       address: '321 Pine St, Hamletville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Venue Staff',
+      role: USER_ROLES.VENUE_STAFF,
       status: 'Active',
       eventsOrganized: 0,
       eventsAttended: 8,
@@ -130,7 +127,7 @@ export class UserManagementPageComponent {
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Attendee',
+      role: USER_ROLES.ATTENDEE,
       status: 'Inactive',
       eventsOrganized: 0,
       eventsAttended: 1,
@@ -146,7 +143,7 @@ export class UserManagementPageComponent {
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Attendee',
+      role: USER_ROLES.ATTENDEE,
       status: 'Inactive',
       eventsOrganized: 0,
       eventsAttended: 1,
@@ -162,7 +159,7 @@ export class UserManagementPageComponent {
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Attendee',
+      role: USER_ROLES.ATTENDEE,
       status: 'Inactive',
       eventsOrganized: 0,
       eventsAttended: 1,
@@ -178,7 +175,7 @@ export class UserManagementPageComponent {
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Attendee',
+      role: USER_ROLES.ATTENDEE,
       status: 'Inactive',
       eventsOrganized: 0,
       eventsAttended: 1,
@@ -194,7 +191,7 @@ export class UserManagementPageComponent {
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Attendee',
+      role: USER_ROLES.ATTENDEE,
       status: 'Inactive',
       eventsOrganized: 0,
       eventsAttended: 1,
@@ -210,7 +207,7 @@ export class UserManagementPageComponent {
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Attendee',
+      role: USER_ROLES.ATTENDEE,
       status: 'Inactive',
       eventsOrganized: 0,
       eventsAttended: 1,
@@ -226,7 +223,7 @@ export class UserManagementPageComponent {
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
-      role: 'Attendee',
+      role: USER_ROLES.ATTENDEE,
       status: 'Inactive',
       eventsOrganized: 0,
       eventsAttended: 1,
@@ -274,10 +271,10 @@ export class UserManagementPageComponent {
       key: 'role',
       placeholder: 'All Roles',
       options: [
-        { label: 'Organizer', value: 'Organizer' },
-        { label: 'Co-Organizer', value: 'Co-Organizer' },
-        { label: 'Attendee', value: 'Attendee' },
-        { label: 'Venue Staff', value: 'Venue Staff' },
+        { label: USER_ROLES.ORGANIZER, value: USER_ROLES.ORGANIZER },
+        { label: USER_ROLES.CO_ORGANIZER, value: USER_ROLES.CO_ORGANIZER },
+        { label: USER_ROLES.ATTENDEE, value: USER_ROLES.ATTENDEE },
+        { label: USER_ROLES.VENUE_STAFF, value: USER_ROLES.VENUE_STAFF },
       ],
     },
     {
@@ -317,10 +314,7 @@ export class UserManagementPageComponent {
     );
   }
 
-  private _inviteUser(): void {
-   
-  }
+  private _inviteUser(): void {}
 
-  public onRowExpanded(user: User): void {
-  }
+  public onRowExpanded(user: User): void {}
 }

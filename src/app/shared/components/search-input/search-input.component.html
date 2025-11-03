@@ -1,0 +1,12 @@
+<div class="filter-input-wrapper search-wrapper">
+  @if (iconPath) {
+    <img [src]="iconPath" class="filter-icon" alt="Search" />
+  }
+  <input 
+    type="text" 
+    [placeholder]="placeholder"
+    class="filter-search"
+    [(ngModel)]="value"
+    (ngModelChange)="onValueChange($event)"
+  />
+</div>

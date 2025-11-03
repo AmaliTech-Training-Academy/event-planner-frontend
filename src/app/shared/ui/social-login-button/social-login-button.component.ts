@@ -20,11 +20,9 @@ export class SocialLoginComponent {
       case 'google':
         return 'icons/google-icon.png';
       case 'facebook':
-        return 'icons/apple-icon.png';
-      
-      case 'twitter':
         return 'icons/facebook-icon.png';
-
+      case 'twitter':
+        return 'icons/twitter-icon.png';
       default:
         return '';
     }

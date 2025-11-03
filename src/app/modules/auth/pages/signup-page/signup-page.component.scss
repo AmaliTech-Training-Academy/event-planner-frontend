@@ -65,73 +65,15 @@
                 flex-direction: row;
                 overflow: hidden;
                 gap: 1rem;
-
+                app-input{
+                    flex:1;
+                }
                 @include sm {
                     flex-direction: column;
                 }
             }
 
-            .field {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-                flex: 1;
-                overflow: hidden;
-                label {
-                    @include label-1;
-                    color: $header-text;
-                    span {
-                        color: $primary-color;
-                    }
-                }
-
-                .input-container {
-                    display: flex;
-                    flex-direction: row;
-                    overflow: hidden;
-                    gap: 0.75rem;
-                    border: 1px solid $general-stroke-light;
-                    border-radius: 0.25rem;
-                    padding: 0.75rem 0.5rem;
-                    img {
-                        width: 1.5rem;
-                        height: 1.5rem;
-                    }
-                    input {
-                        width: 100%;
-                        border: none;
-                        &:focus {
-                            outline: none;
-                        }
-                        &::placeholder {
-                            @include body-2;
-                            color: $paragraph-text;
-                        }
-                    }
-                    button{
-                        background: none;
-                        border: none;
-                        cursor: pointer;
-                        img {
-                            width: 1.5rem;
-                            height: 1.5rem;
-                        }
-                    }
-                }
-
-                .error-container{
-                    display: flex;
-                    flex-direction: row;
-                    align-items: center;
-                    gap: 0.5rem;
-                    color: #ff0000;
-                    font-family: $font-lato;
-                    img{
-                        width: 1rem;
-                        height: 1rem;
-                    }
-                }
-            }
+           
         }
         .action-container {
             display: flex;

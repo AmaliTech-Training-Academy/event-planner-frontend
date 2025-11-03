@@ -22,7 +22,7 @@
   &__controls {
     display: flex;
     gap: $spacing-3;
-    line-height: 48px;
+    line-height: 50px;
     flex: 0 0  70%;
 }
 
@@ -33,14 +33,6 @@
   }
 
   &__search-input {
-    @include body-2;
-    padding: $spacing-2 $spacing-4 $spacing-2 $spacing-8;
-    border: 1px solid $gray-200;
-    border-radius: $radius-3;
-    height: 48px;
-    outline: none;
-    transition: border-color 0.2s ease;
-    color: $text-primary;
 
     &::placeholder {
       color: $gray-400;

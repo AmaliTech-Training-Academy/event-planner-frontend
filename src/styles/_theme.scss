@@ -1,5 +1,5 @@
-@use "_variables" as *;
-@use "_typography" as *;
+@use "variables" as *;
+@use "typography" as *;
 
 $primary-btn-color: #cc3f02;
 
@@ -29,4 +29,17 @@ $primary-btn-color: #cc3f02;
         background-color: lighten($primary-btn-color, 20%);
         cursor: not-allowed;
     }
+}
+
+@mixin secondary_btn{
+    border: 1.5px solid  #464646;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include body-1;
+    cursor: pointer;
+    border-radius: 8px;
+    text-align: center;
+    background-color: transparent;
+    
 }
