@@ -25,6 +25,10 @@ import { LogoComponent } from '../../components/logo/logo.component';
   styleUrls: ['./forgot-password-page.component.scss']
 })
 export class ForgotPasswordComponent implements OnInit, OnDestroy {
+  protected readonly routes = APP_ROUTES;
+sendCode() {
+throw new Error('Method not implemented.');
+}
 
   protected forgotPasswordForm!: FormGroup;
   protected isLoading: boolean = false;
