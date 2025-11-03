@@ -95,7 +95,6 @@
   }
 }
 
-// Profile Section
 .profile-section {
   display: flex;
   align-items: center;
@@ -162,7 +161,6 @@
   }
 }
 
-// Form Sections
 .form-section {
   display: flex;
   flex-direction: column;
@@ -248,7 +246,6 @@
     }
 
     .phone-input {
-      // Inherits styles from .form-input
     }
   }
 
@@ -282,7 +279,6 @@
   }
 }
 
-// Responsive
 @include md {
   .modal {
     width: 95%;
