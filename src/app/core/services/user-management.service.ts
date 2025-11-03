@@ -59,7 +59,7 @@ export class UserManagementService {
     );
   }
 
-  private setLoading(isLoading: boolean) {
+  protected setLoading(isLoading: boolean) {
     this._loading$.next(isLoading);
   }
 }
