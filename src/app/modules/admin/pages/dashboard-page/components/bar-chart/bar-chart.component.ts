@@ -79,8 +79,8 @@ export class BarChartComponent implements OnInit, OnChanges {
   public readonly chartOptions = signal<EChartsOption>({});
 
   constructor(
-    private _appRef: ApplicationRef,
-    private _injector: EnvironmentInjector
+    private readonly _appRef: ApplicationRef,
+    private readonly _injector: EnvironmentInjector
   ) {}
 
   public ngOnInit(): void {

@@ -40,7 +40,6 @@ interface TooltipFormatterParams {
   axisValue: string;
 }
 
-// --- Chart Config Constants ---
 const GRID_CONFIG = {
   left: '3%',
   right: '4%',
