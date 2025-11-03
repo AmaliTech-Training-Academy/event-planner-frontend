@@ -14,6 +14,7 @@ import type {
   XAXisComponentOption,
   YAXisComponentOption,
 } from 'echarts';
+import { generateMultiSeriesTooltipHtml } from '../../../../../../shared/utils/chart-tooltip.html';
 
 export interface TimeSeriesDataPoint {
   month: string;
@@ -253,33 +254,23 @@ export class LineChartComponent implements OnInit, OnChanges {
       borderColor: '#E5E7EB',
       borderWidth: 1,
       textStyle: { color: '#374151' },
-
       formatter: ((params: unknown) => {
         const paramsArray = params as TooltipFormatterParams[];
-        return this._formatTooltip(paramsArray);
+
+        if (!paramsArray?.length) {
+          return '';
+        }
+
+        return generateMultiSeriesTooltipHtml({
+          axisValue: paramsArray[0].axisValue,
+          series: paramsArray.map((param) => ({
+            color: this._extractColor(param.color),
+            name: param.seriesName,
+            value: param.value,
+          })),
+        });
       }) as never,
     };
-  }
-
-  private _formatTooltip(params: TooltipFormatterParams[]): string {
-    if (!params?.length) {
-      return '';
-    }
-
-    let result = `<div style="font-weight: 600; margin-bottom: 8px;">${params[0].axisValue}</div>`;
-
-    params.forEach((param) => {
-      const color = this._extractColor(param.color);
-      result += `
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-          <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${color};"></span>
-          <span style="color: #6B7280;">${param.seriesName}:</span>
-          <span style="font-weight: 600;">${param.value.toLocaleString()}</span>
-        </div>
-      `;
-    });
-
-    return result;
   }
 
   private _extractColor(

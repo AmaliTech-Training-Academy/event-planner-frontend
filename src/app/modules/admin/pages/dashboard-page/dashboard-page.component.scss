@@ -21,7 +21,6 @@
   }
 }
 
-// Charts Layout
 .charts-row {
   display: grid;
   gap: $spacing-6;
@@ -42,7 +41,6 @@
   }
 }
 
-// Chart Card
 .chart-card {
   background: white;
   border-radius: $radius-4;
@@ -85,7 +83,6 @@
   }
 }
 
-// Chart Tabs
 .chart-tabs {
   display: flex;
   gap: $spacing-2;
@@ -114,7 +111,6 @@
   }
 }
 
-// Chart Legend
 .chart-legend {
   display: flex;
   gap: $spacing-5;
@@ -144,7 +140,6 @@
   }
 }
 
-// Responsive
 @include md {
   .dashboard-page {
     gap: $spacing-5;
