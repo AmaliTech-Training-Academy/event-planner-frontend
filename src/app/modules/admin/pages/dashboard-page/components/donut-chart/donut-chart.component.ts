@@ -10,6 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { NgxEchartsModule } from 'ngx-echarts';
 import type { EChartsOption } from 'echarts';
+import { generateTooltipHtml } from '../../../../../../shared/utils/chart-tooltip.html';
 
 export interface UserStatistics {
   category: string;
@@ -135,24 +136,15 @@ export class DonutChartComponent implements OnInit, OnChanges {
     return {
       trigger: 'item',
       className: 'chart-tooltip',
-
       formatter: ((params: unknown) => {
         const typedParams = params as TooltipFormatterParams;
-        return this._formatTooltip(typedParams);
+        return generateTooltipHtml({
+          axisValue: typedParams.name,
+          value: typedParams.value,
+          color: typedParams.color,
+          label: 'Percentage',
+        });
       }) as never,
     };
-  }
-
-  private _formatTooltip(params: TooltipFormatterParams): string {
-    return `
-      <div class="tooltip-content">
-        <div class="tooltip-title">${params.name}</div>
-        <div class="tooltip-row">
-          <span class="tooltip-dot" style="background:${params.color}"></span>
-          <span class="tooltip-label">Percentage:</span>
-          <span class="tooltip-value">${params.value}%</span>
-        </div>
-      </div>
-    `;
   }
 }
