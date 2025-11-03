@@ -33,14 +33,12 @@ export class UserManagementPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   private readonly _router = inject(Router);
 
-  // Modal states
   protected readonly isInviteModalOpen = signal<boolean>(false);
   protected readonly isSuccessModalOpen = signal<boolean>(false);
   protected readonly isEditModalOpen = signal<boolean>(false);
   protected readonly isViewModalOpen = signal<boolean>(false);
   protected readonly selectedUser = signal<User | null>(null);
 
-  // Data
   protected readonly userCards = signal<UserCardData[]>([
     {
       title: 'Total Users',
@@ -154,11 +152,123 @@ export class UserManagementPageComponent implements OnInit {
       joinedDate: '2024-01-25',
       lastActive: '2 weeks ago',
     },
+    {
+      userId: 'U005',
+      name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
+      email: 'jessica@example.com',
+      phone: '+233501234567',
+      address: '654 Maple St, Boroughville',
+      avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
+      role: USER_ROLES.ATTENDEE,
+      status: 'Inactive',
+      eventsOrganized: 0,
+      eventsAttended: 1,
+      joinedDate: '2024-01-25',
+      lastActive: '2 weeks ago',
+    },
+    {
+      userId: 'U005',
+      name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
+      email: 'jessica@example.com',
+      phone: '+233501234567',
+      address: '654 Maple St, Boroughville',
+      avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
+      role: USER_ROLES.ATTENDEE,
+      status: 'Inactive',
+      eventsOrganized: 0,
+      eventsAttended: 1,
+      joinedDate: '2024-01-25',
+      lastActive: '2 weeks ago',
+    },
+    {
+      userId: 'U005',
+      name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
+      email: 'jessica@example.com',
+      phone: '+233501234567',
+      address: '654 Maple St, Boroughville',
+      avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
+      role: USER_ROLES.ATTENDEE,
+      status: 'Inactive',
+      eventsOrganized: 0,
+      eventsAttended: 1,
+      joinedDate: '2024-01-25',
+      lastActive: '2 weeks ago',
+    },
+    {
+      userId: 'U005',
+      name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
+      email: 'jessica@example.com',
+      phone: '+233501234567',
+      address: '654 Maple St, Boroughville',
+      avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
+      role: USER_ROLES.ATTENDEE,
+      status: 'Inactive',
+      eventsOrganized: 0,
+      eventsAttended: 1,
+      joinedDate: '2024-01-25',
+      lastActive: '2 weeks ago',
+    },
+    {
+      userId: 'U005',
+      name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
+      email: 'jessica@example.com',
+      phone: '+233501234567',
+      address: '654 Maple St, Boroughville',
+      avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
+      role: USER_ROLES.ATTENDEE,
+      status: 'Inactive',
+      eventsOrganized: 0,
+      eventsAttended: 1,
+      joinedDate: '2024-01-25',
+      lastActive: '2 weeks ago',
+    },
+    {
+      userId: 'U005',
+      name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
+      email: 'jessica@example.com',
+      phone: '+233501234567',
+      address: '654 Maple St, Boroughville',
+      avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
+      role: USER_ROLES.ATTENDEE,
+      status: 'Inactive',
+      eventsOrganized: 0,
+      eventsAttended: 1,
+      joinedDate: '2024-01-25',
+      lastActive: '2 weeks ago',
+    },
+    {
+      userId: 'U005',
+      name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
+      email: 'jessica@example.com',
+      phone: '+233501234567',
+      address: '654 Maple St, Boroughville',
+      avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
+      role: USER_ROLES.ATTENDEE,
+      status: 'Inactive',
+      eventsOrganized: 0,
+      eventsAttended: 1,
+      joinedDate: '2024-01-25',
+      lastActive: '2 weeks ago',
+    }
+    
   ]);
 
   protected readonly users = this._users.asReadonly();
 
-  // Table configuration
   protected readonly tableColumns: TableColumn<User>[] = [
     { key: 'name', header: 'User', sortable: true },
     { key: 'role', header: 'Role(s)', filterable: true },
@@ -218,7 +328,6 @@ export class UserManagementPageComponent implements OnInit {
     effect(() => {
       const user = this.selectedUser();
       const isOpen = this.isEditModalOpen();
-      console.log('[Debug] Modal state:', { isOpen, user });
     });
   }
 
@@ -226,7 +335,6 @@ export class UserManagementPageComponent implements OnInit {
     this._layoutService.pageTitle.set('User Management');
   }
 
-  // Invite Modal handlers
   protected openInviteModal(): void {
     this.isInviteModalOpen.set(true);
   }
@@ -252,17 +360,14 @@ export class UserManagementPageComponent implements OnInit {
     this._router.navigate(['/dashboard']);
   }
 
-  // View Modal handlers
   protected closeViewModal(): void {
     this.isViewModalOpen.set(false);
     this.selectedUser.set(null);
   }
 
   protected onEditFromView(): void {
-    // Transition from view to edit mode
     this.isViewModalOpen.set(false);
 
-    // Use microtask to ensure clean modal transition
     Promise.resolve().then(() => {
       this.isEditModalOpen.set(true);
     });
@@ -273,18 +378,15 @@ export class UserManagementPageComponent implements OnInit {
     this.closeViewModal();
   }
 
-  // Edit Modal handlers
   protected closeEditModal(): void {
     this.isEditModalOpen.set(false);
     this.selectedUser.set(null);
   }
 
   protected onSaveEdit(formData: any): void {
-    console.log('[UserManagement] Form data received:', formData);
 
     const selectedUserId = this.selectedUser()?.userId;
     if (!selectedUserId) {
-      console.error('[UserManagement] No selected user!');
       return;
     }
 
@@ -306,22 +408,17 @@ export class UserManagementPageComponent implements OnInit {
       })
     );
 
-    console.log('[UserManagement] Users updated:', this._users());
     this.closeEditModal();
   }
 
-  // Table handlers
   protected onRowExpanded(user: User): void {
-    console.log('Row expanded:', user);
   }
 
-  // Private action handlers
   private _openInviteModal(): void {
     this.openInviteModal();
   }
 
   private _viewUser(user: User): void {
-    console.log('Viewing user:', user);
     this.selectedUser.set(user);
 
     Promise.resolve().then(() => {
@@ -330,9 +427,7 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   private _editUser(user: User): void {
-    console.log('[UserManagement] Editing user:', user);
 
-    // Close view modal if it's open
     if (this.isViewModalOpen()) {
       this.closeViewModal();
     }

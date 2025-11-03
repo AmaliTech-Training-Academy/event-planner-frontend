@@ -30,6 +30,18 @@
   z-index: 1001;
   max-height: 90vh;
   overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 4px !important;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    width: 1rem !important;
+    border: none;
+  }
 
   &__title {
     @include h-4;
@@ -83,7 +95,6 @@
     padding-top: $spacing-4;
   }
 
-  // ✅ Email Chips Styling
   .email-chips-container {
     display: flex;
     flex-direction: column;
@@ -96,7 +107,6 @@
     }
   }
 
- // ✅ Email Chips Styling
 .email-chips-container {
   display: flex;
   flex-direction: column;
@@ -130,14 +140,12 @@
   border: 1px solid $general-stroke-light;
   border-radius: $radius-3;
   background: $gray-50;
-  min-height: 48px; // matches typical input height
   align-items: center;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   cursor: text;
 
   &:focus-within {
     border-color: $orange-600;
-    box-shadow: 0 0 0 3px rgba($orange-600, 0.1); // subtle focus ring
   }
 
   &.has-error {
@@ -231,7 +239,6 @@
     }
   }
 
-  // ✅ Responsive adjustments using mixins
   @include md {
     width: 95%;
     padding: $spacing-5;

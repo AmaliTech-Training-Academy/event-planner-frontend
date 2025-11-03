@@ -1,6 +1,4 @@
-import {
-  CommonModule,
-} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -40,23 +38,18 @@ interface FilterOption {
   ],
 })
 export class FilterSelectComponent implements ControlValueAccessor {
-  /** --- Inputs --- */
   public readonly options = input<ReadonlyArray<FilterOption>>([]);
   public readonly placeholder = input<string>('All');
   public readonly size = input<'sm' | 'md' | 'lg'>('md');
   public readonly errorMessage = input<string | null>(null);
-  public readonly value = input<string>(''); // ✅ Add this input for [value] binding
-
-  /** --- Outputs --- */
+  public readonly value = input<string>('');
   public readonly valueChange = output<string>();
 
-  /** --- Internal State --- */
-  private readonly _value = signal<string>(''); // internal reactive value
+  private readonly _value = signal<string>('');
   private readonly _isOpen = signal(false);
   private readonly _disabled = signal(false);
   private readonly _activeIndex = signal<number>(-1);
 
-  /** --- Computed --- */
   public readonly isOpen = computed(() => this._isOpen());
   public readonly selectedLabel = computed(() => {
     const selected = this.options()?.find((o) => o.value === this._value());
@@ -65,7 +58,6 @@ export class FilterSelectComponent implements ControlValueAccessor {
   public readonly filterClass = computed(() => `filter-select--${this.size()}`);
 
   constructor() {
-    // ✅ Sync external [value] input with internal _value signal
     effect(() => {
       const externalValue = this.value();
       if (externalValue && externalValue !== this._value()) {
@@ -74,34 +66,32 @@ export class FilterSelectComponent implements ControlValueAccessor {
     });
   }
 
-  /** --- ControlValueAccessor --- */
-  private onChange: (value: string) => void = () => {};
-  private onTouched: () => void = () => {};
+  private _onChange: (value: string) => void = () => {};
+  private _onTouched: () => void = () => {};
 
-  writeValue(value: string): void {
+  public writeValue(value: string): void {
     this._value.set(value ?? '');
   }
 
-  registerOnChange(fn: (value: string) => void): void {
-    this.onChange = fn;
+  public registerOnChange(fn: (value: string) => void): void {
+    this._onChange = fn;
   }
 
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
+  public registerOnTouched(fn: () => void): void {
+    this._onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  public setDisabledState(isDisabled: boolean): void {
     this._disabled.set(isDisabled);
   }
 
-  /** --- Public Methods --- */
   public toggleDropdown(): void {
     if (this._disabled()) return;
     this._isOpen.update((open) => !open);
 
     if (!this._isOpen()) {
       this._activeIndex.set(-1);
-      this.onTouched();
+      this._onTouched();
     }
   }
 
@@ -109,11 +99,11 @@ export class FilterSelectComponent implements ControlValueAccessor {
     if (this._disabled()) return;
 
     this._value.set(option.value);
-    this.onChange(option.value);
+    this._onChange(option.value);
     this.valueChange.emit(option.value);
     this._isOpen.set(false);
     this._activeIndex.set(-1);
-    this.onTouched();
+    this._onTouched();
   }
 
   public onKeydown(event: KeyboardEvent): void {
@@ -156,7 +146,6 @@ export class FilterSelectComponent implements ControlValueAccessor {
     return this._activeIndex() === index;
   }
 
-  /** --- Public getter for templates --- */
   public currentValue(): string {
     return this._value();
   }
