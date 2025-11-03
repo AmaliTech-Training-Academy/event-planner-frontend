@@ -3,19 +3,19 @@
     <ul class="options">
         <li class="item">
             <div class="left">
-                <img src="icons/ticket.svg" alt="" class="preview">
+                <img width="24" height="24" ngSrc="icons/ticket.svg" alt="" class="preview">
                 <p>Tickets</p>
             </div>
             <div class="right">
                 <p>{{form()?.get(EVENT_FORM_FIELDS.PRICE)?.value | currency}}</p>
                 <app-button buttonType="button" (onClick)="togglePriceModal()" type="plain">
-                    <img src="icons/pencil.svg" alt="" class="preview">
+                    <img width="24" height="24" ngSrc="icons/pencil.svg" alt="" class="preview">
                 </app-button>
             </div>
         </li>
         <li class="item">
             <div class="left">
-                <img src="icons/add-user.svg" alt="" class="preview">
+                <img width="24" height="24" ngSrc="icons/add-user.svg" alt="" class="preview">
                 <p>Require Approval</p>
             </div>
             <div class="right">
@@ -27,24 +27,24 @@
         </li>
         <li class="item">
             <div class="left">
-                <img src="icons/trend-up.svg" alt="" class="preview">
+                <img width="24" height="24" ngSrc="icons/trend-up.svg" alt="" class="preview">
                 <p>Capacity</p>
             </div>
             <div class="right">
                 <p>{{form()?.get(EVENT_FORM_FIELDS.CAPACITY)?.value || 'Unlimited'}}</p>
                 <app-button buttonType="button" (onClick)="toggleCapacityModal()" type="plain">
-                    <img src="icons/pencil.svg" alt="" class="preview">
+                    <img width="24" height="24" ngSrc="icons/pencil.svg" alt="" class="preview">
                 </app-button>
             </div>
         </li>
         <li class="item">
             <a [routerLink]='APP_ROUTE.MANAGE_EVENT_ROLES'>
                 <div class="left">
-                    <img src="icons/user-circle.svg" alt="" class="preview">
+                    <img width="24" height="24" ngSrc="icons/user-circle.svg" alt="" class="preview">
                     <p>Manage user roles</p>
                 </div>
                 <div class="right">
-                    <img src="icons/chevron-right.svg" alt="" class="preview">
+                    <img width="24" height="24" ngSrc="icons/chevron-right.svg" alt="" class="preview">
                 </div>
             </a>
         </li>

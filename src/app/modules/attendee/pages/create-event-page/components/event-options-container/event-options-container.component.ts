@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { RouterLink } from "@angular/router";
@@ -8,7 +8,7 @@ import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from '../../../
 
 @Component({
   selector: 'app-event-options-container',
-  imports: [ButtonComponent, CommonModule, RouterLink],
+  imports: [ButtonComponent, CommonModule, RouterLink, NgOptimizedImage],
   templateUrl: './event-options-container.component.html',
   styleUrl: './event-options-container.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

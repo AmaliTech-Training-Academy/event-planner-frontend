@@ -6,10 +6,11 @@ import { ButtonComponent } from "../../../../../../shared/ui/button/button.compo
 import { InputComponent } from "../../../../../../shared/ui/input/input.component";
 import { RadioButtonComponent } from "../../../../../../shared/ui/radio-button/radio-button.component";
 import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from '../../../../constants/event-form.constant';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-set-price-modal',
-  imports: [ModalContainerComponent, RadioButtonComponent, InputComponent, ButtonComponent, ReactiveFormsModule],
+  imports: [ModalContainerComponent, RadioButtonComponent, InputComponent, ButtonComponent, ReactiveFormsModule, NgOptimizedImage],
   templateUrl: './set-price-modal.component.html',
   styleUrl: './set-price-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

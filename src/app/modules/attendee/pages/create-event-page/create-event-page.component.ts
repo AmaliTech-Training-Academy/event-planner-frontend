@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
@@ -20,7 +20,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, InputComponent, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, InputComponent, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink , NgOptimizedImage],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })

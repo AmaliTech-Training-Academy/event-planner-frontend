@@ -5,10 +5,11 @@ import { ButtonComponent } from "../../../../../../shared/ui/button/button.compo
 import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from '../../../../constants/event-form.constant';
 import { ControlContainer, FormGroupDirective, ReactiveFormsModule } from '@angular/forms';
 import { APP_ROUTES } from '../../../../../../core/constants/app-routes.constants';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-set-capacity-modal',
-  imports: [ModalContainerComponent, InputComponent, ButtonComponent,ReactiveFormsModule],
+  imports: [ModalContainerComponent, InputComponent, ButtonComponent,ReactiveFormsModule,NgOptimizedImage],
   templateUrl: './set-capacity-modal.component.html',
   styleUrl: './set-capacity-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

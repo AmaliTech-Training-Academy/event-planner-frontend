@@ -266,8 +266,7 @@
         flex-direction: column;
         gap: 62px;
 
-        @include md {
-        }
+        @include md {}
 
         @include sm {
             width: 100%;
@@ -287,4 +286,3 @@
         }
     }
 }
-

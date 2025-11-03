@@ -75,13 +75,13 @@
                 <p>Choose Virtual Option</p>
                 <app-button (click)="toggleConnectZoomModal()" type="plain">
                     <div class="button-content">
-                        <img src="icons/cam_corder.svg" />
+                        <img width="20" height="20" ngSrc="icons/cam_corder.svg" />
                         <p>Create Zoom Meeting</p>
                     </div>
                 </app-button>
                 <app-button (click)="toggleConnectZoomModal()" type="plain">
                     <div class="button-content">
-                        <img src="icons/cam_corder.svg" />
+                        <img width="20" height="20" ngSrc="icons/cam_corder.svg" />
                         <p>Use Existing Meeting</p>
                     </div>
                 </app-button>
@@ -93,7 +93,9 @@
         <app-upload-event-flyer (selectedFlyer)="onFlyerImageSelected($event)"
             [flyerPreview]="flyerPreview"></app-upload-event-flyer>
         <div class="event-options-container">
-         <app-event-options-container [form]="form" [checked]="checked" (openCapacityModal)="toggleCapacityModal()" (openPriceModal)="togglePriceModal()" (requireApprovalChange)="onToggle()" ></app-event-options-container>
+            <app-event-options-container [form]="form" [checked]="checked" (openCapacityModal)="toggleCapacityModal()"
+                (openPriceModal)="togglePriceModal()"
+                (requireApprovalChange)="onToggle()"></app-event-options-container>
             <app-button buttonType="button" type="primary" [fullWidth]="true" (onClick)="createEvent()">
                 Create Event
             </app-button>
