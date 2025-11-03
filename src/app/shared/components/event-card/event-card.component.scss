@@ -1,6 +1,6 @@
 
 @use 'index' as *;
-
+@use 'media_query' as *;
 
 
 
@@ -91,7 +91,7 @@
   }
 
   &__button {
-    @include secondary_btn;
+     @include secondary_btn;
     width: 100%;
     padding: $spacing-3 $spacing-4;
     text-align: center;

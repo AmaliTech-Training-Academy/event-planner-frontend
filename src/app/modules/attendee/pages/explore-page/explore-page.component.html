@@ -1,8 +1,9 @@
 <main class="explore-page-content">
 
   <section class="filter-bar">
-    
     <app-search-input
+      class="filter-input-wrapper search-wrapper"
+      style="height: 48px;" 
       iconPath="icons/Vector1.png"
       placeholder="Search events..."
       [(value)]="searchQuery"
@@ -11,8 +12,11 @@
     
     <div class="secondary-filters-group">
       
+     
       <div class="filter-dropdown-wrapper location-filter-wrapper">
+        
         <app-filter-button
+          class="filter-button filter-input-wrapper" 
           [text]="selectedLocation"
           [isPlaceholder]="selectedLocation === 'Location'"
           iconPath="icons/room.png"
@@ -30,8 +34,10 @@
         }
       </div>
       
+     
       <div class="filter-dropdown-wrapper event-type-filter-wrapper">
         <app-filter-button
+          class="filter-button filter-input-wrapper"
           [text]="selectedEventType"
           [isPlaceholder]="selectedEventType === 'All Events'"
           iconPath="icons/Vector.png"
@@ -48,8 +54,8 @@
         }
       </div>
       
-     <div class="filter-input-wrapper date-wrapper">
-        
+      
+      <div class="filter-input-wrapper date-wrapper">
         <img 
           ngSrc="icons/Mixed.png" 
           class="filter-icon" 
@@ -70,6 +76,8 @@
 
   </section>
   
+  
+
   <app-tab-toggle 
     [tabs]="eventToggles" 
     [activeTabKey]="activeToggle"
@@ -80,7 +88,7 @@
     <h2>Paid Events</h2>
     <div class="event-grid">
       @for (event of paidEvents.slice(0, 6); track event.id) {
-       
+        
         <app-event-card [event]="event"></app-event-card>
       }
     </div>
@@ -90,7 +98,7 @@
     <app-button
       class="load-more-btn"
       [type]="'primary'"
-      (click)="onLoadMorePaid()">
+      (onClick)="onLoadMorePaid()">
       Load More Event
     </app-button>
   </div>
@@ -109,8 +117,9 @@
     <app-button
       class="load-more-btn"
       [type]="'primary'"
-      (click)="onLoadMoreFree()">
+      (onClick)="onLoadMoreFree()">
       Load More Event
     </app-button>
   </div>
 </main>
+
