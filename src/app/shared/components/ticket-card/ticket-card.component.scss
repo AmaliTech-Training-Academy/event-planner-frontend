@@ -1,0 +1,62 @@
+@use 'index' as *;
+@use 'sass:color';
+
+:host {
+  display: block;
+}
+
+.ticket-card {
+  background-color: $gray-50;
+  border: $stroke-0 solid $general-stroke-light;
+  border-radius: $radius-4;
+  padding: $spacing-6;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  @include h-4;
+  color: $header-dark;
+  margin: 0 0 $spacing-4 0;
+}
+
+.price {
+  font-family: $font-lato;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: $blue-700;
+  margin-bottom: $spacing-6;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 $spacing-6 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  @include body-1;
+  color: $paragraph-text;
+
+  span {
+    color: $green-600;
+    font-size: $spacing-5;
+    line-height: 1;
+  }
+}
+
+app-button {
+  width: 100%;
+
+  ::ng-deep button {
+    width: 100%;
+    padding-top: $spacing-3;
+    padding-bottom: $spacing-3;
+  }
+}
+

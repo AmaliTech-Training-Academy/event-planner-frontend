@@ -1,5 +1,15 @@
-<label class="custom-checkbox">
-  <input type="checkbox" [checked]="_checked()" (change)="toggle()" />
-  <span class="checkmark"></span>
-  <span class="label-text">{{ label() }}</span>
+<label class="checkbox-wrapper" [class.disabled]="disabled">
+  <input
+    type="checkbox"
+    class="checkbox-input"
+    [checked]="checked"
+    [disabled]="disabled"
+    [attr.aria-label]="ariaLabel || label"
+    (change)="onInputChange($event)"
+    (blur)="onBlur()"
+  />
+  <span class="checkbox-box">
+    <span class="checkmark"></span>
+  </span>
+  <span class="label-text" *ngIf="label">{{ label }}</span>
 </label>

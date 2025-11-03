@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VerifyEmailPageComponent } from './verify-email-page.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('VerifyEmailPageComponent', () => {
   let component: VerifyEmailPageComponent;
@@ -8,7 +9,7 @@ describe('VerifyEmailPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VerifyEmailPageComponent]
+      imports: [VerifyEmailPageComponent, NoopAnimationsModule]
     })
     .compileComponents();
 

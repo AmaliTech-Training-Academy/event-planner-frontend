@@ -1,0 +1,378 @@
+@use 'typography' as *;
+@use 'colors' as *;
+@use 'variables' as *;
+
+.header {
+  background-color: $gray-50;
+  padding: $spacing-4 0;
+  font-family: $font-lato;
+  border-bottom: $stroke-0 solid $gray-100;
+  transition: background-color 0.3s ease, padding 0.3s ease;
+
+  &__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: padding 0.3s ease;
+    
+  }
+
+  &__logo {
+    display: flex;
+    align-items: baseline;
+    @include h-5;
+    transition: transform 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    &--orange {
+      color: $orange-500;
+    }
+
+    &--black {
+      color: $gray-900;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: $spacing-8;
+    transition: gap 0.3s ease, transform 0.3s ease;
+    justify-content: flex-end;
+
+    flex: 1;
+@media (min-width: 1240px) {
+  padding-right:1.5rem;
+}
+  }
+
+  &__link {
+    @include body-2;
+    color: $gray-900;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    position: relative;
+    padding-bottom: $spacing-2;
+    transition: color 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+      color: $orange-400;
+      transform: translateY(-1px);
+    }
+
+    &.active {
+      color: $orange-500;
+      font-weight: 500;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -$spacing-1;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: $orange-400;
+      transition: width 0.3s ease;
+    }
+
+    &:hover::after,
+    &.active::after {
+      width: 100%;
+    }
+
+    lucide-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      transition: transform 0.5s ease;
+    }
+
+    span {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  &__btn {
+    background-color: transparent;
+    border: $stroke-1 solid $gray-900;
+    border-radius: $radius-3;
+    padding: $spacing-2 $spacing-4;
+    @include body-2;
+    font-weight: 500;
+    color: $gray-900;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: $gray-900;
+      color: $gray-50;
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    &:active {
+      transform: translateY(1px) scale(1.05);
+    }
+  }
+
+  &__hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: $spacing-2;
+    color: $gray-900;
+    transition: transform 0.3s ease, color 0.3s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      color: $orange-500;
+      transform: rotate(90deg);
+    }
+
+    &:active {
+      transform: rotate(90deg) scale(0.95);
+    }
+
+    lucide-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  // Tablet view (768px - 1024px)
+  @media (max-width: 1024px) and (min-width: 768px) {
+    position: relative;
+
+    &__container {
+      padding: 0 $spacing-5;
+    }
+
+    &__nav {
+      gap: $spacing-4;
+      flex: 1;
+      justify-content: flex-end;
+      align-items: center;
+      position: static;
+    }
+
+    &__link {
+      display: none;
+
+      // Show only "Explore Events" link on tablet (2nd child)
+      &:nth-child(2) {
+        display: flex;
+        position: static;
+        padding-bottom: $spacing-2;
+      }
+    }
+
+    // When menu is open, show dropdown with all links
+    &__nav.open {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      background-color: $gray-50;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 0;
+      z-index: 100;
+
+      .header__link {
+        display: flex;
+        width: 100%;
+        padding: $spacing-3 $spacing-4;
+        border-bottom: 1px solid $gray-100;
+        transition: background-color 0.3s ease;
+
+        &::after {
+          display: none;
+        }
+
+        &:hover {
+          background-color: $gray-100;
+          transform: none;
+        }
+      }
+
+      .header__actions {
+        width: 100%;
+      
+      }
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      gap: $spacing-3;
+      position: static;
+    }
+
+    &__hamburger {
+      display: block;
+    }
+  }
+
+  // Small tablet/Large mobile (348px - 767px)
+  @media (max-width: 767px) and (min-width: 348px) {
+    position: relative;
+
+    &__container {
+      padding: 0 $spacing-4;
+    }
+
+    &__nav {
+      gap: $spacing-4;
+      flex: 1;
+      justify-content: flex-end;
+      align-items: center;
+      position: static;
+    }
+
+    &__link {
+      display: none;
+
+      // Show only "Explore Events" link (2nd child)
+      &:nth-child(2) {
+        display: flex;
+        position: static;
+        padding-bottom: $spacing-2;
+      }
+    }
+
+    // When menu is open, show dropdown with all links
+    &__nav.open {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      background-color: $gray-50;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      padding: 0;
+      z-index: 100;
+
+      .header__link {
+        display: flex;
+        width: 100%;
+        padding: $spacing-3 $spacing-4;
+        border-bottom: 1px solid $gray-100;
+        transition: background-color 0.3s ease;
+
+        &::after {
+          display: none;
+        }
+
+        &:hover {
+          background-color: $gray-100;
+          transform: none;
+        }
+      }
+
+      .header__actions {
+        width: 100%;
+        padding: $spacing-3 $spacing-4;
+        border-bottom: 1px solid $gray-100;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      gap: $spacing-3;
+      position: static;
+    }
+
+    &__hamburger {
+      display: block;
+    }
+  }
+
+  // Mobile view (below 347px)
+  @media (max-width: 457px) {
+    position: relative;
+
+    &__container {
+      padding: 0 $spacing-4;
+    }
+
+    &__nav {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      background-color: $gray-50;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.4s ease;
+      z-index: 100;
+      justify-content: flex-start;
+
+      &.open {
+        max-height: 400px;
+      }
+    }
+
+    &__link {
+      width: 100%;
+      padding: $spacing-3 $spacing-4;
+      border-bottom: 1px solid $gray-100;
+      display: flex;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: $gray-100;
+        transform: none;
+      }
+
+      &::after {
+        display: none;
+      }
+    }
+
+    &__actions {
+      width: 100%;
+      padding: $spacing-3 $spacing-4;
+      border-bottom: 1px solid $gray-100;
+
+      button {
+        width: 100%;
+      }
+    }
+
+    &__hamburger {
+      display: block;
+    }
+  }
+}
+

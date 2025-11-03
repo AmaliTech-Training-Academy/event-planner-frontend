@@ -1,39 +1,112 @@
-import { Component, input, signal, computed } from '@angular/core';
+import {
+  Component,
+  input,
+  signal,
+  computed,
+  forwardRef,
+  output,
+  ChangeDetectionStrategy,
+  effect,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
+  ControlValueAccessor,
+} from '@angular/forms';
+import { FormErrorComponent } from '../form-error/form-error.component';
 
 @Component({
   selector: 'app-input',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorComponent],
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => InputComponent),
+      multi: true,
+    },
+  ],
 })
-export class InputComponent {
-  public type = input<'text' | 'email' | 'password'>('text');
-  public placeholder = input<string>('');
-  public label = input<string>('');
-  public formControlName = input<string>('');
-  public errorMessage = input<string>('');
-  public iconSrc = input<string | undefined>();
-  public required = input<boolean>(false);
-  public disabled = input<boolean>(false);
+export class InputComponent implements ControlValueAccessor {
+  // Inputs - reactive values from parent
+  public readonly type = input<'text' | 'email' | 'password'>('text');
+  public readonly placeholder = input<string>('');
+  public readonly label = input<string>('');
+  public readonly formControlName = input<string>('');
+  public readonly errorMessage = input<string | null>('');
+  public readonly iconSrc = input<string | undefined>();
+  public readonly required = input<boolean>(false);
+  public readonly disabled = input<boolean>(false);
+  public readonly value = input<string>(''); // ✅ Add this
 
-  private _value = signal<string>('');
-  private _isFocused = signal<boolean>(false);
-  private _showPassword = signal<boolean>(false);
+  // Outputs
+  public readonly valueChange = output<string>();
 
-  public hasError = computed(() => !!this.errorMessage());
-  public inputType = computed(() =>
+  // Internal signals - component state only
+  private readonly _internalValue = signal<string>('');
+  private readonly _isFocused = signal<boolean>(false);
+  private readonly _showPassword = signal<boolean>(false);
+  private readonly _isDisabled = signal<boolean>(false);
+
+  // Computed values - derived state
+  public readonly hasError = computed(() => !!this.errorMessage());
+  public readonly inputType = computed(() =>
     this.type() === 'password' && !this._showPassword() ? 'password' : 'text'
   );
-  public showPassword = computed(() => this._showPassword());
-  public isFocused = computed(() => this._isFocused());
+  public readonly showPassword = computed(() => this._showPassword());
+  public readonly isFocused = computed(() => this._isFocused());
+  public readonly isDisabled = computed(
+    () => this.disabled() || this._isDisabled()
+  );
 
-  public togglePasswordVisibility(): void {
-    if (this.type() === 'password') {
-      this._showPassword.update((v) => !v);
+  // ✅ Add effect to sync external value input with internal state
+  constructor() {
+    effect(() => {
+      const externalValue = this.value();
+      if (externalValue !== this._internalValue()) {
+        this._internalValue.set(externalValue);
+      }
+    });
+  }
+
+  // ControlValueAccessor callbacks
+  private onChange: (value: string) => void = () => {};
+  private onTouched: () => void = () => {};
+
+  // ControlValueAccessor implementation
+  public writeValue(value: string): void {
+    if (value !== undefined && value !== null) {
+      this._internalValue.set(value);
     }
+  }
+
+  public registerOnChange(fn: (value: string) => void): void {
+    this.onChange = fn;
+  }
+
+  public registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  public setDisabledState(isDisabled: boolean): void {
+    this._isDisabled.set(isDisabled);
+  }
+
+  // Public methods
+  public currentValue(): string {
+    return this._internalValue();
+  }
+
+  public onValueChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this._internalValue.set(value);
+    this.onChange(value);
+    this.valueChange.emit(value);
   }
 
   public onFocus(): void {
@@ -42,7 +115,10 @@ export class InputComponent {
 
   public onBlur(): void {
     this._isFocused.set(false);
+    this.onTouched();
   }
 
-  public value = this._value.asReadonly();
+  public togglePasswordVisibility(): void {
+    this._showPassword.update((current) => !current);
+  }
 }

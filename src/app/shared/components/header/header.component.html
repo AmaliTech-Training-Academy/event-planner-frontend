@@ -1,0 +1,40 @@
+<header class="header">
+  <div class="header__container container">
+    <!-- Logo -->
+    <div class="header__logo">
+      <span class="header__logo--orange">Event</span>
+      <span class="header__logo--black">Hub</span>
+    </div>
+
+    <nav class="header__nav" [class.open]="isMenuOpen()">
+      @for (link of navLinks(); track link.path) {
+      <a
+        [routerLink]="link.path"
+        routerLinkActive="active"
+        class="header__link"
+        (click)="closeMenu()"
+      >
+        <img
+          [src]="link.icon"
+          [alt]="link.label + ' icon'"
+          class="header__icon"
+        />
+        <span>{{ link.label }}</span>
+      </a>
+      }
+
+      <div class="header__actions">
+        <app-button
+          type="secondary"
+          [extraClass]="'header__button'"
+          routerLink="/auth/login"
+          >Sign In</app-button
+        >
+      </div>
+    </nav>
+
+    <button class="header__hamburger" (click)="toggleMenu()">
+      <img src="icons/menu.png" alt="Menu" class="header__icon" />
+    </button>
+  </div>
+</header>

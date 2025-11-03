@@ -1,25 +1,69 @@
-import { Component, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  forwardRef,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  ControlValueAccessor,
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-checkbox',
   standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './checkbox.component.html',
   styleUrls: ['./checkbox.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => CheckboxComponent),
+      multi: true,
+    },
+  ],
 })
-export class CheckboxComponent {
-  public label = input<string>('');
-  public checked = input<boolean>(false);
+export class CheckboxComponent implements ControlValueAccessor {
+  @Input() public label: string = '';
+  @Input() public ariaLabel: string = '';
+  @Input() public checked: boolean = false;
+  @Input() public disabled: boolean = false;
 
-  public checkedChange = output<boolean>();
+  @Output() public checkedChange = new EventEmitter<boolean>();
 
-  protected _checked = signal(this.checked());
+  private _onChange: (value: boolean) => void = () => {};
+  private _onTouched: () => void = () => {};
 
-  public get isChecked(): boolean {
-    return this._checked();
+  public writeValue(value: boolean): void {
+    this.checked = value ?? false;
   }
 
-  public toggle(): void {
-    this._checked.update((current) => !current);
-    this.checkedChange.emit(this._checked());
+  public registerOnChange(fn: (value: boolean) => void): void {
+    this._onChange = fn;
+  }
+
+  public registerOnTouched(fn: () => void): void {
+    this._onTouched = fn;
+  }
+
+  public setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  public onInputChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.checked = input.checked;
+    this._onChange(this.checked);
+    this.checkedChange.emit(this.checked);
+  }
+
+  public onBlur(): void {
+    this._onTouched();
   }
 }
