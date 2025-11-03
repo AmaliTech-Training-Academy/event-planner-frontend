@@ -15,7 +15,7 @@ import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { finalize, takeUntil } from 'rxjs/operators'; 
 import { Subject } from 'rxjs';
- 
+ import { APP_ROUTES } from '../../../../core/constants/routes.constants';
 
 @Component({
   selector: 'app-forgot-password',
@@ -39,7 +39,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   isLoading: boolean = false;
   apiMessage: string | null = null;
   isError: boolean = false;
-
+protected readonly routes = APP_ROUTES;
   private readonly unsubscribe$ = new Subject<void>();
 
   constructor(
