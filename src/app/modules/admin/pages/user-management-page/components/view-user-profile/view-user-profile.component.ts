@@ -3,7 +3,6 @@ import {
   EventEmitter,
   Output,
   Input,
-  signal,
   computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -16,7 +15,7 @@ import { User } from '../../../../../../core/models/user.model';
   standalone: true,
   imports: [CommonModule, ModalHeaderComponent, ButtonComponent],
   templateUrl: './view-user-profile.component.html',
-  styleUrl: './view-user-profile.component.scss',
+  styleUrls: ['./view-user-profile.component.scss'],
 })
 export class ViewUserProfileComponent {
   @Output() close = new EventEmitter<void>();
@@ -31,17 +30,11 @@ export class ViewUserProfileComponent {
     );
   });
 
-  public readonly isActive = computed(() => {
-    return this.userData?.status === 'Active';
-  });
+  public readonly isActive = computed(() => this.userData?.status === 'Active');
 
-  public readonly statusButtonText = computed(() => {
-    return this.isActive() ? 'Deactivate User' : 'Activate User';
-  });
-
-  public readonly statusButtonType = computed(() => {
-    return this.isActive() ? 'danger' : 'success';
-  });
+  public readonly statusButtonText = computed(() =>
+    this.isActive() ? 'Deactivate User' : 'Activate User'
+  );
 
   public onClose(): void {
     this.close.emit();
@@ -57,5 +50,3 @@ export class ViewUserProfileComponent {
     return this.userData?.phone || 'N/A';
   }
 }
-
-

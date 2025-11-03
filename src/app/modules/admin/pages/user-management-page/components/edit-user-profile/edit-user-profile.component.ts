@@ -27,9 +27,9 @@ import {
 import * as countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/modal-header.component';
-import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 import { FormErrorComponent } from '../../../../../../shared/ui/form-error/form-error.component';
+import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 
 interface CountryOption {
   code: CountryCode;

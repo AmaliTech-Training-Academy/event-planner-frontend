@@ -1,8 +1,11 @@
 import {
   Component,
-  forwardRef,
+  Input,
+  Output,
+  EventEmitter,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  forwardRef,
   inject,
   signal,
   computed,
@@ -34,29 +37,36 @@ import { FormErrorComponent } from '../form-error/form-error.component';
 export class InputComponent implements ControlValueAccessor {
   private readonly cdr = inject(ChangeDetectorRef);
 
-  // --- Inputs ---
-  type: 'text' | 'email' | 'password' = 'text';
-  placeholder = '';
-  label = '';
-  iconSrc: string | null = null;
-  required = false;
-  disabled = false;
-  errorMessage: string | null = null;
+  /** --- Inputs --- */
+  @Input() type: 'text' | 'email' | 'password' = 'text';
+  @Input() placeholder = '';
+  @Input() label = '';
+  @Input() formControlName = '';
+  @Input() errorMessage: string | null = null;
+  @Input() iconSrc: string | null = null;
+  @Input() required = false;
+  @Input() disabled = false;
+  @Input() value = '';
 
-  // --- Internal State ---
- public readonly _value = signal<string>('');
+  /** --- Outputs --- */
+  @Output() valueChange = new EventEmitter<string>();
+
+  /** --- Internal State --- */
+  public readonly _value = signal<string>('');
   private readonly _focused = signal<boolean>(false);
   private readonly _showPassword = signal<boolean>(false);
+  private readonly _isDisabled = signal<boolean>(false);
 
-  // --- Computed ---
+  /** --- Computed Values --- */
   readonly hasError = computed(() => !!this.errorMessage);
   readonly inputType = computed(() =>
     this.type === 'password' && !this._showPassword() ? 'password' : this.type
   );
   readonly showPassword = computed(() => this._showPassword());
   readonly isFocused = computed(() => this._focused());
+  readonly isDisabled = computed(() => this.disabled || this._isDisabled());
 
-  // --- ControlValueAccessor methods ---
+  /** --- ControlValueAccessor --- */
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
@@ -65,24 +75,29 @@ export class InputComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  registerOnChange(fn: any): void {
+  registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: any): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+    this._isDisabled.set(isDisabled);
     this.cdr.markForCheck();
   }
 
-  // --- Handlers ---
+  /** --- Handlers --- */
   onInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this._value.set(value);
     this.onChange(value);
+    this.valueChange.emit(value);
+  }
+
+  onFocus(): void {
+    this._focused.set(true);
   }
 
   onBlur(): void {
@@ -90,15 +105,12 @@ export class InputComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
-  onFocus(): void {
-    this._focused.set(true);
-  }
-
   togglePasswordVisibility(): void {
-    this._showPassword.update(v => !v);
+    this._showPassword.update((v) => !v);
   }
 
-  get value(): string {
+  /** --- Getters --- */
+  get currentValue(): string {
     return this._value();
   }
 }

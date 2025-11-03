@@ -182,3 +182,20 @@ button.app-button.back-button {
     gap: $spacing-1;
   
 }
+button.app-button--success {
+  background-color: #2a9d8f !important;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background-color: #21867a;
+  }
+}
+
+button.app-button--danger {
+  background-color: #e63946 !important;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background-color: #c92d3a;
+  }
+}

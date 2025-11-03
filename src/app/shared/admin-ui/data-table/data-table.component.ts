@@ -10,10 +10,9 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { CheckboxComponent } from '../../ui/checkbox/checkbox.component';
-import { InputComponent } from '../../ui/input/input.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { FilterSelectComponent } from '../filter-select/filter-select.component';
-import { InviteUserModalComponent } from '../../../modules/admin/pages/user-management-page/components/invite-user-modal/invite-user-modal.component';
+import { InputComponent } from '../../ui/input/input.component';
 
 export interface TableColumn<T> {
   readonly key: Extract<keyof T, string>;
@@ -54,7 +53,7 @@ export interface TableFilter {
     ButtonComponent,
     CheckboxComponent,
     PaginationComponent,
-    InputComponent,
+    InputComponent
   ],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
