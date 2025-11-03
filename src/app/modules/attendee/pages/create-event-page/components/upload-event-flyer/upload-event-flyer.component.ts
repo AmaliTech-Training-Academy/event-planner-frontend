@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { ButtonComponent } from "../../../../../shared/ui/button/button.component";
+import { ButtonComponent } from "../../../../../../shared/ui/button/button.component";
 
 @Component({
   selector: 'app-upload-event-flyer',
@@ -11,7 +11,7 @@ import { ButtonComponent } from "../../../../../shared/ui/button/button.componen
 })
 export class UploadEventFlyerComponent {
 
-  public flyerPreview = input<string | null>();
+  public readonly flyerPreview = input<string | null>();
 
   public selectedFlyer = output<Event>()
 

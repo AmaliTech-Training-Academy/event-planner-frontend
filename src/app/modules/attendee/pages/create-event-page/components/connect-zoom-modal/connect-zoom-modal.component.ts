@@ -1,6 +1,6 @@
 import { Component, output } from '@angular/core';
-import { ModalContainerComponent } from "../../../../../shared/components/modal-container/modal-container.component";
-import { ButtonComponent } from "../../../../../shared/ui/button/button.component";
+import { ModalContainerComponent } from "../../../../../../shared/components/modal-container/modal-container.component";
+import { ButtonComponent } from "../../../../../../shared/ui/button/button.component";
 
 @Component({
   selector: 'app-connect-zoom-modal',

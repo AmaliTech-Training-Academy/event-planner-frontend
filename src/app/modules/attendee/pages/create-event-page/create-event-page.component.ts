@@ -9,12 +9,12 @@ import { EventDatePickerComponent } from "../../components/event-date-picker/eve
 import { EventTimePickerComponent } from "../../components/event-time-picker/event-time-picker.component";
 import { EventTimeZonePickerComponent } from "../../components/event-time-zone-picker/event-time-zone-picker.component";
 import { EventFormService } from '../../services/event-form.service';
-import { ConnectZoomModalComponent } from "../components/connect-zoom-modal/connect-zoom-modal.component";
-import { SetCapacityModalComponent } from "../components/set-capacity-modal/set-capacity-modal.component";
-import { SetPriceModalComponent } from "../components/set-price-modal/set-price-modal.component";
-import { UploadEventFlyerComponent } from "../components/upload-event-flyer/upload-event-flyer.component";
+import { ConnectZoomModalComponent } from "./components/connect-zoom-modal/connect-zoom-modal.component";
+import { SetCapacityModalComponent } from "./components/set-capacity-modal/set-capacity-modal.component";
+import { SetPriceModalComponent } from "./components/set-price-modal/set-price-modal.component";
+import { UploadEventFlyerComponent } from "./components/upload-event-flyer/upload-event-flyer.component";
 import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from './../../constants/event-form.constant';
-import { EventOptionsContainerComponent } from "../components/event-options-container/event-options-container.component";
+import { EventOptionsContainerComponent } from "./components/event-options-container/event-options-container.component";
 import { RouterLink } from '@angular/router';
 
 
@@ -32,28 +32,16 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   protected showCapacityModal: boolean = false;
   protected connectZoomModal: boolean = false;
 
+  protected readonly EVENT_FORM_FIELDS = FIELDS;
+  protected readonly MEETING_TYPES = MEETING_TYPE;
+  protected readonly EVENT_TYPES = EVENT_TYPE;
+  protected readonly APP_ROUTE = APP_ROUTES;
 
   constructor(private readonly eventFormService: EventFormService) {
     this.form = this.eventFormService.getForm();
     this.checked = this.eventFormService.requireApproval?.value;
   }
 
-    protected get EVENT_FORM_FIELDS() {
-    return FIELDS;
-  }
-
-  protected get MEETING_TYPES() {
-    return MEETING_TYPE;
-  }
-
-  protected get EVENT_TYPES() {
-    return EVENT_TYPE;
-  }
-
-
-  protected get APP_ROUTE() {
-    return APP_ROUTES;
-  }
 
   ngOnInit(): void {
     this.eventFormService.registerValueChangeHandlers();
