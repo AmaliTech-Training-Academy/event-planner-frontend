@@ -9,5 +9,11 @@ export const API_ENDPOINTS = {
     AUTH_REGISTER: `${BASE}/auth/register`,
     AUTH_VERIFY_OTP: `${BASE}/auth/verify-otp`,
     AUTH_FORGOT_PASSWORD: `${BASE}/auth/forgot-password`,
-    GET_USER: (userId: string): string => `${BASE}/users/${userId}`
+  GET_USER: (userId: string): string => `${BASE}/users/${userId}`,
+  GET_ALL_USERS: `${BASE}/users`,
+  UPDATE_USER: (userId: string): string => `${BASE}/users/${userId}`,
+  DELETE_USER: (userId: string): string => `${BASE}/users/${userId}`,
+  CREATE_USER: `${BASE}/users`,
+
+    
 }as const;
