@@ -6,6 +6,9 @@ import {
   SimpleChanges,
   signal,
   ChangeDetectionStrategy,
+  ApplicationRef,
+  EnvironmentInjector,
+  createComponent,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxEchartsModule } from 'ngx-echarts';
@@ -14,13 +17,13 @@ import type {
   XAXisComponentOption,
   YAXisComponentOption,
 } from 'echarts';
+import { ChartTooltipComponent } from '../../../../../../shared/chart-tool-tip/chart-tool-tip.component';
 
 export interface TrafficByDevice {
   device: string;
   value: number;
   color: string;
 }
-
 
 interface TooltipFormatterParams {
   color: string;
@@ -61,19 +64,6 @@ const DEFAULT_Y_AXIS: YAXisComponentOption = {
   },
 };
 
-const DEFAULT_TOOLTIP = (
-  color: string,
-  value: number,
-  axisValue: string
-): string => `
-  <div class="tooltip-title">${axisValue}</div>
-  <div class="tooltip-content">
-    <span class="tooltip-dot" style="background: ${color}"></span>
-    <span>Traffic:</span>
-    <span class="tooltip-value">${value.toLocaleString()}</span>
-  </div>
-`;
-
 @Component({
   selector: 'app-bar-chart',
   standalone: true,
@@ -87,6 +77,11 @@ export class BarChartComponent implements OnInit, OnChanges {
 
   public readonly isLoading = signal(false);
   public readonly chartOptions = signal<EChartsOption>({});
+
+  constructor(
+    private _appRef: ApplicationRef,
+    private _injector: EnvironmentInjector
+  ) {}
 
   public ngOnInit(): void {
     this._setChartData();
@@ -147,24 +142,42 @@ export class BarChartComponent implements OnInit, OnChanges {
   private _createTooltipConfig(): EChartsOption['tooltip'] {
     return {
       trigger: 'axis',
-      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-      borderColor: '#E5E7EB',
-      borderWidth: 1,
-      textStyle: { color: '#374151' },
+      backgroundColor: 'transparent',
+      borderWidth: 0,
       axisPointer: {
         type: 'shadow',
         shadowStyle: { color: 'rgba(0,0,0,0.05)' },
       },
-      /**
-       * Note: Using 'unknown' type because ECharts doesn't export the correct
-       * TooltipFormatterCallback parameter type. This is a type-safe alternative
-       * to 'any' that forces explicit casting and documents expected structure.
-       */
       formatter: ((params: unknown) => {
         const typedParams = params as TooltipFormatterParams[];
         const param = typedParams[0];
-        return DEFAULT_TOOLTIP(param.color, param.value, param.axisValue);
+        return this._renderTooltipComponent(
+          param.color,
+          param.value,
+          param.axisValue
+        );
       }) as never,
     };
+  }
+
+  private _renderTooltipComponent(
+    color: string,
+    value: number,
+    axisValue: string
+  ): string {
+    const componentRef = createComponent(ChartTooltipComponent, {
+      environmentInjector: this._injector,
+    });
+
+    componentRef.setInput('color', color);
+    componentRef.setInput('value', value);
+    componentRef.setInput('axisValue', axisValue);
+
+    this._appRef.attachView(componentRef.hostView);
+    const html = (componentRef.location.nativeElement as HTMLElement).outerHTML;
+    this._appRef.detachView(componentRef.hostView);
+    componentRef.destroy();
+
+    return html;
   }
 }

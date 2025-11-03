@@ -17,7 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
 
-    // 👇 Add ECharts global configuration
     importProvidersFrom(NgxEchartsModule.forRoot({ echarts })),
   ],
 };
