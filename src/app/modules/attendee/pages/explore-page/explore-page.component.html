@@ -80,14 +80,8 @@
     <h2>Paid Events</h2>
     <div class="event-grid">
       @for (event of paidEvents.slice(0, 6); track event.id) {
-        <app-event-card
-          [imageUrl]="event.imageUrl"
-          [date]="event.date"
-          [title]="event.title"
-          [location]="event.location"
-          [attendees]="event.attendees"
-          [isPaid]="true">
-        </app-event-card>
+       
+        <app-event-card [event]="event"></app-event-card>
       }
     </div>
   </section>
@@ -105,14 +99,8 @@
     <h2>Free Events</h2>
     <div class="event-grid">
       @for (event of freeEvents.slice(0, 6); track event.id) {
-        <app-event-card
-          [imageUrl]="event.imageUrl"
-          [date]="event.date"
-          [title]="event.title"
-          [location]="event.location"
-          [attendees]="event.attendees"
-          [isPaid]="false">
-        </app-event-card>
+        
+        <app-event-card [event]="event"></app-event-card>
       }
     </div>
   </section>

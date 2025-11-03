@@ -5,4 +5,5 @@ export interface AppEvent {
   title: string;
   location: string;
   attendees: number;
+  isPaid: boolean;
 }

@@ -4,6 +4,7 @@ export const APP_ROUTES = {
     FORGOT_PASSWORD: "/auth/forgot-password",
     LANDING_PAGE : "/",
     EXPLORE:"/app/explore",
+    EVENT_DETAILS:"/app/event-details",
     VERIFY_EMAIL:'/auth/verify-email',
     ADMIN_LOGIN:'/auth/admin',
     VENUE_SECTION:'/app/define-venue-sections',

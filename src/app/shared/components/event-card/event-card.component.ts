@@ -1,18 +1,26 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
+import { AppEvent } from '../../../core/models/event-model';
+import { CommonModule, NgOptimizedImage} from '@angular/common';
+import { ButtonComponent } from '../../ui/button/button.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-event-card',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, NgOptimizedImage, ButtonComponent],
   templateUrl: './event-card.component.html',
-  styleUrl: './event-card.component.scss', 
+  styleUrls: ['./event-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventCardComponent {
-  @Input() public imageUrl: string = '';
-  @Input() public date: string = '';
-  @Input() public title: string = '';
-  @Input() public location: string = '';
-  @Input() public attendees: number = 0;
-  @Input() public isPaid: boolean = false;
+ @Input({ required: true }) event!: AppEvent;
+  public APP_ROUTES = APP_ROUTES;
+
+  constructor(private router: Router) {}
+
+  public navigateToDetails(): void {
+    this.router.navigate(['/', this.APP_ROUTES.EVENT_DETAILS, this.event.id]);
+  }
 }
+
