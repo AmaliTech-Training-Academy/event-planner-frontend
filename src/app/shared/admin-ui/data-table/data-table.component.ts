@@ -8,11 +8,11 @@ import {
   output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { FilterSelectComponent } from '../filter-select/filter-select.component';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { CheckboxComponent } from '../../ui/checkbox/checkbox.component';
 import { InputComponent } from '../../ui/input/input.component';
 import { PaginationComponent } from '../pagination/pagination.component';
+import { FilterSelectComponent } from '../filter-select/filter-select.component';
 
 export interface TableColumn<T> {
   readonly key: Extract<keyof T, string>;

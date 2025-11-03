@@ -5,19 +5,13 @@
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-        <img
-          src="icons/search-icon.png"
-          alt="Search icon"
-          class="data-table__search-icon"
+        <app-input
+          class="md"
+          placeholder="Search users..."
+          [value]="searchQuery()"
+          (valueChange)="updateSearch($event)"
+          iconSrc="icons/search-icon.png"
         />
-    <app-input
-  class="md"
-  placeholder="Search users..."
-  [value]="searchQuery()"
-  (valueChange)="updateSearch($event)"
-  iconSrc="icons/search-icon.png"
-/>
-
       </div>
       }
       <!-- Reusable Filter Select -->
@@ -71,7 +65,6 @@
     <tbody class="data-table__tbody">
       @for (item of paginatedData(); track trackByIndex($index)) {
       <tr class="data-table__tr">
-        <!-- ✅ Checkbox column -->
         <td class="data-table__td data-table__td--checkbox">
           <app-checkbox
             [checked]="isSelected(item)"
@@ -91,10 +84,13 @@
           @if (column.key === 'name' && item['email']) {
           <div class="data-table__user-cell">
             <img
-              [src]="item['avatar']"
+              [ngSrc]="item['avatar']"
               alt="User avatar"
               class="data-table__user-avatar"
+              width="40"
+              height="40"
             />
+
             <div class="data-table__user-info">
               <p class="data-table__user-name">
                 {{ item[column.key] }}

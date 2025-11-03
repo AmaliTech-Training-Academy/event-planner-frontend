@@ -1,0 +1,41 @@
+@use 'typography' as *;
+@use 'variables' as *;
+
+:host {
+    width: 103px;
+    height: 168px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0px 0px 16px 16px #14141414;
+    overflow: hidden;
+    display: flex;
+}
+
+.selector{
+    padding: 8px 4px;
+    width: 100%;
+    .options{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        gap: 8px;
+        button{
+            width: 100%;
+            background-color: transparent;
+            border: none;
+            text-align: center;
+            @include body-2;
+            color: $options-dark;
+            padding: 11.5px 0;
+            cursor: pointer;
+        }
+
+         hr {
+            margin-right: 8px;
+            background-color: $line-card-stroke;
+            color: $line-card-stroke;
+        }
+    }
+}
