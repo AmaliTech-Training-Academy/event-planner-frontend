@@ -1,7 +1,13 @@
+
 <div class="secure-text">
-  <p>
-    <img [src]="iconSrc()" alt="lock icon" class="icon" />
-    {{ main() }}
+  <p class="secure-text__main">
+    <img 
+      [src]="iconSrc()" 
+      alt="Security icon" 
+      class="secure-text__icon"
+      loading="lazy"
+    />
+    {{ text() }}
   </p>
-  <small>{{ sub()}}</small>
+  <small class="secure-text__subtitle">{{ subText() }}</small>
 </div>

@@ -1,21 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  LucideAngularModule,
-  Home,
-  Users,
-  Menu,
-  LucideIconData,
-} from 'lucide-angular';
+
 import { ButtonComponent } from '../../ui/button/button.component';
 
 interface NavLink {
   label: string;
   path: string;
-  icon: string; 
+  icon: string;
 }
-
 
 @Component({
   selector: 'app-header',
@@ -27,8 +20,8 @@ interface NavLink {
 export class HeaderComponent {
   public readonly navLinks = signal<NavLink[]>([
     { label: 'Home', path: '/', icon: 'icons/home-icon.png' },
-    { label: 'Explore Events', path: '/events', icon: 'icons/action-icon.png' },
-    { label: 'About Us', path: '/about', icon: 'icons/user-icon.png' },
+    { label: 'Explore Events', path: '/events', icon: 'icons/action.png' },
+    { label: 'About Us', path: '/about', icon: 'icons/users-icon.png' },
   ]);
 
   public readonly isMenuOpen = signal(false);
@@ -41,4 +34,3 @@ export class HeaderComponent {
     this.isMenuOpen.set(false);
   }
 }
-

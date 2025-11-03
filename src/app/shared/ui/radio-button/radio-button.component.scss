@@ -1,0 +1,36 @@
+@use "typography" as *;
+@use "variables" as *;
+@use "theme" as *;
+@use "media_query" as *;
+
+.radio-container {
+    display: flex;
+    flex-direction: row;
+    gap: $spacing-2;
+    align-items: center;
+
+    input {
+        width: 1.5rem;
+        height: 1.5rem;
+
+        @include md {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+
+        @include md {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+    }
+
+    label {
+        @include md {
+            @include body-2;
+        }
+
+        @include sm {
+            @include body-3;
+        }
+    }
+}

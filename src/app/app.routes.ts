@@ -1,56 +1,13 @@
 import { Routes } from '@angular/router';
+import { AUTH_ROUTES } from './modules/admin/auth.routes';
+import { ATTENDEE_ROUTES } from './modules/attendee/attendee.routes';
+import { ADMIN_ROUTES } from './modules/admin/admin.routes';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'app', pathMatch: 'full' },
   {
     path: 'auth',
-    children: [
-      {
-        path: '',
-        redirectTo: 'login',
-        pathMatch: 'full',
-      },
-      {
-        path: 'login',
-        loadComponent: () =>
-          import('./modules/auth/pages/login-page/login-page.component').then(
-            (m) => m.LoginPageComponent
-          ),
-      },
-      {
-        path: 'signup',
-        loadComponent: () =>
-          import('./modules/auth/pages/signup-page/signup-page.component').then(
-            (m) => m.SignupPageComponent
-          ),
-      },
-      {
-        path: 'verify-email',
-        loadComponent: () =>
-          import(
-            './modules/auth/pages/verify-email-page/verify-email-page.component'
-          ).then((m) => m.VerifyEmailPageComponent),
-      },
-      {
-        path: 'forgot-password',
-        loadComponent: () =>
-          import(
-            './modules/auth/pages/forgot-password-page/forgot-password-page.component'
-          ).then((m) => m.ForgotPasswordComponent),
-      },
-      {
-        path: 'reset-password',
-        loadComponent: () => import('./modules/auth/pages/reset-password/reset-password.component')
-          .then(m => m.ResetPasswordComponent),
-      },
-      {
-        path: 'admin',
-        loadComponent: () =>
-          import(
-            './modules/auth/pages/admin-login-page/admin-login-page.component'
-          ).then((m) => m.AdminLoginPageComponent),
-      },
-    ],
+    children: AUTH_ROUTES,
   },
   {
     path: 'app',
@@ -58,57 +15,7 @@ export const routes: Routes = [
       import('./layouts/atendee-layout/atendee-layout.component').then(
         (m) => m.AtendeeLayoutComponent
       ),
-    children: [
-      {
-        path: '',
-        loadComponent: () =>
-          import(
-            './modules/attendee/pages/landing-page/landing-page.component'
-          ).then((m) => m.LandingPageComponent),
-      },
-      {
-        path: 'about',
-        loadComponent: () =>
-          import(
-            './modules/attendee/pages/about-page/about-page.component'
-          ).then((m) => m.AboutPageComponent),
-      },
-      {
-        path: 'explore',
-        loadComponent: () =>
-          import(
-            './modules/attendee/pages/explore-page/explore-page.component'
-          ).then((m) => m.ExplorePageComponent),
-      },
-      {
-        path: 'create-event',
-        loadComponent: () =>
-          import(
-            './modules/attendee/pages/create-event-page/create-event-page.component'
-          ).then((m) => m.CreateEventPageComponent),
-      },
-      {
-        path: 'event/:id',
-        loadComponent: () =>
-          import(
-            './modules/attendee/pages/event-page/event-page.component'
-          ).then((m) => m.EventPageComponent),
-      },
-      {
-        path: 'profile',
-        loadComponent: () =>
-          import(
-            './modules/attendee/pages/profile-page/profile-page.component'
-          ).then((m) => m.ProfilePageComponent),
-      },
-      {
-        path: 'my-events',
-        loadComponent: () =>
-          import(
-            './modules/attendee/pages/my-events-page/my-events-page.component'
-          ).then((m) => m.MyEventsPageComponent),
-      },
-    ],
+    children: ATTENDEE_ROUTES,
   },
   {
     path: 'admin',
@@ -116,21 +23,13 @@ export const routes: Routes = [
       import('./layouts/admin-layout/admin-layout.component').then(
         (m) => m.AdminLayoutComponent
       ),
-    children: [
-      {
-        path: '',
-        loadComponent: () =>
-          import(
-            './modules/admin/pages/dashboard-page/dashboard-page.component'
-          ).then((m) => m.DashboardPageComponent),
-      },
-      {
-        path: 'users',
-        loadComponent: () =>
-          import(
-            './modules/admin/pages/user-management-page/user-management-page.component'
-          ).then((m) => m.UserManagementPageComponent),
-      },
-    ],
+    children: ADMIN_ROUTES,
   },
+  // {
+  //   path: '**',
+  //   loadComponent: () =>
+  //     import('./shared/pages/not-found-page/not-found-page.component').then(
+  //       (m) => m.NotFoundPageComponent
+  //     ),
+  // },
 ];
