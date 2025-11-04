@@ -106,6 +106,9 @@ export class AuthService {
     this.setLoading(true);
     return this.authBackend.forgotPassword(email)
       .pipe(
+           tap(() => {
+          this.router.navigate([APP_ROUTES.RESET_PASSWORD],{ queryParams: { email } }); 
+        }),
         catchError(err => this.errorHandlerService.handle(err)),
         finalize(() => this.setLoading(false))
       )

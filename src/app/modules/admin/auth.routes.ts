@@ -37,4 +37,11 @@ export const AUTH_ROUTES: Routes = [
         (m) => m.AdminLoginPageComponent
       ),
   },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('../auth/pages/reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent
+      ),
+  },
 ];

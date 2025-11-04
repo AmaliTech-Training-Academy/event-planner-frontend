@@ -70,7 +70,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       return;
     }
     const { email } = this.forgotPasswordForm.value;
-
+    console.log(email);
     this.authService.forgotPassword(email).subscribe({
       next: (response) => {
         this.notificationService.success(response.description);
