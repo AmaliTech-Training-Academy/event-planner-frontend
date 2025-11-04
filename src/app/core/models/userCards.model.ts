@@ -11,6 +11,6 @@ export interface User {
   status: 'Active' | 'Inactive';
   eventsOrganized: number;
   eventsAttended: number;
-  joinedDate: string; // ISO date or formatted date string
+  joinedDate: string; 
   lastActive: string;
 }
