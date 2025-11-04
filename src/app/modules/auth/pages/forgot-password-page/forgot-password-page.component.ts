@@ -36,7 +36,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
     private readonly notificationService: NotificationService,
-    private readonly router: Router // <-- added router injection
+    private readonly router: Router 
   ) { }
 
   ngOnInit(): void {
@@ -76,8 +76,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.notificationService.success(response.description);
 
-        // Navigate to reset password route with email as query param
-        // Minimal addition — does not alter existing behavior
+        
         this.router.navigate([APP_ROUTES.RESET_PASSWORD], { queryParams: { email } });
       },
       complete: () => {
