@@ -1,6 +1,10 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
 
+/**
+ * Validator for phone numbers using libphonenumber-js
+ * @param countryCodeControl - The form control that contains the country code
+ */
 export function phoneNumberValidator(
   countryCodeControl: AbstractControl
 ): ValidatorFn {
@@ -37,6 +41,10 @@ export function phoneNumberValidator(
   };
 }
 
+/**
+ * Static validator for phone numbers when country code is known
+ * @param countryCode - The country code (e.g., 'GH', 'US')
+ */
 export function staticPhoneNumberValidator(
   countryCode: CountryCode
 ): ValidatorFn {
@@ -63,6 +71,9 @@ export function staticPhoneNumberValidator(
   };
 }
 
+/**
+ * Validator for international phone numbers (with country code included)
+ */
 export function internationalPhoneValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const phoneNumber = control.value;
@@ -90,6 +101,7 @@ export function internationalPhoneValidator(): ValidatorFn {
     }
   };
 }
+
 
 function getCountryName(countryCode: CountryCode): string {
   const countryNames: { [key: string]: string } = {

@@ -1,45 +1,44 @@
 <div class="modal-backdrop" (click)="onCancel()"></div>
 
 <div class="modal modal--large">
-  <app-modal-header
-    title="Edit Profile"
-    subtitle="Update your personal information"
-    (close)="onCancel()"
-  ></app-modal-header>
-
   <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-    <!-- Profile Picture Section -->
     <div class="profile-section">
       <div class="profile-avatar">
         <img [src]="profileImage()" alt="Profile picture" />
-        <button type="button" class="avatar-edit-btn" (click)="triggerFileInput()">
-          <span class="edit-icon">📷</span>
-        </button>
+        <app-button
+          type="secondary"
+          extraClass="avatar-edit-btn"
+          (click)="triggerFileInput()"
+        >
+          📷
+        </app-button>
         <input
           #fileInput
           type="file"
           accept="image/*"
           (change)="onImageSelect($event)"
-          style="display: none;"
+          hidden
         />
       </div>
       <div class="profile-info">
-        <h3>{{ profileForm.get('fullName')?.value || 'Your Name' }}</h3>
+        <h3>{{ profileForm.get("fullName")?.value || "Your Name" }}</h3>
         <p>Update your profile information</p>
       </div>
     </div>
 
-    <!-- Basic Information -->
     <div class="form-section">
       <h4 class="section-title">Basic Information</h4>
-      
+
       <div class="form-row">
         <app-input
           formControlName="fullName"
           placeholder="Full Name"
           label="Full Name"
           [required]="true"
-          [errorMessage]="hasError('fullName') ? getErrorMessage('fullName') : ''"
+          [disabled]="editingSection !== 'basic'"
+          [errorMessage]="
+            hasError('fullName') ? getErrorMessage('fullName') : ''
+          "
         ></app-input>
       </div>
 
@@ -49,7 +48,10 @@
           placeholder="Username"
           label="Username"
           [required]="true"
-          [errorMessage]="hasError('username') ? getErrorMessage('username') : ''"
+          [disabled]="editingSection !== 'basic'"
+          [errorMessage]="
+            hasError('username') ? getErrorMessage('username') : ''
+          "
         ></app-input>
       </div>
 
@@ -60,39 +62,59 @@
           label="Email Address"
           type="email"
           [required]="true"
+          [disabled]="editingSection !== 'basic'"
           [errorMessage]="hasError('email') ? getErrorMessage('email') : ''"
         ></app-input>
+      </div>
+
+      <!-- Section Action Buttons -->
+      <div class="section-actions">
+        @if (editingSection !== 'basic') {
+        <app-button type="secondary" (click)="startEditing('basic')">
+          Edit
+        </app-button>
+        } @else {
+        <app-button type="secondary" (click)="cancelEditing()"
+          >Cancel</app-button
+        >
+        <app-button
+          type="primary"
+          [disabled]="profileForm.invalid"
+          (click)="saveSectionChanges()"
+        >
+          Save Changes
+        </app-button>
+        }
       </div>
     </div>
 
     <!-- Contact Information -->
     <div class="form-section">
       <h4 class="section-title">Contact Information</h4>
-      
+
       <div class="form-row form-row--phone">
         <div class="phone-group">
-          <label for="phoneCode">Phone Number</label>
           <div class="phone-input-wrapper">
-        <select
-            id="phoneCode"
-            formControlName="phoneCode"
-            class="form-select phone-code-select"
-          >
-            @for (country of phoneCodes; track country.value) {
-              <option [value]="country.value">{{ country.code }}</option>
-            }
-          </select>
+            <select
+              id="phoneCode"
+              formControlName="phoneCode"
+              class="phone-code"
+              [disabled]="editingSection !== 'contact'"
+            >
+              <option *ngFor="let item of phoneCodes" [value]="item.value">
+                {{ item.label }}
+              </option>
+            </select>
+
             <app-input
               formControlName="phoneNumber"
               placeholder="000000000"
-              type="text"
-              class="phone-number"
-              [errorMessage]="hasError('phoneNumber') ? getErrorMessage('phoneNumber') : ''"
+              [disabled]="editingSection !== 'contact'"
+              [errorMessage]="
+                hasError('phoneNumber') ? getErrorMessage('phoneNumber') : ''
+              "
             ></app-input>
           </div>
-          @if (profileForm.get('phoneNumber')?.valid && profileForm.get('phoneNumber')?.value) {
-            <small class="phone-preview">{{ getFormattedPhoneNumber() }}</small>
-          }
         </div>
       </div>
 
@@ -103,53 +125,44 @@
           formControlName="address"
           placeholder="123 Main Street, City, State, 12345"
           rows="3"
+          [disabled]="editingSection !== 'contact'"
         ></textarea>
       </div>
-    </div>
 
-    <!-- Social Links (Optional) -->
-    <div class="form-section">
-      <h4 class="section-title">Social Links <span class="optional">(Optional)</span></h4>
-      
-      <div class="social-links">
-        <div class="social-input">
-          <span class="social-icon">🌐</span>
-          <app-input
-            formControlName="website"
-            placeholder="https://yourwebsite.com"
-            label="Website"
-          ></app-input>
-        </div>
-
-        <div class="social-input">
-          <span class="social-icon">📘</span>
-          <app-input
-            formControlName="facebook"
-            placeholder="facebook.com/username"
-            label="Facebook"
-          ></app-input>
-        </div>
-
-        <div class="social-input">
-          <span class="social-icon">📸</span>
-          <app-input
-            formControlName="instagram"
-            placeholder="instagram.com/username"
-            label="Instagram"
-          ></app-input>
-        </div>
+      <!-- Section Action Buttons -->
+      <div class="section-actions">
+        @if (editingSection !== 'contact') {
+        <app-button type="secondary" (click)="startEditing('contact')">
+          Edit
+        </app-button>
+        } @else {
+        <app-button type="secondary" (click)="cancelEditing()"
+          >Cancel</app-button
+        >
+        <app-button
+          type="primary"
+          [disabled]="profileForm.invalid"
+          (click)="saveSectionChanges()"
+        >
+          Save Changes
+        </app-button>
+        }
       </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="modal__actions">
-      <app-button type="secondary" (click)="onCancel()">Cancel</app-button>
+    <!-- Activation Control -->
+    <div class="profile-status-action">
       <app-button
-        type="primary"
-        [disabled]="profileForm.invalid || !profileForm.dirty"
-        buttonType="submit"
+        [extraClass]="
+          userData?.status === 'Active'
+            ? 'state-action deactivate'
+            : 'state-action activate'
+        "
+        (click)="toggleUserStatus()"
       >
-        Save Changes
+        {{
+          userData?.status === "Active" ? "Deactivate User" : "Activate User"
+        }}
       </app-button>
     </div>
   </form>

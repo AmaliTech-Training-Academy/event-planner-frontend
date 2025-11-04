@@ -18,7 +18,7 @@ export interface PhoneCountry {
   providedIn: 'root',
 })
 export class PhoneService {
-  public getPopularCountries(): PhoneCountry[] {
+  getPopularCountries(): PhoneCountry[] {
     return [
       { value: 'GH', label: '+233 (Ghana)', code: '+233' },
       { value: 'NG', label: '+234 (Nigeria)', code: '+234' },
@@ -33,11 +33,11 @@ export class PhoneService {
     ];
   }
 
-  public getAllCountries(): PhoneCountry[] {
+  getAllCountries(): PhoneCountry[] {
     return getCountries()
       .map((country) => ({
         value: country,
-        label: `+${getCountryCallingCode(country)} (${this._getCountryName(
+        label: `+${getCountryCallingCode(country)} (${this.getCountryName(
           country
         )})`,
         code: `+${getCountryCallingCode(country)}`,
@@ -45,7 +45,7 @@ export class PhoneService {
       .sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  public isValidNumber(phoneNumber: string, countryCode: CountryCode): boolean {
+  isValidNumber(phoneNumber: string, countryCode: CountryCode): boolean {
     try {
       return isValidPhoneNumber(phoneNumber, countryCode);
     } catch {
@@ -53,7 +53,7 @@ export class PhoneService {
     }
   }
 
-  public parseNumber(
+  parseNumber(
     phoneNumber: string,
     countryCode: CountryCode
   ): PhoneNumber | null {
@@ -64,27 +64,21 @@ export class PhoneService {
     }
   }
 
-  public formatToInternational(
-    phoneNumber: string,
-    countryCode: CountryCode
-  ): string {
-    return this._tryFormat(phoneNumber, countryCode, (p) =>
+  formatToInternational(phoneNumber: string, countryCode: CountryCode): string {
+    return this.tryFormat(phoneNumber, countryCode, (p) =>
       p.formatInternational()
     );
   }
 
-  public formatToNational(
-    phoneNumber: string,
-    countryCode: CountryCode
-  ): string {
-    return this._tryFormat(phoneNumber, countryCode, (p) => p.formatNational());
+  formatToNational(phoneNumber: string, countryCode: CountryCode): string {
+    return this.tryFormat(phoneNumber, countryCode, (p) => p.formatNational());
   }
 
-  public formatToE164(phoneNumber: string, countryCode: CountryCode): string {
-    return this._tryFormat(phoneNumber, countryCode, (p) => p.number);
+  formatToE164(phoneNumber: string, countryCode: CountryCode): string {
+    return this.tryFormat(phoneNumber, countryCode, (p) => p.number);
   }
 
-  public getNumberType(
+  getNumberType(
     phoneNumber: string,
     countryCode: CountryCode
   ): string | undefined {
@@ -96,9 +90,7 @@ export class PhoneService {
     }
   }
 
-  public extractCountryFromNumber(
-    phoneNumber: string
-  ): CountryCode | undefined {
+  extractCountryFromNumber(phoneNumber: string): CountryCode | undefined {
     try {
       return parsePhoneNumber(phoneNumber)?.country;
     } catch {
@@ -106,11 +98,11 @@ export class PhoneService {
     }
   }
 
-  public cleanNumber(phoneNumber: string): string {
+  cleanNumber(phoneNumber: string): string {
     return phoneNumber.replace(/[^\d+]/g, '');
   }
 
-  private _tryFormat(
+  private tryFormat(
     phoneNumber: string,
     countryCode: CountryCode,
     formatter: (p: PhoneNumber) => string
@@ -123,7 +115,7 @@ export class PhoneService {
     }
   }
 
-  private _getCountryName(countryCode: CountryCode): string {
+  private getCountryName(countryCode: CountryCode): string {
     const countryNames: Record<string, string> = {
       GH: 'Ghana',
       NG: 'Nigeria',

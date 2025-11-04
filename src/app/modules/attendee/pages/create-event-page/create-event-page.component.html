@@ -63,7 +63,7 @@
 
                         </div>
                     </div>
-                    <a [href]='APP_ROUTE.VENUE_SECTION' class="define-venue-sections">
+                    <a [routerLink]='APP_ROUTE.VENUE_SECTION' class="define-venue-sections">
                         <p>Define venue section</p>
                         <img src="icons/arrow-right.svg" />
                     </a>
@@ -75,13 +75,13 @@
                 <p>Choose Virtual Option</p>
                 <app-button (click)="toggleConnectZoomModal()" type="plain">
                     <div class="button-content">
-                        <img src="icons/cam_corder.svg" />
+                        <img width="20" height="20" ngSrc="icons/cam_corder.svg" />
                         <p>Create Zoom Meeting</p>
                     </div>
                 </app-button>
                 <app-button (click)="toggleConnectZoomModal()" type="plain">
                     <div class="button-content">
-                        <img src="icons/cam_corder.svg" />
+                        <img width="20" height="20" ngSrc="icons/cam_corder.svg" />
                         <p>Use Existing Meeting</p>
                     </div>
                 </app-button>
@@ -90,159 +90,29 @@
         </div>
     </div>
     <div class="right-panel">
-        <div class="flyer-container">
-            <div class="flyer-preview">
-                <img [src]="flyerPreview || 'images/flyer.jpg'" alt="" class="flyer-preview">
-
-                <app-button buttonType="button" type="plain">
-                    <img src="icons/image.svg" alt="" class="preview">
-                </app-button>
-            </div>
-            <div class="change-flyer-container">
-                <input #flyerFileInput type="file" accept="image/*" (change)="onFlyerImageSelected($event)" hidden>
-                <div class="info">
-                    <h5>Upload event flyer</h5>
-                    <p>Accepted formats: PDF, JPG, PNG (max 10MB)</p>
-                </div>
-                <app-button buttonType="button" type="secondary" (onClick)="flyerFileInput.click()">
-                    Change the picture
-                </app-button>
-            </div>
-        </div>
+        <app-upload-event-flyer (selectedFlyer)="onFlyerImageSelected($event)"
+            [flyerPreview]="flyerPreview"></app-upload-event-flyer>
         <div class="event-options-container">
-            <div class="options-container">
-                <h3>Event Options</h3>
-                <ul class="options">
-                    <li class="item">
-                        <div class="left">
-                            <img src="icons/ticket.svg" alt="" class="preview">
-                            <p>Tickets</p>
-                        </div>
-                        <div class="right">
-                            <p>{{form.get(EVENT_FORM_FIELDS.PRICE)?.value | currency}}</p>
-                            <app-button buttonType="button" (onClick)="togglePriceModal()" type="plain">
-                                <img src="icons/pencil.svg" alt="" class="preview">
-                            </app-button>
-                        </div>
-                    </li>
-                    <li class="item">
-                        <div class="left">
-                            <img src="icons/add-user.svg" alt="" class="preview">
-                            <p>Require Approval</p>
-                        </div>
-                        <div class="right">
-                            <label for="toggle" class="toggle-switch">
-                                <input id="toggle" type="checkbox" [checked]="checked" (change)="onToggle()" />
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </li>
-                    <li class="item">
-                        <div class="left">
-                            <img src="icons/trend-up.svg" alt="" class="preview">
-                            <p>Capacity</p>
-                        </div>
-                        <div class="right">
-                            <p>{{form.get(EVENT_FORM_FIELDS.CAPACITY)?.value || 'Unlimited'}}</p>
-                            <app-button buttonType="button" (onClick)="toggleCapacityModal()" type="plain">
-                                <img src="icons/pencil.svg" alt="" class="preview">
-                            </app-button>
-                        </div>
-                    </li>
-                    <li class="item">
-                        <a [href]='APP_ROUTE.MANAGE_EVENT_ROLES'>
-                            <div class="left">
-                                <img src="icons/user-circle.svg" alt="" class="preview">
-                                <p>Manage user roles</p>
-                            </div>
-                            <div class="right">
-                                <img src="icons/chevron-right.svg" alt="" class="preview">
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <app-event-options-container [form]="form" [checked]="checked" (openCapacityModal)="toggleCapacityModal()"
+                (openPriceModal)="togglePriceModal()"
+                (requireApprovalChange)="onToggle()"></app-event-options-container>
             <app-button buttonType="button" type="primary" [fullWidth]="true" (onClick)="createEvent()">
                 Create Event
             </app-button>
         </div>
 
         @if (showPriceModal) {
-        <app-modal-container (close)="togglePriceModal()">
-            <div class="set-price-container">
-                <img src="icons/ticket_circle.svg" alt="" srcset="" class="icon">
-                <div class="header">
-                    <h3>Set Price for Event</h3>
-                    <p>Select whether your event is a free or paid event</p>
-                    <div class="alert-container">
-                        <img src="icons/info_warn.svg" alt="" srcset="" class="icon">
-                        <p>Define Venue Sections to add multiple prices</p>
-                    </div>
-                </div>
-                <div class="content">
-                    <div class="price-selection-container">
-                        <div class="radio-container">
-                            <input [formControlName]="EVENT_FORM_FIELDS.PRICE_TYPE" value="free" type="radio"
-                                id="price-selection-free">
-                            <label for="price-selection-free">Free Entry</label>
-                        </div>
-                        <div class="radio-container">
-                            <input [formControlName]="EVENT_FORM_FIELDS.PRICE_TYPE" value="paid" type="radio"
-                                id="price-selection-paid">
-                            <label for="price-selection-paid">Paid</label>
-                        </div>
-                    </div>
-                    <app-input [iconSrc]="'icons/money.svg'" [label]="'Price'"
-                        [formControlName]="EVENT_FORM_FIELDS.PRICE" [type]="'text'" [placeholder]="'0.00'"></app-input>
-                    <div class="field">
-                        <label for="price-included">What’s included with this ticket?</label>
-                        <textarea [formControlName]="EVENT_FORM_FIELDS.PERCS" name="price-included" id="price-included"
-                            placeholder="Enter what’s included with this ticket"></textarea>
-                    </div>
-                    <app-button (onClick)="setPrice()" [fullWidth]="true" type="primary">Set Price</app-button>
-                </div>
-
-            </div>
-        </app-modal-container>
+        <app-set-price-modal (onSetPrice)="setPrice()" (closeModal)="togglePriceModal()"></app-set-price-modal>
         }
 
         @if (showCapacityModal) {
-        <app-modal-container (close)="toggleCapacityModal()">
-            <div class="set-capacity-container">
-                <div class="content">
-                    <img src="icons/trend_up_circle.svg" alt="" srcset="" class="icon">
-                    <div class="info">
-                        <h3>Capacity</h3>
-                        <p>Set the number of attendees for the event. Auto-close registration when the capacity is
-                            reached.
-                        </p>
-                    </div>
-                    <app-input [formControlName]="EVENT_FORM_FIELDS.CAPACITY" type="text"
-                        placeholder="E.g., 20"></app-input>
-                </div>
-                <div class="actions">
-                    <app-button (onClick)="removeCapacityLimit()" type='social'>Remove Limit</app-button>
-                    <app-button (onClick)="setCapacityLimit()">Set Capacity</app-button>
-                </div>
-            </div>
-        </app-modal-container>
+        <app-set-capacity-modal (removeCapacity)="removeCapacityLimit()" (setCapacity)="setCapacityLimit()"
+            (close)="toggleCapacityModal()"></app-set-capacity-modal>
         }
 
         @if (connectZoomModal) {
-        <app-modal-container (close)="toggleConnectZoomModal()">
-            <div class="zoom-connect">
-                <img src="icons/trend_up_circle.svg" alt="" srcset="" class="icon">
-
-                <div class="content">
-                    <h3>Connect to Zoom</h3>
-                    <p>Connect your account to the zoom platform to automatically create the meeting link for the event
-                    </p>
-                </div>
-                <app-button type="primary" [fullWidth]="true">Connect</app-button>
-            </div>
-        </app-modal-container>
+        <app-connect-zoom-modal (close)="toggleConnectZoomModal()"></app-connect-zoom-modal>
         }
-
 
     </div>
 
