@@ -1,0 +1,32 @@
+<app-modal-container (close)="togglePriceModal()">
+    <div class="set-price-container">
+        <img width="56" height="56" ngSrc="icons/ticket_circle.svg" alt="" srcset="" class="icon">
+        <div class="header">
+            <h3>Set Price for Event</h3>
+            <p>Select whether your event is a free or paid event</p>
+            <div class="alert-container">
+                <img width="24" height="24" ngSrc="icons/info_warn.svg" alt="" srcset="" class="icon">
+                <p>Define Venue Sections to add multiple prices</p>
+            </div>
+        </div>
+        <div class="content">
+            <div class="price-selection-container">
+                <app-radio-button id="price-selection-free" label="Free Entry"
+                    [controlName]="EVENT_FORM_FIELDS.PRICE_TYPE" value="free">
+                </app-radio-button>
+                <app-radio-button id="price-selection-paid" label="Paid" [controlName]="EVENT_FORM_FIELDS.PRICE_TYPE"
+                    value="paid">
+                </app-radio-button>
+            </div>
+            <app-input [iconSrc]="'icons/money.svg'" [label]="'Price'" [formControlName]="EVENT_FORM_FIELDS.PRICE"
+                [type]="'text'" [placeholder]="'0.00'"></app-input>
+            <div class="field">
+                <label for="price-included">What’s included with this ticket?</label>
+                <textarea [formControlName]="EVENT_FORM_FIELDS.PERCS" name="price-included" id="price-included"
+                    placeholder="Enter what’s included with this ticket"></textarea>
+            </div>
+            <app-button (onClick)="setPrice()" [fullWidth]="true" type="primary">Set Price</app-button>
+        </div>
+
+    </div>
+</app-modal-container>
