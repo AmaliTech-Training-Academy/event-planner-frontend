@@ -55,6 +55,15 @@ export class AuthService {
         finalize(() => this.setLoading(false))
       )
   }
+  public resendOtp(email: string): Observable<any> {
+    this.setLoading(true);
+    return this.authBackend.resendOtp(email).pipe(
+      tap(() => {
+      }),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
 
   public logout() {
     this.setLoading(true);
