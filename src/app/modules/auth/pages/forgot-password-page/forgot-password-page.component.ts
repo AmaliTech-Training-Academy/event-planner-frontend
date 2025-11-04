@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -35,7 +35,8 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly router: Router // <-- added router injection
   ) { }
 
   ngOnInit(): void {
@@ -74,6 +75,10 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     this.authService.forgotPassword(email).subscribe({
       next: (response) => {
         this.notificationService.success(response.description);
+
+        // Navigate to reset password route with email as query param
+        // Minimal addition — does not alter existing behavior
+        this.router.navigate([APP_ROUTES.RESET_PASSWORD], { queryParams: { email } });
       },
       complete: () => {
         this.forgotPasswordForm.reset();
