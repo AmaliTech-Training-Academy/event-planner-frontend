@@ -1,28 +1,36 @@
-@if (ticketInfo) {
-  <div class="ticket-card">
-    <h3 class="card-title">Get Your Tickets</h3>
+@if (ticketInfo(); as ticket) {
+<div class="ticket-card">
+  <h3 class="card-title">
+    @if (ticket.title.includes('Free')) {
+    <span>Get Your <span class="blue-text">Free</span> Ticket</span>
+    } @else {
+    <span>{{ ticket.title }}</span>
+    }
+  </h3>
+
+  @if (!isFree()) {
+  <div class="price">{{ ticket.currency }}{{ ticket.price }}</div>
+  }
+
+  
+  <ul class="features-list">
+    @for (feature of ticket.features; track $index) {
+    <li class="feature-item">
     
-   
-    <div class="price">
-      {{ ticketInfo.currency }}{{ ticketInfo.price }}
-    </div>
-    
-    
-    <ul class="features-list">
-      @for (feature of ticketInfo.features; track $index) {
-        <li class="feature-item">
-          <span>&check;</span> 
-          {{ feature }}
-        </li>
-      }
-    </ul>
-    
-   
-    <app-button 
-      [type]="'primary'"
-      (click)="registerClick.emit()">
-      Register For Event
-    </app-button>
-  </div>
+      <img
+        src="icons/checkmark.png"
+        alt="Checkmark"
+        class="check-icon"
+        aria-hidden="true"
+      />
+      <span>{{ feature }}</span>
+    </li>
+    }
+  </ul>
+
+  <app-button type="primary" (click)="registerClick.emit()">
+    {{ ticket.buttonText }}
+  </app-button>
+</div>
 }
 
