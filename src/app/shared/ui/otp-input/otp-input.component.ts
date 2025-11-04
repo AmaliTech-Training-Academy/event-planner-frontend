@@ -1,11 +1,15 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   QueryList,
   ViewChildren,
   ElementRef,
   signal,
+  Input,
+  Output, 
+  EventEmitter, 
+  OnInit, 
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -15,16 +19,33 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
 })
-export class OtpInputComponent {
-  protected otpDigits = signal<string[]>(new Array(6).fill(''));
+export class OtpInputComponent implements OnInit {
+  
+  
+  
+  @Input() length: number = 6; 
 
-  protected get digits(): string[] {
-    return this.otpDigits();
-  }
+ 
+  @Output() otpChange = new EventEmitter<string>();
 
+ 
+ 
+  protected otpDigits = signal<string[]>([]);
+
+ 
   @ViewChildren('otpInput') private inputs?: QueryList<
     ElementRef<HTMLInputElement>
   >;
+
+  
+  
+  ngOnInit(): void {
+    this.otpDigits.set(new Array(this.length).fill(''));
+  }
+  
+  protected get digits(): string[] {
+    return this.otpDigits();
+  }
 
   protected onInput(event: Event, index: number): void {
     const input = event.target as HTMLInputElement;
@@ -40,7 +61,11 @@ export class OtpInputComponent {
       return digits;
     });
 
-    if (value && index < 5) {
+    
+    
+    this.otpChange.emit(this.getOtpValue());
+
+    if (value && index < this.length - 1) {
       this.inputs?.toArray()[index + 1]?.nativeElement.focus();
     }
   }
@@ -57,16 +82,21 @@ export class OtpInputComponent {
 
     if (!/^\d+$/.test(pastedData)) return;
 
-    const digits = pastedData.slice(0, 6).split('');
+    const digits = pastedData.slice(0, this.length).split('');
     this.otpDigits.update((arr) => {
       digits.forEach((digit, i) => {
-        if (i < 6) arr[i] = digit;
+        if (i < this.length) arr[i] = digit;
       });
       return arr;
     });
 
-    const nextIndex = Math.min(digits.length, 5);
+    
+    
+    const nextIndex = Math.min(digits.length, this.length - 1);
     this.inputs?.toArray()[nextIndex]?.nativeElement.focus();
+    
+    
+    this.otpChange.emit(this.getOtpValue());
   }
 
   protected getOtpValue(): string {
