@@ -1,20 +1,18 @@
 <div class="traffic-list">
-  @if (data?.length) {
-    @for (item of data; track item.website) {
-      <div class="traffic-item">
-        <span class="traffic-item__label">{{ item.website }}</span>
-        <div class="traffic-item__bar">
-          <div
-            class="traffic-item__progress"
-            [style.width.%]="item.percentage"
-            [style.background-color]="item.color"
-          ></div>
-        </div>
-      </div>
-    }
-  } @else {
-    <div class="traffic-list__empty">
-      <span>No traffic data available</span>
+  @if (data.length) { @for (item of data; track item.website) {
+  <div class="traffic-item">
+    <span class="traffic-item__label">{{ item.website }}</span>
+    <div class="traffic-item__bar">
+      <div
+        class="traffic-item__progress"
+        [style.width.%]="item.percentage"
+        [style.background-color]="item.color"
+      ></div>
     </div>
+  </div>
+  } } @else {
+  <div class="traffic-list__empty">
+    <span>No traffic data available</span>
+  </div>
   }
 </div>

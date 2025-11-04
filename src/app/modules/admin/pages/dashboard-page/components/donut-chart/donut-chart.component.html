@@ -7,7 +7,7 @@
       [autoResize]="true"
       class="chart"
     ></div>
-    @if (data?.length) {
+    @if (data.length) {
     <div class="donut-chart__legend">
       @for (item of data; track item.category) {
       <div class="legend-item">

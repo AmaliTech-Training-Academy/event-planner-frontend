@@ -20,7 +20,6 @@ import { AuthService } from '../../../../core/services/auth.service';
     RouterModule,
     LogoComponent,
     ButtonComponent,
-    FormErrorComponent,
     OtpInputComponent
   ],
   templateUrl: './verify-email-page.component.html',

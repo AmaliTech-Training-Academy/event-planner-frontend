@@ -31,7 +31,6 @@ import {
     CommonModule,
     RouterModule,
     NgOptimizedImage,
-    ButtonComponent,
     DatePickerComponent,
     TicketCardComponent,
     HelpCardComponent,
