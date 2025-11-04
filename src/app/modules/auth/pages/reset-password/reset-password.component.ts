@@ -20,7 +20,7 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { OtpInputComponent } from '../../../../shared/ui/otp-input/otp-input.component';
-
+import { NotificationService } from '../../../../core/services/notification.service';
 export function passwordMatchValidator(passwordField: string, confirmPasswordField: string): ValidatorFn {
   return (formGroup: AbstractControl): ValidationErrors | null => {
     const password = formGroup.get(passwordField)?.value;
@@ -54,7 +54,8 @@ export function passwordMatchValidator(passwordField: string, confirmPasswordFie
     ButtonComponent,
     FormErrorComponent,
     InputComponent,
-    OtpInputComponent
+    OtpInputComponent,
+  
   ],
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.scss']
@@ -73,6 +74,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly fb: FormBuilder,
+    private readonly notificationService: NotificationService,
     private readonly authService: AuthService,
     private readonly route: ActivatedRoute,
     private readonly router: Router
@@ -117,24 +119,27 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   }
 
   protected onSubmit(): void {
-    if (this.setPasswordForm.invalid) {
-      this.setPasswordForm.markAllAsTouched();
-      return;
-    }
-
-    this.isLoading = true;
-    const { otp, newPassword } = this.setPasswordForm.value;
-
-
-    this.authService.resetPassword(otp, this.email ?? '', newPassword)
-      .pipe(finalize(() => this.isLoading = false))
-      .subscribe({
-        next: () => {
-          this.router.navigate([APP_ROUTES.LOGIN]);
-        },
-        error: () => {
-         
-        }
-      });
+  if (this.setPasswordForm.invalid) {
+    this.setPasswordForm.markAllAsTouched();
+    return;
   }
+
+  const { otp, newPassword } = this.setPasswordForm.value;
+
+  if (!otp || !newPassword || !this.email) {
+    return;
+  }
+
+  this.isLoading = true;
+
+  this.authService.resetPassword(otp, this.email, newPassword)
+    .pipe(finalize(() => this.isLoading = false))
+    .subscribe({
+      next: () => {
+        this.notificationService.success('Password reset successfully!');
+        this.setPasswordForm.reset();
+        this.router.navigate([APP_ROUTES.LOGIN]);
+      }
+    });
+}
 }
