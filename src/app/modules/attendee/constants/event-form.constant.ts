@@ -23,6 +23,15 @@ export const EVENT_FORM_FIELDS = {
   PERCS: 'percs',
   REQUIRE_APPROVAL: 'requireApproval',
   PRICE_TYPE: 'priceType',
+  VENUE_SECTIONS: 'venuSections',
+
+  // VENUE GROUP
+  VENUE_SECTION_NAME: "name",
+  VENUE_SECTION_CAPACITY: "capacity",
+  VENUE_SECTION_PRICE: "price",
+  VENUE_SECTION_COLOR: "color",
+  VENUE_SECTION_DESCRIPTION: "description",
+  VENUE_SECTION_IMAGE: "image",
 
   // Nested groups
   IN_PERSON_DETAILS: 'inPersonDetails',

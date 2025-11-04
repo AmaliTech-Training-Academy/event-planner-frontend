@@ -8,7 +8,6 @@
         flex-direction: column;
         gap: 10px;
         padding: 16px;
-
 }
 
 .canvas-wrapper {
@@ -27,21 +26,22 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+
         .description {
                 flex: 1;
                 display: flex;
                 flex-direction: column;
 
-                h6{
+                h6 {
                         @include h-6;
                 }
 
-                p{
+                p {
                         @include body-2;
                 }
         }
+
         app-button {
                 flex: 1;
-                // cursor: pointer;
         }
 }
