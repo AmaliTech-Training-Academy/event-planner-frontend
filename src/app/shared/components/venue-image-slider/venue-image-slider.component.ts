@@ -9,11 +9,9 @@ import {
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ButtonComponent } from '../../ui/button/button.component';
+import { VenueImage } from '../../../core/models/event.model';  
 
-export interface VenueImage {
-  url: string;
-  alt: string;
-}
+
 
 @Component({
   selector: 'app-venue-image-slider',
