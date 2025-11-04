@@ -1,0 +1,47 @@
+<div class="filter-group">
+  
+  <div class="filter-input-wrapper">
+    <img 
+      src="icons/room.png" 
+      class="filter-icon" 
+      alt="Location" />
+    <input 
+      type="text" 
+      placeholder="Location" 
+      class="filter-input"
+      [(ngModel)]="selectedLocation"
+      (ngModelChange)="onLocationChange()" 
+    />
+  </div>
+
+  <div class="filter-input-wrapper">
+    <img 
+      src="icons/Vector.png" 
+      class="filter-icon select-arrow" 
+      alt="Dropdown" />
+    <select 
+      class="filter-select"
+      [(ngModel)]="selectedEventType"
+      (ngModelChange)="onEventTypeChange()"
+    >
+      <option value="all">All Events</option>
+      <option value="paid">Paid Events</option>
+      <option value="free">Free Events</option>
+    </select>
+  </div>
+  
+  <div class="filter-input-wrapper">
+    <img 
+      src="icons/Mixed.png" 
+      class="filter-icon" 
+      alt="Date" />
+    <input 
+      type="date" 
+      class="filter-date"
+      required  
+      [(ngModel)]="selectedDate"
+      (ngModelChange)="onDateChange()"
+    />
+  </div>
+
+</div>
