@@ -8,5 +8,5 @@ export const APP_ROUTES = {
     ADMIN_LOGIN:'/auth/admin',
     VENUE_SECTION:'/app/define-venue-sections',
     MANAGE_EVENT_ROLES:'/app/manage-event-roles',
-    RESET_PASSWORD:'auth/reset-password',
+    RESET_PASSWORD:'/auth/reset-password',
 }
