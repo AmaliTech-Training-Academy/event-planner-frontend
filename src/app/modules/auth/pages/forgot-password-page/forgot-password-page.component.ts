@@ -16,7 +16,7 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { LogoComponent } from '../../components/logo/logo.component';
-
+import{ finalize } from 'rxjs/operators';
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
@@ -65,24 +65,33 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     return APP_ROUTES;
   }
 
-  protected onSubmit() {
-    if (this.forgotPasswordForm.invalid) {
-      this.forgotPasswordForm.markAllAsTouched();
-      return;
-    }
-    const { email } = this.forgotPasswordForm.value;
+ onSubmit(): void {
+  if (this.forgotPasswordForm.invalid) {
+    this.forgotPasswordForm.markAllAsTouched();
+    return;
+  }
 
-    this.authService.forgotPassword(email).subscribe({
+  const { email } = this.forgotPasswordForm.value;
+
+  if (!email) {
+    return;
+  }
+
+  this.isLoading = true;
+
+  this.authService.forgotPassword(email)
+    .pipe(
+      finalize(() => this.isLoading = false)
+    )
+    .subscribe({
       next: (response) => {
         this.notificationService.success(response.description);
-
-        
-        this.router.navigate([APP_ROUTES.RESET_PASSWORD], { queryParams: { email } });
-      },
-      complete: () => {
         this.forgotPasswordForm.reset();
+        
+        this.router.navigate([APP_ROUTES.RESET_PASSWORD], { 
+          queryParams: { email } 
+        });
       }
-    })
-
-  }
+    });
+}
 }
