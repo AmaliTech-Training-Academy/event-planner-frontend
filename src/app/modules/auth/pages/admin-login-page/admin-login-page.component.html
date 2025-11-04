@@ -103,25 +103,17 @@
         </div>
       </div>
 
-    <app-button
-  type="primary"
-  [buttonType]="'submit'"
-  [disabled]="!loginForm.valid || isSubmitting()"
->
-  <ng-container *ngIf="isSubmitting(); else signInText">
-    <img
-      ngSrc="icons/spinner.svg"
-      alt="Loading..."
-      width="20"
-      height="20"
-      class="spinner"
-    />
-    Please wait…
-  </ng-container>
-  <ng-template #signInText>Sign In to Dashboard</ng-template>
-</app-button>
-
-
+      <app-button
+        type="primary"
+        [buttonType]="'submit'"
+        [disabled]="!loginForm.valid || isSubmitting()"
+      >
+        @if (isSubmitting()) {
+          Please wait…
+        } @else {
+          Sign In to Dashboard
+        }
+      </app-button>
 
       <app-secure-text
         text="Secure login enabled"
