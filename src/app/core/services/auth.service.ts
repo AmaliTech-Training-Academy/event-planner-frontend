@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, finalize, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, Observable, tap, throwError } from 'rxjs';
 import { APP_ROUTES } from '../constants/app-routes.constants';
 import { User } from '../models/user.model';
 import { AuthBackendService } from './backend/auth-backend.service';
@@ -55,6 +55,15 @@ export class AuthService {
         finalize(() => this.setLoading(false))
       )
   }
+  public resendOtp(email: string): Observable<any> {
+    this.setLoading(true);
+    return this.authBackend.resendOtp(email).pipe(
+      tap(() => {
+      }),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
 
   public logout() {
     this.setLoading(true);
@@ -79,6 +88,17 @@ export class AuthService {
         }),
         catchError(err => this.errorHandlerService.handle(err)),
         finalize(() => this.setLoading(false))
+      );
+  }
+     public resetPassword(otp: string, email: string, password: string) {
+       this.setLoading(true);
+    return this.authBackend.resetPassword(otp, email, password)
+      .pipe(
+        tap(() => {
+          this.router.navigate([APP_ROUTES.LOGIN]); 
+        }),
+         catchError(err => this.errorHandlerService.handle(err)),
+           finalize(() => this.setLoading(false))
       );
   }
 

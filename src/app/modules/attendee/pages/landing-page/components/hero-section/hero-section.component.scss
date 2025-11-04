@@ -47,7 +47,6 @@
     gap: $spacing-4;
     flex-wrap: wrap;
     @media (max-width: 457px) {
-      justify-content: space-between;
       flex-wrap: nowrap;
       gap: $spacing-3;
     }

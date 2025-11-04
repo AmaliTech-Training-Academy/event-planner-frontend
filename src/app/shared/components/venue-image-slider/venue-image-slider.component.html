@@ -1,0 +1,51 @@
+<div class="slider-container">
+  <div class="slider-header">
+    <h2 class="slider-title">Venue Images</h2>
+    <div class="slider-nav">
+      <app-button
+        type="primary"
+        variant="icon"
+        (click)="prev()"
+        [disabled]="isPrevDisabled()"
+        aria-label="Previous image"
+      >
+        <img icon src="icons/chevron-left.png" alt="Previous" />
+      </app-button>
+
+      <app-button
+        type="primary"
+        variant="icon"
+        (click)="next()"
+        [disabled]="isNextDisabled()"
+        aria-label="Next image"
+      >
+        <img icon src="icons/Nav.png" alt="Next" />
+      </app-button>
+    </div>
+  </div>
+
+  <div class="image-list-wrapper">
+    <div
+      class="image-list"
+      [style.transform]="
+        'translateX(' + -currentIndex() * slideWidthPercentage() + '%)'
+      "
+    >
+      @for (image of images; track image.url) {
+      <div
+        class="image-slide"
+        [style.width.%]="slideWidthPercentage()"
+      >
+        <img
+          [ngSrc]="image.url"
+          [alt]="image.alt"
+          class="venue-image"
+          width="300"
+          height="150"
+        />
+      </div>
+      }
+    </div>
+  </div>
+</div>
+

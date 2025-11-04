@@ -18,7 +18,7 @@ export class NotificationService {
       clearTimeout(this.timeoutId);
       this.timeoutId = null;
     }
-
+    
     this.notifications.next(notification);
 
     if (notification.duration) {
