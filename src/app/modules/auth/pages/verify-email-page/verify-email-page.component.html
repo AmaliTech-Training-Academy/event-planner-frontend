@@ -8,20 +8,17 @@
       <p class="subtitle">Enter the 6-digit code sent to your email</p>
     </div>
 
-    
-
     <form (ngSubmit)="verifyAccount()">
       <div class="field verification-field">
-
         <app-otp-input
           [length]="6"
           (otpChange)="onOtpChange($event)">
         </app-otp-input>
-
       </div>
 
       <app-button 
-        [type]="'primary'" 
+        buttonType="submit"
+        type="primary"
         [fullWidth]="true"
         [disabled]="!isOtpComplete() || isLoading">
 
