@@ -24,12 +24,24 @@
     gap: $spacing-3;
     line-height: 50px;
     flex: 0 0  70%;
+    
+     &--expanded {
+      flex: 1;
+    }
 }
 
   &__search-box {
     position: relative;
     flex: 0 0 30%;
+.md {
+    width: 100%;
+  }
 
+  .lg {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
   }
 
   &__search-input {

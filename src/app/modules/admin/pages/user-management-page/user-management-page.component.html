@@ -12,9 +12,12 @@
       [actions]="tableActions"
       [filters]="tableFilters"
       [searchable]="true"
-      [expandable]="false"
+      [showCheckboxes]="true"
+      [showFilters]="true"
+      [tableTitle]="'User List'"
+      [searchPlaceholder]="'Search users...'"
       [primaryAction]="primaryAction"
-      (rowExpanded)="onRowExpanded($event)"
+      [itemsPerPage]="10"
     />
   </div>
 </div>

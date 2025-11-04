@@ -6,6 +6,7 @@ import {
   signal,
   input,
   output,
+  Input,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -60,6 +61,12 @@ export interface TableFilter {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataTableComponent<T extends Record<string, any>> {
+  public readonly tableTitle = input<string>('User List');
+  public readonly searchPlaceholder = input<string>('Search users...');
+  public readonly showCheckboxes = input<boolean>(true);
+  public readonly showFilters = input<boolean>(true);
+  @Input() public   searchSize: 'md' | 'lg' = 'md';
+
   public readonly data = input.required<ReadonlyArray<T>>();
   public readonly columns = input.required<ReadonlyArray<TableColumn<T>>>();
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
@@ -206,5 +213,48 @@ export class DataTableComponent<T extends Record<string, any>> {
     return Object.values(item).some((value) =>
       String(value).toLowerCase().includes(query)
     );
+  }
+  // Add these helper methods to data-table.component.ts:
+
+  public getActionColor(action: TableAction<T>, item: T): string | undefined {
+    if (action.color === 'power') {
+      return item['status'] === 'Active' ? 'power-active' : 'power-inactive';
+    }
+    return action.color;
+  }
+
+  public getActionExtraClass(
+    action: TableAction<T>,
+    item: T
+  ): string | undefined {
+    if (action.color === 'power') {
+      return item['status'] === 'Active' ? 'power-active' : 'power-inactive';
+    }
+    return action.color;
+  }
+
+  public getActionIcon(action: TableAction<T>, item: T): string {
+    if (action.color === 'power') {
+      return item['status'] === 'Active'
+        ? 'icons/power-icon-red.png'
+        : 'icons/power-icon-green.png';
+    }
+    return action.icon;
+  }
+
+  public getActionIconAlt(action: TableAction<T>, item: T): string {
+    if (action.color === 'power') {
+      return item['status'] === 'Active'
+        ? 'Deactivate user icon'
+        : 'Activate user icon';
+    }
+    return `${action.label} icon`;
+  }
+
+  public getActionAriaLabel(action: TableAction<T>, item: T): string {
+    if (action.color === 'power') {
+      return item['status'] === 'Active' ? 'Deactivate user' : 'Activate user';
+    }
+    return action.label;
   }
 }

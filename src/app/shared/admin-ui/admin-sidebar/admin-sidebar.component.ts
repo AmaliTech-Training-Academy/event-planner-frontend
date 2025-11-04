@@ -44,7 +44,7 @@ export class AdminSidebarComponent {
         {
           label: 'Saved Invites',
           iconPath: 'icons/save-icon.png',
-          route: '/admin/invites',
+          route: '/admin/saved-invites',
         },
         {
           label: 'Event Overview',

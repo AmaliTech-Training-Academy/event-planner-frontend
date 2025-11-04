@@ -6,12 +6,12 @@
       @if (searchable()) {
       <div class="data-table__search-box">
         <app-input
-          class="md"
-          placeholder="Search users..."
-          [value]="searchQuery()"
-          (valueChange)="updateSearch($event)"
-          iconSrc="icons/search-icon.png"
-        />
+  [ngClass]="searchSize"
+  placeholder="Search users..."
+  [value]="searchQuery()"
+  (valueChange)="updateSearch($event)"
+  iconSrc="icons/search-icon.png"
+/>
       </div>
       }
       <!-- Reusable Filter Select -->
@@ -65,6 +65,7 @@
     <tbody class="data-table__tbody">
       @for (item of paginatedData(); track trackByIndex($index)) {
       <tr class="data-table__tr">
+        <!-- ✅ Checkbox column -->
         <td class="data-table__td data-table__td--checkbox">
           <app-checkbox
             [checked]="isSelected(item)"
@@ -84,12 +85,12 @@
           @if (column.key === 'name' && item['email']) {
           <div class="data-table__user-cell">
             <img
-              [ngSrc]="item['avatar']"
-              alt="User avatar"
-              class="data-table__user-avatar"
-              width="40"
-              height="40"
-            />
+  [ngSrc]="item['avatar']"
+  alt="User avatar"
+  class="data-table__user-avatar"
+  width="40"
+  height="40"
+/>
 
             <div class="data-table__user-info">
               <p class="data-table__user-name">
@@ -110,51 +111,30 @@
         </td>
         }
 
-        <!-- ✅ Actions column -->
-        @if (actions().length > 0) {
-        <td class="data-table__td data-table__td--actions">
-          @for (action of actions(); track action.label) {
-          <app-button
-            type="action"
-            [extraClass]="
-              action.color === 'power'
-                ? item['status'] === 'Active'
-                  ? 'power-active'
-                  : 'power-inactive'
-                : action.color
-            "
-            (click)="executeAction(action, item)"
-            [disabled]="isActionDisabled(action, item)"
-            [attr.aria-label]="
-              action.color === 'power'
-                ? item['status'] === 'Active'
-                  ? 'Deactivate user'
-                  : 'Activate user'
-                : action.label
-            "
-            class="data-table__action-btn"
-          >
-            <img
-              [src]="
-                action.color === 'power'
-                  ? item['status'] === 'Active'
-                    ? 'icons/power-icon-red.png'
-                    : 'icons/power-icon-green.png'
-                  : action.icon
-              "
-              [alt]="
-                action.color === 'power'
-                  ? item['status'] === 'Active'
-                    ? 'Deactivate user icon'
-                    : 'Activate user icon'
-                  : action.label + ' icon'
-              "
-            />
-          </app-button>
-          }
-        </td>
+     <!-- In data-table.component.html, replace the actions section: -->
 
-        }
+@if (actions().length > 0) {
+<td class="data-table__td data-table__td--actions">
+  @for (action of actions(); track action.label) {
+    @if (isActionVisible(action, item)) {
+    <app-button
+      [type]="action.type || 'action'"
+      [color]="getActionColor(action, item)"
+      [extraClass]="getActionExtraClass(action, item)"
+      (onClick)="executeAction(action, item)"
+      [disabled]="isActionDisabled(action, item)"
+      [attr.aria-label]="getActionAriaLabel(action, item)"
+      class="data-table__action-btn"
+    >
+      <img
+        [src]="getActionIcon(action, item)"
+        [alt]="getActionIconAlt(action, item)"
+      />
+    </app-button>
+    }
+  }
+</td>
+}
       </tr>
       }
     </tbody>
@@ -175,3 +155,4 @@
 
   }
 </div>
+
