@@ -21,7 +21,7 @@ export class AuthService {
       .pipe(
         tap(() => {
           this.router.navigate([APP_ROUTES.VERIFY_EMAIL], {
-            queryParams: { email },
+            state: { email },
           });
         }),
         catchError(err => this.errorHandlerService.handle(err)),
@@ -34,9 +34,7 @@ export class AuthService {
     return this.authBackend.register(fullName, email, password, confirmPassword)
       .pipe(
         tap(() => {
-          this.router.navigate([APP_ROUTES.LOGIN], {
-            queryParams: { email },
-          });
+          this.router.navigate([APP_ROUTES.LOGIN]);
         }), catchError(err => this.errorHandlerService.handle(err)),
         finalize(() => this.setLoading(false))
       );
@@ -106,6 +104,11 @@ export class AuthService {
     this.setLoading(true);
     return this.authBackend.forgotPassword(email)
       .pipe(
+          tap(() => {
+          this.router.navigate([APP_ROUTES.RESET_PASSWORD], {
+            state: { email },
+          }); 
+        }),
         catchError(err => this.errorHandlerService.handle(err)),
         finalize(() => this.setLoading(false))
       )
