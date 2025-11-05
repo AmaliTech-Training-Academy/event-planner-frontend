@@ -19,6 +19,7 @@ export class AuthService {
   private _userInfo$ = new BehaviorSubject<User | null>(null);
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
+  private email: string = '';
 
   constructor(
     private readonly authBackend: AuthBackendService,
@@ -32,9 +33,8 @@ export class AuthService {
     return this.authBackend.login(email, password)
       .pipe(
         tap(() => {
-          this.router.navigate([APP_ROUTES.VERIFY_EMAIL], {
-            state: { email },
-          });
+          this.email = email;
+          this.router.navigate([APP_ROUTES.VERIFY_EMAIL]);
         }),
         catchError(err => this.errorHandlerService.handle(err)),
         finalize(() => this.setLoading(false))
@@ -133,9 +133,8 @@ export class AuthService {
     return this.authBackend.forgotPassword(email)
       .pipe(
         tap(() => {
-          this.router.navigate([APP_ROUTES.RESET_PASSWORD], {
-            state: { email },
-          });
+          this.email = email;
+          this.router.navigate([APP_ROUTES.RESET_PASSWORD]);
         }),
         catchError(err => this.errorHandlerService.handle(err)),
         finalize(() => this.setLoading(false))
@@ -153,5 +152,9 @@ export class AuthService {
 
   private setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);
+  }
+
+  public getEmail(): string {
+    return this.email;
   }
 }

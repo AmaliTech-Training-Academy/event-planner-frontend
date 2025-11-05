@@ -78,14 +78,11 @@ export class ResetPasswordComponent implements OnInit {
   ) { }
 
 
-  public ngOnInit(): void {
-    const navigation = this.router.getCurrentNavigation();
-    const state = navigation?.extras?.state as { email?: string };
-
-    if (state && state.email) {
-      this.email = state.email;
-    } else {
+   ngOnInit(): void {
+    this.email = this.authService.getEmail()
+    if (!this.email) {
       this.router.navigate([APP_ROUTES.FORGOT_PASSWORD]);
+      return
     }
 
     this.setPasswordForm = this.createForm();
