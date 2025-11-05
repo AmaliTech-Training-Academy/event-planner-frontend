@@ -1,22 +1,20 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  forwardRef,
-  inject,
+  input,
   signal,
   computed,
+  forwardRef,
+  output,
+  ChangeDetectionStrategy,
+  effect,
 } from '@angular/core';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import {
+  FormsModule,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
+  ControlValueAccessor,
+} from '@angular/forms';
 import { FormErrorComponent } from '../form-error/form-error.component';
 
 @Component({
@@ -35,82 +33,92 @@ import { FormErrorComponent } from '../form-error/form-error.component';
   ],
 })
 export class InputComponent implements ControlValueAccessor {
-  private readonly cdr = inject(ChangeDetectorRef);
+  // Inputs - reactive values from parent
+  public readonly type = input<'text' | 'email' | 'password'>('text');
+  public readonly placeholder = input<string>('');
+  public readonly label = input<string>('');
+  public readonly formControlName = input<string>('');
+  public readonly errorMessage = input<string | null>('');
+  public readonly iconSrc = input<string | undefined>();
+  public readonly required = input<boolean>(false);
+  public readonly disabled = input<boolean>(false);
+  public readonly value = input<string>(''); // ✅ Add this
 
-  /** --- Inputs --- */
-  @Input() type: 'text' | 'email' | 'password' = 'text';
-  @Input() placeholder = '';
-  @Input() label = '';
-  @Input() formControlName = '';
-  @Input() errorMessage: string | null = null;
-  @Input() iconSrc: string | null = null;
-  @Input() required = false;
-  @Input() disabled = false;
-  @Input() value = '';
+  // Outputs
+  public readonly valueChange = output<string>();
 
-  /** --- Outputs --- */
-  @Output() valueChange = new EventEmitter<string>();
-
-  /** --- Internal State --- */
-  public readonly _value = signal<string>('');
-  private readonly _focused = signal<boolean>(false);
+  // Internal signals - component state only
+  private readonly _internalValue = signal<string>('');
+  private readonly _isFocused = signal<boolean>(false);
   private readonly _showPassword = signal<boolean>(false);
   private readonly _isDisabled = signal<boolean>(false);
 
-  /** --- Computed Values --- */
-  readonly hasError = computed(() => !!this.errorMessage);
-  readonly inputType = computed(() =>
-    this.type === 'password' && !this._showPassword() ? 'password' : this.type
+  // Computed values - derived state
+  public readonly hasError = computed(() => !!this.errorMessage());
+  public readonly inputType = computed(() =>
+    this.type() === 'password' && !this._showPassword() ? 'password' : 'text'
   );
-  readonly showPassword = computed(() => this._showPassword());
-  readonly isFocused = computed(() => this._focused());
-  readonly isDisabled = computed(() => this.disabled || this._isDisabled());
+  public readonly showPassword = computed(() => this._showPassword());
+  public readonly isFocused = computed(() => this._isFocused());
+  public readonly isDisabled = computed(
+    () => this.disabled() || this._isDisabled()
+  );
 
-  /** --- ControlValueAccessor --- */
+  // ✅ Add effect to sync external value input with internal state
+  constructor() {
+    effect(() => {
+      const externalValue = this.value();
+      if (externalValue !== this._internalValue()) {
+        this._internalValue.set(externalValue);
+      }
+    });
+  }
+
+  // ControlValueAccessor callbacks
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
-  writeValue(value: string): void {
-    this._value.set(value ?? '');
-    this.cdr.markForCheck();
+  // ControlValueAccessor implementation
+  public writeValue(value: string): void {
+    if (value !== undefined && value !== null) {
+      this._internalValue.set(value);
+    }
   }
 
-  registerOnChange(fn: (value: string) => void): void {
+  public registerOnChange(fn: (value: string) => void): void {
     this.onChange = fn;
   }
 
-  registerOnTouched(fn: () => void): void {
+  public registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  public setDisabledState(isDisabled: boolean): void {
     this._isDisabled.set(isDisabled);
-    this.cdr.markForCheck();
   }
 
-  /** --- Handlers --- */
-  onInput(event: Event): void {
+  // Public methods
+  public currentValue(): string {
+    return this._internalValue();
+  }
+
+  public onValueChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this._value.set(value);
+    this._internalValue.set(value);
     this.onChange(value);
     this.valueChange.emit(value);
   }
 
-  onFocus(): void {
-    this._focused.set(true);
+  public onFocus(): void {
+    this._isFocused.set(true);
   }
 
-  onBlur(): void {
+  public onBlur(): void {
     this._isFocused.set(false);
     this.onTouched();
   }
 
-  togglePasswordVisibility(): void {
-    this._showPassword.update((v) => !v);
-  }
-
-  /** --- Getters --- */
-  get currentValue(): string {
-    return this._value();
+  public togglePasswordVisibility(): void {
+    this._showPassword.update((current) => !current);
   }
 }

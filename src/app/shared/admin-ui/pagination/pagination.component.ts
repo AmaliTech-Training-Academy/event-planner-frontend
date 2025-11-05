@@ -21,7 +21,7 @@ export class PaginationComponent {
   public readonly itemsPerPage = input<number>(10);
   public readonly maxVisiblePages = input<number>(5);
 
-  protected readonly currentPage = model<number>(1);
+  public readonly currentPage = model<number>(1);
 
   public readonly totalPages = computed(() =>
     Math.ceil(this.totalItems() / this.itemsPerPage())

@@ -11,12 +11,12 @@ import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/m
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 import { User } from '../../../../../../core/models/user.model';
 import { EditUserProfileComponent } from '../edit-user-profile/edit-user-profile.component';
-import { NgOptimizedImage } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-view-user-profile',
   standalone: true,
-  imports: [ModalHeaderComponent, ButtonComponent, EditUserProfileComponent, NgOptimizedImage],
+  imports: [ModalHeaderComponent, ButtonComponent, CommonModule,  EditUserProfileComponent, NgOptimizedImage],
   templateUrl: './view-user-profile.component.html',
   styleUrls: ['./view-user-profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

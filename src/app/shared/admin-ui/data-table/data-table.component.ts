@@ -53,7 +53,7 @@ export interface TableFilter {
     ButtonComponent,
     CheckboxComponent,
     PaginationComponent,
-    InputComponent
+    InputComponent,
   ],
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],

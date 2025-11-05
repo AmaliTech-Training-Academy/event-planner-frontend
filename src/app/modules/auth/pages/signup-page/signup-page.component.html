@@ -1,147 +1,179 @@
 <div class="wrapper">
-
-    <div class="content">
-        <app-logo></app-logo>
-        <div class="header">
-            <h2>Sign Up</h2>
-            <p>Fill the form below to register your account</p>
-        </div>
-        <div class="form-container">
-            <form [formGroup]="signupForm" method="post">
-                <div class="field">
-                    <label for="fullname">Full name<span>*</span></label>
-                    <div class="input-container">
-                        <img src="icons/user.png" alt="person icon">
-                        <input formControlName="fullName" type="text" id="fullname" name="fullname"
-                            placeholder="E.g., John Doe">
-                    </div>
-                    @if (hasError('fullName', 'required')) {
-                    <div class="error-container">
-                        <img src="icons/error-info.svg" alt="error info icon">
-
-                        <small class="error">Full name is required.</small>
-                    </div>
-                    }
-                    @if (hasError('fullName', 'minlength')) {
-                    <div class="error-container">
-                        <img src="icons/error-info.svg" alt="error info icon">
-
-                        <small class="error">Full name must be at least 3
-                            characters.</small>
-                    </div>
-                    }
-                </div>
-                <div class="field">
-                    <label for="email">Email Address<span>*</span></label>
-                    <div class="input-container">
-                        <img src="icons/mail.png" alt="mail icon">
-                        <input formControlName="email" type="email" id="email" name="email"
-                            placeholder="user@gmail.com">
-                    </div>
-                    @if (hasError('email', 'required')) {
-                    <div class="error-container">
-                        <img src="icons/error-info.svg" alt="error info icon">
-                        <small class="error">Email is required.</small>
-                    </div>
-                    }
-                    @if (hasError('email', 'email')) {
-                    <div class="error-container">
-                        <img src="icons/error-info.svg" alt="error info icon">
-                        <small class="error">Enter a valid email address.</small>
-                    </div>
-                    }
-                </div>
-
-                <div class="row">
-                    <div class="field">
-                        <label for="password">Password<span>*</span></label>
-                        <div class="input-container">
-                            <img src="icons/lock.png" alt="lock icon">
-                            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" id="password"
-                                name="password" placeholder="********">
-                            <button type="button" (click)="toggleShowPassword()">
-                                @if (showPassword) {
-                                <img src="icons/eye-closed.svg" alt="hide password icon">
-
-                                }@else {
-                                <img src="icons/eye-open.svg" alt="show password icon">
-                                }
-
-                            </button>
-
-                        </div>
-                        @if (hasError('password', 'required')) {
-                        <div class="error-container">
-                            <img src="icons/error-info.svg" alt="error info icon">
-                            <small class="error">Password is required.</small>
-                        </div>
-                        }
-                        @if (hasError('password', 'minlength')) {
-                        <div class="error-container">
-                            <img src="icons/error-info.svg" alt="error info icon">
-                            <small class="error">Password must be at least 6 characters.</small>
-                        </div>
-                        }
-                    </div>
-                    <div class="field">
-                        <label for="confirm-password">Confirm Password<span>*</span></label>
-                        <div class="input-container">
-                            <img src="icons/lock.png" alt="lock icon">
-                            <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword"
-                                id="confirm-password" name="confirm-password" placeholder="********">
-                            <button type="button" (click)="toggleShowConfirmPassword()">
-                                @if (showConfirmPassword) {
-                                <img src="icons/eye-closed.svg" alt="hide confirm password icon">
-
-                                }@else {
-                                <img src="icons/eye-open.svg" alt="show confirm password icon">
-                                }
-                            </button>
-                        </div>
-                        @if (hasError('confirmPassword', 'required')) {
-                        <div class="error-container">
-                            <img src="icons/error-info.svg" alt="error info icon">
-                            <small class="error">Confirm your password.</small>
-                        </div>
-                        }
-                        @if (signupForm.errors?.['passwordMismatch'] && signupForm.touched) {
-                        <div class="error-container">
-                            <img src="icons/error-info.svg" alt="error info icon">
-                            <small class="error"> Passwords do not match.</small>
-                        </div>
-                        }
-
-                    </div>
-                </div>
-            </form>
-            <div class="action-container">
-                <button [disabled]="signupForm.invalid" (click)="toggleShowConfirmPassword()" class="create-account">
-                    Create Account
-                </button>
-                <div class="divider">
-                    <hr>
-                    <span>Or Sign Up with</span>
-                    <hr>
-                </div>
-                <div class="socials-login">
-                    <button class="google"><img src="icons/google.svg" alt="google icon"></button>
-                    <button class="apple"><img src="icons/apple.svg" alt="apple icon"></button>
-                    <button class="facebook"><img src="icons/facebook.svg" alt="facebook icon"></button>
-                </div>
-
-                <div class="secure-info">
-                    <div class="header-info">
-                        <img src="icons/info.svg" alt="security info icon">
-                        <h3>Secure login enabled</h3>
-                    </div>
-                    <p>This is a secure, encrypted connection</p>
-                </div>
-
-                <p class="already-signin">Already have an account? <a routerLink="/auth/login" class="signin-cta">Sign
-                        In</a></p>
-
-            </div>
-        </div>
+  <div class="content">
+    <app-logo></app-logo>
+    <div class="header">
+      <h2>Sign Up</h2>
+      <p>Fill the form below to register your account</p>
     </div>
+    <div class="form-container">
+      <form [formGroup]="signupForm" method="post">
+        <div class="field">
+          <label for="fullname">Full name<span>*</span></label>
+          <div class="input-container">
+            <img src="icons/user.png" alt="person icon" />
+            <input
+              formControlName="fullName"
+              type="text"
+              id="fullname"
+              name="fullname"
+              placeholder="E.g., John Doe"
+            />
+          </div>
+          @if (hasError('fullName', 'required')) {
+          <div class="error-container">
+            <img src="icons/error-info.svg" alt="error info icon" />
 
+            <small class="error">Full name is required.</small>
+          </div>
+          } @if (hasError('fullName', 'minlength')) {
+          <div class="error-container">
+            <img src="icons/error-info.svg" alt="error info icon" />
+
+            <small class="error"
+              >Full name must be at least 3 characters.</small
+            >
+          </div>
+          }
+        </div>
+        <div class="field">
+          <label for="email">Email Address<span>*</span></label>
+          <div class="input-container">
+            <img src="icons/mail.png" alt="mail icon" />
+            <input
+              formControlName="email"
+              type="email"
+              id="email"
+              name="email"
+              placeholder="user@gmail.com"
+            />
+          </div>
+          @if (hasError('email', 'required')) {
+          <div class="error-container">
+            <img src="icons/error-info.svg" alt="error info icon" />
+            <small class="error">Email is required.</small>
+          </div>
+          } @if (hasError('email', 'email')) {
+          <div class="error-container">
+            <img src="icons/error-info.svg" alt="error info icon" />
+            <small class="error">Enter a valid email address.</small>
+          </div>
+          }
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="password">Password<span>*</span></label>
+            <div class="input-container">
+              <img src="icons/lock.png" alt="lock icon" />
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                id="password"
+                name="password"
+                placeholder="********"
+              />
+              <button type="button" (click)="toggleShowPassword()">
+                @if (showPassword) {
+                <img src="icons/eye-closed.svg" alt="hide password icon" />
+
+                }@else {
+                <img src="icons/eye-open.svg" alt="show password icon" />
+                }
+              </button>
+            </div>
+            @if (hasError('password', 'required')) {
+            <div class="error-container">
+              <img src="icons/error-info.svg" alt="error info icon" />
+              <small class="error">Password is required.</small>
+            </div>
+            } @if (hasError('password', 'minlength')) {
+            <div class="error-container">
+              <img src="icons/error-info.svg" alt="error info icon" />
+              <small class="error"
+                >Password must be at least 6 characters.</small
+              >
+            </div>
+            }
+          </div>
+          <div class="field">
+            <label for="confirm-password">Confirm Password<span>*</span></label>
+            <div class="input-container">
+              <img src="icons/lock.png" alt="lock icon" />
+              <input
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                id="confirm-password"
+                name="confirm-password"
+                placeholder="********"
+              />
+              <button type="button" (click)="toggleShowConfirmPassword()">
+                @if (showConfirmPassword) {
+                <img
+                  src="icons/eye-closed.svg"
+                  alt="hide confirm password icon"
+                />
+
+                }@else {
+                <img
+                  src="icons/eye-open.svg"
+                  alt="show confirm password icon"
+                />
+                }
+              </button>
+            </div>
+            @if (hasError('confirmPassword', 'required')) {
+            <div class="error-container">
+              <img src="icons/error-info.svg" alt="error info icon" />
+              <small class="error">Confirm your password.</small>
+            </div>
+            } @if (signupForm.errors?.['passwordMismatch'] &&
+            signupForm.touched) {
+            <div class="error-container">
+              <img src="icons/error-info.svg" alt="error info icon" />
+              <small class="error"> Passwords do not match.</small>
+            </div>
+            }
+          </div>
+        </div>
+      </form>
+      <div class="action-container">
+        <button
+          [disabled]="signupForm.invalid"
+          (click)="toggleShowConfirmPassword()"
+          class="create-account"
+        >
+          Create Account
+        </button>
+        <div class="divider">
+          <hr />
+          <span>Or Sign Up with</span>
+          <hr />
+        </div>
+        <div class="socials-login">
+          <button class="google">
+            <img src="icons/google.svg" alt="google icon" />
+          </button>
+          <button class="apple">
+            <img src="icons/apple.svg" alt="apple icon" />
+          </button>
+          <button class="facebook">
+            <img src="icons/facebook.svg" alt="facebook icon" />
+          </button>
+        </div>
+
+        <div class="secure-info">
+          <div class="header-info">
+            <img src="icons/info.svg" alt="security info icon" />
+            <h3>Secure login enabled</h3>
+          </div>
+          <p>This is a secure, encrypted connection</p>
+        </div>
+
+        <p class="already-signin">
+          Already have an account?
+          <a routerLink="/auth/login" class="signin-cta">Sign In</a>
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
