@@ -8,7 +8,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgxEchartsModule } from 'ngx-echarts';
+import { NgxEchartsModule, provideEchartsCore } from 'ngx-echarts';
 import type { EChartsOption } from 'echarts';
 import { generateTooltipHtml } from '../../../../../../shared/utils/chart-tooltip.html';
 
@@ -54,6 +54,7 @@ const DONUT_CHART_CONFIG = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './donut-chart.component.html',
   styleUrls: ['./donut-chart.component.scss'],
+  providers: [provideEchartsCore({ echarts: () => import('echarts') })],
 })
 export class DonutChartComponent implements OnInit, OnChanges {
   @Input() public data: UserStatistics[] = [];
