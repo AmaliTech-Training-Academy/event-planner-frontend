@@ -1,121 +1,124 @@
+/* Self-contained SCSS for the "smart" EventCardComponent */
+@use 'sass:color';
 
-@use 'index' as *;
-@use 'media_query' as *;
-
-
-
-@mixin secondary_btn {
-  @include body-1;
-  background-color: #fff;
-  color: $header-dark;
-  border: $stroke-0 solid $general-stroke-light;
-  border-radius: $radius-3; 
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #f9f9f9;
-    border-color: darken($general-stroke-light, 10%);
-  }
+:host {
+  display: block;
 }
-
 
 .event-card {
-  border: $stroke-0 solid $general-stroke-light;
-  border-radius: $radius-4; 
-  overflow: hidden;
+  width: 100%;
+  border-radius: 0.5rem; /* 8px */
+  border: 1px solid #e5e7eb; /* $general-stroke-light */
   background-color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 
-  &__image {
-    width: 100%;
-    height: 180px; 
-    object-fit: cover;
-  }
-
-  &__content {
-    padding: $spacing-4; 
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; 
-  }
-
-  &__badge {
-    position: absolute;
-    top: $spacing-4; 
-    right: $spacing-4; 
-    padding: $spacing-1 $spacing-3; 
-    border-radius: $radius-8; 
-    @include body-3; 
-    font-weight: 600;
-
-    &.badge--paid {
-      background-color: #e6f7ff; 
-      color: #006adc; 
-      border: $stroke-0 solid #b3e0ff;
-    }
-
-    &.badge--free {
-      background-color: #f5f5f5; 
-      color: $sub-header-dark; 
-      border: $stroke-0 solid $general-stroke-light;
-    }
-  }
-
-  &__info {
-    flex-grow: 1; 
-  }
-
-  &__icon-text {
-    display: flex;
-    align-items: center;
-    gap: $spacing-2; 
-    @include label-1; 
-    color: $paragraph-text;
-    margin-bottom: $spacing-2; 
-
-    .icon-calendar, .icon-location, .icon-users {
-      font-size: 1rem; 
-    }
-  }
-
-  &__title {
-    @include h-6; 
-    font-weight: 700; 
-    margin: $spacing-2 0 $spacing-3 0; 
-    color: $header-dark;
-  }
-
-  &__button {
-     @include secondary_btn;
-    width: 100%;
-    padding: $spacing-3 $spacing-4;
-    text-align: center;
-    margin-top: $spacing-4; 
+  &:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+    transform: translateY(-2px);
   }
 }
-.info-icon {
-    width: 1rem; 
-    height: 1rem; 
-    
-  }
-  
 
-  title {
-    @include h-6; 
-    font-weight: 700; 
-    margin: $spacing-2 0 $spacing-3 0;
-    color: $header-dark;
-  }
+/* --- Image --- */
+.event-card__image-link {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 180px;
+}
 
-  button {
-    @include secondary_btn;
-    width: 100%;
-    padding: $spacing-3 $spacing-4; 
-    text-align: center;
-    margin-top: $spacing-4; 
+.event-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- Content --- */
+.event-card__content {
+  padding: 1.25rem; /* 20px */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* 16px */
+  flex-grow: 1;
+  position: relative;
+}
+
+/* --- Badge --- */
+.event-card__badge {
+  position: absolute;
+  top: -1.75rem; /* Pulls it up into the image area */
+  right: 1.25rem; /* 20px */
+  padding: 0.25rem 0.75rem; /* 4px 12px */
+  border-radius: 62.438rem; /* 99px */
+  font-family: 'Lato', sans-serif;
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  display: inline-block;
+  z-index: 2;
+
+  &.badge--paid {
+    background-color: #e6f7ff;
+    color: #006adc;
   }
+  &.badge--free {
+    background-color: #e7f7e9; /* Light green */
+    color: #0d8902; /* Dark green */
+  }
+}
+
+/* --- Info --- */
+.event-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem; /* ~10px */
+  flex-grow: 1;
+}
+
+.event-card__icon-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* 8px */
+  font-family: 'Lato', sans-serif;
+  font-size: 0.875rem; /* 14px */
+  font-weight: 400;
+  color: #656565; /* $paragraph-text */
+
+  .info-icon {
+    width: 1rem; /* 16px */
+    height: 1rem;
+    opacity: 0.7;
+  }
+}
+
+.event-card__title-link {
+  text-decoration: none;
+  color: #292929; /* $header-dark */
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #cc3f02; /* $primary-color */
+  }
+}
+
+.event-card__title {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.25rem; /* 20px */
+  font-weight: 700;
+  color: inherit; /* Inherits color from the link */
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Button --- */
+/* This styles the reusable button specifically within this component */
+::ng-deep .event-card__button {
+  width: 100%;
+  margin-top: 0.5rem; /* 8px - Add space above button */
+}
+
