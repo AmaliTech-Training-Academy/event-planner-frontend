@@ -2,15 +2,15 @@
   class="input-field-group"
   [class.has-error]="hasError()"
   [class.focused]="isFocused()"
-  style="text-align: left;"
+  style="text-align: left"
 >
   @if (label()) {
-    <label class="input-label" [attr.for]="formControlName()">
-      {{ label() }}
-      @if (required()) {
-        <span>*</span>
-      }
-    </label>
+  <label class="input-label" [attr.for]="formControlName()">
+    {{ label() }}
+    @if (required()) {
+    <span>*</span>
+    }
+  </label>
   }
 
   <div
@@ -37,32 +37,26 @@
 
   @if (type() === 'password') {
     <button
-        type="button"
-        class="toggle-password"
-        (click)="togglePasswordVisibility()"
-        [attr.aria-pressed]="showPassword()"
+      type="button"
+      class="toggle-password"
+      (click)="togglePasswordVisibility()"
+      aria-label="Toggle password visibility"
     >
-        <img
-          [src]="
-            showPassword()
-              ? 'icons/eye-close-icon.png'
-              : 'icons/eye-open.svg'
-          "
-          alt="Toggle Password"
-        />
-      </button>
+      <img
+        [src]="
+          showPassword() ? 'icons/eye-close-icon.png' : 'icons/eye-open.svg'
+        "
+        alt="Toggle Password"
+      />
+    </button>
     }
   </div>
 
   @if (hasError() && errorMessage()) {
-    <app-form-error
-      [message]="errorMessage()"
-      [showIcon]="true"
-      id="{{ label() + '-error' }}"
-    ></app-form-error>
+  <app-form-error
+    [message]="errorMessage()"
+    [showIcon]="true"
+    id="{{ label() + '-error' }}"
+  ></app-form-error>
   }
 </div>
-
-@if (errorMessage()) {
-  <div class="error">{{ errorMessage() }}</div>
-}

@@ -1,1 +1,86 @@
-<p>dashboard-page works!</p>
+<div class="dashboard-page">
+  <div class="dashboard-page__cards">
+    @for (card of dashboardCards; track card.title) {
+      <app-admin-user-card [data]="card" />
+    }
+  </div>
+
+  <div class="dashboard-page__charts">
+    <div class="charts-row charts-row--main">
+      <div class="chart-card chart-card--large">
+        <div class="chart-card__header">
+          <div class="chart-tabs">
+          <app-button
+  type="plain"
+  [extraClass]="['chart-tab', activeChartTab() === 'users' ? 'chart-tab--active' : '']"
+  (onClick)="switchChartTab('users')"
+>
+  Total Users
+</app-button>
+
+<app-button
+  type="plain"
+  [extraClass]="['chart-tab', activeChartTab() === 'events' ? 'chart-tab--active' : '']"
+  (onClick)="switchChartTab('events')"
+>
+  Total Events
+</app-button>
+
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item">
+              <span class="legend-dot legend-dot--orange"></span>
+              This year
+            </span>
+            <span class="legend-item">
+              <span class="legend-dot legend-dot--gray"></span>
+              Last year
+            </span>
+          </div>
+        </div>
+        <div class="chart-card__body">
+          @if (activeChartTab() === 'users') {
+            <app-line-chart
+              [thisYearData]="totalUsersData"
+              [lastYearData]="totalEventsData"
+            />
+          } @else {
+            <app-line-chart
+              [thisYearData]="totalEventsData"
+              [lastYearData]="totalUsersData"
+            />
+          }
+        </div>
+      </div>
+
+      <div class="chart-card chart-card--sidebar">
+        <div class="chart-card__header">
+          <h3 class="chart-card__title">Traffic by Website</h3>
+        </div>
+        <div class="chart-card__body">
+          <app-traffic-list [data]="trafficByWebsite" />
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-row charts-row--split">
+      <div class="chart-card">
+        <div class="chart-card__header">
+          <h3 class="chart-card__title">Traffic by Device</h3>
+        </div>
+        <div class="chart-card__body">
+          <app-bar-chart [data]="trafficByDevice" />
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card__header">
+          <h3 class="chart-card__title">User Statistics</h3>
+        </div>
+        <div class="chart-card__body">
+          <app-donut-chart [data]="userStatistics" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

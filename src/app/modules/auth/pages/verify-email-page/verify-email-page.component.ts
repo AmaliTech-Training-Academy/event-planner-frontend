@@ -22,7 +22,6 @@ import { NotificationService } from '../../../../core/services/notification.serv
     RouterModule,
     LogoComponent,
     ButtonComponent,
-    FormErrorComponent,
     OtpInputComponent
   ],
   templateUrl: './verify-email-page.component.html',

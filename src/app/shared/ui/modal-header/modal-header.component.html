@@ -1,0 +1,10 @@
+<header class="modal-header">
+  <div class="modal-header__text">
+    <h3 class="modal-header__title">{{ title }}</h3>
+    <p *ngIf="subtitle" class="modal-header__subtitle">{{ subtitle }}</p>
+  </div>
+
+  <app-button type="social" (click)="onClose()" aria-label="Close modal">
+    <img src="icons/close.png" alt="Close" />
+  </app-button>
+</header>

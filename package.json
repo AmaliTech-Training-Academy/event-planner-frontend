@@ -17,6 +17,12 @@
     "@angular/platform-browser": "^19.2.0",
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
+    "fabric": "^6.7.1",
+    "ngx-quill": "^27.1.2",
+    "quill": "^2.0.3",
+    "echarts": "^6.0.0",
+    "libphonenumber-js": "^1.12.25",
+    "ngx-echarts": "^19.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
