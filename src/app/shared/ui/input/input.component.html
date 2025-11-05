@@ -35,7 +35,7 @@
     />
 
 
-  @if (type === 'password') {
+  @if (type() === 'password') { 
     <button
         type="button"
         class="toggle-password"
@@ -63,6 +63,6 @@
   }
 </div>
 
-@if (errorMessage) {
-  <div class="error">{{ errorMessage }}</div>
+@if (errorMessage()) {
+  <div class="error">{{ errorMessage() }}</div>
 }
