@@ -38,7 +38,7 @@ interface CountryOption {
     ModalHeaderComponent,
     InputComponent,
     ButtonComponent,
-    NgOptimizedImage
+    NgOptimizedImage,
   ],
   templateUrl: './edit-user-profile.component.html',
   styleUrl: './edit-user-profile.component.scss',

@@ -3,10 +3,11 @@ import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AsyncPipe } from '@angular/common';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
+import { LayoutService } from '../../../../core/services/layout.service';
 import {
   DataTableComponent,
-  TableAction,
   TableColumn,
+  TableAction,
   TableFilter,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
 import { User, UserCardData } from '../../../../core/models/user.model';
@@ -107,15 +108,8 @@ export class UserManagementPageComponent implements OnInit {
 
   public readonly primaryAction = {
     label: 'Invite User',
-    handler: () => this._openInviteModal(),
+    handler: () => this._inviteUser(),
   };
-
-  constructor() {
-    effect(() => {
-      const user = this.selectedUser();
-      const isOpen = this.isEditModalOpen();
-    });
-  }
 
   ngOnInit(): void {
     this._layoutService.pageTitle.set('User Management');
