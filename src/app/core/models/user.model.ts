@@ -8,13 +8,14 @@ export interface User {
   phone: string;
   address: string;
   avatar: string;
-  profileImageUrl: string;
+  profileImageUrl?: string;
   role: UserRole;
   status: 'Active' | 'Inactive';
   eventsOrganized: number;
   eventsAttended: number;
   joinedDate: string;
   lastActive: string;
+  
 }
 export interface UserCardData {
   title: string;
