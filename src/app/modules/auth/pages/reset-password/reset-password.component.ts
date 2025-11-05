@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   FormBuilder,
@@ -13,14 +15,15 @@ import {
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import { AuthService } from '../../../../core/services/auth.service';
 import { LogoComponent } from '../../components/logo/logo.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
-import { OtpInputComponent } from '../../../../shared/ui/otp-input/otp-input.component';
+import { AuthService } from '../../../../core/services/auth.service';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { NotificationService } from '../../../../core/services/notification.service';
+
+
 export function passwordMatchValidator(passwordField: string, confirmPasswordField: string): ValidatorFn {
   return (formGroup: AbstractControl): ValidationErrors | null => {
     const password = formGroup.get(passwordField)?.value;
@@ -31,7 +34,7 @@ export function passwordMatchValidator(passwordField: string, confirmPasswordFie
     }
 
     if (password !== confirmPassword) {
-      formGroup.get(confirmPasswordField)?.setErrors({ passwordMismatch: true });
+      formGroup.get(confirmPasswordField)?.setErrors({ 'passwordMismatch': true });
       return { passwordMismatch: true };
     } else {
       if (formGroup.get(confirmPasswordField)?.hasError('passwordMismatch')) {
@@ -60,34 +63,38 @@ export function passwordMatchValidator(passwordField: string, confirmPasswordFie
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.scss']
 })
-export class ResetPasswordComponent implements OnInit, OnDestroy {
+export class ResetPasswordComponent implements OnInit {
+
   protected setPasswordForm!: FormGroup;
   protected isLoading: boolean = false;
   protected userEmail: string = 'Loading...';
   protected apiError: string | null = null;
- protected goBack(): void {
-  this.router.navigate([APP_ROUTES.FORGOT_PASSWORD]);
-}
 
-  private routeSub: Subscription | null = null;
+  private token: string | null = null;
   private email: string | null = null;
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly notificationService: NotificationService,
     private readonly authService: AuthService,
-    private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private notificationService: NotificationService,
   ) { }
 
-  public ngOnInit(): void {
-    this.routeSub = this.route.queryParamMap.subscribe(params => {
-      this.email = params.get('email');
-      this.userEmail = this.email || 'your-email@provider.com';
-    });
 
-    this.setPasswordForm = this.fb.group({
-      otp: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(6)]],
+   ngOnInit(): void {
+    this.email = this.authService.getEmail()
+    if (!this.email) {
+      this.router.navigate([APP_ROUTES.FORGOT_PASSWORD]);
+      return
+    }
+
+    this.setPasswordForm = this.createForm();
+  }
+
+
+  private createForm(): FormGroup {
+    return this.fb.group({
       newPassword: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required]
     }, {
@@ -95,13 +102,13 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     });
   }
 
-  public ngOnDestroy(): void {
-    this.routeSub?.unsubscribe();
-  }
+
+
 
   protected get controls() {
     return this.setPasswordForm.controls as { [key: string]: AbstractControl };
   }
+
 
   protected get passwordsMismatch(): boolean {
     return !!this.setPasswordForm.errors?.['passwordMismatch'];
@@ -112,17 +119,12 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   }
 
 
-  protected onOtpChange(otp: string | any): void {
-    const otpValue = (typeof otp === 'string') ? otp : (otp?.target?.value ?? String(otp));
-    this.setPasswordForm.get('otp')?.setValue(otpValue);
-    this.setPasswordForm.get('otp')?.markAsTouched();
-  }
-
   protected onSubmit(): void {
-  if (this.setPasswordForm.invalid) {
-    this.setPasswordForm.markAllAsTouched();
-    return;
-  }
+    this.apiError = null;
+    if (this.setPasswordForm.invalid) {
+      this.setPasswordForm.markAllAsTouched();
+      return;
+    }
 
   const { otp, newPassword } = this.setPasswordForm.value;
 
@@ -130,16 +132,20 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     return;
   }
 
-  this.isLoading = true;
+    this.isLoading = true;
 
-  this.authService.resetPassword(otp, this.email, newPassword)
-    .pipe(finalize(() => this.isLoading = false))
-    .subscribe({
-      next: () => {
-        this.notificationService.success('Password reset successfully!');
-        this.setPasswordForm.reset();
-        this.router.navigate([APP_ROUTES.LOGIN]);
-      }
-    });
-}
+
+    const { newPassword } = this.setPasswordForm.value;
+
+
+    this.authService.resetPassword(this.token, this.email, newPassword)
+      .pipe(
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe({
+        next: () => {
+          this.notificationService.success(`Password reset successful. You can now login with your new password.`)
+        }
+      });
+  }
 }

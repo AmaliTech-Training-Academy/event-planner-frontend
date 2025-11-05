@@ -1,0 +1,211 @@
+@use 'colors' as *;
+@use 'typography' as *;
+@use 'variables' as *;
+@use 'media_query' as *;
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+
+  &__cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-4;
+  }
+
+  &__charts {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-6;
+  }
+}
+
+.charts-row {
+  display: grid;
+  gap: $spacing-6;
+
+  &--main {
+    grid-template-columns: 1fr 380px;
+  }
+
+  &--split {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    &--main,
+    &--split {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.chart-card {
+  background: white;
+  border-radius: $radius-4;
+  padding: $spacing-6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-5;
+    flex-wrap: wrap;
+    gap: $spacing-4;
+  }
+
+  &__title {
+    @include h-6;
+    color: $header-dark;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  &__body {
+    flex: 1;
+    min-height: 350px;
+  }
+
+  &--large {
+    .chart-card__body {
+      min-height: 400px;
+    }
+  }
+
+  &--sidebar {
+    .chart-card__body {
+      min-height: 400px;
+    }
+  }
+}
+
+.chart-tabs {
+  display: flex;
+  gap: $spacing-2;
+}
+
+.chart-tab {
+  @include body-2;
+  padding: $spacing-2 $spacing-4;
+  border: none;
+  background: transparent;
+  color: $gray-600;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: $radius-2;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $gray-100;
+    color: $header-dark;
+  }
+
+  &--active {
+    background: $gray-100;
+    color: $header-dark;
+    font-weight: 600;
+  }
+}
+
+.chart-legend {
+  display: flex;
+  gap: $spacing-5;
+  align-items: center;
+}
+
+.legend-item {
+  @include body-3;
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  color: $gray-700;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+
+  &--orange {
+    background: $orange-600;
+  }
+
+  &--gray {
+    background: transparent;
+    border: 2px dashed $gray-500;
+  }
+}
+
+@include md {
+  .dashboard-page {
+    gap: $spacing-5;
+
+    &__cards {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: $spacing-4;
+    }
+
+    &__charts {
+      gap: $spacing-5;
+    }
+  }
+
+  .chart-card {
+    padding: $spacing-5;
+
+    &__body {
+      min-height: 300px;
+    }
+
+    &--large .chart-card__body,
+    &--sidebar .chart-card__body {
+      min-height: 300px;
+    }
+  }
+}
+
+@include sm {
+  .dashboard-page {
+    gap: $spacing-4;
+
+    &__cards {
+      grid-template-columns: 1fr;
+      gap: $spacing-3;
+    }
+
+    &__charts {
+      gap: $spacing-4;
+    }
+  }
+
+  .charts-row {
+    gap: $spacing-4;
+  }
+
+  .chart-card {
+    padding: $spacing-4;
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__body {
+      min-height: 250px;
+    }
+
+    &--large .chart-card__body,
+    &--sidebar .chart-card__body {
+      min-height: 250px;
+    }
+  }
+
+  .chart-legend {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
