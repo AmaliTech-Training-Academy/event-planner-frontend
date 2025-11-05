@@ -1,27 +1,45 @@
-// user-management-page.component.ts
-import { Component, signal, inject } from '@angular/core';
-import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { USER_ROLES } from '../../../../core/constants/user.constants';
+import { User, UserCardData } from '../../../../core/models/user.model';
 import { LayoutService } from '../../../../core/services/layout.service';
+import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import {
   DataTableComponent,
-  TableColumn,
   TableAction,
+  TableColumn,
   TableFilter,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
-import { User, UserCardData } from '../../../../core/models/user.model';
-import { USER_ROLES } from '../../../../core/constants/user.constants';
+import { InviteUserModalComponent } from './components/invite-user-modal/invite-user-modal.component';
+import { SuccessModalComponent } from './components/success-modal/success-modal.component';
+import { EditUserProfileComponent } from './components/edit-user-profile/edit-user-profile.component';
+import { ViewUserProfileComponent } from './components/view-user-profile/view-user-profile.component';
 
 @Component({
   selector: 'app-user-management-page',
   standalone: true,
-  imports: [AdminUserCardComponent, DataTableComponent],
+  imports: [
+    AdminUserCardComponent,
+    DataTableComponent,
+    InviteUserModalComponent,
+    SuccessModalComponent,
+    EditUserProfileComponent,
+    ViewUserProfileComponent,
+  ],
   templateUrl: './user-management-page.component.html',
   styleUrls: ['./user-management-page.component.scss'],
 })
-export class UserManagementPageComponent {
-  private _layoutService = inject(LayoutService);
+export class UserManagementPageComponent implements OnInit {
+  private readonly _layoutService = inject(LayoutService);
+  private readonly _router = inject(Router);
 
-  public readonly userCards = signal<UserCardData[]>([
+  protected readonly isInviteModalOpen = signal<boolean>(false);
+  protected readonly isSuccessModalOpen = signal<boolean>(false);
+  protected readonly isEditModalOpen = signal<boolean>(false);
+  protected readonly isViewModalOpen = signal<boolean>(false);
+  protected readonly selectedUser = signal<User | null>(null);
+
+  protected readonly userCards = signal<UserCardData[]>([
     {
       title: 'Total Users',
       count: 2593,
@@ -53,13 +71,13 @@ export class UserManagementPageComponent {
     },
   ]);
 
-  private _users = signal<User[]>([
+  private readonly _users = signal<User[]>([
     {
       userId: 'U001',
       name: 'Sarah Wilson',
       fullName: 'Sarah Wilson',
       email: 'sarah@example.com',
-      phone: '123-456-7890',
+      phone: '+233501234567',
       address: '123 Main St, Cityville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -75,7 +93,7 @@ export class UserManagementPageComponent {
       name: 'John Smith',
       fullName: 'John Smith',
       email: 'john@example.com',
-      phone: '234-567-8901',
+      phone: '+233501234567',
       address: '456 Elm St, Townsville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -91,7 +109,7 @@ export class UserManagementPageComponent {
       name: 'Emily Johnson',
       fullName: 'Emily Johnson',
       email: 'emily@example.com',
-      phone: '345-678-9012',
+      phone: '+233501234567',
       address: '789 Oak St, Villageville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -107,7 +125,7 @@ export class UserManagementPageComponent {
       name: 'Michael Brown',
       fullName: 'Michael Brown',
       email: 'michael@example.com',
-      phone: '456-789-0123',
+      phone: '+233501234567',
       address: '321 Pine St, Hamletville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -123,7 +141,7 @@ export class UserManagementPageComponent {
       name: 'Jessica Davis',
       fullName: 'Jessica Davis',
       email: 'jessica@example.com',
-      phone: '567-890-1234',
+      phone: '+233501234567',
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -135,11 +153,11 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      userId: 'U006',
+      userId: 'U005',
       name: 'Jessica Davis',
       fullName: 'Jessica Davis',
       email: 'jessica@example.com',
-      phone: '567-890-1234',
+      phone: '+233501234567',
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -151,11 +169,11 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      userId: 'U007',
+      userId: 'U005',
       name: 'Jessica Davis',
       fullName: 'Jessica Davis',
       email: 'jessica@example.com',
-      phone: '567-890-1234',
+      phone: '+233501234567',
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -167,11 +185,11 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      userId: 'U008',
+      userId: 'U005',
       name: 'Jessica Davis',
       fullName: 'Jessica Davis',
       email: 'jessica@example.com',
-      phone: '567-890-1234',
+      phone: '+233501234567',
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -183,11 +201,11 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      userId: 'U009',
+      userId: 'U005',
       name: 'Jessica Davis',
       fullName: 'Jessica Davis',
       email: 'jessica@example.com',
-      phone: '567-890-1234',
+      phone: '+233501234567',
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -199,11 +217,11 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      userId: 'U010',
+      userId: 'U005',
       name: 'Jessica Davis',
       fullName: 'Jessica Davis',
       email: 'jessica@example.com',
-      phone: '567-890-1234',
+      phone: '+233501234567',
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -215,11 +233,11 @@ export class UserManagementPageComponent {
       lastActive: '2 weeks ago',
     },
     {
-      userId: 'U011',
+      userId: 'U005',
       name: 'Jessica Davis',
       fullName: 'Jessica Davis',
       email: 'jessica@example.com',
-      phone: '567-890-1234',
+      phone: '+233501234567',
       address: '654 Maple St, Boroughville',
       avatar: 'icons/avatar.png',
       profileImageUrl: 'icons/avatar.png',
@@ -230,12 +248,28 @@ export class UserManagementPageComponent {
       joinedDate: '2024-01-25',
       lastActive: '2 weeks ago',
     },
+    {
+      userId: 'U005',
+      name: 'Jessica Davis',
+      fullName: 'Jessica Davis',
+      email: 'jessica@example.com',
+      phone: '+233501234567',
+      address: '654 Maple St, Boroughville',
+      avatar: 'icons/avatar.png',
+      profileImageUrl: 'icons/avatar.png',
+      role: USER_ROLES.ATTENDEE,
+      status: 'Inactive',
+      eventsOrganized: 0,
+      eventsAttended: 1,
+      joinedDate: '2024-01-25',
+      lastActive: '2 weeks ago',
+    }
+    
   ]);
 
-  public users = this._users.asReadonly();
+  protected readonly users = this._users.asReadonly();
 
-  // Table columns
-  public tableColumns: TableColumn<User>[] = [
+  protected readonly tableColumns: TableColumn<User>[] = [
     { key: 'name', header: 'User', sortable: true },
     { key: 'role', header: 'Role(s)', filterable: true },
     { key: 'status', header: 'Status', filterable: true },
@@ -243,8 +277,7 @@ export class UserManagementPageComponent {
     { key: 'eventsAttended', header: 'Events Attended', sortable: true },
   ];
 
-  // Table actions
-  public tableActions: TableAction<User>[] = [
+  protected readonly tableActions: TableAction<User>[] = [
     {
       icon: 'icons/view-icon.png',
       label: 'View User Details',
@@ -265,8 +298,7 @@ export class UserManagementPageComponent {
     },
   ];
 
-  // Table filters
-  public tableFilters: TableFilter[] = [
+  protected readonly tableFilters: TableFilter[] = [
     {
       key: 'role',
       placeholder: 'All Roles',
@@ -287,21 +319,124 @@ export class UserManagementPageComponent {
     },
   ];
 
-  public primaryAction = {
+  protected readonly primaryAction = {
     label: 'Invite User',
-    handler: () => this._inviteUser(),
+    handler: () => this._openInviteModal(),
   };
+
+  constructor() {
+    effect(() => {
+      const user = this.selectedUser();
+      const isOpen = this.isEditModalOpen();
+    });
+  }
 
   ngOnInit(): void {
     this._layoutService.pageTitle.set('User Management');
   }
 
+  protected openInviteModal(): void {
+    this.isInviteModalOpen.set(true);
+  }
+
+  protected closeInviteModal(): void {
+    this.isInviteModalOpen.set(false);
+  }
+
+  protected closeSuccessModal(): void {
+    this.isSuccessModalOpen.set(false);
+  }
+
+  protected onInviteSuccess(): void {
+    this.closeInviteModal();
+
+    setTimeout(() => {
+      this.isSuccessModalOpen.set(true);
+    }, 200);
+  }
+
+  protected goToDashboard(): void {
+    this.closeSuccessModal();
+    this._router.navigate(['/dashboard']);
+  }
+
+  protected closeViewModal(): void {
+    this.isViewModalOpen.set(false);
+    this.selectedUser.set(null);
+  }
+
+  protected onEditFromView(): void {
+    this.isViewModalOpen.set(false);
+
+    Promise.resolve().then(() => {
+      this.isEditModalOpen.set(true);
+    });
+  }
+
+  protected onToggleUserStatus(user: User): void {
+    this._toggleUserStatus(user);
+    this.closeViewModal();
+  }
+
+  protected closeEditModal(): void {
+    this.isEditModalOpen.set(false);
+    this.selectedUser.set(null);
+  }
+
+  protected onSaveEdit(formData: any): void {
+
+    const selectedUserId = this.selectedUser()?.userId;
+    if (!selectedUserId) {
+      return;
+    }
+
+    this._users.update((users) =>
+      users.map((u) => {
+        if (u.userId === selectedUserId) {
+          return {
+            ...u,
+            fullName: formData.fullName,
+            name: formData.fullName,
+            email: formData.email,
+            phone: formData.phoneNumber,
+            address: formData.address,
+            profileImageUrl: formData.profileImage || u.profileImageUrl,
+            avatar: formData.profileImage || u.avatar,
+          };
+        }
+        return u;
+      })
+    );
+
+    this.closeEditModal();
+  }
+
+  protected onRowExpanded(user: User): void {
+  }
+
+  private _openInviteModal(): void {
+    this.openInviteModal();
+  }
+
   private _viewUser(user: User): void {
-    console.log('Viewing user:', user);
+    this.selectedUser.set(user);
+
+    Promise.resolve().then(() => {
+      this.isViewModalOpen.set(true);
+    });
   }
 
   private _editUser(user: User): void {
-    console.log('Editing user:', user);
+
+    if (this.isViewModalOpen()) {
+      this.closeViewModal();
+    }
+
+    this.selectedUser.set(user);
+
+    Promise.resolve().then(() => {
+      this.isEditModalOpen.set(true);
+    });
   }
 
   private _toggleUserStatus(user: User): void {
@@ -313,8 +448,4 @@ export class UserManagementPageComponent {
       )
     );
   }
-
-  private _inviteUser(): void {}
-
-  public onRowExpanded(user: User): void {}
 }

@@ -1,4 +1,6 @@
-@use 'index' as *;
+@use 'typography' as *;
+@use 'colors' as *;
+@use 'variables' as *;
 
 .input-field-group {
   margin-bottom: $spacing-4;
