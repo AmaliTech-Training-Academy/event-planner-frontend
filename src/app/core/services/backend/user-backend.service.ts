@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from '../../constants/api-endpoints.constants';
-import { User, UserManagementResponse } from '../../models/user.model';
+import { InviteUserPayload, InviteUserResponse, User, UserManagementResponse } from '../../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserBackendService {
@@ -39,6 +39,14 @@ export class UserBackendService {
     return this.http.put<{ data: User }>(
       API_ENDPOINTS.UPDATE_USER(userId),
       user
+    );
+  }
+  public inviteUsers(
+    payload: InviteUserPayload
+  ): Observable<InviteUserResponse> {
+    return this.http.post<InviteUserResponse>(
+      API_ENDPOINTS.INVITE_USER,
+      payload
     );
   }
 }

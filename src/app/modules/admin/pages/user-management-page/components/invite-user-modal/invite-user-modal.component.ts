@@ -1,11 +1,10 @@
-import { Component, Output, EventEmitter, inject, signal } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
-  FormControl,
   FormArray,
 } from '@angular/forms';
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
@@ -13,6 +12,8 @@ import { FilterSelectComponent } from '../../../../../../shared/admin-ui/filter-
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/modal-header.component';
 import { USER_ROLES } from '../../../../../../core/constants/user.constants';
+import { UserManagementService } from '../../../../../../core/services/user-management.service';
+import { InviteUserPayload } from '../../../../../../core/models/user.model';
 
 @Component({
   selector: 'app-invite-user-modal',
@@ -33,6 +34,7 @@ export class InviteUserModalComponent {
   @Output() public readonly success = new EventEmitter<void>();
 
   private readonly _fb = inject(FormBuilder);
+  private readonly userManagementService = inject(UserManagementService);
 
   public readonly inviteForm: FormGroup = this._fb.group({
     title: this._fb.control('', [Validators.required]),
@@ -55,6 +57,8 @@ export class InviteUserModalComponent {
     { label: 'Startup Pitch Night', value: 'startup_pitch' },
     { label: 'Community Meetup', value: 'community_meetup' },
   ];
+
+  public isSubmitting = false;
 
   private _createUserFormGroup(): FormGroup {
     return this._fb.group({
@@ -86,8 +90,75 @@ export class InviteUserModalComponent {
       return;
     }
 
-    console.log('Inviting users:', this.inviteForm.value);
-    this.success.emit();
+    this.isSubmitting = true;
+
+    // Build the payload - check your backend API documentation for exact structure
+    const payload: InviteUserPayload = {
+      title: this.inviteForm.value.title,
+      users: this.users.value.map((user: any) => ({
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      })),
+      eventId: this.inviteForm.value.event,
+      message: this.inviteForm.value.message || undefined,
+    };
+
+    console.log('Sending invitation payload:', payload);
+
+    this.userManagementService.inviteUsers(payload).subscribe({
+      next: (response) => {
+        console.log('Invitations sent successfully:', response.data);
+
+        if (response.data.invitationsSent > 0) {
+          alert(
+            `Successfully sent ${response.data.invitationsSent} invitation(s)`
+          );
+        }
+
+        if (response.data.failedInvitations > 0) {
+          const failedEmails = response.data.invitations
+            .filter((inv) => inv.status === 'failed')
+            .map((inv) => `${inv.email}: ${inv.error}`)
+            .join('\n');
+
+          alert(
+            `Failed invitations (${response.data.failedInvitations}):\n${failedEmails}`
+          );
+        }
+
+        if (response.data.invitationsSent > 0) {
+          this.success.emit();
+          this.close.emit();
+        }
+
+        this.isSubmitting = false;
+      },
+      error: (err) => {
+        console.error('Failed to send invitations:', err);
+        console.error('Error details:', {
+          status: err.status,
+          statusText: err.statusText,
+          url: err.url,
+          message: err.message,
+        });
+
+        let errorMessage = 'Failed to send invitations. ';
+        if (err.status === 405) {
+          errorMessage +=
+            'The invitation endpoint may not be configured correctly. Please contact support.';
+        } else if (err.status === 404) {
+          errorMessage += 'The invitation endpoint was not found.';
+        } else if (err.error?.message) {
+          errorMessage += err.error.message;
+        } else {
+          errorMessage += 'Please try again.';
+        }
+
+        alert(errorMessage);
+        this.isSubmitting = false;
+      },
+    });
   }
 
   public onSaveProgress(): void {

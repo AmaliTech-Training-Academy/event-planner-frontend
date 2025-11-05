@@ -1,7 +1,12 @@
 // core/services/user-management.service.ts
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, tap, throwError } from 'rxjs';
-import { User, UserCardData } from '../models/user.model';
+import { BehaviorSubject, catchError, finalize, map, tap, throwError } from 'rxjs';
+import {
+InviteUserPayload,
+User,
+UserCardData,
+normalizeUserStatus
+} from '../models/user.model';
 import { UserBackendService } from './backend/user-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
 
@@ -27,6 +32,23 @@ export class UserManagementService {
   public fetchAllUsers(page: number = 0, size: number = 10) {
     this.setLoading(true);
     return this.userBackend.getAllUsers(page, size).pipe(
+      map((response) => {
+        // Normalize all users to ensure 'status' is UserStatus
+        const normalizedUsers: User[] = response.data.users.content.map(
+          (user) => normalizeUserStatus(user)
+        );
+
+        return {
+          ...response,
+          data: {
+            ...response.data,
+            users: {
+              ...response.data.users,
+              content: normalizedUsers,
+            },
+          },
+        };
+      }),
       tap((response) => {
         this._users$.next(response.data.users.content);
         this._totalPages$.next(response.data.users.totalPages);
@@ -80,6 +102,10 @@ export class UserManagementService {
   public getUser(userId: string) {
     this.setLoading(true);
     return this.userBackend.getUserById(userId).pipe(
+      map((response) => ({
+        ...response,
+        data: normalizeUserStatus(response.data), // normalize before returning
+      })),
       catchError((err) => {
         this.errorHandler.handle(err);
         return throwError(() => err);
@@ -91,6 +117,10 @@ export class UserManagementService {
   public createUser(user: Partial<User>) {
     this.setLoading(true);
     return this.userBackend.createUser(user).pipe(
+      map((response) => ({
+        ...response,
+        data: normalizeUserStatus(response.data), // normalize created user
+      })),
       tap((response) =>
         this._users$.next([...this._users$.getValue(), response.data])
       ),
@@ -105,6 +135,10 @@ export class UserManagementService {
   public updateUser(userId: string, user: Partial<User>) {
     this.setLoading(true);
     return this.userBackend.updateUser(userId, user).pipe(
+      map((response) => ({
+        ...response,
+        data: normalizeUserStatus(response.data), // normalize updated user
+      })),
       tap((response) => {
         const users = this._users$
           .getValue()
@@ -121,13 +155,34 @@ export class UserManagementService {
 
   public toggleUserStatus(userId: number | string) {
     const users = this._users$.getValue();
-    const updatedUsers = users.map((u) =>
-      u.userId === userId ? { ...u, status: !u.status } : u
-    );
+    const updatedUsers = users.map((u) => {
+      if (u.userId === userId) {
+        // Toggle between Active and Inactive
+        const newStatus: User['status'] =
+          u.status === 'Active' ? 'Inactive' : 'Active';
+        return { ...u, status: newStatus }; // now type-safe
+      }
+      return u;
+    });
     this._users$.next(updatedUsers);
+  }
 
-    // TODO: Call backend API to persist the change
-    // return this.userBackend.toggleStatus(userId);
+  public inviteUsers(payload: InviteUserPayload) {
+    this.setLoading(true);
+    return this.userBackend.inviteUsers(payload).pipe(
+      tap((response) => {
+        if (response.data.invitationsSent > 0) {
+          console.log(
+            `${response.data.invitationsSent} invitation(s) sent successfully`
+          );
+        }
+      }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
   }
 
   protected setLoading(isLoading: boolean): void {

@@ -1,3 +1,4 @@
+// core/constants/api-endpoints.constants.ts
 import { environment } from '../../../environments/environment';
 
 const API_VERSION = 'v1';
@@ -14,8 +15,8 @@ export const API_ENDPOINTS = {
   UPDATE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   DELETE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   CREATE_USER: `${BASE}/users`,
+  INVITE_USER: `${BASE}/users/event-invitations`, // Add this line
   AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
-
   AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
 } as const;
