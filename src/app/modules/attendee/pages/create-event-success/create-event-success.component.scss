@@ -1,0 +1,190 @@
+@use 'typography' as *;
+@use 'variables' as *;
+@use 'theme' as *;
+@use 'media_query' as *;
+
+ul {
+    list-style: none;
+}
+
+p {
+    @include body-1;
+    color: $paragraph-text;
+}
+
+:host {
+    display: block;
+    padding: 62px 0;
+
+    @include md {
+        padding: 62px 32px;
+    }
+
+    @include sm {
+        padding: 62px 30px;
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    max-width: 738px;
+    margin: auto;
+    gap: 23px;
+    padding: 12px;
+
+
+    @include sm {
+        flex-direction: column-reverse;
+    }
+
+    .left {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        width: 282px;
+
+        @include sm {
+            width: 100%;
+        }
+
+        img {
+            width: 282px;
+            height: 331px;
+            border-radius: 16px;
+            overflow: hidden;
+            object-fit: cover;
+
+            @include md {
+                width: 316.5px;
+            height: 331px;
+            }
+            @include sm {
+                width: 100%;
+            }
+        }
+
+        .action-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            p {
+
+                text-align: start;
+
+                @include sm {
+                    text-align: center;
+                }
+            }
+
+        }
+
+        .author {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            p {
+                padding: 10px 12px;
+                border-bottom: 1px solid #E5E7EB;
+
+                &:last-child {
+                    padding: 0;
+                    border: none;
+                }
+            }
+        }
+    }
+
+    .right {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+
+        .summary {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+
+            h2 {
+                @include h-2;
+            }
+
+            .info {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+
+                .organizer {
+                    display: flex;
+                    gap: 6px;
+
+                    p {
+                        font-weight: bold;
+                        color: $sub-header-dark;
+
+                        &:last-child {
+                            font-weight: normal;
+                            color: $paragraph-text;
+                        }
+                    }
+                }
+
+                ul {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+
+                    li {
+                        display: flex;
+                        flex-direction: row;
+                        gap: 10px;
+
+                        .label {
+                            display: flex;
+                            flex-direction: row;
+                            gap: 6px;
+
+                            p {
+                                font-weight: bold;
+                                color: $sub-header-dark;
+                            }
+
+                            img {
+                                width: 24px;
+                                height: 24px;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .message {
+                background-color: #F8F9FA;
+                padding: 8.25px 16px;
+                border-radius: 8px;
+            }
+        }
+
+        .description {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            h4 {
+                @include body-1;
+                color: $paragraph-text;
+                font-weight: bold;
+                padding: 4px 0;
+                border-bottom: 1px solid $general-stroke-light;
+            }
+
+            p {
+                @include body-1;
+                color: $paragraph-text;
+            }
+        }
+    }
+}

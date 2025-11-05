@@ -1,0 +1,39 @@
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.75rem;
+
+  &__title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    color: #666;
+    margin: 0.25rem 0 0 0;
+  }
+
+  app-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    background: transparent;
+    border: none;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover img {
+        transform:scale(1.2)
+    }
+  }
+}

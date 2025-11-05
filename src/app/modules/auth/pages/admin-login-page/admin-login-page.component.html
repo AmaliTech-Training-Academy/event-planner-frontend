@@ -105,10 +105,14 @@
 
       <app-button
         type="primary"
-        label="Sign In to Dashboard"
+        [buttonType]="'submit'"
         [disabled]="!loginForm.valid || isSubmitting()"
       >
-        Sign In to Dashboard
+        @if (isSubmitting()) {
+          Please wait…
+        } @else {
+          Sign In to Dashboard
+        }
       </app-button>
 
       <app-secure-text
