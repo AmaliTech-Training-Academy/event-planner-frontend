@@ -32,6 +32,22 @@ export const ATTENDEE_ROUTES: Routes = [
     // canActivate: [AuthGuard],
   },
   {
+    path: 'define-venue-sections',
+    loadComponent: () =>
+      import(
+        '../attendee/pages/define-venue/define-venue.component'
+      ).then((m) => m.DefineVenueComponent),
+    // canActivate: [AuthGuard],
+  },
+  {
+    path: 'create-event',
+    loadComponent: () =>
+      import(
+        '../attendee/pages/create-event-page/create-event-page.component'
+      ).then((m) => m.CreateEventPageComponent),
+
+  },
+  {
     path: 'create-event-success',
     loadComponent: () =>
       import(
