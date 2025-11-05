@@ -45,7 +45,7 @@ export const ATTENDEE_ROUTES: Routes = [
         (m) => m.ProfilePageComponent
       ),
     // canActivate: [AuthGuard],
-  },
+},
   {
     path: 'my-events',
     loadComponent: () =>

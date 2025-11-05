@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgxEchartsModule } from 'ngx-echarts';
+import { NgxEchartsModule, provideEchartsCore } from 'ngx-echarts';
 import type {
   EChartsOption,
   XAXisComponentOption,
@@ -86,6 +86,7 @@ const DEFAULT_Y_AXIS: YAXisComponentOption = {
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideEchartsCore({ echarts: () => import('echarts') })],  
 })
 export class LineChartComponent implements OnInit, OnChanges {
   @Input() public seriesConfig: LineSeriesConfig[] = [];

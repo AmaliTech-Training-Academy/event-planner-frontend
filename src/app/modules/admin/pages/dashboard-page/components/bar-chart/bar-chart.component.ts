@@ -11,7 +11,7 @@ import {
   createComponent,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgxEchartsModule } from 'ngx-echarts';
+import { NgxEchartsModule, provideEchartsCore } from 'ngx-echarts';
 import type {
   EChartsOption,
   XAXisComponentOption,
@@ -70,6 +70,7 @@ const DEFAULT_Y_AXIS: YAXisComponentOption = {
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideEchartsCore({ echarts: () => import('echarts') })],
 })
 export class BarChartComponent implements OnInit, OnChanges {
   @Input() public data: TrafficByDevice[] = [];
