@@ -5,24 +5,40 @@ import { AuthResponseBody, OtpBodyData, RegisterBodyData } from '../../models/au
 import { User } from '../../models/user.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthBackendService {
-
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
   public login(email: string, password: string) {
-    return this.http.post(API_ENDPOINTS.AUTH_LOGIN, { email, password })
+    return this.http.post(API_ENDPOINTS.AUTH_LOGIN, { email, password });
+  }
+  public adminLogin(email: string, password: string) {
+    return this.http.post(API_ENDPOINTS.AUTH_ADMIN_LOGIN, { email, password });
   }
 
-  public register(fullName: string, email: string, password: string, confirmPassword: string) {
-    return this.http.post<AuthResponseBody<RegisterBodyData>>(API_ENDPOINTS.AUTH_REGISTER, { fullName, email, password, confirmPassword })
+  public register(
+    fullName: string,
+    email: string,
+    password: string,
+    confirmPassword: string
+  ) {
+    return this.http.post<AuthResponseBody<RegisterBodyData>>(
+      API_ENDPOINTS.AUTH_REGISTER,
+      { fullName, email, password, confirmPassword }
+    );
   }
   public verifyEmail(otp: string, email: string) {
-    return this.http.post<AuthResponseBody<OtpBodyData>>(API_ENDPOINTS.AUTH_VERIFY_OTP, { otp, email })
+    return this.http.post<AuthResponseBody<OtpBodyData>>(
+      API_ENDPOINTS.AUTH_VERIFY_OTP,
+      { otp, email }
+    );
   }
   public forgotPassword(email: string) {
-    return this.http.post<AuthResponseBody<unknown>>(API_ENDPOINTS.AUTH_FORGOT_PASSWORD, { email })
+    return this.http.post<AuthResponseBody<unknown>>(
+      API_ENDPOINTS.AUTH_FORGOT_PASSWORD,
+      { email }
+    );
   }
   public resendOtp(email: string) {
     return this.http.post(API_ENDPOINTS.AUTH_RESEND_OTP, { email });
@@ -34,11 +50,10 @@ export class AuthBackendService {
   }
 
   public logout() {
-    return this.http.post(API_ENDPOINTS.AUTH_LOGOUT, {})
+    return this.http.post(API_ENDPOINTS.AUTH_LOGOUT, {});
   }
 
   public checkAuthUser(userId: string) {
-    return this.http.get<{ data: User }>(API_ENDPOINTS.GET_USER(userId))
+    return this.http.get<{ data: User }>(API_ENDPOINTS.GET_USER(userId));
   }
-
 }
