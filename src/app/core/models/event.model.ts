@@ -1,8 +1,3 @@
-
-
-
-
-
 export interface VenueSection {
   id: string;
   name: string;
@@ -26,7 +21,7 @@ export interface EventDetails {
 export interface RegistrationInfo {
   eventName: string;
   ticketName: string;
-   ticketPrice: number;
+  ticketPrice: number;
 }
 
 export interface VenueImage {
@@ -39,5 +34,21 @@ export interface TicketInfo {
   price: number;
   currency?: string;
   features: string[];
-  buttonText: string; 
+  buttonText: string;
+}
+
+export interface BaseType {
+  id: number;
+  name: string;
+}
+
+export type EventType = BaseType;
+export type MeetingType = BaseType;
+
+
+
+export interface TimeZone {
+  zoneId: string,
+  gmtOffset: string,
+  displayName: string
 }

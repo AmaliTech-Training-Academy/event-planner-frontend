@@ -12,4 +12,15 @@ export const API_ENDPOINTS = {
     AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
     AUTH_FORGOT_PASSWORD: `${BASE}/auth/forgot-password`,
     GET_USER: (userId: string): string => `${BASE}/users/${userId}`
-}as const;
+} as const;
+
+
+export const EVENTS_API_ENDPOINTS = {
+    GET_EVENTS: `${BASE}/events`,
+    GET_EVENT: (id: string): string => `${BASE}/events/${id}`,
+    CREATE_EVENT: `${BASE}/events`,
+    GET_EVENT_TYPES: `${BASE}/event_types`,
+    GET_EVENT_TYPE: (id: number): string => `${BASE}/event_types/${id}`,
+    CREATE_EVENT_TYPE: `${BASE}/event_types`,
+    GET_TIME_ZONES: `${BASE}/timezones`,
+} as const;

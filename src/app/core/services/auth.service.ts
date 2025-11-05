@@ -90,15 +90,15 @@ export class AuthService {
         finalize(() => this.setLoading(false))
       );
   }
-     public resetPassword(otp: string, email: string, password: string) {
-       this.setLoading(true);
+  public resetPassword(otp: string, email: string, password: string) {
+    this.setLoading(true);
     return this.authBackend.resetPassword(otp, email, password)
       .pipe(
         tap(() => {
-          this.router.navigate([APP_ROUTES.LOGIN]); 
+          this.router.navigate([APP_ROUTES.LOGIN]);
         }),
-         catchError(err => this.errorHandlerService.handle(err)),
-           finalize(() => this.setLoading(false))
+        catchError(err => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
       );
   }
 
