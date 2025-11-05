@@ -132,6 +132,7 @@ export class AuthService {
 
     return this.authBackend.forgotPassword(email)
       .pipe(
+
         tap(() => {
           this.email = email;
           this.router.navigate([APP_ROUTES.RESET_PASSWORD]);
