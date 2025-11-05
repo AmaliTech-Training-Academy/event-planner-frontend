@@ -19,24 +19,28 @@ export class AuthService {
   private _userInfo$ = new BehaviorSubject<User | null>(null);
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
+  private email: string = '';
 
   constructor(
     private readonly authBackend: AuthBackendService,
     private readonly router: Router,
     private readonly errorHandlerService: ErrorHandlerService
-  ) {}
+  ) { }
 
   public login(email: string, password: string) {
     this.setLoading(true);
-    return this.authBackend.login(email, password).pipe(
-      tap(() => {
-        this.router.navigate([APP_ROUTES.VERIFY_EMAIL], {
-          queryParams: { email },
-        });
-      }),
-      catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
-    );
+
+    return this.authBackend.login(email, password)
+      .pipe(
+        tap(() => {
+          this.email = email;
+          this.router.navigate([APP_ROUTES.VERIFY_EMAIL]);
+        }),
+        catchError(err => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
+
+
   }
   public adminLogin(email: string, password: string) {
     this.setLoading(true);
@@ -47,6 +51,7 @@ export class AuthService {
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );
+
   }
 
   public register(
@@ -60,11 +65,10 @@ export class AuthService {
       .register(fullName, email, password, confirmPassword)
       .pipe(
         tap(() => {
-          this.router.navigate([APP_ROUTES.LOGIN], {
-            queryParams: { email },
-          });
-        }),
-        catchError((err) => this.errorHandlerService.handle(err)),
+
+          this.router.navigate([APP_ROUTES.LOGIN]);
+        }), catchError(err => this.errorHandlerService.handle(err)),
+
         finalize(() => this.setLoading(false))
       );
   }
@@ -83,7 +87,7 @@ export class AuthService {
   public resendOtp(email: string): Observable<any> {
     this.setLoading(true);
     return this.authBackend.resendOtp(email).pipe(
-      tap(() => {}),
+      tap(() => { }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );
@@ -125,10 +129,17 @@ export class AuthService {
 
   public forgotPassword(email: string) {
     this.setLoading(true);
-    return this.authBackend.forgotPassword(email).pipe(
-      catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
-    );
+
+    return this.authBackend.forgotPassword(email)
+      .pipe(
+        tap(() => {
+          this.email = email;
+          this.router.navigate([APP_ROUTES.RESET_PASSWORD]);
+        }),
+        catchError(err => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      )
+
   }
 
   public isLoggedIn(): Observable<boolean> {
@@ -141,5 +152,9 @@ export class AuthService {
 
   private setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);
+  }
+
+  public getEmail(): string {
+    return this.email;
   }
 }
