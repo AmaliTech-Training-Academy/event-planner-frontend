@@ -1,0 +1,33 @@
+<div class="upcoming-events">
+  <div class="upcoming-events__header">
+    <h3 class="upcoming-events__title">{{ title() }}</h3>
+    @if (showViewAll()) {
+      <button 
+        class="upcoming-events__view-all" 
+        (click)="onViewAll()"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M8 3C8 2.44772 8.44772 2 9 2H11C11.5523 2 12 2.44772 12 3V8H17C17.5523 8 18 8.44772 18 9V11C18 11.5523 17.5523 12 17 12H12V17C12 17.5523 11.5523 18 11 18H9C8.44772 18 8 17.5523 8 17V12H3C2.44772 12 2 11.5523 2 11V9C2 8.44772 2.44772 8 3 8H8V3Z" fill="currentColor"/>
+        </svg>
+      </button>
+    }
+  </div>
+
+  <div class="upcoming-events__list">
+    @for (event of events(); track event.id) {
+      <div 
+        class="upcoming-events__item"
+        (click)="onEventClick(event)"
+      >
+        <div class="upcoming-events__info">
+          <h4 class="upcoming-events__event-title">{{ event.title }}</h4>
+          <p class="upcoming-events__date">{{ event.date }}</p>
+        </div>
+
+        <span class="upcoming-events__attendees">
+          {{ formatAttendees(event.attendeeCount) }}
+        </span>
+      </div>
+    }
+  </div>
+</div>

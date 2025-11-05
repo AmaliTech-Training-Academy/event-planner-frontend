@@ -18,4 +18,12 @@ export const ADMIN_ROUTES: Routes = [
       ).then((m) => m.UserManagementPageComponent),
     // canActivate: [AdminGuard],
   },
+  {
+    path: 'events',
+    loadComponent: () =>
+      import(
+        '../admin/pages/event-management-page/event-management-page.component'
+      ).then((m) => m.EventManagementPageComponent),
+    // canActivate: [AdminGuard],
+  },
 ];

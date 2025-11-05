@@ -1,0 +1,66 @@
+<div class="top-organizers">
+  <div class="top-organizers__header">
+    <h3 class="top-organizers__title">{{ title() }}</h3>
+    @if (showViewAll()) {
+      <button 
+        class="top-organizers__view-all" 
+        (click)="onViewAll()"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M8 3C8 2.44772 8.44772 2 9 2H11C11.5523 2 12 2.44772 12 3V8H17C17.5523 8 18 8.44772 18 9V11C18 11.5523 17.5523 12 17 12H12V17C12 17.5523 11.5523 18 11 18H9C8.44772 18 8 17.5523 8 17V12H3C2.44772 12 2 11.5523 2 11V9C2 8.44772 2.44772 8 3 8H8V3Z" fill="currentColor"/>
+        </svg>
+      </button>
+    }
+  </div>
+
+  <div class="top-organizers__list">
+    @for (organizer of organizers(); track organizer.id) {
+      <div 
+        class="top-organizers__item"
+        (click)="onOrganizerClick(organizer)"
+      >
+        <div class="top-organizers__avatar">
+          @if (organizer.avatar) {
+            <img [src]="organizer.avatar" [alt]="organizer.name" />
+          } @else {
+            <span>{{ organizer.name.charAt(0) }}</span>
+          }
+        </div>
+
+        <div class="top-organizers__info">
+          <h4 class="top-organizers__name">{{ organizer.name }}</h4>
+          <p class="top-organizers__email">{{ organizer.email }}</p>
+        </div>
+
+        <div class="top-organizers__stats">
+          <span class="top-organizers__event-count">{{ organizer.eventCount }} Events</span>
+          
+          @if (organizer.trendData && organizer.trendData.length > 0) {
+            <svg 
+              class="top-organizers__sparkline" 
+              width="80" 
+              height="24" 
+              viewBox="0 0 80 24"
+            >
+              <polyline
+                [attr.points]="getSparklinePoints(organizer.trendData)"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+            </svg>
+          }
+
+          <span 
+            class="top-organizers__growth"
+            [class.top-organizers__growth--positive]="organizer.growthPercentage > 0"
+            [class.top-organizers__growth--negative]="organizer.growthPercentage < 0"
+          >
+            {{ organizer.growthPercentage > 0 ? '+' : '' }}{{ organizer.growthPercentage }}%
+          </span>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+*/
