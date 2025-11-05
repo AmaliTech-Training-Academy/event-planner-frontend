@@ -14,14 +14,14 @@ export class EventsServiceService {
 
   public timeZones() {
     this.setLoading(true)
-    this.eventBackendService.getTimeZones().pipe(
+    return this.eventBackendService.getTimeZones().pipe(
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     )
   }
   public eventTypes() {
     this.setLoading(true)
-    this.eventBackendService.getEventTypes().pipe(
+    return this.eventBackendService.getEventTypes().pipe(
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     )

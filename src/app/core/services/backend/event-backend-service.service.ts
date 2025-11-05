@@ -21,8 +21,8 @@ export class EventBackendServiceService {
     return this.http.get<EventType>(EVENTS_API_ENDPOINTS.GET_EVENT_TYPE(id));
   }
 
-  public getTimeZones(): Observable<TimeZone> {
-    return this.cacheHttp.get<TimeZone>(EVENTS_API_ENDPOINTS.GET_TIME_ZONES);
+  public getTimeZones(): Observable<TimeZone[]> {
+    return this.cacheHttp.get<TimeZone[]>(EVENTS_API_ENDPOINTS.GET_TIME_ZONES);
   }
 
 }

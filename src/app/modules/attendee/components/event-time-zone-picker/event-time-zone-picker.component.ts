@@ -1,8 +1,9 @@
-import { Component, ElementRef, HostListener, input } from '@angular/core';
+import { Component, ElementRef, HostListener, input, OnInit } from '@angular/core';
 import { CreateEventDateComponent } from "../create-event-date/create-event-date.component";
 import { TimeZonePickerComponent } from "../../../../shared/components/time-zone-picker/time-zone-picker.component";
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { TimeZone } from '../../models/event.models';
+import { EventsServiceService } from '../../../../core/services/events.service';
+import { TimeZone } from '../../../../core/models/event.model';
 
 @Component({
   selector: 'app-event-time-zone-picker',
@@ -10,12 +11,28 @@ import { TimeZone } from '../../models/event.models';
   templateUrl: './event-time-zone-picker.component.html',
   styleUrl: './event-time-zone-picker.component.scss'
 })
-export class EventTimeZonePickerComponent {
+export class EventTimeZonePickerComponent implements OnInit {
+
   public readonly control = input<FormControl | undefined>(undefined);
+
   protected selectedTimeZone: TimeZone | null = null
+  protected timeZones: TimeZone[] = []
   protected isOpen: boolean = false;
 
-  constructor(private readonly elementRef: ElementRef) { }
+  constructor(private readonly elementRef: ElementRef, private readonly eventService: EventsServiceService) { }
+
+  ngOnInit(): void {
+    this.eventService.timeZones().subscribe({
+      next: (value) => {
+        this.timeZones = value;
+        const currentValue = this.control()?.value;
+        if (currentValue) {
+          this.selectedTimeZone =
+            this.timeZones.find((tz) => tz.zoneId === currentValue) || null;
+        }
+      }
+    })
+  }
 
   protected toggleState() {
     this.isOpen = !this.isOpen;
@@ -26,7 +43,7 @@ export class EventTimeZonePickerComponent {
     this.selectedTimeZone = timeZone;
 
     if (this.control()) {
-      this.control()?.setValue(timeZone.gmt);
+      this.control()?.setValue(timeZone.zoneId);
       this.control()?.markAsDirty();
     }
 

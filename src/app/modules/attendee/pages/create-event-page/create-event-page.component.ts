@@ -16,11 +16,12 @@ import { UploadEventFlyerComponent } from "./components/upload-event-flyer/uploa
 import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from './../../constants/event-form.constant';
 import { EventOptionsContainerComponent } from "./components/event-options-container/event-options-container.component";
 import { RouterLink } from '@angular/router';
+import { EventsServiceService } from '../../../../core/services/events.service';
 
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, InputComponent, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink , NgOptimizedImage],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, InputComponent, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink, NgOptimizedImage],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
@@ -37,7 +38,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   protected readonly EVENT_TYPES = EVENT_TYPE;
   protected readonly APP_ROUTE = APP_ROUTES;
 
-  constructor(private readonly eventFormService: EventFormService) {
+  constructor(private readonly eventFormService: EventFormService, private readonly eventService:EventsServiceService) {
     this.form = this.eventFormService.getForm();
     this.checked = this.eventFormService.requireApproval?.value;
   }

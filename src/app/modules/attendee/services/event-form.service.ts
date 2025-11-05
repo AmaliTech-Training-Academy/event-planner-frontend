@@ -89,45 +89,45 @@ export class EventFormService {
 
   public registerValueChangeHandlers() {
     this.form.get(F.EVENT_TYPE)?.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((type) => {
-      if (type === EVENT_TYPE.MULTI_DAY && this.eventDates.length < 2) {
-        this.addDateGroup();
-      } else if (type === EVENT_TYPE.SINGLE_DAY && this.eventDates.length > 1) {
-        const startData = this.eventDates.at(0).value;
-        this.eventDates.clear();
-        this.eventDates.push(this.fb.group(startData));
-      }
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((type) => {
+        if (type === EVENT_TYPE.MULTI_DAY && this.eventDates.length < 2) {
+          this.addDateGroup();
+        } else if (type === EVENT_TYPE.SINGLE_DAY && this.eventDates.length > 1) {
+          const startData = this.eventDates.at(0).value;
+          this.eventDates.clear();
+          this.eventDates.push(this.fb.group(startData));
+        }
+      });
 
-     this.meetingType?.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((type) => {
-      this.form.removeControl(F.VIRTUAL_DETAILS);
-      this.form.removeControl(F.IN_PERSON_DETAILS);
+    this.meetingType?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((type) => {
+        this.form.removeControl(F.VIRTUAL_DETAILS);
+        this.form.removeControl(F.IN_PERSON_DETAILS);
 
-      if (type === MEETING_TYPE.IN_PERSON) {
-        this.form.addControl(F.IN_PERSON_DETAILS, this.createInPersonDetailGroup());
-      } else if (type === MEETING_TYPE.VIRTUAL) {
-        this.form.addControl(F.VIRTUAL_DETAILS, this.createVirtualDetailGroup());
-      }
-    });
+        if (type === MEETING_TYPE.IN_PERSON) {
+          this.form.addControl(F.IN_PERSON_DETAILS, this.createInPersonDetailGroup());
+        } else if (type === MEETING_TYPE.VIRTUAL) {
+          this.form.addControl(F.VIRTUAL_DETAILS, this.createVirtualDetailGroup());
+        }
+      });
 
     this.form.get(F.PRICE_TYPE)?.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((type) => {
-      const priceControl = this.form.get(F.PRICE);
-      const includedControl = this.form.get(F.PERCS);
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((type) => {
+        const priceControl = this.form.get(F.PRICE);
+        const includedControl = this.form.get(F.PERCS);
 
-      if (type === 'free') {
-        priceControl?.setValue(0);
-        priceControl?.disable({ emitEvent: false });
-        includedControl?.disable({ emitEvent: false });
-      } else {
-        priceControl?.enable({ emitEvent: false });
-        includedControl?.enable({ emitEvent: false });
-      }
-    });
+        if (type === 'free') {
+          priceControl?.setValue(0);
+          priceControl?.disable({ emitEvent: false });
+          includedControl?.disable({ emitEvent: false });
+        } else {
+          priceControl?.enable({ emitEvent: false });
+          includedControl?.enable({ emitEvent: false });
+        }
+      });
 
 
     this.form.get(F.PRICE_TYPE)?.setValue(PRICE_TYPE.FREE);
