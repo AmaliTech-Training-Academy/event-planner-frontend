@@ -19,6 +19,7 @@ export interface TableColumn<T> {
   readonly header: string;
   readonly sortable?: boolean;
   readonly filterable?: boolean;
+  readonly getValue?: (item: T) => string | number | boolean | null;
 }
 
 export interface TableAction<T> {
