@@ -41,6 +41,20 @@ export class UserBackendService {
       user
     );
   }
+  public uploadProfileImage(
+    userId: string,
+    imageFile: File
+  ): Observable<{ data: { imageUrl?: string; profileImageUrl?: string } }> {
+    const formData = new FormData();
+    formData.append('file', imageFile);
+    // Alternative field names your API might expect:
+    // formData.append('image', imageFile);
+    // formData.append('profileImage', imageFile);
+
+    return this.http.post<{
+      data: { imageUrl?: string; profileImageUrl?: string };
+    }>(API_ENDPOINTS.UPLOAD_PROFILE_IMAGE(userId), formData);
+  }
   public inviteUsers(
     payload: InviteUserPayload
   ): Observable<InviteUserResponse> {

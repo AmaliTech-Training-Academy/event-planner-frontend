@@ -292,7 +292,5 @@ export class UserManagementPageComponent implements OnInit {
 
   private _toggleUserStatus(user: User): void {
     this._userService.toggleUserStatus(user.userId);
-    // Optionally reload to get fresh data from backend
-    // this._loadUsers(this.currentPage() || 0);
   }
 }

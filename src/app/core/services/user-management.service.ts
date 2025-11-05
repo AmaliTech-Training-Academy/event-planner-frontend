@@ -1,11 +1,18 @@
 // core/services/user-management.service.ts
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, map, tap, throwError } from 'rxjs';
 import {
-InviteUserPayload,
-User,
-UserCardData,
-normalizeUserStatus
+  BehaviorSubject,
+  catchError,
+  finalize,
+  map,
+  tap,
+  throwError,
+} from 'rxjs';
+import {
+  InviteUserPayload,
+  User,
+  UserCardData,
+  normalizeUserStatus,
 } from '../models/user.model';
 import { UserBackendService } from './backend/user-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
@@ -33,7 +40,6 @@ export class UserManagementService {
     this.setLoading(true);
     return this.userBackend.getAllUsers(page, size).pipe(
       map((response) => {
-        // Normalize all users to ensure 'status' is UserStatus
         const normalizedUsers: User[] = response.data.users.content.map(
           (user) => normalizeUserStatus(user)
         );
@@ -53,8 +59,6 @@ export class UserManagementService {
         this._users$.next(response.data.users.content);
         this._totalPages$.next(response.data.users.totalPages);
         this._currentPage$.next(response.data.users.number);
-
-        // Update user cards
         this._updateUserCards(response.data);
       }),
       catchError((err) => {
@@ -104,7 +108,7 @@ export class UserManagementService {
     return this.userBackend.getUserById(userId).pipe(
       map((response) => ({
         ...response,
-        data: normalizeUserStatus(response.data), // normalize before returning
+        data: normalizeUserStatus(response.data),
       })),
       catchError((err) => {
         this.errorHandler.handle(err);
@@ -119,7 +123,7 @@ export class UserManagementService {
     return this.userBackend.createUser(user).pipe(
       map((response) => ({
         ...response,
-        data: normalizeUserStatus(response.data), // normalize created user
+        data: normalizeUserStatus(response.data),
       })),
       tap((response) =>
         this._users$.next([...this._users$.getValue(), response.data])
@@ -137,12 +141,16 @@ export class UserManagementService {
     return this.userBackend.updateUser(userId, user).pipe(
       map((response) => ({
         ...response,
-        data: normalizeUserStatus(response.data), // normalize updated user
+        data: normalizeUserStatus(response.data),
       })),
       tap((response) => {
         const users = this._users$
           .getValue()
-          .map((u) => (u.userId === userId ? response.data : u));
+          .map((u) =>
+            u.userId === userId || u.userId === Number(userId)
+              ? response.data
+              : u
+          );
         this._users$.next(users);
       }),
       catchError((err) => {
@@ -153,14 +161,27 @@ export class UserManagementService {
     );
   }
 
+  /**
+   * Upload profile image for a user
+   * Note: This method assumes your backend has an image upload endpoint.
+   * If not available, you can remove this method and handle images differently.
+   */
+  public uploadProfileImage(userId: string, imageFile: File) {
+    return this.userBackend.uploadProfileImage(userId, imageFile).pipe(
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      })
+    );
+  }
+
   public toggleUserStatus(userId: number | string) {
     const users = this._users$.getValue();
     const updatedUsers = users.map((u) => {
       if (u.userId === userId) {
-        // Toggle between Active and Inactive
         const newStatus: User['status'] =
           u.status === 'Active' ? 'Inactive' : 'Active';
-        return { ...u, status: newStatus }; // now type-safe
+        return { ...u, status: newStatus };
       }
       return u;
     });
