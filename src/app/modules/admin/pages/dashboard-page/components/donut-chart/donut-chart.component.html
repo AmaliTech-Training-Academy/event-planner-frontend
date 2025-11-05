@@ -1,0 +1,32 @@
+<div class="donut-chart">
+  <div class="donut-chart__container">
+    <div
+      echarts
+      [options]="chartOptions()"
+      [loading]="isLoading()"
+      [autoResize]="true"
+      class="chart"
+    ></div>
+    @if (data.length) {
+    <div class="donut-chart__legend">
+      @for (item of data; track item.category) {
+      <div class="legend-item">
+        <div class="legend-item__info">
+          <span
+            class="legend-dot"
+            [style.background-color]="item.color"
+            [attr.aria-label]="item.category + ' color indicator'"
+          ></span>
+          <span class="legend-label">{{ item.category }}</span>
+        </div>
+        <span class="legend-value">{{ item.percentage }}%</span>
+      </div>
+      }
+    </div>
+    } @else {
+    <div class="donut-chart__empty">
+      <span>No data available</span>
+    </div>
+    }
+  </div>
+</div>

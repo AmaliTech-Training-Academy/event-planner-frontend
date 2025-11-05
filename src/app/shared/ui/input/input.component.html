@@ -18,22 +18,24 @@
       class="form-input"
     />
 
+
+  @if (type() === 'password') {
     <button
-      *ngIf="type === 'password'"
-      type="button"
-      class="toggle-password"
-      (click)="togglePasswordVisibility()"
-      [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+        type="button"
+        class="toggle-password"
+        (click)="togglePasswordVisibility()"
+        [attr.aria-pressed]="showPassword()"
     >
-      <img
-        [src]="
-          showPassword()
-            ? 'icons/eye-close-icon.png'
-            : 'icons/eye-open.svg'
-        "
-        alt=""
-      />
-    </button>
+        <img
+          [src]="
+            showPassword()
+              ? 'icons/eye-close-icon.png'
+              : 'icons/eye-open.svg'
+          "
+          alt="Toggle Password"
+        />
+      </button>
+    }
   </div>
 
   <app-form-error
@@ -42,3 +44,7 @@
     [showIcon]="true"
   ></app-form-error>
 </div>
+
+@if (errorMessage()) {
+  <div class="error">{{ errorMessage() }}</div>
+}

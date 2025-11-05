@@ -1,0 +1,18 @@
+<app-modal-container (close)="toggleCapacityModal()">
+    <div class="set-capacity-container">
+        <div class="content">
+            <img width="56" height="56" ngSrc="icons/trend_up_circle.svg" alt="" srcset="" class="icon">
+            <div class="info">
+                <h3>Capacity</h3>
+                <p>Set the number of attendees for the event. Auto-close registration when the capacity is
+                    reached.
+                </p>
+            </div>
+            <app-input [formControlName]="EVENT_FORM_FIELDS.CAPACITY" type="text" placeholder="E.g., 20"></app-input>
+        </div>
+        <div class="actions">
+            <app-button (onClick)="removeCapacityLimit()" type='secondary'>Remove Limit</app-button>
+            <app-button (onClick)="setCapacityLimit()">Set Capacity</app-button>
+        </div>
+    </div>
+</app-modal-container>

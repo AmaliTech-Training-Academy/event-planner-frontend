@@ -47,7 +47,6 @@
   }
 }
 
-// Profile Section
 .profile-section {
   display: flex;
   align-items: center;
@@ -102,6 +101,7 @@
 
   h3 {
     @include body-1;
+    @include body-1;
     color: $header-dark;
     margin: 0 0 $spacing-1 0;
     font-weight: 600;
@@ -109,18 +109,19 @@
 
   p {
     @include body-3;
+    @include body-3;
     color: $gray-600;
     margin: 0;
   }
 }
 
-// Form Sections
 .form-section {
   display: flex;
   flex-direction: column;
   gap: $spacing-4;
 
   .section-title {
+    @include body-2;
     @include body-2;
     color: $header-dark;
     font-weight: 600;
@@ -148,6 +149,7 @@
     padding: 12px $spacing-4;
     border: 1px solid $general-stroke-light;
     border-radius: $radius-3;
+    background: white;
     background: white;
     color: $text-primary;
     font-family: inherit;
@@ -191,7 +193,6 @@
   }
 }
 
-// Responsive
 @include md {
   .modal {
     width: 95%;
@@ -202,6 +203,7 @@
 
     &__actions {
       flex-direction: column;
+      padding: $spacing-4 $spacing-5;
       padding: $spacing-4 $spacing-5;
 
       button {

@@ -1,0 +1,11 @@
+<nav class="tab-toggle">
+  @for (tab of tabs; track tab.key) {
+    <button
+      class="toggle-btn"
+      [class.active]="tab.key === activeTabKey"
+      (click)="selectTab(tab.key)"
+    >
+      {{ tab.label }}
+    </button>
+  }
+</nav>

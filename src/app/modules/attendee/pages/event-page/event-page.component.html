@@ -1,55 +1,137 @@
 <main class="event-page-content">
-  <a routerLink="/explore" class="back-link">
-    <img src="icons/Navigation1.png" alt="" class="back-icon" />
-    Back to events
+  <a [routerLink]="routes.EXPLORE" class="back-link">
+    <img
+      src="icons/Navigation1.png"
+      alt="Back"
+      class="back-icon"
+      aria-hidden="true"
+    />
+    <span>Back to event</span>
   </a>
 
+  @if (eventDetails(); as event) {
   <section class="hero-section">
     <img
-      [src]="eventDetails?.heroImageUrl"
-      [alt]="eventDetails?.title"
+      [ngSrc]="event.heroImageUrl"
+      [alt]="event.title"
       class="hero-image"
+      fill
+      priority
     />
     <div class="hero-overlay">
-      <h1 class="hero-title">{{ eventDetails?.title }}</h1>
+      <h1 class="hero-title">{{ event.title }}</h1>
       <div class="hero-details">
+        
         <span class="hero-detail-item">
-          <img src="icons/Mixed.png" alt="Date" class="hero-icon" />
-          <span>{{ eventDetails?.date }}</span>
+          <img
+            src="icons/Mixed.png"
+            alt=""
+            class="hero-icon"
+            aria-hidden="true"
+          />
+          <button (click)="toggleDatePicker()" class="hero-date-btn">
+            {{ event.date }}
+          </button>
         </span>
-
         <span class="hero-detail-item">
-          <img src="icons/room.png" alt="Location" class="hero-icon" />
-          <span>{{ eventDetails?.location }}</span>
+          <img
+            src="icons/room.png"
+            alt=""
+            class="hero-icon"
+            aria-hidden="true"
+          />
+          {{ event.location }}
         </span>
       </div>
-      @if (eventDetails?.isPaid) {
+      @if (event.isPaid) {
       <span class="hero-badge">Paid</span>
       }
     </div>
+
+   
+    @if (showDatePicker()) {
+    <div class="date-picker-dropdown">
+      <app-date-picker
+        (dateSelected)="onDateSelected($event)"
+      ></app-date-picker>
+    </div>
+    }
   </section>
+  }
 
   <div class="content-grid">
+    
     <div class="left-column">
-      <section class="about-section">
-        <h2>About The Event</h2>
-        <p>{{ eventDetails?.description }}</p>
-        <div class="attendees-info">
-          <img src="icons/Frame.png" alt="Attendees" class="attendees-icon" />
-          {{ eventDetails?.attendeesCount }} Attendees
+      
+      <div class="content-card">
+        @if (eventDetails(); as event) {
+        <section class="about-section">
+          <h2>About The Event</h2>
+          <p>{{ event.description }}</p>
+          <div class="attendees-info">
+            <img
+              src="icons/Frame.png"
+              alt="Attendees"
+              class="attendees-icon"
+            />
+            {{ event.attendeesCount }} Attendees
+          </div>
+        </section>
+        }
+      </div>
+
+      
+      @if (venueImages().length > 0) {
+      <app-venue-image-slider
+        [images]="venueImages()"
+      ></app-venue-image-slider>
+      }
+
+      
+      @if (venueSections().length > 0) {
+      <section class="venue-sections">
+        <h2>Venue Sections</h2>
+        <div class="venue-grid">
+          @for (section of venueSections(); track section.id) {
+          <app-venue-section-card
+            [section]="section"
+          ></app-venue-section-card>
+          }
         </div>
       </section>
-
-      @if (venueImages && venueImages.length > 0) {
-      <app-venue-image-slider [images]="venueImages"></app-venue-image-slider>
       }
     </div>
 
-    <div class="right-column">
-      <app-ticket-card [ticketInfo]="ticketInfo" (registerClick)="onRegister()">
-      </app-ticket-card>
+    
+   <div class="right-column">
+     
+      <div class="ticket-options-container">
+        @for (ticket of tickets(); track ticket.title) {
+        <app-ticket-card
+          [ticketInfo]="ticket"
+          (registerClick)="onRegister(ticket)"
+        ></app-ticket-card>
+        }
+      </div>
 
-      <app-help-card [email]="helpEmail"></app-help-card>
+      
+      @if (helpEmail()) {
+      <app-help-card [email]="helpEmail()"></app-help-card>
+      }
     </div>
   </div>
 </main>
+
+
+@if (showRegistrationModal() && selectedTicket()) {
+<app-registration-modal
+  [registrationInfo]="{
+    eventName: eventDetails()?.title || 'Registration',
+    ticketName: selectedTicket()!.title,
+    ticketPrice: selectedTicket()!.price
+  }"
+  (cancelRegistration)="onCancelRegistration()"
+  (submitRegistration)="onSubmitRegistration($event)"
+></app-registration-modal>
+}
+
