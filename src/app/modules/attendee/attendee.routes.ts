@@ -45,6 +45,14 @@ export const ATTENDEE_ROUTES: Routes = [
       import(
         '../attendee/pages/create-event-page/create-event-page.component'
       ).then((m) => m.CreateEventPageComponent),
+
+  },
+  {
+    path: 'create-event-success',
+    loadComponent: () =>
+      import(
+        '../attendee/pages/create-event-success/create-event-success.component'
+      ).then((m) => m.CreateEventSuccessComponent),
     // canActivate: [AuthGuard],
   },
   {
@@ -61,7 +69,7 @@ export const ATTENDEE_ROUTES: Routes = [
         (m) => m.ProfilePageComponent
       ),
     // canActivate: [AuthGuard],
-  },
+},
   {
     path: 'my-events',
     loadComponent: () =>

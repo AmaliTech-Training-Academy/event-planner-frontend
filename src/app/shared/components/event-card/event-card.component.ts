@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-event-card',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage, ButtonComponent],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './event-card.component.html',
   styleUrls: ['./event-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

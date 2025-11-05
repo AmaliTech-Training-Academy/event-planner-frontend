@@ -113,7 +113,7 @@ export class InputComponent implements ControlValueAccessor {
     this._isFocused.set(true);
   }
 
-  onBlur(): void {
+  public onBlur(): void {
     this._isFocused.set(false);
     this.onTouched();
   }
