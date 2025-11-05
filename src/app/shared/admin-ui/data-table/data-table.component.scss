@@ -5,6 +5,7 @@
 .data-table {
   background: #F8F9FA;
   border-radius: $radius-4;
+  box-shadow: 0 0 15px rgb(0 0 0 /15%);
 
   &__header {
     display: flex;
@@ -23,6 +24,7 @@
     display: flex;
     gap: $spacing-3;
     line-height: 50px;
+    justify-content: flex-end;
     flex: 0 0  70%;
     
      &--expanded {
@@ -326,5 +328,5 @@
 }
 
 .invite-btn {
-flex: 1;
+// flex: 1;
 }

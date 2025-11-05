@@ -34,7 +34,7 @@ export class AdminSidebarComponent {
         {
           label: 'Overview',
           iconPath: 'icons/editor-icon.png',
-          route: '/admin/overview',
+          route: '/admin',
         },
         {
           label: 'User Management',

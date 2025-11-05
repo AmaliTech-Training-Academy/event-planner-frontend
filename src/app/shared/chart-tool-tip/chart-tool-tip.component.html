@@ -1,0 +1,12 @@
+<!-- chart-tooltip.component.html -->
+<div
+  class="tooltip-container"
+  [ngStyle]="{ left: left + 'px', top: top + 'px' }"
+>
+  <div class="tooltip-title">{{ axisValue }}</div>
+  <div class="tooltip-content">
+    <span class="tooltip-dot" [style.background]="color"></span>
+    <span class="tooltip-label">Percentage:</span>
+    <span class="tooltip-value">{{ value }}%</span>
+  </div>
+</div>
