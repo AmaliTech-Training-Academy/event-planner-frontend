@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -22,6 +21,7 @@ import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { OtpInputComponent } from '../../../../shared/ui/otp-input/otp-input.component';
 
 
 export function passwordMatchValidator(passwordField: string, confirmPasswordField: string): ValidatorFn {
@@ -52,13 +52,12 @@ export function passwordMatchValidator(passwordField: string, confirmPasswordFie
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-    FormsModule,
     LogoComponent,
     ButtonComponent,
     FormErrorComponent,
     InputComponent,
-    OtpInputComponent,
-  
+    FormsModule,
+    OtpInputComponent
   ],
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.scss']
@@ -75,7 +74,6 @@ export class ResetPasswordComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly notificationService: NotificationService,
     private readonly authService: AuthService,
     private readonly router: Router,
     private notificationService: NotificationService,
@@ -92,9 +90,14 @@ export class ResetPasswordComponent implements OnInit {
     this.setPasswordForm = this.createForm();
   }
 
+  protected goBack(): void {
+    this.router.navigate([APP_ROUTES.FORGOT_PASSWORD]);
+  }
+
 
   private createForm(): FormGroup {
     return this.fb.group({
+      otp: ['', [Validators.required, Validators.maxLength(6)]],
       newPassword: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required]
     }, {
@@ -111,13 +114,13 @@ export class ResetPasswordComponent implements OnInit {
 
 
   protected get passwordsMismatch(): boolean {
-    return !!this.setPasswordForm.errors?.['passwordMismatch'];
+    return this.setPasswordForm.errors?.['passwordMismatch'] as boolean;
   }
 
-  protected get APP_ROUTES() {
-    return APP_ROUTES;
-  }
 
+  protected onOtpChange(otpValue: string): void {
+    this.token = otpValue;
+  }
 
   protected onSubmit(): void {
     this.apiError = null;
@@ -126,11 +129,10 @@ export class ResetPasswordComponent implements OnInit {
       return;
     }
 
-  const { otp, newPassword } = this.setPasswordForm.value;
-
-  if (!otp || !newPassword || !this.email) {
-    return;
-  }
+    if (!this.token || !this.email) {
+      this.apiError = 'Cannot submit: Token or email missing from URL.';
+      return;
+    }
 
     this.isLoading = true;
 
