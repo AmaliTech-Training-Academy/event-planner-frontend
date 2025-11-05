@@ -24,6 +24,7 @@
     display: flex;
     gap: $spacing-3;
     line-height: 50px;
+    justify-content: flex-end;
     flex: 0 0  70%;
 }
 
@@ -315,5 +316,5 @@
 }
 
 .invite-btn {
-flex: 1;
+// flex: 1;
 }

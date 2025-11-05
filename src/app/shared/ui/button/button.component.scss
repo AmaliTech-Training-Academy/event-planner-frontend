@@ -192,11 +192,9 @@ button.app-button--success {
 }
 
 button.app-button--danger {
-  background-color: #e63946 !important;
   color: #fff;
 
   &:hover:not(:disabled) {
-    background-color: #c92d3a;
   }
 }
 button.status-button,
@@ -227,3 +225,5 @@ button.status-button,
     object-fit: contain;
   }
 }
+
+.app-button.delete-button {}

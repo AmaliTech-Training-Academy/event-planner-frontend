@@ -6,6 +6,7 @@ import {
   FormGroup,
   Validators,
   FormControl,
+  FormArray,
 } from '@angular/forms';
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 import { FilterSelectComponent } from '../../../../../../shared/admin-ui/filter-select/filter-select.component';
@@ -33,14 +34,9 @@ export class InviteUserModalComponent {
 
   private readonly _fb = inject(FormBuilder);
 
-  public readonly emailChips = signal<string[]>([]);
-  public readonly emailInput = signal<string>('');
-
-  public readonly inviteForm: FormGroup<InviteUserForm> = this._fb.group({
+  public readonly inviteForm: FormGroup = this._fb.group({
     title: this._fb.control('', [Validators.required]),
-    name: this._fb.control('', [Validators.required]),
-    email: this._fb.control(''),
-    role: this._fb.control('', [Validators.required]),
+    users: this._fb.array([this._createUserFormGroup()]),
     event: this._fb.control('', [Validators.required]),
     message: this._fb.control(''),
   });
@@ -60,102 +56,81 @@ export class InviteUserModalComponent {
     { label: 'Community Meetup', value: 'community_meetup' },
   ];
 
-  public addEmailChip(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const email = input.value.trim();
+  private _createUserFormGroup(): FormGroup {
+    return this._fb.group({
+      name: this._fb.control('', [Validators.required]),
+      email: this._fb.control('', [Validators.required, Validators.email]),
+      role: this._fb.control('', [Validators.required]),
+    });
+  }
 
-    if (
-      email &&
-      this._isValidEmail(email) &&
-      !this.emailChips().includes(email)
-    ) {
-      this.emailChips.update((chips) => [...chips, email]);
-      input.value = '';
-      this.emailInput.set('');
+  public get users(): FormArray {
+    return this.inviteForm.get('users') as FormArray;
+  }
+
+  public addUser(): void {
+    this.users.push(this._createUserFormGroup());
+  }
+
+  public removeUser(index: number): void {
+    if (this.users.length > 1) {
+      this.users.removeAt(index);
     }
-  }
-
-  public onEmailKeyDown(event: KeyboardEvent): void {
-    const input = event.target as HTMLInputElement;
-    const email = input.value.trim();
-
-    if (event.key === 'Enter' || event.key === ',') {
-      event.preventDefault();
-      if (
-        email &&
-        this._isValidEmail(email) &&
-        !this.emailChips().includes(email)
-      ) {
-        this.emailChips.update((chips) => [...chips, email]);
-        input.value = '';
-        this.emailInput.set('');
-      }
-    } else if (
-      event.key === 'Backspace' &&
-      !email &&
-      this.emailChips().length > 0
-    ) {
-      this.emailChips.update((chips) => chips.slice(0, -1));
-    }
-  }
-
-  public removeEmailChip(email: string): void {
-    this.emailChips.update((chips) => chips.filter((e) => e !== email));
-  }
-
-  private _isValidEmail(email: string): boolean {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
   }
 
   public onSubmit(): void {
     this.inviteForm.markAllAsTouched();
 
-    if (this.emailChips().length === 0) {
-      alert('Please add at least one email address');
+    if (this.inviteForm.invalid) {
+      alert('Please fill in all required fields');
       return;
     }
 
-    if (this.inviteForm.invalid) return;
-
-    console.log('Inviting users:', {
-      ...this.inviteForm.value,
-      emails: this.emailChips(),
-    });
-
+    console.log('Inviting users:', this.inviteForm.value);
     this.success.emit();
+  }
+
+  public onSaveProgress(): void {
+    console.log('Saving progress:', this.inviteForm.value);
   }
 
   public onCancel(): void {
     this.close.emit();
   }
 
-  public hasError(controlName: keyof InviteUserForm): boolean {
+  public hasError(controlName: string): boolean {
     const control = this.inviteForm.get(controlName);
     return !!(control?.invalid && control?.touched);
   }
 
-  public getErrorMessage(controlName: keyof InviteUserForm): string {
+  public hasUserFieldError(userIndex: number, fieldName: string): boolean {
+    const control = this.users.at(userIndex).get(fieldName);
+    return !!(control?.invalid && control?.touched);
+  }
+
+  public getErrorMessage(controlName: string): string {
     const control = this.inviteForm.get(controlName);
     if (!control?.errors) return '';
 
     if (control.errors['required'])
       return `${this._capitalize(controlName)} is required`;
-    if (control.errors['email'] || control.errors['invalidEmail'])
-      return 'Please enter a valid email address';
+    return 'Invalid input';
+  }
+
+  public getUserFieldErrorMessage(
+    userIndex: number,
+    fieldName: string
+  ): string {
+    const control = this.users.at(userIndex).get(fieldName);
+    if (!control?.errors) return '';
+
+    if (control.errors['required'])
+      return `${this._capitalize(fieldName)} is required`;
+    if (control.errors['email']) return 'Please enter a valid email address';
     return 'Invalid input';
   }
 
   private _capitalize(text: string): string {
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
-}
-
-interface InviteUserForm {
-  title: FormControl<string | null>;
-  name: FormControl<string | null>;
-  email: FormControl<string | null>;
-  role: FormControl<string | null>;
-  event: FormControl<string | null>;
-  message: FormControl<string | null>;
 }
