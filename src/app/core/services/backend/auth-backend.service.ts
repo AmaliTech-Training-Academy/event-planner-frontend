@@ -40,6 +40,14 @@ export class AuthBackendService {
       { email }
     );
   }
+  public resendOtp(email: string) {
+    return this.http.post(API_ENDPOINTS.AUTH_RESEND_OTP, { email });
+  }
+
+  public resetPassword(otp: string, email: string, password: string) {
+    const payload = { otp, email, password };
+    return this.http.post(API_ENDPOINTS.AUTH_RESET_PASSWORD, payload);
+  }
 
   public logout() {
     return this.http.post(API_ENDPOINTS.AUTH_LOGOUT, {});

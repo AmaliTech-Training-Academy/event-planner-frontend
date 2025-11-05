@@ -11,4 +11,7 @@ export const API_ENDPOINTS = {
   AUTH_VERIFY_OTP: `${BASE}/auth/verify-otp`,
   AUTH_FORGOT_PASSWORD: `${BASE}/auth/forgot-password`,
   GET_USER: (userId: string): string => `${BASE}/users/${userId}`,
+
+  AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
+  AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
 } as const;

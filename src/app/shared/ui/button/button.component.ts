@@ -9,24 +9,30 @@ import { Component, input, computed, output } from '@angular/core';
   styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent {
-  public readonly type = input<'primary' | 'secondary' | 'social' | 'action' | 'plain'>(
-    'primary'
-  );
+  // Extended to include "danger" and "success"
+  public readonly type = input<
+    | 'primary'
+    | 'secondary'
+    | 'social'
+    | 'action'
+    | 'plain'
+    | 'danger'
+    | 'success'
+  >('primary');
+
   public readonly disabled = input(false);
   public readonly fullWidth = input(false);
   public readonly onClick = output<void>();
 
   protected handleClick(): void {
     if (this.disabled()) return;
-
     this.onClick.emit();
   }
-  
+
   public readonly color = input<
     'view' | 'edit' | 'delete' | 'power' | 'inactive' | string | undefined
   >();
   public readonly extraClass = input<string | string[] | undefined>();
-
   public readonly buttonType = input<'button' | 'submit' | 'reset'>('button');
 
   public readonly classes = computed((): string[] => {

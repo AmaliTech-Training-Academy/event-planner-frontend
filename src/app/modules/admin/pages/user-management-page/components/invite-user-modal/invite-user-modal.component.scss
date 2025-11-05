@@ -21,39 +21,54 @@
   border-radius: $radius-4;
   padding: $spacing-6;
   width: 90%;
-  max-width: 500px;
+  max-width: 600px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
+  max-height: 90vh;
+  overflow-y: auto;
 
-  &__title {
-    @include h-4;
-    color: $header-dark;
-    margin: 0 0 $spacing-6 0;
-    font-weight: 600;
+  &::-webkit-scrollbar {
+    width: 4px !important;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    width: 1rem !important;
+    border: none;
   }
 
   form {
     display: flex;
     flex-direction: column;
-    gap: $spacing-5;
+    gap: $spacing-6;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
   }
 
   label {
     @include body-2;
     color: $header-dark;
     font-weight: 500;
-    margin-bottom: $spacing-2;
     display: block;
   }
 
   textarea {
     @include body-2;
     width: 100%;
-    min-height: 100px;
+    min-height: 80px;
     padding: $spacing-3 $spacing-4;
     border: 1px solid $general-stroke-light;
     border-radius: $radius-3;
@@ -73,15 +88,73 @@
     }
   }
 
+  .users-section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+
+    > label {
+      @include body-2;
+      color: $header-dark;
+      font-weight: 500;
+    }
+  }
+
+  .users-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-3;
+  }
+
+  .user-row {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-3;
+    padding: $spacing-4;
+    background: white;
+    border: 1px solid $general-stroke-light;
+    border-radius: $radius-3;
+    position: relative;
+
+    .user-fields {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: $spacing-3;
+      align-items: start;
+
+      .form-field {
+        margin: 0;
+      }
+    }
+
+  
+  }
+
+  // Add User button styling
+  ::ng-deep .btn-add-user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-2;
+    
+    svg {
+      flex-shrink: 0;
+    }
+    
+    span {
+      @include body-2;
+      font-weight: 500;
+    }
+  }
+
   &__actions {
     display: flex;
     gap: $spacing-3;
     justify-content: flex-end;
-    margin-top: $spacing-4;
-    padding-top: $spacing-4;
+    margin-top: $spacing-2;
   }
 
-  // ✅ Responsive adjustments using mixins
   @include md {
     width: 95%;
     padding: $spacing-5;
@@ -93,34 +166,39 @@
         width: 100%;
       }
     }
+
+    .user-row {
+      .user-fields {
+        grid-template-columns: 1fr 1.2fr 1fr;
+        gap: $spacing-2;
+      }
+    }
   }
 
   @include sm {
     width: 100%;
     padding: $spacing-4;
-  }
-}
 
-// Close button (if needed)
-.modal__close {
-  position: absolute;
-  top: $spacing-4;
-  right: $spacing-4;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  color: $gray-500;
-  cursor: pointer;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: $radius-2;
-  transition: all 0.2s ease;
+    .user-row {
+      flex-direction: column;
+      gap: $spacing-3;
 
-  &:hover {
-    background: $gray-100;
-    color: $header-dark;
+      .user-fields {
+        grid-template-columns: 1fr;
+        gap: $spacing-3;
+        width: 100%;
+      }
+
+      .btn-remove {
+        position: absolute;
+        top: $spacing-3;
+        right: $spacing-3;
+        margin-top: 0;
+      }
+    }
+
+    .btn-add-user {
+      font-size: 0.875rem;
+    }
   }
 }

@@ -10,4 +10,6 @@ export const APP_ROUTES = {
   MANAGE_EVENT_ROLES: '/app/manage-event-roles',
   RESET_PASSWORD: 'auth/reset-password',
   ADMIN_DASHBOARD: '/admin',
+
+  EVENT_DETAILS: (id: string) => `/app/event/${id}`,
 };

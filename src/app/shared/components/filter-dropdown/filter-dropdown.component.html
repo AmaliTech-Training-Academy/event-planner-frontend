@@ -1,0 +1,12 @@
+<ul class="dropdown-panel" (click)="$event.stopPropagation()">
+  @for (option of options; track option) {
+    <li 
+      class="dropdown-item"
+      [class.selected]="option === selectedOption"
+      [class.has-divider]="!$first" 
+      (click)="onOptionSelect(option)">
+      {{ option }}
+    </li>
+  }
+</ul>
+

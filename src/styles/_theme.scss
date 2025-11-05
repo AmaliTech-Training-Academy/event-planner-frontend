@@ -43,3 +43,19 @@ $primary-btn-color: #cc3f02;
     background-color: transparent;
     
 }
+@mixin flex-col($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  @if $gap != 0 { gap: $gap; }
+}
+
+@mixin flex-row($gap: 0) {
+  display: flex;
+  flex-direction: row;
+  @if $gap != 0 { gap: $gap; }
+}
+
+@mixin bordered-box {
+  border: 0.156rem solid $general-stroke-light;
+  border-radius: $radius-4;
+}
