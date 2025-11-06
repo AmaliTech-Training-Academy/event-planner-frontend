@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EVENTS_API_ENDPOINTS } from '../../constants/api-endpoints.constants';
@@ -30,7 +30,7 @@ export class EventBackendServiceService {
   }
 
   public createEvent(data: FormData) {
-    return this.http.post(EVENTS_API_ENDPOINTS.CREATE_EVENT, data)
+    return this.http.post(EVENTS_API_ENDPOINTS.CREATE_EVENT, data);
   }
 
 }

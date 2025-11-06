@@ -22,5 +22,5 @@ export const EVENTS_API_ENDPOINTS = {
   GET_EVENT_TYPE: (id: number): string => `${BASE}/event_types/${id}`,
   CREATE_EVENT_TYPE: `${BASE}/event_types`,
   GET_TIME_ZONES: `${BASE}/timezones`,
-  GET_MEETING_TYPES: `${BASE}/meeting_types`,
+  GET_MEETING_TYPES: `${BASE}/event_meeting_types`,
 } as const;

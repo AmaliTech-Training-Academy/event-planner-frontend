@@ -5,8 +5,7 @@ import {
   catchError,
   finalize,
   Observable,
-  tap,
-  throwError,
+  tap
 } from 'rxjs';
 import { APP_ROUTES } from '../constants/app-routes.constants';
 import { User } from '../models/user.model';

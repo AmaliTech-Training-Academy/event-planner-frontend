@@ -294,7 +294,8 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     }
 
     // --- Final Append ---
-    formData.append('event', JSON.stringify(eventInfo));
+    // formData.append('event', JSON.stringify(eventInfo));
+    formData.append('event', new Blob([JSON.stringify(eventInfo)], { type: 'application/json' }));
 
     return formData;
   }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, tap } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, take, tap } from 'rxjs';
 import { EventBackendServiceService } from './backend/event-backend-service.service';
 import { ErrorHandlerService } from './error-handler.service';
 import {  Router } from '@angular/router';
@@ -17,6 +17,7 @@ export class EventsServiceService {
   public timeZones() {
     this.setLoading(true)
     return this.eventBackendService.getTimeZones().pipe(
+      take(1),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     )
@@ -25,6 +26,7 @@ export class EventsServiceService {
   public eventTypes() {
     this.setLoading(true)
     return this.eventBackendService.getEventTypes().pipe(
+      take(1),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     )
@@ -32,6 +34,7 @@ export class EventsServiceService {
   public meetingTypes() {
     this.setLoading(true)
     return this.eventBackendService.getMeeting().pipe(
+      take(1),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     )
@@ -40,6 +43,7 @@ export class EventsServiceService {
   public createEvent(formData: FormData){
     this.setLoading(true)
     return this.eventBackendService.createEvent(formData).pipe(
+      take(1),
       tap(() => {
         this.router.navigate([APP_ROUTES.CREATE_EVENT_SUCCESS]);
       }),
