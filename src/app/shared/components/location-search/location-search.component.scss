@@ -1,0 +1,37 @@
+@use 'typography' as *;
+@use 'variables' as *;
+
+.location-search {
+  text-align: left;
+  display: flex;
+  flex-direction:column;
+  gap: 8px
+}
+
+.input-label {
+    @include label-1;
+    color: $sub-header-dark;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding:  12px;
+}
+
+.input-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.form-input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+}
+
+

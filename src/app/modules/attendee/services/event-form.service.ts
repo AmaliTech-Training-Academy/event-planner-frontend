@@ -64,7 +64,7 @@ export class EventFormService {
     return this.inPersonDetails.get(F.IMAGES);
   }
 
-  private createDateGroup(label?: 'startsAt' | 'endsAt'): FormGroup {
+  private createDateGroup(label?: 'start' | 'end'): FormGroup {
     return this.fb.group({
       [F.LABEL]: [label || 'startsAt'],
       [F.DATE]: ['', Validators.required],
@@ -166,7 +166,7 @@ export class EventFormService {
   }
 
   private addDateGroup(): void {
-    const label = this.eventDates.length === 0 ? 'startsAt' : 'endsAt';
+    const label = this.eventDates.length === 0 ? 'start' : 'end';
     this.eventDates.push(this.createDateGroup(label));
   }
 

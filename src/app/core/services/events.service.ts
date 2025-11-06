@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, finalize } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, tap } from 'rxjs';
 import { EventBackendServiceService } from './backend/event-backend-service.service';
 import { ErrorHandlerService } from './error-handler.service';
+import {  Router } from '@angular/router';
+import { APP_ROUTES } from '../constants/app-routes.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,7 @@ export class EventsServiceService {
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
-  constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService) { }
+  constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router:Router) { }
 
   public timeZones() {
     this.setLoading(true)
@@ -19,9 +21,28 @@ export class EventsServiceService {
       finalize(() => this.setLoading(false))
     )
   }
+
   public eventTypes() {
     this.setLoading(true)
     return this.eventBackendService.getEventTypes().pipe(
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+  public meetingTypes() {
+    this.setLoading(true)
+    return this.eventBackendService.getMeeting().pipe(
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
+  public createEvent(formData: FormData){
+    this.setLoading(true)
+    return this.eventBackendService.createEvent(formData).pipe(
+      tap(() => {
+        this.router.navigate([APP_ROUTES.CREATE_EVENT_SUCCESS]);
+      }),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     )

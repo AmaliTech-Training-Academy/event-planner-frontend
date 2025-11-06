@@ -1,29 +1,31 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { EventsServiceService } from '../../../../core/services/events.service';
+import { LocationSearchComponent } from '../../../../shared/components/location-search/location-search.component';
 import { ButtonComponent } from "../../../../shared/ui/button/button.component";
-import { InputComponent } from "../../../../shared/ui/input/input.component";
+import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
 import { RadioButtonComponent } from "../../../../shared/ui/radio-button/radio-button.component";
+import { getControlError } from '../../../../shared/utils/form-error.util';
 import { EventDatePickerComponent } from "../../components/event-date-picker/event-date-picker.component";
 import { EventTimePickerComponent } from "../../components/event-time-picker/event-time-picker.component";
 import { EventTimeZonePickerComponent } from "../../components/event-time-zone-picker/event-time-zone-picker.component";
 import { EventFormService } from '../../services/event-form.service';
+import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from './../../constants/event-form.constant';
 import { ConnectZoomModalComponent } from "./components/connect-zoom-modal/connect-zoom-modal.component";
+import { EventOptionsContainerComponent } from "./components/event-options-container/event-options-container.component";
 import { SetCapacityModalComponent } from "./components/set-capacity-modal/set-capacity-modal.component";
 import { SetPriceModalComponent } from "./components/set-price-modal/set-price-modal.component";
 import { UploadEventFlyerComponent } from "./components/upload-event-flyer/upload-event-flyer.component";
-import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from './../../constants/event-form.constant';
-import { EventOptionsContainerComponent } from "./components/event-options-container/event-options-container.component";
-import { RouterLink } from '@angular/router';
-import { EventsServiceService } from '../../../../core/services/events.service';
-import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
-import { getControlError } from '../../../../shared/utils/form-error.util';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { EventType, MeetingType } from '../../../../core/models/event.model';
 
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, InputComponent, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink, NgOptimizedImage, FormErrorComponent],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink, NgOptimizedImage, FormErrorComponent, LocationSearchComponent],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
@@ -39,16 +41,34 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   protected readonly MEETING_TYPES = MEETING_TYPE;
   protected readonly EVENT_TYPES = EVENT_TYPE;
   protected readonly APP_ROUTE = APP_ROUTES;
+  protected readonly getError = getControlError;
 
-  constructor(private readonly eventFormService: EventFormService, private readonly eventService:EventsServiceService) {
+  protected backendEventTypes: EventType[] = []
+  protected backendMeetingTypes: MeetingType[] = []
+
+  constructor(private readonly eventFormService: EventFormService, private readonly eventService: EventsServiceService, private readonly notificationService: NotificationService) {
     this.form = this.eventFormService.getForm();
     this.checked = this.eventFormService.requireApproval?.value;
+
+
+    this.eventService.meetingTypes().subscribe({
+      next: (meeting_types) => {
+        this.backendMeetingTypes = meeting_types
+      },
+    })
+
+    this.eventService.eventTypes().subscribe({
+      next: (event_types) => {
+        this.backendEventTypes = event_types
+      },
+    })
+
   }
 
 
   ngOnInit(): void {
     this.eventFormService.registerValueChangeHandlers();
-    if(this.eventFormService.flyer?.value) {
+    if (this.eventFormService.flyer?.value) {
       this.flyerPreview = this.eventFormService.getImageSrc(this.eventFormService.flyer.value);
     }
   }
@@ -147,18 +167,136 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   }
 
 
+
+
   protected createEvent() {
-    console.log(this.form.getRawValue());
+
 
     if (this.form.invalid) {
+
       this.form.markAllAsTouched();
+
+      for (const key of Object.keys(this.form.controls)) {
+        const control = this.form.get(key);
+        if (control && control.invalid) {
+          const current_error = `Please provide a value for the ${key} field`;
+          this.notificationService.error(current_error);
+          break;
+        }
+      }
+
+
       return;
     }
 
-    // TODO: Implement event creation logic here
-    this.eventFormService.resetForm();
+    const formData = this.parseObjectToFormdata()
+
+    // TODO: remove this line
+    // const plainObject = Object.fromEntries(formData.entries());
+    // console.log(plainObject);
+
+    this.eventService.createEvent(formData).subscribe({
+      next: () => {
+        this.eventFormService.resetForm();
+        this.notificationService.success(`Event Successfully created`)
+      },
+    });
   }
 
-  protected readonly getError = getControlError;
+
+
+  private parseObjectToFormdata(): FormData {
+    const data = this.form.getRawValue();
+    const formData = new FormData();
+
+    const eventInfo = {
+      [FIELDS.EVENT_TYPE]: this.backendEventTypes.find((v) => v.name == data[FIELDS.EVENT_TYPE])?.id || 0,
+      [FIELDS.TITLE]: data[FIELDS.TITLE],
+      [FIELDS.PRICE_TYPE]: data[FIELDS.PRICE_TYPE],
+      [FIELDS.MEETING_TYPE]: this.backendMeetingTypes.find((v) => v.name == data[FIELDS.MEETING_TYPE])?.id || 0,
+      eventOptionsRequest: {
+        [FIELDS.PRICE]: data[FIELDS.PRICE] ?? 0,
+        [FIELDS.REQUIRE_APPROVAL]: !!data[FIELDS.REQUIRE_APPROVAL],
+        [FIELDS.CAPACITY]: data[FIELDS.CAPACITY] ?? 0,
+        [FIELDS.PERCS]: data[FIELDS.PERCS] ?? '',
+      },
+    };
+
+    // --- Flyer ---
+    if (data[FIELDS.FLYER] instanceof File) {
+      formData.append(FIELDS.FLYER, data[FIELDS.FLYER] as File);
+    }
+
+    // --- Dates ---
+    const dates = data[FIELDS.DATES] ?? [];
+
+    if (dates.length === 1) {
+      const d = dates[0];
+      Object.assign(eventInfo, {
+        [FIELDS.DATE]: d[FIELDS.DATE],
+        [FIELDS.TIME]: d[FIELDS.TIME],
+        [FIELDS.TIME_ZONE]: d[FIELDS.TIME_ZONE],
+      });
+    } else if (dates.length === 2) {
+      for (const date of dates) {
+        const label = date[FIELDS.LABEL]?.toLowerCase();
+        if (!label) continue;
+
+        Object.assign(eventInfo, {
+          [`event_${label}_time_date`]: date[FIELDS.DATE],
+          [`event_${label}_time`]: date[FIELDS.TIME],
+          [`event_${label}_time_zone_id`]: date[FIELDS.TIME_ZONE],
+        });
+      }
+    }
+
+    // --- Meeting Type: In-Person ---
+    if (data[FIELDS.MEETING_TYPE] === MEETING_TYPE.IN_PERSON && data[FIELDS.IN_PERSON_DETAILS]) {
+      const inPerson = data[FIELDS.IN_PERSON_DETAILS];
+
+      Object.assign(eventInfo, {
+        [FIELDS.LOCATION]: inPerson[FIELDS.LOCATION],
+        [FIELDS.DESCRIPTION]: inPerson[FIELDS.DESCRIPTION],
+      });
+
+      if (Array.isArray(inPerson[FIELDS.IMAGES])) {
+        (inPerson[FIELDS.IMAGES] as File[]).forEach((file: File) => {
+          formData.append(`${FIELDS.IMAGES}[]`, file);
+        });
+      }
+    }
+
+    // --- Meeting Type: Virtual ---
+    if (data[FIELDS.MEETING_TYPE] === MEETING_TYPE.VIRTUAL && data[FIELDS.VIRTUAL_DETAILS]) {
+      const virtual = data[FIELDS.VIRTUAL_DETAILS];
+      if (virtual[FIELDS.MEETING_LINK]) {
+        Object.assign(eventInfo, {
+          [FIELDS.MEETING_LINK]: virtual[FIELDS.MEETING_LINK],
+        });
+      }
+    }
+
+    // --- Venue Sections ---
+    const sections = data[FIELDS.VENUE_SECTIONS] ?? [];
+    if (Array.isArray(sections)) {
+      sections.forEach((sec: any, i: number) => {
+        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_NAME}]`, sec[FIELDS.VENUE_SECTION_NAME]);
+        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_CAPACITY}]`, String(sec[FIELDS.VENUE_SECTION_CAPACITY]));
+        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_PRICE}]`, String(sec[FIELDS.VENUE_SECTION_PRICE]));
+        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_COLOR}]`, sec[FIELDS.VENUE_SECTION_COLOR]);
+        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_DESCRIPTION}]`, sec[FIELDS.VENUE_SECTION_DESCRIPTION]);
+
+        const img = sec[FIELDS.VENUE_SECTION_IMAGE];
+        if (img instanceof File) {
+          formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_IMAGE}]`, img);
+        }
+      });
+    }
+
+    // --- Final Append ---
+    formData.append('event', JSON.stringify(eventInfo));
+
+    return formData;
+  }
 
 }

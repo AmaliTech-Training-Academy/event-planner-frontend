@@ -1,0 +1,18 @@
+<div class="location-search">
+  <label class="input-label">{{ label() }}</label>
+  <div class="input-wrapper">
+    <img [src]="iconSrc()" alt="" class="input-icon" />
+    <input
+      type="text"
+      class="form-input"
+      [placeholder]="placeholder()"
+      [value]="currentValue()"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      [disabled]="disabled"
+      #inputRef
+    />
+  </div>
+</div>
+
+

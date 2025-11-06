@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EVENTS_API_ENDPOINTS } from '../../constants/api-endpoints.constants';
-import { EventType, TimeZone } from '../../models/event.model';
+import { BaseType, EventType, TimeZone } from '../../models/event.model';
 import { CacheHttpService } from '../util/CacheHttpClient';
 
 
@@ -23,6 +23,14 @@ export class EventBackendServiceService {
 
   public getTimeZones(): Observable<TimeZone[]> {
     return this.cacheHttp.get<TimeZone[]>(EVENTS_API_ENDPOINTS.GET_TIME_ZONES);
+  }
+
+  public getMeeting(): Observable<BaseType[]> {
+    return this.cacheHttp.get<BaseType[]>(EVENTS_API_ENDPOINTS.GET_MEETING_TYPES);
+  }
+
+  public createEvent(data: FormData) {
+    return this.http.post(EVENTS_API_ENDPOINTS.CREATE_EVENT, data)
   }
 
 }

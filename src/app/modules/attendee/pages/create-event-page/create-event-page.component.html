@@ -1,8 +1,10 @@
 <form [formGroup]="form" method="post" class="wrapper">
     <div class="left-panel">
         <div class="title-container">
+           <section>
             <input type="text" [formControlName]="EVENT_FORM_FIELDS.TITLE" placeholder="Add Event Title" class="title">
             <app-form-error [message]="getError(form.get(EVENT_FORM_FIELDS.TITLE))"></app-form-error>
+           </section>
             <div class="time-container">
                 <div class="day-container">
                     <p>Select event type:</p>
@@ -41,8 +43,13 @@
             </div>
             @if (meetingType?.value === MEETING_TYPES.IN_PERSON) {
             <div class="in-person-details" [formGroupName]="EVENT_FORM_FIELDS.IN_PERSON_DETAILS">
-                <app-input placeholder="Type location here" iconSrc="icons/pin.svg" type="text"
-                    label="Add event location" [value]="inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION)?.value" [formControlName]="EVENT_FORM_FIELDS.LOCATION" [errorMessage]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION))"></app-input>
+                <!-- <app-input placeholder="Type location here" iconSrc="icons/pin.svg" type="text"
+                label="Add event location" [value]="inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION)?.value" [formControlName]="EVENT_FORM_FIELDS.LOCATION" [errorMessage]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION))"></app-input> -->
+                <div class="field">
+                    <app-location-search label="Add event location" placeholder="Type location here"
+                        [formControlName]="EVENT_FORM_FIELDS.LOCATION"></app-location-search>
+                    <app-form-error [message]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION))"></app-form-error>
+                </div>
                 <div class="field">
                     <label for="description">Add event description</label>
                     <textarea name="description" [formControlName]="EVENT_FORM_FIELDS.DESCRIPTION" id="description"
