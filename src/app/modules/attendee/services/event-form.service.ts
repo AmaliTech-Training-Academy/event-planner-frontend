@@ -8,6 +8,7 @@ import { EVENT_TYPE, EVENT_FORM_FIELDS as F, MEETING_TYPE, PRICE_TYPE } from '..
 export class EventFormService {
   private form: FormGroup;
   private destroy$ = new Subject<void>();
+  private objectUrlCache = new WeakMap<File, string>();
 
   constructor(private readonly fb: FormBuilder) {
     this.form = this.fb.group({
@@ -15,10 +16,10 @@ export class EventFormService {
       [F.DATES]: this.fb.array([]),
       [F.MEETING_TYPE]: [MEETING_TYPE.IN_PERSON, [Validators.required]],
       [F.FLYER]: ['', Validators.required],
-      [F.TITLE]: ['', Validators.required],
-      [F.CAPACITY]: [0],
-      [F.PRICE]: [0],
-      [F.PERCS]: ['', Validators.required],
+      [F.TITLE]: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      [F.CAPACITY]: [0, [Validators.min(0)]],
+      [F.PRICE]: [0, [Validators.min(0)]],
+      [F.PERCS]: ['', [Validators.required, Validators.minLength(3)]],
       [F.REQUIRE_APPROVAL]: [false, Validators.required],
       [F.PRICE_TYPE]: [PRICE_TYPE.FREE, Validators.required],
       [F.VENUE_SECTIONS]: this.fb.array([]),
@@ -74,15 +75,24 @@ export class EventFormService {
 
   private createVirtualDetailGroup(): FormGroup {
     return this.fb.group({
-      [F.MEETING_LINK]: ['', Validators.required],
+      [F.MEETING_LINK]: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            // Basic URL pattern (http/https)
+            /^(https?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#\[\]@!$&'\(\)\*\+,;=.]+$/
+          ),
+        ],
+      ],
     });
   }
 
   private createInPersonDetailGroup(): FormGroup {
     return this.fb.group({
-      [F.LOCATION]: ['', Validators.required],
-      [F.DESCRIPTION]: ['', Validators.required],
-      [F.IMAGES]: [[]],
+      [F.LOCATION]: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      [F.DESCRIPTION]: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+      [F.IMAGES]: [[], Validators.maxLength(5)],
     });
   }
 
@@ -134,9 +144,10 @@ export class EventFormService {
         const priceControl = this.form.get(F.PRICE);
         const includedControl = this.form.get(F.PERCS);
 
-        if (type === 'free') {
-          priceControl?.setValue(0);
+        if (type === PRICE_TYPE.FREE) {
+          priceControl?.setValue(0,{emitEvent: false});
           priceControl?.disable({ emitEvent: false });
+          includedControl?.setValue('',{emitEvent: false});
           includedControl?.disable({ emitEvent: false });
         } else {
           priceControl?.enable({ emitEvent: false });
@@ -144,8 +155,14 @@ export class EventFormService {
         }
       });
 
+      const currentPriceType = this.form.get(F.PRICE_TYPE)?.value;
 
-    this.form.get(F.PRICE_TYPE)?.setValue(PRICE_TYPE.FREE);
+      if(!currentPriceType) {
+        this.form.get(F.PRICE_TYPE)?.setValue(PRICE_TYPE.FREE);
+      }else{
+        this.form.get(F.PRICE_TYPE)?.setValue(currentPriceType);
+      }
+
   }
 
   private addDateGroup(): void {
@@ -172,7 +189,11 @@ export class EventFormService {
 
   public getImageSrc(image: any): string {
     if (image instanceof File) {
-      return URL.createObjectURL(image);
+      const cached = this.objectUrlCache.get(image);
+      if (cached) return cached;
+      const url = URL.createObjectURL(image);
+      this.objectUrlCache.set(image, url);
+      return url;
     }
     return image;
   }

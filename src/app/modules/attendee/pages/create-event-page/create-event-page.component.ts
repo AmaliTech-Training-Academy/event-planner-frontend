@@ -1,6 +1,6 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 import { InputComponent } from "../../../../shared/ui/input/input.component";
@@ -17,11 +17,13 @@ import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from './../../c
 import { EventOptionsContainerComponent } from "./components/event-options-container/event-options-container.component";
 import { RouterLink } from '@angular/router';
 import { EventsServiceService } from '../../../../core/services/events.service';
+import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
+import { getControlError } from '../../../../shared/utils/form-error.util';
 
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, InputComponent, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink, NgOptimizedImage],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, InputComponent, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink, NgOptimizedImage, FormErrorComponent],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
@@ -46,8 +48,9 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.eventFormService.registerValueChangeHandlers();
-
-    this.eventService.eventTypes
+    if(this.eventFormService.flyer?.value) {
+      this.flyerPreview = this.eventFormService.getImageSrc(this.eventFormService.flyer.value);
+    }
   }
 
 
@@ -145,6 +148,8 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
 
 
   protected createEvent() {
+    console.log(this.form.getRawValue());
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -153,5 +158,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     // TODO: Implement event creation logic here
     this.eventFormService.resetForm();
   }
+
+  protected readonly getError = getControlError;
 
 }
