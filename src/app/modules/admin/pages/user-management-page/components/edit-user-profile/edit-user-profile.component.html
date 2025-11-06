@@ -94,28 +94,14 @@
       <div class="form-section">
         <h4 class="section-title">Contact Information</h4>
 
-        <!-- Phone Number with Country Code -->
-        <div class="phone-input-group">
-          <div class="phone-code-select">
-            <label class="input-label">Country Code</label>
-            <select formControlName="phoneCode" class="country-code-dropdown">
-              @for (country of phoneCodes; track country.value) {
-                <option [value]="country.value">
-                  {{ country.code }} ({{ country.label }})
-                </option>
-              }
-            </select>
-          </div>
-
-          <app-input
-            type="text"
-            label="Phone Number"
-            placeholder="241234567"
-            formControlName="phone"
-            [errorMessage]="getErrorMessage('phone')"
-            class="phone-number-input"
-          ></app-input>
-        </div>
+        <!-- Phone Number (no country code selector) -->
+        <app-input
+          type="text"
+          label="Phone Number"
+          placeholder="+233241234567"
+          formControlName="phone"
+          [errorMessage]="getErrorMessage('phone')"
+        ></app-input>
 
         <!-- Display formatted phone number -->
         @if (getFormattedPhoneNumber()) {

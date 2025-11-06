@@ -4,6 +4,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from '../../constants/api-endpoints.constants';
 import { InviteUserPayload, InviteUserResponse, User, UserManagementResponse } from '../../models/user.model';
+export interface UpdateUserPayload {
+  fullName: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  status: boolean;
+}
 
 @Injectable({ providedIn: 'root' })
 export class UserBackendService {
@@ -34,13 +41,17 @@ export class UserBackendService {
 
   public updateUser(
     userId: string,
-    user: Partial<User>
+    user: UpdateUserPayload
   ): Observable<{ data: User }> {
     return this.http.put<{ data: User }>(
       API_ENDPOINTS.UPDATE_USER(userId),
       user
     );
   }
+  public toggleUserActivation(userId: number | string): Observable<void> {
+    return this.http.post<void>(API_ENDPOINTS.DEACTIVATE_USER(userId), {});
+  }
+
   public uploadProfileImage(
     userId: string,
     imageFile: File

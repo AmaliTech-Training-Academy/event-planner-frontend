@@ -23,33 +23,38 @@
 }
 
 .modal {
-  background: white;
-  width: 100%;
-  max-width: 700px;
+  background: $gray-50;
+  border-radius: $radius-4;
+  padding: $spacing-6;
+  width: 90%;
+  max-width: 600px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  position: absolute;
-  top: 0%;
-  right: 0%;
+  position: fixed;
+  top: 0;
+  right: 0;
   z-index: 1001;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  max-height: 100vh;
+  overflow-y: auto;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-6;
+  }
 
   &__content {
-    padding: $spacing-6;
-    overflow-y: auto;
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-5;
   }
 
   &__actions {
-    background-color: transparent;
     display: flex;
     gap: $spacing-3;
-    justify-content: flex-start;
-    padding: $spacing-5 $spacing-6;
+    justify-content: flex-end;
+    margin-top: $spacing-3;
+    padding-top: $spacing-5;
     border-top: 1px solid $general-stroke-light;
-    flex-shrink: 0;
   }
 }
 

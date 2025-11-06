@@ -284,13 +284,39 @@ export class UserManagementPageComponent implements OnInit {
       this.closeViewModal();
     }
 
-    this.selectedUser.set(user);
+    this.selectedUser.set(null); // reset any previous signal
     Promise.resolve().then(() => {
+      this.selectedUser.set(user);
       this.isEditModalOpen.set(true);
     });
   }
 
   private _toggleUserStatus(user: User): void {
-    this._userService.toggleUserStatus(user.userId);
+    const normalizedStatus =
+      typeof user.status === 'boolean'
+        ? user.status
+          ? 'Active'
+          : 'Inactive'
+        : user.status;
+    const isCurrentlyActive = normalizedStatus === 'Active';
+
+    this._userService
+      .deactivateUser(user.userId)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: () => {
+          // ✅ Only toggle locally after backend success
+          this._userService.toggleUserStatus(user.userId);
+
+          console.log(
+            isCurrentlyActive
+              ? '✅ User deactivated successfully'
+              : '✅ User reactivated successfully'
+          );
+        },
+        error: (err) => {
+          console.error('❌ Failed to toggle user status:', err);
+        },
+      });
   }
 }

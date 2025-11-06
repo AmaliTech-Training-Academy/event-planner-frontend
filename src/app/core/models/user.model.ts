@@ -161,6 +161,7 @@ export interface RawUser {
   lastActive?: string;
 }
 
+
 // Normalize an array of users from backend
 export function normalizeUsersArray(rawUsers: RawUser[]): User[] {
   return rawUsers.map((user) =>

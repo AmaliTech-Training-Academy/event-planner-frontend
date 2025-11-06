@@ -19,6 +19,9 @@ export const API_ENDPOINTS = {
   AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
   AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
+  DEACTIVATE_USER: (userId: string | number) =>
+    `${BASE}/users/${userId}/deactivate`,
+
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
 } as const;

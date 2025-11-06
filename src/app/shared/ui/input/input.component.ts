@@ -66,12 +66,7 @@ export class InputComponent implements ControlValueAccessor {
 
   // ✅ Add effect to sync external value input with internal state
   constructor() {
-    effect(() => {
-      const externalValue = this.value();
-      if (externalValue !== this._internalValue()) {
-        this._internalValue.set(externalValue);
-      }
-    });
+    
   }
 
   // ControlValueAccessor callbacks

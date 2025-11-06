@@ -12,6 +12,7 @@ import {
   InviteUserPayload,
   User,
   UserCardData,
+  mapStatusToBoolean,
   normalizeUserStatus,
 } from '../models/user.model';
 import { UserBackendService } from './backend/user-backend.service';
@@ -135,10 +136,22 @@ export class UserManagementService {
       finalize(() => this.setLoading(false))
     );
   }
+  private buildUpdatePayload(user: Partial<User>) {
+    return {
+      fullName: user.fullName?.trim() || '',
+      email: user.email?.trim() || '',
+      phone: user.phone || '',
+      address: user.address || '',
+      // ✅ always include status (backend requires it)
+      status: mapStatusToBoolean(user.status ?? 'Active'),
+    };
+  }
 
   public updateUser(userId: string, user: Partial<User>) {
     this.setLoading(true);
-    return this.userBackend.updateUser(userId, user).pipe(
+    const payload = this.buildUpdatePayload(user); // inferred as UpdateUserPayload
+
+    return this.userBackend.updateUser(userId, payload).pipe(
       map((response) => ({
         ...response,
         data: normalizeUserStatus(response.data),
@@ -152,6 +165,28 @@ export class UserManagementService {
               : u
           );
         this._users$.next(users);
+      }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+  public deactivateUser(userId: number | string) {
+    this.setLoading(true);
+    return this.userBackend.toggleUserActivation(userId).pipe(
+      tap(() => {
+        const users = this._users$.getValue();
+        const updatedUsers = users.map((u) => {
+          if (u.userId === userId) {
+            const newStatus: User['status'] =
+              u.status === 'Active' ? 'Inactive' : 'Active';
+            return { ...u, status: newStatus };
+          }
+          return u;
+        });
+        this._users$.next(updatedUsers);
       }),
       catchError((err) => {
         this.errorHandler.handle(err);
