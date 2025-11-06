@@ -31,7 +31,7 @@ export class LocationSearchComponent implements  ControlValueAccessor, AfterView
   private readonly _value = signal<string>('');
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
-  public disabled = true;
+  protected disabled = true;
   
   @ViewChild('inputRef', { static: true }) inputRef!: ElementRef<HTMLInputElement>;
 
