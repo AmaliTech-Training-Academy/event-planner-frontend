@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
 import { EventCard } from '../../../../core/models/event.model';
-import { MOCK_EVENT_CARDS } from '../../../../core/data/mock-data';
+import { MOCK_MY_EVENTS_CARDS } from '../../../../core/data/mock-data'; 
 import { Router } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
@@ -21,18 +21,10 @@ export class MyEventsPageComponent implements OnInit {
   protected readonly routes = APP_ROUTES;
 
   public ngOnInit(): void {
-    // We'll just use the mock data for now
-    this.myEvents.set(MOCK_EVENT_CARDS);
+    this.myEvents.set(MOCK_MY_EVENTS_CARDS); 
   }
 
-  /**
-   * Handles the manage event click.
-   * This is where you would navigate to your edit page.
-   */
   protected handleManageEvent(event: EventCard): void {
-    console.log('Managing event from the page:', event.id);
-    // Example navigation (uncomment when your MANAGE_EVENT route exists):
-    // this.router.navigate([this.routes.MANAGE_EVENT, event.id]);
+  this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
   }
 }
-

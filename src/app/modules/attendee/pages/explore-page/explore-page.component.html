@@ -1,6 +1,6 @@
 <div class="explore-page-content">
   <div class="filter-bar">
-    <!-- Search Input -->
+   
     <div class="search-wrapper">
       <app-search-input
         [placeholder]="'Search events...'"
@@ -9,10 +9,9 @@
       ></app-search-input>
     </div>
 
-    
     <div class="secondary-filters-group">
      
-      <div class="filter-dropdown-wrapper">
+      <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
         <div class="filter-button-wrapper">
           <app-button
             type="secondary"
@@ -43,8 +42,8 @@
         }
       </div>
 
-    
-      <div class="filter-dropdown-wrapper">
+     
+      <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
         <div class="filter-button-wrapper">
           <app-button
             type="secondary"
@@ -74,8 +73,8 @@
         }
       </div>
 
-     
-      <div class="filter-dropdown-wrapper">
+   
+      <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
         <div class="filter-button-wrapper">
           <app-button
             type="secondary"
@@ -116,9 +115,9 @@
     (tabChange)="onTabChange($event)"
   ></app-tab-toggle>
 
-  
+ 
   @if (activeToggle() === 'all') {
-  
+ 
     @if (paidEvents().length > 0) {
     <section class="event-section">
       <h2>Paid Events</h2>
@@ -177,7 +176,7 @@
     }
   }
 
-  <!-- Show only Upcoming events when toggle is active -->
+ 
   @else if (activeToggle() === 'upcoming') {
     <section class="event-section">
       <h2>Upcoming Events</h2>
@@ -208,7 +207,7 @@
     </section>
   }
 
-  <!-- Show only Past events when toggle is active -->
+  
   @else if (activeToggle() === 'past') {
     <section class="event-section">
       <h2>Past Events</h2>

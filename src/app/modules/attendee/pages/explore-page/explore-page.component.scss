@@ -1,5 +1,5 @@
 @use 'sass:color';
-
+@use 'media_query' as *;
 
 :host {
   display: block;

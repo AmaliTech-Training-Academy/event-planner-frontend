@@ -335,3 +335,34 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
   { name: 'London, UK', meta: 'England' },
   { name: 'Berlin, Germany', meta: 'Europe' },
 ];
+
+
+export const MOCK_MY_EVENTS_CARDS: EventCard[] = [
+  {
+    id: 'evt123',
+    title: 'Tech Innovation Summit 2025',
+    date: eventStartDate,
+    location: 'Silicon Valley, CA',
+    imageUrl: 'images/event1.jpg', 
+    isPaid: true,
+    attendees: 5000,
+  },
+  {
+    id: 'evt124',
+    title: 'Community Code & Coffee',
+    date: new Date('2025-05-10T00:00:00Z'),
+    location: 'Austin, TX',
+    imageUrl: 'images/event2.jpg', 
+    isPaid: true,
+    attendees: 150,
+  },
+  {
+    id: 'evt125',
+    title: 'AI World Conference',
+    date: new Date('2025-06-20T00:00:00Z'),
+    location: 'New York, NY',
+    imageUrl: 'images/event3.jpg', 
+    isPaid: true,
+    attendees: 2500,
+  },
+];

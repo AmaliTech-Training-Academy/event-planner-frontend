@@ -15,6 +15,7 @@ export interface EventDetails {
 export interface VenueImage {
   url: string;
   alt: string;
+  description?: string;
 }
 
 export interface VenueSection {
