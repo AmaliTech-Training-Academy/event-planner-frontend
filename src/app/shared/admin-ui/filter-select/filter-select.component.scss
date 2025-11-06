@@ -99,7 +99,7 @@
   .filter-select__dropdown {
     height: 36px;
     padding: $spacing-2 $spacing-4;
-    font-size: 0.8125rem; // ~13px
+    font-size: 0.8125rem; 
   }
 
   .filter-select__menu li {
@@ -131,11 +131,30 @@ width: 100%;
   .filter-select__dropdown {
     height: 56px;
     padding: $spacing-4 $spacing-6;
-    font-size: 1rem; // ~16px
+    font-size: 1rem; 
   }
 
   .filter-select__menu li {
     padding: $spacing-3 $spacing-5;
     font-size: 1rem;
+  }
+}
+/* Add disabled state styling */
+.filter-select {
+  &--disabled {
+    .filter-select__dropdown {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+      background-color: $gray-100;
+    }
+
+    .filter-select__selected {
+      color: $gray-400;
+    }
+
+    .filter-select__icon {
+      opacity: 0.4;
+    }
   }
 }

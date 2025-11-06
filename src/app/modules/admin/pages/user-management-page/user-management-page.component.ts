@@ -48,14 +48,14 @@ export class UserManagementPageComponent implements OnInit {
   private readonly _router = inject(Router);
   private readonly _destroyRef = inject(DestroyRef);
 
-  // Modal state signals
   protected readonly isInviteModalOpen = signal<boolean>(false);
   protected readonly isSuccessModalOpen = signal<boolean>(false);
   protected readonly isEditModalOpen = signal<boolean>(false);
   protected readonly isViewModalOpen = signal<boolean>(false);
   protected readonly selectedUser = signal<User | null>(null);
 
-  // Convert observables to signals
+  protected readonly togglingUserId = signal<number | string | null>(null);
+
   protected readonly userCards = toSignal(this._userService.userCards$, {
     initialValue: [],
   });
@@ -76,7 +76,6 @@ export class UserManagementPageComponent implements OnInit {
     initialValue: 0,
   });
 
-  // Table configuration
   protected readonly tableColumns: TableColumn<User>[] = [
     {
       key: 'fullName',
@@ -129,6 +128,7 @@ export class UserManagementPageComponent implements OnInit {
       label: 'Toggle User Status',
       color: 'power',
       handler: (user) => this._toggleUserStatus(user),
+      isLoading: (user) => this.togglingUserId() === user.userId,
     },
   ];
 
@@ -162,7 +162,6 @@ export class UserManagementPageComponent implements OnInit {
     effect(() => {
       const user = this.selectedUser();
       const isOpen = this.isEditModalOpen();
-      // Add any side effects here if needed
     });
   }
 
@@ -171,7 +170,6 @@ export class UserManagementPageComponent implements OnInit {
     this._loadUsers();
   }
 
-  // Data loading
   private _loadUsers(page: number = 0): void {
     this._userService
       .fetchAllUsers(page)
@@ -183,7 +181,6 @@ export class UserManagementPageComponent implements OnInit {
     this._loadUsers(page);
   }
 
-  // Modal handlers
   protected openInviteModal(): void {
     this.isInviteModalOpen.set(true);
   }
@@ -198,7 +195,6 @@ export class UserManagementPageComponent implements OnInit {
 
   protected onInviteSuccess(): void {
     this.closeInviteModal();
-    // Reload users to show the new invite
     this._loadUsers(this.currentPage() || 0);
 
     setTimeout(() => {
@@ -253,21 +249,17 @@ export class UserManagementPageComponent implements OnInit {
       .subscribe({
         next: () => {
           this.closeEditModal();
-          // Reload current page to show updated data
           this._loadUsers(this.currentPage() || 0);
         },
         error: (error) => {
           console.error('Failed to update user:', error);
-          // Error is handled by ErrorHandlerService
         },
       });
   }
 
   protected onRowExpanded(user: User): void {
-    // Handle row expansion if needed
   }
 
-  // Private action handlers
   private _openInviteModal(): void {
     this.openInviteModal();
   }
@@ -284,7 +276,6 @@ export class UserManagementPageComponent implements OnInit {
       this.closeViewModal();
     }
 
-    this.selectedUser.set(null); // reset any previous signal
     Promise.resolve().then(() => {
       this.selectedUser.set(user);
       this.isEditModalOpen.set(true);
@@ -292,6 +283,8 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   private _toggleUserStatus(user: User): void {
+    this.togglingUserId.set(user.userId);
+
     const normalizedStatus =
       typeof user.status === 'boolean'
         ? user.status
@@ -305,7 +298,6 @@ export class UserManagementPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
-          // ✅ Only toggle locally after backend success
           this._userService.toggleUserStatus(user.userId);
 
           console.log(
@@ -313,9 +305,12 @@ export class UserManagementPageComponent implements OnInit {
               ? '✅ User deactivated successfully'
               : '✅ User reactivated successfully'
           );
+
+          this.togglingUserId.set(null);
         },
         error: (err) => {
           console.error('❌ Failed to toggle user status:', err);
+          this.togglingUserId.set(null);
         },
       });
   }

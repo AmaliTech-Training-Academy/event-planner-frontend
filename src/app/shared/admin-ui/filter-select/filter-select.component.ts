@@ -43,6 +43,7 @@ export class FilterSelectComponent implements ControlValueAccessor {
   public readonly size = input<'sm' | 'md' | 'lg'>('md');
   public readonly errorMessage = input<string | null>(null);
   public readonly value = input<string>('');
+  public readonly disabled = input<boolean>(false); // ✅ Added disabled input
   public readonly valueChange = output<string>();
 
   private readonly _value = signal<string>('');
@@ -51,11 +52,20 @@ export class FilterSelectComponent implements ControlValueAccessor {
   private readonly _activeIndex = signal<number>(-1);
 
   public readonly isOpen = computed(() => this._isOpen());
+  public readonly isDisabled = computed(
+    () => this.disabled() || this._disabled()
+  ); // ✅ Combined disabled states
   public readonly selectedLabel = computed(() => {
     const selected = this.options()?.find((o) => o.value === this._value());
     return selected?.label ?? this.placeholder();
   });
-  public readonly filterClass = computed(() => `filter-select--${this.size()}`);
+  public readonly filterClass = computed(() => {
+    const classes = [`filter-select--${this.size()}`];
+    if (this.isDisabled()) {
+      classes.push('filter-select--disabled');
+    }
+    return classes.join(' ');
+  });
 
   constructor() {
     effect(() => {
@@ -86,7 +96,7 @@ export class FilterSelectComponent implements ControlValueAccessor {
   }
 
   public toggleDropdown(): void {
-    if (this._disabled()) return;
+    if (this.isDisabled()) return;
     this._isOpen.update((open) => !open);
 
     if (!this._isOpen()) {
@@ -96,7 +106,7 @@ export class FilterSelectComponent implements ControlValueAccessor {
   }
 
   public selectOption(option: FilterOption): void {
-    if (this._disabled()) return;
+    if (this.isDisabled()) return;
 
     this._value.set(option.value);
     this._onChange(option.value);
@@ -107,7 +117,7 @@ export class FilterSelectComponent implements ControlValueAccessor {
   }
 
   public onKeydown(event: KeyboardEvent): void {
-    if (this._disabled()) return;
+    if (this.isDisabled()) return;
 
     if (!this._isOpen()) {
       if (event.key === 'Enter' || event.key === ' ') {

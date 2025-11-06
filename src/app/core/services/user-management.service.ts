@@ -142,14 +142,13 @@ export class UserManagementService {
       email: user.email?.trim() || '',
       phone: user.phone || '',
       address: user.address || '',
-      // ✅ always include status (backend requires it)
       status: mapStatusToBoolean(user.status ?? 'Active'),
     };
   }
 
   public updateUser(userId: string, user: Partial<User>) {
     this.setLoading(true);
-    const payload = this.buildUpdatePayload(user); // inferred as UpdateUserPayload
+    const payload = this.buildUpdatePayload(user);
 
     return this.userBackend.updateUser(userId, payload).pipe(
       map((response) => ({

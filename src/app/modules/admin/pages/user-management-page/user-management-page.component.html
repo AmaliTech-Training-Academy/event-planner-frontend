@@ -13,6 +13,7 @@
       [filters]="tableFilters"
       [searchable]="true"
       [expandable]="false"
+      [loading]="loading()"
       [primaryAction]="primaryAction"
       (rowExpanded)="onRowExpanded($event)"
     />

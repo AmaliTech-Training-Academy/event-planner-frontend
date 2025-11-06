@@ -30,6 +30,7 @@ export interface TableAction<T> {
   readonly visible?: (item: T) => boolean;
   readonly disabled?: boolean | ((item: T) => boolean);
   readonly type?: 'primary' | 'secondary' | 'social' | 'action';
+  readonly isLoading?: (item: T) => boolean; // ✅ Added loading state
 }
 
 export interface FilterOption {
@@ -67,6 +68,7 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly filters = input<ReadonlyArray<TableFilter>>([]);
   public readonly searchable = input<boolean>(true);
   public readonly expandable = input<boolean>(false);
+  public readonly loading = input<boolean>(false); // ✅ Added loading input
   public readonly primaryAction = input<{
     label: string;
     handler: () => void;
@@ -103,9 +105,11 @@ export class DataTableComponent<T extends Record<string, any>> {
 
     return result;
   });
+
   public setCurrentPage(page: number): void {
     this._currentPage.set(page);
   }
+
   public readonly paginatedData = computed(() => {
     const filtered = this.filteredData();
     const page = this._currentPage();
@@ -190,9 +194,20 @@ export class DataTableComponent<T extends Record<string, any>> {
   }
 
   public isActionDisabled(action: TableAction<T>, item: T): boolean {
-    return typeof action.disabled === 'function'
-      ? action.disabled(item)
-      : !!action.disabled;
+    const disabled =
+      typeof action.disabled === 'function'
+        ? action.disabled(item)
+        : !!action.disabled;
+
+    // ✅ Also disable if action is loading
+    const isLoading = action.isLoading ? action.isLoading(item) : false;
+
+    return disabled || isLoading;
+  }
+
+  // ✅ New method to check if action is loading
+  public isActionLoading(action: TableAction<T>, item: T): boolean {
+    return action.isLoading ? action.isLoading(item) : false;
   }
 
   public getFilterValue(filterKey: string): string {
