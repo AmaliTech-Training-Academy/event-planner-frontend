@@ -1,4 +1,3 @@
-// core/services/user-management.service.ts
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
@@ -41,18 +40,46 @@ export class UserManagementService {
     this.setLoading(true);
     return this.userBackend.getAllUsers(page, size).pipe(
       map((response) => {
-        const normalizedUsers: User[] = response.data.users.content.map(
-          (user) => normalizeUserStatus(user)
-        );
-
+        const normalizedUsers: User[] =
+          response.data.users.content.map(normalizeUserStatus);
         return {
           ...response,
           data: {
             ...response.data,
-            users: {
-              ...response.data.users,
-              content: normalizedUsers,
-            },
+            users: { ...response.data.users, content: normalizedUsers },
+          },
+        };
+      }),
+      tap((response) => {
+        this._users$.next(response.data.users.content);
+        this._totalPages$.next(response.data.users.totalPages);
+        this._currentPage$.next(response.data.users.number);
+        this._updateUserCards(response.data);
+      }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
+  public searchUsers(
+    keyword?: string,
+    role?: string,
+    status?: boolean,
+    page: number = 0
+  ) {
+    this.setLoading(true);
+    return this.userBackend.searchUsers(keyword, role, status, page).pipe(
+      map((response) => {
+        const normalizedUsers: User[] =
+          response.data.users.content.map(normalizeUserStatus);
+        return {
+          ...response,
+          data: {
+            ...response.data,
+            users: { ...response.data.users, content: normalizedUsers },
           },
         };
       }),
@@ -136,6 +163,7 @@ export class UserManagementService {
       finalize(() => this.setLoading(false))
     );
   }
+
   private buildUpdatePayload(user: Partial<User>) {
     return {
       fullName: user.fullName?.trim() || '',
@@ -172,6 +200,7 @@ export class UserManagementService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public deactivateUser(userId: number | string) {
     this.setLoading(true);
     return this.userBackend.toggleUserActivation(userId).pipe(
@@ -195,11 +224,6 @@ export class UserManagementService {
     );
   }
 
-  /**
-   * Upload profile image for a user
-   * Note: This method assumes your backend has an image upload endpoint.
-   * If not available, you can remove this method and handle images differently.
-   */
   public uploadProfileImage(userId: string, imageFile: File) {
     return this.userBackend.uploadProfileImage(userId, imageFile).pipe(
       catchError((err) => {

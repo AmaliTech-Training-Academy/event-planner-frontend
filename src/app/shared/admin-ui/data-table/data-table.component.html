@@ -96,7 +96,7 @@
 
         @if (expandable()) {
         <td class="data-table__td data-table__td--expand">
-          <app-button type="social" (click)="toggleRow($index)">
+          <app-button type="social" (click)="toggleRow($index, item)">
             {{ isRowExpanded($index) ? "−" : "+" }}
           </app-button>
         </td>

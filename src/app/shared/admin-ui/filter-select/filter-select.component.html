@@ -1,6 +1,6 @@
 <div class="filter-select" [ngClass]="filterClass()">
   <div
-    class="filter-select__dropdown"
+    class="filter-select__dropdown extra-dropdown"
     tabindex="0"
     role="button"
     aria-haspopup="listbox"
@@ -10,34 +10,44 @@
     (keydown)="onKeydown($event)"
   >
     <span class="filter-select__selected">{{ selectedLabel() }}</span>
-    <img
-      src="icons/drop-down.png"
-      width="16"
-      height="16"
-      alt="Dropdown arrow"
-      class="filter-select__icon"
-      [class.open]="isOpen()"
-    />
+
+    <div class="filter-select__actions">
+      @if (showReset() && hasValue() && !isDisabled()) {
+        <app-button
+          class="filter-select__reset extra-reset"
+          size="sm"
+          [extraClass]="'filter-reset'"
+
+          (click)="resetFilter($event)"
+          aria-label="Reset filter"
+          title="Reset filter"
+        >
+          <img src="icons/close.png" alt="">
+        </app-button>
+      }
+
+      <img src="icons/drop-down.png" alt="">
+    </div>
   </div>
 
   @if (isOpen() && !isDisabled()) {
-  <ul class="filter-select__menu" role="listbox" aria-label="Filter options">
-    @for (option of options(); track option.value) {
-    <li
-      class="filter-select__option"
-      role="option"
-      (click)="selectOption(option)"
-      [class.active]="option?.value === value() || isActive($index)"
-      [attr.aria-selected]="option?.value === value()"
-    >
-      {{ option?.label }}
-    </li>
-    } @empty {
-    <li class="filter-select__empty" role="presentation">
-      No options available
-    </li>
-    }
-  </ul>
+    <ul class="filter-select__menu extra-menu" role="listbox" aria-label="Filter options">
+      @for (option of options(); track option.value) {
+        <li
+          class="filter-select__option"
+          role="option"
+          (click)="selectOption(option)"
+          [class.active]="option?.value === value() || isActive($index)"
+          [attr.aria-selected]="option?.value === value()"
+        >
+          {{ option?.label }}
+        </li>
+      } @empty {
+        <li class="filter-select__empty" role="presentation">
+          No options available
+        </li>
+      }
+    </ul>
   }
 
   <app-form-error [message]="errorMessage()"></app-form-error>

@@ -6,6 +6,7 @@ import {
   signal,
   input,
   output,
+  inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -13,6 +14,7 @@ import { CheckboxComponent } from '../../ui/checkbox/checkbox.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { FilterSelectComponent } from '../filter-select/filter-select.component';
 import { InputComponent } from '../../ui/input/input.component';
+import { UserManagementService } from '../../../core/services/user-management.service';
 
 export interface TableColumn<T> {
   readonly key: Extract<keyof T, string>;
@@ -30,7 +32,7 @@ export interface TableAction<T> {
   readonly visible?: (item: T) => boolean;
   readonly disabled?: boolean | ((item: T) => boolean);
   readonly type?: 'primary' | 'secondary' | 'social' | 'action';
-  readonly isLoading?: (item: T) => boolean; // ✅ Added loading state
+  readonly isLoading?: (item: T) => boolean;
 }
 
 export interface FilterOption {
@@ -68,7 +70,7 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly filters = input<ReadonlyArray<TableFilter>>([]);
   public readonly searchable = input<boolean>(true);
   public readonly expandable = input<boolean>(false);
-  public readonly loading = input<boolean>(false); // ✅ Added loading input
+  public readonly loading = input<boolean>(false);
   public readonly primaryAction = input<{
     label: string;
     handler: () => void;
@@ -76,47 +78,27 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly itemsPerPage = input<number>(10);
 
   public readonly rowExpanded = output<T>();
+  protected readonly userService = inject(UserManagementService, {
+    optional: true,
+  });
 
   private readonly _activeFilters = signal<Map<string, string>>(new Map());
   private readonly _expandedRows = signal<Set<number>>(new Set());
   private readonly _selectedItems = signal<Set<T>>(new Set());
   private readonly _searchQuery = signal<string>('');
   private readonly _currentPage = signal<number>(1);
-  public readonly currentPage = computed(() => this._currentPage());
 
+  public readonly currentPage = computed(() => this._currentPage());
   public readonly searchQuery = computed(() => this._searchQuery());
 
-  public readonly filteredData = computed(() => {
-    let result = this.data();
-    const query = this._searchQuery().trim().toLowerCase();
-
-    if (query) {
-      result = result.filter((item) => this._matchesSearch(item, query));
-    }
-
-    const filters = this._activeFilters();
-    filters.forEach((value, key) => {
-      if (value !== 'all') {
-        result = result.filter(
-          (item) => String(item[key]).toLowerCase() === value.toLowerCase()
-        );
-      }
-    });
-
-    return result;
-  });
+  public readonly filteredData = computed(() => this.data());
 
   public setCurrentPage(page: number): void {
     this._currentPage.set(page);
+    this._performBackendSearch(page - 1);
   }
 
-  public readonly paginatedData = computed(() => {
-    const filtered = this.filteredData();
-    const page = this._currentPage();
-    const perPage = this.itemsPerPage();
-    const start = (page - 1) * perPage;
-    return filtered.slice(start, start + perPage);
-  });
+  public readonly paginatedData = computed(() => this.filteredData());
 
   public isSelected(item: T): boolean {
     return this._selectedItems().has(item);
@@ -160,6 +142,7 @@ export class DataTableComponent<T extends Record<string, any>> {
   public updateSearch(query: string): void {
     this._searchQuery.set(query);
     this._currentPage.set(1);
+    this._performBackendSearch(0);
   }
 
   public updateFilter(filterKey: string, value: string): void {
@@ -167,12 +150,35 @@ export class DataTableComponent<T extends Record<string, any>> {
     filters.set(filterKey, value);
     this._activeFilters.set(filters);
     this._currentPage.set(1);
+    this._performBackendSearch(0);
   }
 
-  public toggleRow(index: number): void {
+  private _performBackendSearch(page: number): void {
+    if (!this.userService) return;
+
+    const keyword = this._searchQuery().trim() || undefined;
+    const filters = this._activeFilters();
+    const role =
+      filters.get('role') !== 'all' ? filters.get('role') : undefined;
+    const statusValue = filters.get('status');
+    const status =
+      statusValue && statusValue !== 'all'
+        ? this._normalizeStatusToBoolean(statusValue)
+        : undefined;
+
+    this.userService.searchUsers(keyword, role, status, page).subscribe();
+  }
+
+  private _normalizeStatusToBoolean(status: string): boolean {
+    const normalized = status.toLowerCase();
+    return normalized === 'active' || normalized === 'true';
+  }
+
+  public toggleRow(index: number, item: T): void {
     const expanded = new Set(this._expandedRows());
     expanded.has(index) ? expanded.delete(index) : expanded.add(index);
     this._expandedRows.set(expanded);
+    this.rowExpanded.emit(item);
   }
 
   public isRowExpanded(index: number): boolean {
@@ -198,14 +204,10 @@ export class DataTableComponent<T extends Record<string, any>> {
       typeof action.disabled === 'function'
         ? action.disabled(item)
         : !!action.disabled;
-
-    // ✅ Also disable if action is loading
     const isLoading = action.isLoading ? action.isLoading(item) : false;
-
     return disabled || isLoading;
   }
 
-  // ✅ New method to check if action is loading
   public isActionLoading(action: TableAction<T>, item: T): boolean {
     return action.isLoading ? action.isLoading(item) : false;
   }
@@ -216,11 +218,5 @@ export class DataTableComponent<T extends Record<string, any>> {
 
   public trackByIndex(index: number): number {
     return index;
-  }
-
-  private _matchesSearch(item: T, query: string): boolean {
-    return Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(query)
-    );
   }
 }
