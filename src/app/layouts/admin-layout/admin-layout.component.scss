@@ -1,0 +1,33 @@
+.admin-layout__main {
+  display: flex;
+  gap: 40px;
+  margin-left: 17.5rem;
+  min-height: 100vh;
+  flex-direction: column;
+  background-color: #f5f5f5;
+
+  /* Scrollbar styling */
+  overflow-y: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Firefox thumb color and track */
+}
+
+/* Chrome, Edge, Safari */
+.admin-layout__main::-webkit-scrollbar {
+  width: 4px; /* very thin scrollbar */
+}
+
+.admin-layout__main::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-layout__main::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 2px;
+  border: none;
+}
+
+.admin-layout__content {
+  flex: 1;
+  padding: 2rem;
+}

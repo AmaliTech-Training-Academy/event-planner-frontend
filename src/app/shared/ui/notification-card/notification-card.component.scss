@@ -1,0 +1,68 @@
+$error-color: #d70000;
+$warning-color: #ffce2d;
+$info-color: #2bdfff;
+$success-color: #107e29;
+
+$error-background: #f5c6cb;
+$warning-background: #ffeeba;
+$info-background: #bee5eb;
+$success-background: #c3e6cb;
+
+.alert {
+  border-right: 8px solid transparent;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: start;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  max-width: 21.125rem;
+  padding: 1.594rem 1.125rem;
+  gap: 1rem;
+
+  &.error {
+    background-color: $error-background;
+    border-color: $error-color;
+    color: darken($error-color, 20%);
+  }
+
+  &.warning {
+    background-color: $warning-background;
+    border-color: $warning-color;
+    color: darken($warning-color, 20%);
+  }
+
+  &.info {
+    background-color: $info-background;
+    border-color: $info-color;
+    color: darken($info-color, 20%);
+  }
+
+  &.success {
+    background-color: $success-background;
+    border-color: $success-color;
+    color: darken($success-color, 20%);
+  }
+
+  .content {
+    flex-grow: 1;
+  }
+
+  app-button {
+    background: none !important;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: inherit;
+
+    img {
+      height: 1.25rem;
+      width: 1.25rem;
+    }
+
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}

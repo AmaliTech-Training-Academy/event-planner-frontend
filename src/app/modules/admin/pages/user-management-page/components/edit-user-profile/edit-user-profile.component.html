@@ -1,0 +1,108 @@
+<div class="modal-backdrop" (click)="onCancel()"></div>
+
+<div class="modal modal--profile">
+  <app-modal-header
+    title="Edit Profile Information"
+    (close)="onCancel()"
+  ></app-modal-header>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <div class="modal__content">
+      <div class="profile-section">
+        <div class="profile-avatar">
+          <!-- Optimized profile image -->
+          <img
+            [ngSrc]="profileImage()"
+            width="128"
+            height="128"
+            class="profile-picture"
+            alt="Profile picture"
+            priority
+          />
+
+          <app-button
+            type="plain"
+            [extraClass]="'status-button'"
+            size="small"
+            class="status-button"
+            (click)="triggerFileInput()"
+          >
+            <span class="button-content">
+              <!-- Optimized status icon -->
+              <img
+                [ngSrc]="statusIcon"
+                width="16"
+                height="16"
+                class="status-icon"
+                alt="Status icon"
+              />
+            </span>
+          </app-button>
+
+          <input
+            #fileInput
+            type="file"
+            accept="image/*"
+            (change)="onImageSelect($event)"
+            style="display: none"
+          />
+        </div>
+
+        <div class="profile-info">
+          <h3>Edit Profile</h3>
+          <p>Update your personal information</p>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h4 class="section-title">Basic Information</h4>
+
+        <app-input
+          type="text"
+          label="Full Name"
+          placeholder="Andrew"
+          formControlName="fullName"
+          [errorMessage]="getErrorMessage('fullName')"
+        ></app-input>
+
+        <app-input
+          type="email"
+          label="Email Address"
+          placeholder="user@eventhub.com"
+          formControlName="email"
+          [errorMessage]="getErrorMessage('email')"
+        ></app-input>
+      </div>
+
+      <div class="form-section">
+        <h4 class="section-title">Contact Information</h4>
+
+        <app-input
+          type="text"
+          label="Phone Number"
+          placeholder="+233 345 6785 423"
+          formControlName="phoneNumber"
+          [errorMessage]="getErrorMessage('phoneNumber')"
+        ></app-input>
+
+        <app-input
+          type="text"
+          label="Address"
+          placeholder="123 Main Street, City, State, 12345"
+          formControlName="address"
+        ></app-input>
+      </div>
+    </div>
+
+    <div class="modal__actions">
+      <app-button type="secondary" (click)="onCancel()">Cancel</app-button>
+      <app-button
+        type="primary"
+        [disabled]="profileForm.invalid || !profileForm.dirty"
+        buttonType="submit"
+      >
+        Save Changes
+      </app-button>
+    </div>
+  </form>
+</div>

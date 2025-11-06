@@ -1,1 +1,90 @@
-<p>login-page works!</p>
+<div class="login-container">
+  <div class="login-card">
+    <app-button
+      type="action"
+      [extraClass]="'back-button'"
+      (onClick)="goBack()"
+      [attr.aria-label]="'Go back'"
+    >
+      <img src="icons/chevron_left.png" alt="Back" />
+      <span>Go Back</span>
+    </app-button>
+
+    <h2 class="app-name">Event <span>Hub</span></h2>
+
+    <h3 class="welcome-text">Welcome Back!</h3>
+    <p class="subtitle">Log In to your account</p>
+
+    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+      <app-input
+        formControlName="email"
+        label="Email Address"
+        type="email"
+        placeholder="user@gmail.com"
+        [required]="true"
+        [errorMessage]="
+          hasFieldError('email') ? getFieldErrorMessage('email') : ''
+        "
+        [iconSrc]="'icons/mail.png'"
+      ></app-input>
+
+      <app-input
+        formControlName="password"
+        label="Password"
+        type="password"
+        placeholder="••••••••"
+        [required]="true"
+        [errorMessage]="
+          hasFieldError('password') ? getFieldErrorMessage('password') : ''
+        "
+        [iconSrc]="'icons/lock.png'"
+      ></app-input>
+
+      <div class="extras">
+        <label class="custom-checkbox">
+          <input
+            type="checkbox"
+            formControlName="remember"
+            autocomplete="off"
+          />
+          <span class="checkmark"></span>
+          <span class="label-text">Remember me</span>
+        </label>
+
+        <a class="forgot-link" [routerLink]="APP_ROUTES.FORGOT_PASSWORD">
+          Forgot password?
+        </a>
+      </div>
+
+      <app-button
+        buttonType="submit"
+        type="primary"
+        [fullWidth]="true"
+        [disabled]="loading || form.invalid"
+        (onClick)="handleSubmit()"
+        [attr.aria-busy]="loading"
+      >
+        <ng-container *ngIf="!loading; else loadingTemplate">
+          Log In
+        </ng-container>
+
+        <ng-template #loadingTemplate>
+          <span class="please-wait" aria-hidden="true">
+            Please wait<span class="dots"></span>
+          </span>
+          <span class="sr-only">Logging in, please wait</span>
+        </ng-template>
+      </app-button>
+    </form>
+
+    <app-divider text="Or continue with"></app-divider>
+    <app-social-login></app-social-login>
+
+    <app-secure-text></app-secure-text>
+
+    <p class="signup-text">
+      Don't have an account?
+      <a [routerLink]="APP_ROUTES.SIGNUP">Sign Up</a>
+    </p>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<div
+  class="input-field-group"
+  [class.has-error]="hasError()"
+  [class.focused]="isFocused()"
+  style="text-align: left;"
+>
+  @if (label()) {
+    <label class="input-label" [attr.for]="formControlName()">
+      {{ label() }}
+      @if (required()) {
+        <span>*</span>
+      }
+    </label>
+  }
+
+  <div
+    class="input-wrapper"
+    [class.with-icon]="iconSrc()"
+    [class.no-icon]="!iconSrc()"
+  >
+    @if (iconSrc()) {
+    <img [src]="iconSrc()" alt="icon" class="input-icon" />
+    }
+
+    <input
+      [type]="inputType()"
+      [placeholder]="placeholder()"
+      [value]="currentValue()"
+      (input)="onValueChange($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      [disabled]="isDisabled()"
+      [class.error]="hasError()"
+      class="form-input"
+    />
+
+
+  @if (type() === 'password') {
+    <button
+        type="button"
+        class="toggle-password"
+        (click)="togglePasswordVisibility()"
+        [attr.aria-pressed]="showPassword()"
+    >
+        <img
+          [src]="
+            showPassword()
+              ? 'icons/eye-close-icon.png'
+              : 'icons/eye-open.svg'
+          "
+          alt="Toggle Password"
+        />
+      </button>
+    }
+  </div>
+
+  @if (hasError() && errorMessage()) {
+    <app-form-error
+      [message]="errorMessage()"
+      [showIcon]="true"
+      id="{{ label() + '-error' }}"
+    ></app-form-error>
+  }
+</div>

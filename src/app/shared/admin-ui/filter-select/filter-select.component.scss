@@ -1,0 +1,141 @@
+@use 'colors' as *;
+@use 'variables' as *;
+@use 'typography' as *;
+
+.filter-select {
+  display: inline-flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  width: 130px;
+  position: relative;
+  @media(max-width:1280px) {
+    width: 240px;
+  }
+
+  &__dropdown {
+    @include body-2;
+    padding: $spacing-3 $spacing-5;
+    border: 1px solid #e5e7eb;
+    border-radius: $radius-3;
+    background: $gray-50;
+    color: $text-primary;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    height: 48px;
+
+    &:hover {
+      border-color: $gray-300;
+      background: $gray-100;
+    }
+
+    &:focus-within {
+      border-color: $orange-500;
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.12);
+      background: white;
+    }
+  }
+
+  &__selected {
+    flex: 1;
+  }
+
+  &__icon {
+    width: 12px;
+    height: 12px;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    object-fit: contain;
+
+    &.open {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid $gray-200;
+    border-radius: $radius-3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    z-index: 1040;
+    overflow: hidden;
+
+    li {
+      @include body-2;
+      padding: $spacing-2 $spacing-4;
+      border-bottom: 1px solid $gray-100;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: $gray-50;
+      }
+
+      &.active {
+        background-color: $orange-50;
+        color: $orange-700;
+        font-weight: 600;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+/* === Size Variants === */
+.filter-select--sm {
+  width: 180px;
+
+  .filter-select__dropdown {
+    height: 36px;
+    padding: $spacing-2 $spacing-4;
+    font-size: 0.8125rem; // ~13px
+  }
+
+  .filter-select__menu li {
+    padding: $spacing-2 $spacing-3;
+    font-size: 0.8125rem;
+  }
+}
+
+.filter-select--md {
+  max-width: 150px;
+  min-width: 100px;
+  
+
+  .filter-select__dropdown {
+    height: 48px;
+    padding: $spacing-3 $spacing-5;
+    font-size: 0.875rem; 
+  }
+
+  .filter-select__menu li {
+    padding: $spacing-2 $spacing-4;
+    font-size: 0.875rem;
+  }
+}
+
+.filter-select--lg {
+width: 100%;
+
+  .filter-select__dropdown {
+    height: 56px;
+    padding: $spacing-4 $spacing-6;
+    font-size: 1rem; // ~16px
+  }
+
+  .filter-select__menu li {
+    padding: $spacing-3 $spacing-5;
+    font-size: 1rem;
+  }
+}

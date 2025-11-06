@@ -1,0 +1,43 @@
+<nav class="pagination" role="navigation" aria-label="Pagination">
+  <div class="pagination__info">
+    Showing {{ startIndex() }} to {{ endIndex() }} of {{ totalItems() }} results
+  </div>
+
+  <div class="pagination__controls">
+    @if (currentPage() > 1) {
+    <app-button
+      type="secondary"
+      extraClass="pagination__button pagination__button--nav"
+      (click)="goToPage(currentPage() - 1)"
+      aria-label="Previous page"
+    >
+      Prev
+    </app-button>
+    } @for (page of visiblePages(); track page) { @if (page === '...') {
+    <span class="pagination__ellipsis">{{ page }}</span>
+    } @else {
+    <app-button
+      type="secondary"
+      [extraClass]="
+        'pagination__button pagination__button--page' +
+        (page === currentPage() ? ' pagination__button--active' : '')
+      "
+      (click)="goToPage(page)"
+      [attr.aria-label]="'Go to page ' + page"
+      [attr.aria-current]="page === currentPage() ? 'page' : null"
+    >
+      {{ page }}
+    </app-button>
+    } }
+
+    <app-button
+      type="secondary"
+      [disabled]="currentPage() === totalPages()"
+      extraClass="pagination__button pagination__button--nav"
+      (click)="goToPage(currentPage() + 1)"
+      aria-label="Next page"
+    >
+      Next
+    </app-button>
+  </div>
+</nav>

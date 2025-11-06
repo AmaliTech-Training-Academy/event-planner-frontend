@@ -1,1 +1,44 @@
-<p>verify-email-page works!</p>
+<div class="forgot-container">
+  <div class="form-card">
+
+    <app-logo />
+
+    <div class="title-group">
+      <h2>Verify Your Account</h2>
+      <p class="subtitle">Enter the 6-digit code sent to your email</p>
+    </div>
+
+   <form (ngSubmit)="verifyAccount()">
+  <div class="field verification-field">
+    <app-otp-input
+      [length]="6"
+      (otpChange)="onOtpChange($event)">
+    </app-otp-input>
+  </div>
+
+  <app-button 
+    type="primary"
+    buttonType="submit"          
+    [fullWidth]="true"
+    [disabled]="!isOtpComplete() || isLoading">
+
+    @if (!isLoading) {
+      <span>Verify</span>
+    } @else {
+      <span class="spinner"></span>
+    }
+  </app-button>
+</form>
+
+    <div class="resend-otp-wrapper">
+      Didn't receive an OTP?
+      <a 
+        (click)="resendOtp()" 
+        [class.disabled]="isLoading" 
+        class="resend-link">
+        Resend
+      </a>
+    </div>
+
+  </div>
+</div>
