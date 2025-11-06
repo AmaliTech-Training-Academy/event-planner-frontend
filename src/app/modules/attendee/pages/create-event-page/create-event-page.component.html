@@ -1,10 +1,11 @@
 <form [formGroup]="form" method="post" class="wrapper">
     <div class="left-panel">
         <div class="title-container">
-           <section>
-            <input type="text" [formControlName]="EVENT_FORM_FIELDS.TITLE" placeholder="Add Event Title" class="title">
-            <app-form-error [message]="getError(form.get(EVENT_FORM_FIELDS.TITLE))"></app-form-error>
-           </section>
+            <section>
+                <input type="text" [formControlName]="EVENT_FORM_FIELDS.TITLE" placeholder="Add Event Title"
+                    class="title">
+                <app-form-error [message]="getError(form.get(EVENT_FORM_FIELDS.TITLE))"></app-form-error>
+            </section>
             <div class="time-container">
                 <div class="day-container">
                     <p>Select event type:</p>
@@ -44,15 +45,21 @@
             @if (meetingType?.value === MEETING_TYPES.IN_PERSON) {
             <div class="in-person-details" [formGroupName]="EVENT_FORM_FIELDS.IN_PERSON_DETAILS">
                 <div class="field">
-                    <app-location-search label="Add event location" placeholder="Type location here"
+                    <app-location-search [error]="inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION)?.invalid && 
+                                        inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION)?.touched" label="Add event location" placeholder="Type location here"
                         [formControlName]="EVENT_FORM_FIELDS.LOCATION"></app-location-search>
-                    <app-form-error [message]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION))"></app-form-error>
+                    <app-form-error
+                        [message]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION))"></app-form-error>
                 </div>
                 <div class="field">
                     <label for="description">Add event description</label>
-                    <textarea name="description" [formControlName]="EVENT_FORM_FIELDS.DESCRIPTION" id="description"
+                    <textarea [ngClass]="{
+                        'error': inPersonDetails.get(EVENT_FORM_FIELDS.DESCRIPTION)?.invalid && 
+                                        inPersonDetails.get(EVENT_FORM_FIELDS.DESCRIPTION)?.touched
+                      }" name="description" [formControlName]="EVENT_FORM_FIELDS.DESCRIPTION" id="description"
                         placeholder="Type description here"></textarea>
-                    <app-form-error [message]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.DESCRIPTION))"></app-form-error>
+                    <app-form-error
+                        [message]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.DESCRIPTION))"></app-form-error>
                 </div>
                 <div class="upload-continer">
                     <div class="image-container">
@@ -109,11 +116,13 @@
         </div>
 
         @if (showPriceModal) {
-        <app-set-price-modal [price]="form.get(EVENT_FORM_FIELDS.PRICE)?.value" (onSetPrice)="setPrice()" (closeModal)="togglePriceModal()"></app-set-price-modal>
+        <app-set-price-modal [price]="form.get(EVENT_FORM_FIELDS.PRICE)?.value" (onSetPrice)="setPrice()"
+            (closeModal)="togglePriceModal()"></app-set-price-modal>
         }
 
         @if (showCapacityModal) {
-        <app-set-capacity-modal [capacity]="form.get(EVENT_FORM_FIELDS.CAPACITY)?.value" (removeCapacity)="removeCapacityLimit()" (setCapacity)="setCapacityLimit()"
+        <app-set-capacity-modal [capacity]="form.get(EVENT_FORM_FIELDS.CAPACITY)?.value"
+            (removeCapacity)="removeCapacityLimit()" (setCapacity)="setCapacityLimit()"
             (close)="toggleCapacityModal()"></app-set-capacity-modal>
         }
 

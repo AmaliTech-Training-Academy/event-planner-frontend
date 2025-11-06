@@ -1,6 +1,6 @@
 <div class="location-search">
   <label class="input-label">{{ label() }}</label>
-  <div class="input-wrapper">
+  <div class="input-wrapper" [ngClass]="{'error': !!error()}">
     <img [src]="iconSrc()" alt="" class="input-icon" />
     <input
       type="text"

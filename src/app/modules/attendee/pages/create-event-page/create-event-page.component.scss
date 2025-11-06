@@ -138,6 +138,9 @@
       outline: none;
       color: $paragraph-text;
       padding: 8px;
+      &.error{
+        border-color: red;
+      }
     }
   }
 

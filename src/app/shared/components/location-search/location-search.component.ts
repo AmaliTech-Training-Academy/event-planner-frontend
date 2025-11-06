@@ -24,6 +24,7 @@ export class LocationSearchComponent implements  ControlValueAccessor, AfterView
   public readonly placeholder = input<string>('Search for a location');
   public readonly label = input<string>('Location');
   public readonly iconSrc = input<string>('icons/pin.svg');
+  public readonly error = input<boolean|undefined>(false);
 
   public readonly placeSelected = output<any>();
 
