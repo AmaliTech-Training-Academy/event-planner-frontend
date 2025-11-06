@@ -1,9 +1,7 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule, NgOptimizedImage, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-// Import all the components your HTML template uses
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
 import { TabToggleComponent } from '../../../../shared/components/tab-toggle/tab-toggle.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
@@ -12,7 +10,7 @@ import { FilterDropdownComponent } from '../../../../shared/components/filter-dr
 import { SearchInputComponent } from '../../../../shared/components/search-input/search-input.component';
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 
-// Import all models
+
 import {
   EventCard,
   TabToggle,
@@ -20,7 +18,7 @@ import {
   PopularLocation,
 } from '../../../../core/models/event.model';
 
-// Import all mock data
+
 import {
   MOCK_EVENT_CARDS,
   MOCK_EVENT_TOGGLES,
@@ -50,38 +48,52 @@ import {
   styleUrl: './explore-page.component.scss',
 })
 export class ExplorePageComponent implements OnInit {
-  // --- Signals for Data ---
+  
   private allEvents = signal<EventCard[]>([]);
   public upcomingEvents = signal<EventCard[]>([]);
   public pastEvents = signal<EventCard[]>([]);
+  public freeEvents = signal<EventCard[]>([]);
+  public paidEvents = signal<EventCard[]>([]);
 
-  // --- Signals for Filters ---
+ 
+  private freeEventsPage = signal(1);
+  private paidEventsPage = signal(1);
+  private upcomingEventsPage = signal(1);
+  private pastEventsPage = signal(1);
+  private readonly EVENTS_PER_PAGE = 6;
+
+  
+  public showingAllFree = computed(() => !this.hasMoreFreeEvents());
+  public showingAllPaid = computed(() => !this.hasMorePaidEvents());
+  public showingAllUpcoming = computed(() => !this.hasMoreUpcomingEvents());
+  public showingAllPast = computed(() => !this.hasMorePastEvents());
+
+
   public searchQuery = signal('');
   public selectedLocation = signal('Location');
   public selectedEventType = signal('All Events');
   public selectedDate = signal<Date | null>(null);
 
-  // --- Signals for UI State ---
+  
   public showLocationDropdown = signal(false);
   public showEventTypeDropdown = signal(false);
   public showDatePicker = signal(false);
-  public activeToggle = signal('upcoming');
+  public activeToggle = signal<string>('all'); 
 
-  // --- Signals for Dropdown Options ---
+  
   public eventToggles = signal<TabToggle[]>([]);
   public eventTypeOptions = signal<string[]>([]);
   public recentSearches = signal<SearchLocation[]>([]);
   public popularLocations = signal<PopularLocation[]>([]);
 
-  // --- Lifecycle Hooks ---
+ 
   public ngOnInit(): void {
     this.loadData();
     this.filterEvents();
   }
 
-  // --- Data Loading ---
+
   private loadData(): void {
-    // Load all data from mock files
     this.allEvents.set(MOCK_EVENT_CARDS);
     this.eventToggles.set(MOCK_EVENT_TOGGLES);
     this.eventTypeOptions.set(MOCK_EVENT_TYPE_OPTIONS);
@@ -89,15 +101,17 @@ export class ExplorePageComponent implements OnInit {
     this.popularLocations.set(MOCK_POPULAR_LOCATIONS);
   }
 
-  // --- Event Handlers ---
+  
 
   protected onTabChange(selectedTabKey: string): void {
     this.activeToggle.set(selectedTabKey);
+    this.resetPagination();
     this.filterEvents();
   }
 
   protected onSearchChange(query: string): void {
     this.searchQuery.set(query);
+    this.resetPagination();
     this.filterEvents();
   }
 
@@ -114,12 +128,14 @@ export class ExplorePageComponent implements OnInit {
   protected onLocationSelected(location: SearchLocation): void {
     this.selectedLocation.set(location.name);
     this.showLocationDropdown.set(false);
+    this.resetPagination();
     this.filterEvents();
   }
 
   protected onUseCurrentLocation(): void {
     this.selectedLocation.set('Current Location');
     this.showLocationDropdown.set(false);
+    this.resetPagination();
     this.filterEvents();
   }
 
@@ -136,6 +152,7 @@ export class ExplorePageComponent implements OnInit {
   protected onEventTypeSelected(type: string): void {
     this.selectedEventType.set(type);
     this.showEventTypeDropdown.set(false);
+    this.resetPagination();
     this.filterEvents();
   }
 
@@ -148,59 +165,174 @@ export class ExplorePageComponent implements OnInit {
   protected onDateSelected(date: Date): void {
     this.selectedDate.set(date);
     this.showDatePicker.set(false);
+    this.resetPagination();
     this.filterEvents();
   }
 
-  // --- Main Filtering Logic ---
+  
+  private resetPagination(): void {
+    this.freeEventsPage.set(1);
+    this.paidEventsPage.set(1);
+    this.upcomingEventsPage.set(1);
+    this.pastEventsPage.set(1);
+  }
+
+ 
   private filterEvents(): void {
     const now = new Date();
     let events = this.allEvents();
 
-    // 1. Filter by Search Query
+   
     if (this.searchQuery()) {
       events = events.filter((event) =>
         event.title.toLowerCase().includes(this.searchQuery().toLowerCase())
       );
     }
 
-    // 2. Filter by Location
+   
     if (this.selectedLocation() !== 'Location') {
       events = events.filter((event) =>
         event.location.toLowerCase().includes(this.selectedLocation().toLowerCase())
       );
     }
 
-    // 3. Filter by Event Type
-    // This is the logic you're asking about!
-    // It only filters if the type is *not* "All Events".
+    
     if (this.selectedEventType() !== 'All Events') {
       const isPaid = this.selectedEventType() === 'Paid Events';
       events = events.filter((event) => event.isPaid === isPaid);
     }
 
-    // 4. Filter by Date
+    
     if (this.selectedDate()) {
       events = events.filter((event) =>
         event.date.toDateString() === this.selectedDate()?.toDateString()
       );
     }
 
-    // 5. Separate into Upcoming and Past
-    this.upcomingEvents.set(
-      events.filter((event) => event.date >= now)
-    );
-    this.pastEvents.set(
-      events.filter((event) => event.date < now)
-    );
+ 
+    const toggleValue = this.activeToggle();
+
+    if (toggleValue === 'upcoming') {
+      const upcomingFiltered = events.filter((event) => event.date >= now);
+      const upcomingToShow = upcomingFiltered.slice(0, this.upcomingEventsPage() * this.EVENTS_PER_PAGE);
+      this.upcomingEvents.set(upcomingToShow);
+      this.pastEvents.set([]);
+      this.freeEvents.set([]);
+      this.paidEvents.set([]);
+    } else if (toggleValue === 'past') {
+      const pastFiltered = events.filter((event) => event.date < now);
+      const pastToShow = pastFiltered.slice(0, this.pastEventsPage() * this.EVENTS_PER_PAGE);
+      this.pastEvents.set(pastToShow);
+      this.upcomingEvents.set([]);
+      this.freeEvents.set([]);
+      this.paidEvents.set([]);
+    } else {
+    
+      const freeFiltered = events.filter((event) => !event.isPaid);
+      const paidFiltered = events.filter((event) => event.isPaid);
+      
+      const freeToShow = freeFiltered.slice(0, this.freeEventsPage() * this.EVENTS_PER_PAGE);
+      const paidToShow = paidFiltered.slice(0, this.paidEventsPage() * this.EVENTS_PER_PAGE);
+      
+      this.freeEvents.set(freeToShow);
+      this.paidEvents.set(paidToShow);
+      this.upcomingEvents.set([]);
+      this.pastEvents.set([]);
+    }
   }
 
-  // --- Load More Handlers ---
+  
+  protected hasMoreFreeEvents(): boolean {
+    const allFree = this.getAllFilteredEvents().filter(e => !e.isPaid);
+    return this.freeEvents().length < allFree.length;
+  }
+
+  protected hasMorePaidEvents(): boolean {
+    const allPaid = this.getAllFilteredEvents().filter(e => e.isPaid);
+    return this.paidEvents().length < allPaid.length;
+  }
+
+  protected hasMoreUpcomingEvents(): boolean {
+    const now = new Date();
+    const allUpcoming = this.getAllFilteredEvents().filter(e => e.date >= now);
+    return this.upcomingEvents().length < allUpcoming.length;
+  }
+
+  protected hasMorePastEvents(): boolean {
+    const now = new Date();
+    const allPast = this.getAllFilteredEvents().filter(e => e.date < now);
+    return this.pastEvents().length < allPast.length;
+  }
+
+ 
+  private getAllFilteredEvents(): EventCard[] {
+    let events = this.allEvents();
+
+    if (this.searchQuery()) {
+      events = events.filter((event) =>
+        event.title.toLowerCase().includes(this.searchQuery().toLowerCase())
+      );
+    }
+
+    if (this.selectedLocation() !== 'Location') {
+      events = events.filter((event) =>
+        event.location.toLowerCase().includes(this.selectedLocation().toLowerCase())
+      );
+    }
+
+    if (this.selectedEventType() !== 'All Events') {
+      const isPaid = this.selectedEventType() === 'Paid Events';
+      events = events.filter((event) => event.isPaid === isPaid);
+    }
+
+    if (this.selectedDate()) {
+      events = events.filter((event) =>
+        event.date.toDateString() === this.selectedDate()?.toDateString()
+      );
+    }
+
+    return events;
+  }
+
+ 
   protected onLoadMoreUpcoming(): void {
-    // In a real app, you'd fetch more data here.
+    this.upcomingEventsPage.update(page => page + 1);
+    this.filterEvents();
   }
 
   protected onLoadMorePast(): void {
-    // In a real app, you'd fetch more data here.
+    this.pastEventsPage.update(page => page + 1);
+    this.filterEvents();
+  }
+
+  protected onLoadMoreFree(): void {
+    this.freeEventsPage.update(page => page + 1);
+    this.filterEvents();
+  }
+
+  protected onLoadMorePaid(): void {
+    this.paidEventsPage.update(page => page + 1);
+    this.filterEvents();
+  }
+
+  
+  protected onShowLessUpcoming(): void {
+    this.upcomingEventsPage.set(1);
+    this.filterEvents();
+  }
+
+  protected onShowLessPast(): void {
+    this.pastEventsPage.set(1);
+    this.filterEvents();
+  }
+
+  protected onShowLessFree(): void {
+    this.freeEventsPage.set(1);
+    this.filterEvents();
+  }
+
+  protected onShowLessPaid(): void {
+    this.paidEventsPage.set(1);
+    this.filterEvents();
   }
 }
-

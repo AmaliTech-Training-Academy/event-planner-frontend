@@ -1,151 +1,156 @@
 @use 'sass:color';
 
-/* Mixin definitions */
-@mixin sm {
-  @media (max-width: 767px) {
-    @content;
-  }
-}
 
-@mixin md {
-  @media (min-width: 768px) and (max-width: 1023px) {
-    @content;
-  }
-}
-
-@mixin lg {
-  @media (min-width: 1024px) {
-    @content;
-  }
-}
-
-/* Base Styles */
 :host {
   display: block;
   width: 100%;
   margin: 0;
   padding: 0;
   font-family: 'Lato', sans-serif;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 .explore-page-content {
   width: 100%;
-  background: #f9fafb;
+  background: #ffffff;
   box-shadow: none;
   border: none;
   margin: 0;
   padding: 0;
 }
 
-/* Filter Bar */
+
 .filter-bar {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
-  padding: 1rem 2.5rem;
+  padding: 1rem;
   margin: 0 auto;
   max-width: 1280px;
   overflow: visible;
+}
 
-  @include md {
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .filter-bar {
     padding: 1rem 2rem;
   }
+}
 
-  @include sm {
-    padding: 1rem;
-    gap: 1.25rem;
-  }
 
-  @include lg {
-    grid-template-columns: 2fr 3fr;
+@media (min-width: 1024px) {
+  .filter-bar {
+    flex-direction: row;
     gap: 2rem;
+    padding: 1rem 2.5rem;
   }
 }
+
+
+.search-wrapper {
+  width: 100%;
+  order: 1;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .search-wrapper {
+    flex: 2;
+    min-width: 0;
+  }
+}
+
+.search-wrapper app-search-input {
+  width: 100%;
+  display: block;
+}
+
 
 .secondary-filters-group {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem;
   width: 100%;
   overflow: visible;
+  order: 2;
+}
 
-  @include lg {
-    margin-left: 1rem;
-  }
-
-  @include md {
-    gap: 0.5rem;
-  }
-
-  @include sm {
-    grid-template-columns: 1fr 1fr;
+@media (min-width: 768px) and (max-width: 1023px) {
+  .secondary-filters-group {
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
   }
 }
 
-/* Filter Button Wrapper - wraps app-button */
+@media (min-width: 1024px) {
+  .secondary-filters-group {
+    flex: 3;
+    margin-left: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+
 .filter-button-wrapper {
   position: relative;
   width: 100%;
-
-  app-button.filter-button {
-    width: 100%;
-    display: block;
-
-    // Target the projected content inside the button
-    ::ng-deep button {
-      width: 100%;
-      padding: 0;
-      display: block;
-    }
-  }
-
-  // Style the filter content wrapper
-  .filter-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0 0.75rem 0 1rem;
-    min-height: 48px;
-
-    span {
-      flex: 1;
-      text-align: left;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      color: #292929;
-      font-weight: 400;
-
-      &.is-placeholder {
-        color: #656565;
-      }
-    }
-
-    .filter-icon {
-      width: 18px;
-      height: 20px;
-      flex-shrink: 0;
-      margin-left: 0.5rem;
-      display: block;
-    }
-  }
 }
 
-/* Reduce icon size for Event Type filter specifically */
-.filter-dropdown-wrapper:nth-child(2) {
-  .filter-content .filter-icon {
-    width: 14px;
-    height: 10px;
-  }
-  }
+.filter-button-wrapper app-button.filter-button {
+  width: 100%;
+  display: block;
+}
+
+.filter-button-wrapper app-button.filter-button ::ng-deep button {
+  width: 100%;
+  padding: 0;
+  display: block;
+}
 
 
-/* Dropdown positioning */
+.filter-button-wrapper .filter-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 0.75rem 0 1rem;
+  min-height: 48px;
+}
+
+.filter-button-wrapper .filter-content span {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #292929;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.filter-button-wrapper .filter-content span.is-placeholder {
+  color: #656565;
+}
+
+.filter-button-wrapper .filter-content .filter-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+  display: block;
+}
+
+
+.filter-dropdown-wrapper:nth-child(2) .filter-content .filter-icon {
+  width: 14px;
+  height: 9px;
+}
+
+
 .filter-dropdown-wrapper {
   position: relative;
 }
@@ -163,8 +168,12 @@ app-filter-dropdown,
   border-radius: 0.5rem;
   border: 1px solid #e5e7eb;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
 
-  @include sm {
+@media (max-width: 767px) {
+  app-location-dropdown,
+  app-filter-dropdown,
+  .date-picker-dropdown {
     min-width: 240px;
   }
 }
@@ -174,7 +183,7 @@ app-filter-dropdown,
   min-width: auto;
 }
 
-/* Tab Toggle */
+
 app-tab-toggle {
   display: flex;
   justify-content: left;
@@ -182,71 +191,83 @@ app-tab-toggle {
   max-width: 1280px;
   margin: 0 auto;
   width: 100%;
+}
 
-  ::ng-deep .tab-toggle-container {
-    display: flex;
-    gap: 1rem;
-  }
+app-tab-toggle ::ng-deep .tab-toggle-container {
+  display: flex;
+  gap: 1rem;
+}
 
-  ::ng-deep .tab-button {
-    width: 200px;
-    height: 48px;
-    padding: 10px;
-    border-radius: 8px;
-  }
+app-tab-toggle ::ng-deep .tab-button {
+  width: 200px;
+  height: 48px;
+  padding: 10px;
+  border-radius: 8px;
+}
 
-  @include sm {
+@media (max-width: 767px) {
+  app-tab-toggle {
     padding: 1.25rem 1rem 0;
+  }
 
-    ::ng-deep .tab-button {
-      width: 100%;
-      flex-grow: 1;
-    }
+  app-tab-toggle ::ng-deep .tab-button {
+    width: 100%;
+    flex-grow: 1;
   }
 }
 
-/* Event Section */
+
 .event-section {
   padding: 1.75rem 2.5rem;
   max-width: 1280px;
   margin: 0 auto;
+}
 
-  @include md {
+@media (min-width: 768px) and (max-width: 1023px) {
+  .event-section {
     padding: 1.5rem 2rem;
-  }
-
-  @include sm {
-    padding: 1.25rem 1rem;
-  }
-
-  h2 {
-    font-family: 'Lato', sans-serif;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #292929;
-    margin-bottom: 1.5rem;
-
-    @include sm {
-      font-size: 1.25rem;
-    }
-  }
-
-  .event-grid {
-    display: grid;
-    gap: 1.5rem;
-    grid-template-columns: repeat(1, 1fr);
-
-    @media (min-width: 640px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @media (min-width: 1024px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
   }
 }
 
-/* Load More Button */
+@media (max-width: 767px) {
+  .event-section {
+    padding: 1.25rem 1rem;
+  }
+}
+
+.event-section h2 {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #292929;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 767px) {
+  .event-section h2 {
+    font-size: 1.25rem;
+  }
+}
+
+.event-section .event-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+@media (min-width: 640px) {
+  .event-section .event-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .event-section .event-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
 .load-more-container {
   padding: 2.5rem 0 1rem;
   display: flex;
@@ -254,15 +275,15 @@ app-tab-toggle {
   align-items: center;
 }
 
-.load-more-btn {
-  ::ng-deep button {
-    min-width: 380px;
-    padding: 0.75rem 1.25rem;
-    font-size: 1rem;
+.load-more-btn ::ng-deep button {
+  min-width: 380px;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+}
 
-    @include sm {
-      min-width: auto;
-      width: 100%;
-    }
+@media (max-width: 767px) {
+  .load-more-btn ::ng-deep button {
+    min-width: auto;
+    width: 100%;
   }
 }

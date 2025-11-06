@@ -1,4 +1,4 @@
-// src/app/core/services/explore-data.service.ts
+
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { AppEvent } from '../models/event-model';
@@ -28,7 +28,7 @@ export class ExploreDataService {
     return of([
       {
         id: 'evt1',
-        imageUrl: '/assets/images/event1.jpg',
+        imageUrl: 'images/event1.jpg',
         date: '2025-04-15T00:00:00Z', 
         title: 'Tech Innovation Summit 2025',
         location: 'Silicon Valley, CA',
@@ -37,7 +37,7 @@ export class ExploreDataService {
       },
       {
         id: 'evt2',
-        imageUrl: '/assets/images/event2.jpg',
+        imageUrl: 'images/event2.jpg',
         date: '2025-06-20T00:00:00Z', 
         title: 'AI World Conference',
         location: 'New York, NY',
@@ -51,7 +51,7 @@ export class ExploreDataService {
     return of([
       {
         id: 'evt3',
-        imageUrl: '/assets/images/event3.jpg',
+        imageUrl: 'images/event3.jpg',
         date: '2025-05-10T00:00:00Z', 
         title: 'Community Code & Coffee',
         location: 'Austin, TX',
@@ -60,7 +60,7 @@ export class ExploreDataService {
       },
       {
         id: 'evt4',
-        imageUrl: '/assets/images/event4.jpg',
+        imageUrl: 'images/event4.jpg',
         date: '2025-07-15T00:00:00Z',  
         title: 'Open Source Meetup',
         location: 'Seattle, WA',

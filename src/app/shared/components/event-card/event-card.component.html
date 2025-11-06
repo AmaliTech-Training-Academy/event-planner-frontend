@@ -6,6 +6,7 @@
   />
 
   <div class="event-card__content">
+    <!-- Badge moved outside image - now first element in content -->
     @if (event().isPaid) {
     <span class="event-card__badge badge--paid">Paid</span>
     } @else {
@@ -33,26 +34,23 @@
       }
     </div>
 
-   
+    <!-- Buttons with proper routing -->
     @if (variant() === 'manage') {
-   
     <app-button
       [type]="'secondary'"
       [extraClass]="'event-card__button'"
-      (click)="onManageClick()"
+      (onClick)="onManageClick()"
     >
       Manage Event
     </app-button>
     } @else {
-    
     <app-button
       [type]="'secondary'"
       [extraClass]="'event-card__button'"
-      (click)="navigateToDetails()"
+      (onClick)="navigateToDetails()"
     >
       View Details
     </app-button>
     }
   </div>
 </article>
-

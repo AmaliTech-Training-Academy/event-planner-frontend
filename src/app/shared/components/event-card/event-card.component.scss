@@ -1,4 +1,4 @@
-/* Self-contained SCSS for the "smart" EventCardComponent */
+
 @use 'sass:color';
 
 :host {
@@ -7,8 +7,8 @@
 
 .event-card {
   width: 100%;
-  border-radius: 0.5rem; /* 8px */
-  border: 1px solid #e5e7eb; /* $general-stroke-light */
+  border-radius: 0.5rem; 
+  border: 1px solid #e5e7eb; 
   background-color: #ffffff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
   overflow: hidden;
@@ -22,40 +22,33 @@
   }
 }
 
-/* --- Image --- */
-.event-card__image-link {
-  display: block;
-  position: relative;
-  width: 100%;
-  height: 180px;
-}
 
 .event-card__image {
   width: 100%;
-  height: 100%;
+  height: 180px;
   object-fit: cover;
   display: block;
 }
 
-/* --- Content --- */
+
 .event-card__content {
-  padding: 1.25rem; /* 20px */
+  padding: 1rem 1.25rem 1.25rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* 16px */
+  gap: 0.75rem; 
   flex-grow: 1;
   position: relative;
 }
 
-/* --- Badge --- */
+
 .event-card__badge {
   position: absolute;
-  top: -1.75rem; /* Pulls it up into the image area */
-  right: 1.25rem; /* 20px */
-  padding: 0.25rem 0.75rem; /* 4px 12px */
-  border-radius: 62.438rem; /* 99px */
+  top: 1rem; 
+  right: 1.25rem;
+  padding: 0.25rem 0.75rem; 
+  border-radius: 62.438rem; 
   font-family: 'Lato', sans-serif;
-  font-size: 0.75rem; /* 12px */
+  font-size: 0.75rem; 
   font-weight: 600;
   display: inline-block;
   z-index: 2;
@@ -65,60 +58,48 @@
     color: #006adc;
   }
   &.badge--free {
-    background-color: #e7f7e9; /* Light green */
-    color: #0d8902; /* Dark green */
+    background-color: #e7f7e9; 
+    color: #0d8902; 
   }
 }
 
-/* --- Info --- */
+
 .event-card__info {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem; /* ~10px */
+  gap: 0.6rem; 
   flex-grow: 1;
 }
 
 .event-card__icon-text {
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* 8px */
+  gap: 0.5rem; 
   font-family: 'Lato', sans-serif;
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.875rem; 
   font-weight: 400;
-  color: #656565; /* $paragraph-text */
+  color: #656565; 
 
   .info-icon {
-    width: 1rem; /* 16px */
+    width: 1rem; 
     height: 1rem;
     opacity: 0.7;
   }
 }
 
-.event-card__title-link {
-  text-decoration: none;
-  color: #292929; /* $header-dark */
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: #cc3f02; /* $primary-color */
-  }
-}
-
 .event-card__title {
   font-family: 'Lato', sans-serif;
-  font-size: 1.25rem; /* 20px */
+  font-size: 1.25rem; 
   font-weight: 700;
-  color: inherit; /* Inherits color from the link */
+  color: #292929; 
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* --- Button --- */
-/* This styles the reusable button specifically within this component */
+
 ::ng-deep .event-card__button {
   width: 100%;
-  margin-top: 0.5rem; /* 8px - Add space above button */
+  margin-top: 0.5rem; 
 }
-
