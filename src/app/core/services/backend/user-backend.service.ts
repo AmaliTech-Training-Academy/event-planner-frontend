@@ -17,6 +17,17 @@ export interface UpdateUserPayload {
   status: boolean;
 }
 
+export interface UserUpdateRequestPayload {
+  userUpdateRequest: {
+    fullName: string;
+    email: string;
+    phone: string;
+    address: string;
+    status: boolean;
+  };
+  profilePicture?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UserBackendService {
   constructor(private readonly http: HttpClient) {}
@@ -45,27 +56,16 @@ export class UserBackendService {
 
   public updateUser(
     userId: string,
-    user: UpdateUserPayload
+    payload: UserUpdateRequestPayload
   ): Observable<{ data: User }> {
     return this.http.put<{ data: User }>(
       API_ENDPOINTS.UPDATE_USER(userId),
-      user
+      payload
     );
   }
 
   public toggleUserActivation(userId: number | string): Observable<void> {
     return this.http.post<void>(API_ENDPOINTS.DEACTIVATE_USER(userId), {});
-  }
-
-  public uploadProfileImage(
-    userId: string,
-    imageFile: File
-  ): Observable<{ data: { imageUrl?: string; profileImageUrl?: string } }> {
-    const formData = new FormData();
-    formData.append('file', imageFile);
-    return this.http.post<{
-      data: { imageUrl?: string; profileImageUrl?: string };
-    }>(API_ENDPOINTS.UPLOAD_PROFILE_IMAGE(userId), formData);
   }
 
   public inviteUsers(

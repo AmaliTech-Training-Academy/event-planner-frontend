@@ -17,6 +17,17 @@ import {
 import { UserBackendService } from './backend/user-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
 
+interface UserUpdatePayload {
+  userUpdateRequest: {
+    fullName: string;
+    email: string;
+    phone: string;
+    address: string;
+    status: boolean;
+  };
+  profilePicture?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UserManagementService {
   private _users$ = new BehaviorSubject<User[]>([]);
@@ -164,17 +175,32 @@ export class UserManagementService {
     );
   }
 
-  private buildUpdatePayload(user: Partial<User>) {
-    return {
-      fullName: user.fullName?.trim() || '',
-      email: user.email?.trim() || '',
-      phone: user.phone || '',
-      address: user.address || '',
-      status: mapStatusToBoolean(user.status ?? 'Active'),
+  private buildUpdatePayload(
+    user: Partial<User> & { profileImage?: string; profileImageUrl?: string }
+  ): UserUpdatePayload {
+    const payload: UserUpdatePayload = {
+      userUpdateRequest: {
+        fullName: user.fullName?.trim() || '',
+        email: user.email?.trim() || '',
+        phone: user.phone || '',
+        address: user.address || '',
+        status: mapStatusToBoolean(user.status ?? 'Active'),
+      },
     };
+
+    if (user.profileImage) {
+      payload.profilePicture = user.profileImage;
+    } else if (user.profileImageUrl) {
+      payload.profilePicture = user.profileImageUrl;
+    }
+
+    return payload;
   }
 
-  public updateUser(userId: string, user: Partial<User>) {
+  public updateUser(
+    userId: string,
+    user: Partial<User> & { profileImage?: string; profileImageUrl?: string }
+  ) {
     this.setLoading(true);
     const payload = this.buildUpdatePayload(user);
 
@@ -221,15 +247,6 @@ export class UserManagementService {
         return throwError(() => err);
       }),
       finalize(() => this.setLoading(false))
-    );
-  }
-
-  public uploadProfileImage(userId: string, imageFile: File) {
-    return this.userBackend.uploadProfileImage(userId, imageFile).pipe(
-      catchError((err) => {
-        this.errorHandler.handle(err);
-        return throwError(() => err);
-      })
     );
   }
 
