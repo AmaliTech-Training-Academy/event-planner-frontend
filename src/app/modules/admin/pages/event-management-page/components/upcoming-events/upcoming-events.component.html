@@ -5,29 +5,57 @@
       <button 
         class="upcoming-events__view-all" 
         (click)="onViewAll()"
+        type="button"
+        aria-label="View all events"
       >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-          <path d="M8 3C8 2.44772 8.44772 2 9 2H11C11.5523 2 12 2.44772 12 3V8H17C17.5523 8 18 8.44772 18 9V11C18 11.5523 17.5523 12 17 12H12V17C12 17.5523 11.5523 18 11 18H9C8.44772 18 8 17.5523 8 17V12H3C2.44772 12 2 11.5523 2 11V9C2 8.44772 2.44772 8 3 8H8V3Z" fill="currentColor"/>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="M13 10C13 9.44772 13.4477 9 14 9H16C16.5523 9 17 9.44772 17 10C17 10.5523 16.5523 11 16 11H14C13.4477 11 13 10.5523 13 10Z" fill="currentColor"/>
+          <path d="M9 10C9 9.44772 9.44772 9 10 9C10.5523 9 11 9.44772 11 10C11 10.5523 10.5523 11 10 11C9.44772 11 9 10.5523 9 10Z" fill="currentColor"/>
+          <path d="M4 9C3.44772 9 3 9.44772 3 10C3 10.5523 3.44772 11 4 11H6C6.55228 11 7 10.5523 7 10C7 9.44772 6.55228 9 6 9H4Z" fill="currentColor"/>
         </svg>
       </button>
     }
   </div>
 
-  <div class="upcoming-events__list">
-    @for (event of events(); track event.id) {
-      <div 
-        class="upcoming-events__item"
-        (click)="onEventClick(event)"
-      >
-        <div class="upcoming-events__info">
-          <h4 class="upcoming-events__event-title">{{ event.title }}</h4>
-          <p class="upcoming-events__date">{{ event.date }}</p>
-        </div>
+  @if (hasEvents()) {
+    <div class="upcoming-events__list">
+      @for (event of events(); track trackByEvent($index, event)) {
+        <div 
+          class="upcoming-events__item"
+          (click)="onEventClick(event)"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'View ' + event.title + ' event details'"
+          (keydown.enter)="onEventClick(event)"
+          (keydown.space)="onEventClick(event)"
+        >
+          <div class="upcoming-events__info">
+            <h4 class="upcoming-events__event-title">{{ event.title }}</h4>
+            <p class="upcoming-events__date">{{ formatDate(event.date) }}</p>
+          </div>
 
-        <span class="upcoming-events__attendees">
-          {{ formatAttendees(event.attendeeCount) }}
-        </span>
-      </div>
-    }
-  </div>
+          <div class="upcoming-events__meta">
+            @if (hasStatus(event)) {
+              <span 
+                class="upcoming-events__status"
+                [ngClass]="getStatusClass(event.status)"
+              >
+                {{ event.status }}
+              </span>
+            }
+            <span 
+              class="upcoming-events__attendees"
+              [attr.aria-label]="formatAttendees(event.attendeeCount)"
+            >
+              {{ formatAttendees(event.attendeeCount) }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="upcoming-events__empty">
+      <p>No upcoming events</p>
+    </div>
+  }
 </div>

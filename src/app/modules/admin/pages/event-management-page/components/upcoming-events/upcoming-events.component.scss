@@ -1,6 +1,7 @@
 @use 'typography' as *;
 @use 'colors' as *;
 @use 'variables' as *;
+
 .upcoming-events {
   background: $gray-50;
   border-radius: $radius-4;
@@ -31,11 +32,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
     &:hover {
       background: $gray-200;
       color: $gray-700;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $blue-500;
+      outline-offset: 2px;
     }
   }
 
@@ -52,13 +58,20 @@
     padding: $spacing-4;
     border-radius: $radius-3;
     border: $stroke-1 solid $general-stroke-light;
+    background: $gray-50;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 
     &:hover {
       background: $gray-100;
       border-color: $gray-300;
       transform: translateX(4px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $blue-500;
+      outline-offset: -2px;
+      background: $gray-100;
     }
   }
 
@@ -66,6 +79,8 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-1;
+    min-width: 0;
+    flex: 1;
   }
 
   &__event-title {
@@ -73,6 +88,9 @@
     color: $header-dark;
     margin: 0;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__date {
@@ -81,10 +99,54 @@
     margin: 0;
   }
 
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    flex-shrink: 0;
+  }
+
+  &__status {
+    @include body-3;
+    font-weight: 600;
+    padding: $spacing-1 $spacing-2;
+    border-radius: $radius-1;
+    text-transform: capitalize;
+
+    &--upcoming {
+      color: $blue-700;
+      background: $blue-50;
+    }
+
+    &--ongoing {
+      color: $green-700;
+      background: $green-50;
+    }
+
+    &--past {
+      color: $gray-700;
+      background: $gray-100;
+    }
+  }
+
   &__attendees {
     @include body-3;
     color: $paragraph-text;
     white-space: nowrap;
+    font-weight: 500;
+  }
+
+  &__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: $spacing-8;
+    color: $paragraph-text;
+
+    p {
+      @include body-2;
+      margin: 0;
+    }
   }
 }
 
@@ -93,11 +155,13 @@
     &__item {
       flex-direction: column;
       align-items: flex-start;
-      gap: $spacing-2;
+      gap: $spacing-3;
     }
 
-    &__attendees {
+    &__meta {
       align-self: flex-end;
+      width: 100%;
+      justify-content: space-between;
     }
   }
 }

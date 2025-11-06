@@ -1,6 +1,7 @@
 @use 'typography' as *;
 @use 'colors' as *;
 @use 'variables' as *;
+
 .top-organizers {
   background: $gray-50;
   border-radius: $radius-4;
@@ -31,11 +32,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 
     &:hover {
       background: $gray-200;
       color: $gray-700;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $blue-500;
+      outline-offset: 2px;
     }
   }
 
@@ -53,9 +59,15 @@
     padding: $spacing-3;
     border-radius: $radius-3;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease;
 
     &:hover {
+      background: $gray-100;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $blue-500;
+      outline-offset: -2px;
       background: $gray-100;
     }
   }
@@ -69,6 +81,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    flex-shrink: 0;
 
     img {
       width: 100%;
@@ -113,15 +126,18 @@
     display: flex;
     align-items: center;
     gap: $spacing-3;
+    flex-shrink: 0;
   }
 
   &__event-count {
     @include body-3;
     color: $paragraph-text;
+    white-space: nowrap;
   }
 
   &__sparkline {
     color: $blue-500;
+    flex-shrink: 0;
   }
 
   &__growth {
@@ -129,6 +145,7 @@
     font-weight: 600;
     padding: $spacing-1 $spacing-2;
     border-radius: $radius-1;
+    white-space: nowrap;
 
     &--positive {
       color: $green-700;
@@ -138,6 +155,19 @@
     &--negative {
       color: $red-700;
       background: $red-50;
+    }
+  }
+
+  &__empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: $spacing-8;
+    color: $paragraph-text;
+
+    p {
+      @include body-2;
+      margin: 0;
     }
   }
 }
@@ -152,6 +182,7 @@
     &__stats {
       grid-column: 2;
       justify-content: flex-start;
+      flex-wrap: wrap;
     }
   }
 }

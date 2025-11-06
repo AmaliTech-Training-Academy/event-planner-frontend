@@ -1,20 +1,28 @@
 <div class="event-statistics">
   <h3 class="event-statistics__title">{{ title() }}</h3>
   
-  <div class="event-statistics__grid">
-    @for (stat of statistics(); track stat.label) {
-      <div class="event-statistics__card">
-        <div 
-          class="event-statistics__bar" 
-          [style.background-color]="stat.color"
-          [style.height.%]="(stat.count / getMaxCount()) * 100"
-        >
-          <span class="event-statistics__count">
+  @if (statistics().length > 0) {
+    <div class="event-statistics__grid">
+      @for (stat of statistics(); track trackByStat($index, stat)) {
+        <div class="event-statistics__card">
+          <span class="event-statistics__count-bubble">
             {{ formatNumber(stat.count) }}
           </span>
+          <div 
+            class="event-statistics__bar" 
+            [style.background-color]="stat.color"
+            [style.height.px]="getBarHeight(stat.count)"
+            [attr.aria-label]="stat.label + ': ' + formatNumber(stat.count)"
+            role="img"
+          >
+          </div>
+          <p class="event-statistics__label">{{ stat.label }}</p>
         </div>
-        <p class="event-statistics__label">{{ stat.label }}</p>
-      </div>
-    }
-  </div>
+      }
+    </div>
+  } @else {
+    <div class="event-statistics__empty">
+      <p>No statistics available</p>
+    </div>
+  }
 </div>

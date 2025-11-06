@@ -1,5 +1,4 @@
-// event-statistics.component.ts
-import { Component, input, signal } from '@angular/core';
+import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface EventStatistic {
@@ -17,13 +16,48 @@ export interface EventStatistic {
   styleUrls: ['./event-statistics.component.scss'],
 })
 export class EventStatisticsComponent {
+  // Inputs
   public statistics = input.required<EventStatistic[]>();
   public title = input<string>('Event Statistics');
 
+  // Computed signals for reactive derived values
+  private readonly _maxCount = computed<number>(() => {
+    const stats = this.statistics();
+    return stats.length > 0 ? Math.max(...stats.map((stat) => stat.count)) : 0;
+  });
+
+  // Constants
+  private readonly _MAX_BAR_HEIGHT = 160;
+  private readonly _MIN_BAR_HEIGHT = 60;
+
+  /**
+   * Formats a number to display with K suffix for thousands
+   */
   public formatNumber(num: number): string {
     if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
+      return Math.round(num / 1000) + 'K';
     }
     return num.toString();
+  }
+
+  /**
+   * Calculates bar height based on count relative to max count
+   */
+  public getBarHeight(count: number): number {
+    const maxCount = this._maxCount();
+
+    if (maxCount === 0) {
+      return this._MIN_BAR_HEIGHT;
+    }
+
+    const calculatedHeight = (count / maxCount) * this._MAX_BAR_HEIGHT;
+    return Math.max(this._MIN_BAR_HEIGHT, calculatedHeight);
+  }
+
+  /**
+   * TrackBy function for performance optimization in @for loop
+   */
+  public trackByStat(_index: number, stat: EventStatistic): string {
+    return stat.label;
   }
 }
