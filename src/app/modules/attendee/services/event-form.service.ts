@@ -21,6 +21,7 @@ export class EventFormService {
       [F.PERCS]: ['', Validators.required],
       [F.REQUIRE_APPROVAL]: [false, Validators.required],
       [F.PRICE_TYPE]: [PRICE_TYPE.FREE, Validators.required],
+      [F.VENUE_SECTIONS]: this.fb.array([]),
     });
 
     this.eventDates.push(this.createDateGroup());
@@ -86,6 +87,20 @@ export class EventFormService {
   }
 
 
+  public addVenueSection(name:string,capacity:number,price:number,description:string,color:string,image:File){
+    const newGroup = this.fb.group({
+      [F.VENUE_SECTION_NAME]: [name, Validators.required],
+      [F.VENUE_SECTION_CAPACITY]: [capacity, Validators.required],
+      [F.VENUE_SECTION_PRICE]: [price, Validators.required],
+      [F.VENUE_SECTION_DESCRIPTION]: [description, Validators.required],
+      [F.VENUE_SECTION_COLOR]: [color, Validators.required],
+      [F.VENUE_SECTION_IMAGE]: [image, Validators.required],
+    });
+    const sections = this.form.get(F.VENUE_SECTIONS) as FormArray;
+    sections.push(newGroup);
+  }
+
+
 
   public registerValueChangeHandlers() {
     this.form.get(F.EVENT_TYPE)?.valueChanges
@@ -146,7 +161,6 @@ export class EventFormService {
     this.form.reset();
   }
 
-
   public destroy() {
     this.destroy$.next();
     this.destroy$.complete();
@@ -162,7 +176,6 @@ export class EventFormService {
     }
     return image;
   }
-
 
   public controlValueChanged(control: AbstractControl | null): void {
     if (control) {

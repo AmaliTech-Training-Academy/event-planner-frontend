@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 
@@ -8,6 +8,7 @@ import { ButtonComponent } from '../../../../../../shared/ui/button/button.compo
   imports: [CommonModule, NgOptimizedImage, ButtonComponent],
   templateUrl: './hero-section.component.html',
   styleUrls: ['./hero-section.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroSectionComponent {
   protected readonly title = 'Plan, Host, Engage & Grow';

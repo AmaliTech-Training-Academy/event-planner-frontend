@@ -34,7 +34,7 @@ import { FormErrorComponent } from '../form-error/form-error.component';
 })
 export class InputComponent implements ControlValueAccessor {
   // Inputs - reactive values from parent
-  public readonly type = input<'text' | 'email' | 'password'>('text');
+  public readonly type = input<'text' | 'email' | 'password' | 'number'>('text');
   public readonly placeholder = input<string>('');
   public readonly label = input<string>('');
   public readonly formControlName = input<string>('');
@@ -56,7 +56,7 @@ export class InputComponent implements ControlValueAccessor {
   // Computed values - derived state
   public readonly hasError = computed(() => !!this.errorMessage());
   public readonly inputType = computed(() =>
-    this.type() === 'password' && !this._showPassword() ? 'password' : 'text'
+    this.type() === 'password' && !this._showPassword() ? 'password' : this.type()
   );
   public readonly showPassword = computed(() => this._showPassword());
   public readonly isFocused = computed(() => this._isFocused());
@@ -113,7 +113,7 @@ export class InputComponent implements ControlValueAccessor {
     this._isFocused.set(true);
   }
 
-  onBlur(): void {
+  public onBlur(): void {
     this._isFocused.set(false);
     this.onTouched();
   }

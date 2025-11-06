@@ -1,4 +1,5 @@
 export const APP_ROUTES = {
+
     LOGIN : "/auth/login",
     SIGNUP: "/auth/signup",
     FORGOT_PASSWORD: "/auth/forgot-password",
@@ -9,5 +10,9 @@ export const APP_ROUTES = {
     ADMIN_LOGIN:'/auth/admin',
     VENUE_SECTION:'/app/define-venue-sections',
     MANAGE_EVENT_ROLES:'/app/manage-event-roles',
-    RESET_PASSWORD:'auth/reset-password',
-}
+    RESET_PASSWORD:'/auth/reset-password',
+  CREATE_EVENT: '/app/create-event',
+  CREATE_EVENT_SUCCESS: '/app/create-event-success',
+  ADMIN_DASHBOARD: '/admin',
+};
+

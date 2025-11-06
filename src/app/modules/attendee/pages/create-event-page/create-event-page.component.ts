@@ -46,6 +46,8 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.eventFormService.registerValueChangeHandlers();
+
+    this.eventService.eventTypes
   }
 
 

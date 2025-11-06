@@ -1,5 +1,5 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 interface FooterLinkGroup {
@@ -20,6 +20,7 @@ interface SocialLink {
   imports: [CommonModule, RouterLink, NgOptimizedImage],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent {
   protected readonly footerLinks: readonly FooterLinkGroup[] = [

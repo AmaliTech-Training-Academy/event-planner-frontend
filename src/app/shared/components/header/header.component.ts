@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -16,6 +16,7 @@ interface NavLink {
   imports: [CommonModule, RouterLink, ButtonComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
   public readonly navLinks = signal<NavLink[]>([
