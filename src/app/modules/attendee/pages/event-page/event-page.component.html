@@ -10,18 +10,29 @@
   </a>
 
   @if (eventDetails(); as event) {
-  <section class="hero-section">
+  <section class="hero-section" #heroSection>
     <img
-      [ngSrc]="event.heroImageUrl"
-      [alt]="event.title"
+      [ngSrc]="selectedHeroImage() || event.heroImageUrl"
+      [alt]="selectedHeroImageAlt() || event.title"
       class="hero-image"
       fill
       priority
     />
+    
+    
+    @if (event.isPaid) {
+    <span class="hero-badge">Paid</span>
+    }
+    
     <div class="hero-overlay">
       <h1 class="hero-title">{{ event.title }}</h1>
+      
+     
+      @if (selectedHeroImageDescription()) {
+      <p class="hero-description">{{ selectedHeroImageDescription() }}</p>
+      }
+      
       <div class="hero-details">
-        
         <span class="hero-detail-item">
           <img
             src="icons/Mixed.png"
@@ -43,12 +54,8 @@
           {{ event.location }}
         </span>
       </div>
-      @if (event.isPaid) {
-      <span class="hero-badge">Paid</span>
-      }
     </div>
 
-   
     @if (showDatePicker()) {
     <div class="date-picker-dropdown">
       <app-date-picker
@@ -60,9 +67,7 @@
   }
 
   <div class="content-grid">
-    
     <div class="left-column">
-      
       <div class="content-card">
         @if (eventDetails(); as event) {
         <section class="about-section">
@@ -80,14 +85,13 @@
         }
       </div>
 
-      
       @if (venueImages().length > 0) {
       <app-venue-image-slider
         [images]="venueImages()"
+        (imageClick)="onVenueImageClick($any($event))"
       ></app-venue-image-slider>
       }
 
-      
       @if (venueSections().length > 0) {
       <section class="venue-sections">
         <h2>Venue Sections</h2>
@@ -102,9 +106,7 @@
       }
     </div>
 
-    
-   <div class="right-column">
-     
+    <div class="right-column">
       <div class="ticket-options-container">
         @for (ticket of tickets(); track ticket.title) {
         <app-ticket-card
@@ -114,14 +116,12 @@
         }
       </div>
 
-      
       @if (helpEmail()) {
       <app-help-card [email]="helpEmail()"></app-help-card>
       }
     </div>
   </div>
 </main>
-
 
 @if (showRegistrationModal() && selectedTicket()) {
 <app-registration-modal
@@ -134,4 +134,3 @@
   (submitRegistration)="onSubmitRegistration($event)"
 ></app-registration-modal>
 }
-
