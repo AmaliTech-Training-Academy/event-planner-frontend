@@ -25,7 +25,8 @@ import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/m
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 import { UserManagementService } from '../../../../../../core/services/user-management.service';
-import { User } from '../../../../../../core/models/user.model';
+import { mapStatusToBoolean, mapUserStatus, User } from '../../../../../../core/models/user.model';
+import { UpdateUserPayload } from '../../../../../../core/services/backend/user-backend.service';
 
 interface CountryOption {
   readonly value: CountryCode;
@@ -193,10 +194,22 @@ export class EditUserProfileComponent {
 
     if (!this._validateImageFile(file)) return;
 
-    this._selectedImageFile = file;
-    this.error.set(null);
+    // ⚠️ Temporarily disable profile picture upload
+    this.error.set(
+      'Profile picture updates are temporarily unavailable. Please update other details.'
+    );
 
-    this._convertImageToBase64(file);
+    // Reset the file input
+    if (this._fileInput) {
+      this._fileInput.nativeElement.value = '';
+    }
+
+    return;
+
+    // TODO: Re-enable when backend FormData endpoint is fixed
+    // this._selectedImageFile = file;
+    // this.error.set(null);
+    // this._convertImageToBase64(file);
   }
 
   private _validateImageFile(file: File): boolean {
@@ -269,75 +282,74 @@ export class EditUserProfileComponent {
     return phoneNumber;
   }
 
-  protected onSubmit(): void {
-    const user = this.userData();
-    if (!this.profileForm.valid || !user?.userId) {
-      this._markFormAsTouched();
-      return;
-    }
 
-    if (this.saving()) return;
-
-    this.saving.set(true);
-    this.error.set(null);
-
-    const updatePayload = this._buildUpdatePayload();
-
-    this.userManagementService
-      .updateUser(String(user.userId), updatePayload)
-      .pipe(finalize(() => this.saving.set(false)))
-      .subscribe({
-        next: (response) => {
-          const updatedUser = response.data || response;
-          this.save.emit(updatedUser);
-          this._resetForm();
-          this.close.emit();
-        },
-        error: (err) => {
-          const errorMessage =
-            err?.error?.message ||
-            err?.message ||
-            'Failed to update profile. Please try again.';
-          this.error.set(errorMessage);
-          this.error();
-        },
-      });
+protected onSubmit(): void {
+  const user = this.userData();
+  if (!this.profileForm.valid || !user?.userId) {
+    this._markFormAsTouched();
+    return;
   }
 
-  private _buildUpdatePayload(): Partial<User> & {
-    profileImage?: string;
-    profileImageUrl?: string;
-  } {
-    const phoneNumber = this.profileForm.get('phone')?.value;
-    const countryCode = this.profileForm.get('phoneCode')?.value as CountryCode;
-    let formattedPhone = phoneNumber;
+  if (this.saving()) return;
 
-    if (phoneNumber && countryCode) {
-      try {
-        const phoneNumberObj = parsePhoneNumber(phoneNumber, countryCode);
-        if (phoneNumberObj && phoneNumberObj.isValid()) {
-          formattedPhone = phoneNumberObj.number;
-        }
-      } catch {}
-    }
+  this.saving.set(true);
+  this.error.set(null);
 
-    const user = this.userData();
-    const payload: Partial<User> & {
-      profileImage?: string;
-      profileImageUrl?: string;
-    } = {
-      fullName: this.profileForm.value.fullName,
-      email: this.profileForm.value.email,
-      phone: formattedPhone || undefined,
-      address: this.profileForm.value.address || undefined,
-    };
+  const updatePayload: UpdateUserPayload = this._buildUpdatePayload();
 
-    if (this._newImageBase64) {
-      payload.profileImage = this._newImageBase64;
-    }
+  this.userManagementService
+    .updateUser(String(user.userId), updatePayload)
+    .pipe(finalize(() => this.saving.set(false)))
+    .subscribe({
+      next: (response) => {
+        const updatedUser = response.data || response;
+        this.save.emit(updatedUser);
+        this._resetForm();
+        this.close.emit();
+      },
+      error: (err) => {
+        const errorMessage =
+          err?.error?.message ||
+          err?.message ||
+          'Failed to update profile. Please try again.';
+        this.error.set(errorMessage);
+      },
+    });
+}
 
-    return payload;
+private _buildUpdatePayload(): UpdateUserPayload {
+  const phoneNumber = this.profileForm.get('phone')?.value;
+  const countryCode = this.profileForm.get('phoneCode')?.value as CountryCode;
+  let formattedPhone = phoneNumber;
+
+  if (phoneNumber && countryCode) {
+    try {
+      const phoneNumberObj = parsePhoneNumber(phoneNumber, countryCode);
+      if (phoneNumberObj?.isValid()) {
+        formattedPhone = phoneNumberObj.number;
+      }
+    } catch {}
   }
+
+  const user = this.userData();
+  if (!user) throw new Error('No user data available');
+
+  const payload: UpdateUserPayload = {
+    fullName: this.profileForm.value.fullName,
+    email: this.profileForm.value.email,
+    phone: formattedPhone || undefined,
+    address: this.profileForm.value.address || undefined,
+    status: user.status === 'Active', // boolean for backend
+  };
+
+  // Include new profile image if uploaded
+  if (this._newImageBase64) {
+    payload.profilePicture = this._newImageBase64;
+  }
+
+  return payload;
+}
+
 
   private _markFormAsTouched(): void {
     Object.keys(this.profileForm.controls).forEach((key) => {

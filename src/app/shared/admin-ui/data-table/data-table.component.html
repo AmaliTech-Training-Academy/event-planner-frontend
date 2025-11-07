@@ -48,12 +48,15 @@
     <div class="data-table__skeleton">
       @for (row of [1,2,3,4,5]; track row) {
       <div class="data-table__skeleton-row">
-        <div class="data-table__skeleton-cell data-table__skeleton-cell--checkbox"></div>
+        <div
+          class="data-table__skeleton-cell data-table__skeleton-cell--checkbox"
+        ></div>
         @for (col of columns(); track col.key) {
         <div class="data-table__skeleton-cell"></div>
-        }
-        @if (actions().length > 0) {
-        <div class="data-table__skeleton-cell data-table__skeleton-cell--actions"></div>
+        } @if (actions().length > 0) {
+        <div
+          class="data-table__skeleton-cell data-table__skeleton-cell--actions"
+        ></div>
         }
       </div>
       }
@@ -102,31 +105,27 @@
         </td>
         } @for (column of columns(); track column.key) {
         <td class="data-table__td">
-          @if (column.key === 'name' && item['email']) {
-          <div class="data-table__user-cell">
-            <img
-              [ngSrc]="item['avatar']"
-              alt="User avatar"
-              class="data-table__user-avatar"
-              width="40"
-              height="40"
-            />
-
-            <div class="data-table__user-info">
-              <p class="data-table__user-name">
-                {{ item[column.key] }}
-              </p>
-              <p class="data-table__user-email">{{ item["email"] }}</p>
+          @if (column.key === 'fullName') {
+            <div class="data-table__user-cell">
+              <img 
+                [src]="getRandomAvatar(item)" 
+                [alt]="(column.getValue ? column.getValue(item) : item[column.key]) + ' avatar'"
+                class="data-table__user-avatar-img"
+              />
+              <div class="data-table__user-info">
+                <p class="data-table__user-name">
+                  {{ column.getValue ? column.getValue(item) : item[column.key] }}
+                </p>
+                <p class="data-table__user-email">{{ item['email'] || 'No email' }}</p>
+              </div>
             </div>
-          </div>
           } @else if (isRoleOrStatus(column.key)) {
-
-          <span [class]="getBadgeClass(item[column.key])">
-            {{ item[column.key] }}
-          </span>
-
-          } @else {
-          {{ item[column.key] }}
+  <span [class]="getBadgeClass(item[column.key])">
+    {{ capitalizeFirstLetter(item[column.key]) }}
+  </span>
+}
+@else {
+            {{ column.getValue ? column.getValue(item) : item[column.key] }}
           }
         </td>
         }
@@ -154,7 +153,9 @@
                 : action.label
             "
             class="data-table__action-btn"
-            [class.data-table__action-btn--loading]="isActionLoading(action, item)"
+            [class.data-table__action-btn--loading]="
+              isActionLoading(action, item)
+            "
           >
             @if (isActionLoading(action, item)) {
             <span class="data-table__action-spinner"></span>
@@ -190,15 +191,13 @@
   <div class="data-table__no-data">
     <img src="/images/table-empty.png" alt="No data found" />
   </div>
-  }
-  }
-  
-  @if (filteredData().length > 0 && !loading()) {
-  <app-pagination
-    [totalItems]="filteredData().length"
-    [itemsPerPage]="itemsPerPage()"
-    [currentPage]="currentPage()"
-    (currentPageChange)="setCurrentPage($event)"
-  ></app-pagination>
+  } } @if (filteredData().length > 0 && !loading()) {
+<app-pagination
+  [totalItems]="(userService?.totalElements$ | async) ?? 0"
+  [itemsPerPage]="itemsPerPage()"
+  [currentPage]="currentPage()"
+  (currentPageChange)="setCurrentPage($event)"
+></app-pagination>
+
   }
 </div>

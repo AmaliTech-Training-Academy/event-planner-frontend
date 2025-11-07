@@ -92,16 +92,16 @@ export class InviteUserModalComponent {
 
     this.isSubmitting = true;
 
-    // Build the payload - check your backend API documentation for exact structure
     const payload: InviteUserPayload = {
-      title: this.inviteForm.value.title,
-      users: this.users.value.map((user: any) => ({
-        name: user.name,
-        email: user.email,
+      invitationTitle: this.inviteForm.value.title,
+      invitees: this.users.value.map((user: any) => ({
+        inviteeName: user.name,
+        inviteeEmail: user.email,
         role: user.role,
       })),
-      eventId: this.inviteForm.value.event,
-      message: this.inviteForm.value.message || undefined,
+      event: this.inviteForm.value.event,
+      status: 'SAVE', // or 'SEND' if you have two modes
+      message: this.inviteForm.value.message || '',
     };
 
     console.log('Sending invitation payload:', payload);
@@ -109,53 +109,14 @@ export class InviteUserModalComponent {
     this.userManagementService.inviteUsers(payload).subscribe({
       next: (response) => {
         console.log('Invitations sent successfully:', response.data);
-
-        if (response.data.invitationsSent > 0) {
-          alert(
-            `Successfully sent ${response.data.invitationsSent} invitation(s)`
-          );
-        }
-
-        if (response.data.failedInvitations > 0) {
-          const failedEmails = response.data.invitations
-            .filter((inv) => inv.status === 'failed')
-            .map((inv) => `${inv.email}: ${inv.error}`)
-            .join('\n');
-
-          alert(
-            `Failed invitations (${response.data.failedInvitations}):\n${failedEmails}`
-          );
-        }
-
-        if (response.data.invitationsSent > 0) {
-          this.success.emit();
-          this.close.emit();
-        }
-
+        alert(`Invitations processed successfully.`);
+        this.success.emit();
+        this.close.emit();
         this.isSubmitting = false;
       },
       error: (err) => {
         console.error('Failed to send invitations:', err);
-        console.error('Error details:', {
-          status: err.status,
-          statusText: err.statusText,
-          url: err.url,
-          message: err.message,
-        });
-
-        let errorMessage = 'Failed to send invitations. ';
-        if (err.status === 405) {
-          errorMessage +=
-            'The invitation endpoint may not be configured correctly. Please contact support.';
-        } else if (err.status === 404) {
-          errorMessage += 'The invitation endpoint was not found.';
-        } else if (err.error?.message) {
-          errorMessage += err.error.message;
-        } else {
-          errorMessage += 'Please try again.';
-        }
-
-        alert(errorMessage);
+        alert('Failed to send invitations. Please try again.');
         this.isSubmitting = false;
       },
     });

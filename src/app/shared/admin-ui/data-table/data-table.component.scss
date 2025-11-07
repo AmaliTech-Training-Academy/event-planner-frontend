@@ -118,8 +118,8 @@
     }
 
     &--actions {
-      width: 150px;
-      text-align: right;
+      width: 120px;
+      text-align: center;
     }
   }
 
@@ -141,7 +141,7 @@
 
   &__td {
     @include body-2;
-    padding: $spacing-4 $spacing-5; 
+    padding: $spacing-4 $spacing-4; 
 
     color: $gray-700;
 
@@ -217,57 +217,55 @@
     @include body-2;
   }
 
-  &__badge {
-    @include body-3;
-    display: inline-flex;
-    align-items: center;
-    padding: $spacing-1 $spacing-4;
-    border-radius: $radius-full;
-    font-weight: 500;
-    font-size: 13px;
+ &__badge {
+  @include body-3;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px $spacing-3; // Reduced horizontal padding
+  border-radius: $radius-full;
+  font-weight: 500;
+  font-size: 12px; // Reduced from 13px
+  white-space: nowrap;
 
-    &--organizer {
-      background: $gray-50;
-      color: $gray-700;
-      border: 1px solid $gray-300;
-    }
-
-    &--attendee {
-      background: $blue-50;
-      color: $blue-600;
-      border: 1px solid $blue-200;
-    }
-
-    &--active {
-      background: $green-50;
-      color: $green-700;
-      border: 1px solid $green-300;
-    }
-
-    &--inactive {
-      background: $red-50;
-      color: $red-600;
-      border: 1px solid $red-300;
-    }
+  &--organizer {
+    background: $gray-50 !important;
+    color: $gray-700;
+    border: 1px solid $gray-300 !important;
   }
 
+  &--attendee {
+    background: $blue-50;
+    color: $blue-600;
+    border: 1px solid $blue-200;
+  }
+
+  &--active {
+    background: $green-50;
+    color: $green-700;
+    border: 1px solid $green-300;
+    font-size: .75rem;
+  }
+
+  &--inactive {
+    background: $red-50;
+    color: $red-600;
+    border: 1px solid $red-300;
+  }
+}
   &__user-cell {
     display: flex;
     align-items: center;
     gap: $spacing-3;
   }
 
-  &__user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: $radius-full;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: $gray-100;
-    font-size: 20px;
-    flex-shrink: 0;
-  }
+&__user-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: $gray-100;
+}
 
   &__user-info {
     display: flex;

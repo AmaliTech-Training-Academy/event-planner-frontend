@@ -27,6 +27,7 @@ import { InviteUserModalComponent } from './components/invite-user-modal/invite-
 import { SuccessModalComponent } from './components/success-modal/success-modal.component';
 import { EditUserProfileComponent } from './components/edit-user-profile/edit-user-profile.component';
 import { ViewUserProfileComponent } from './components/view-user-profile/view-user-profile.component';
+import { UpdateUserPayload } from '../../../../core/services/backend/user-backend.service';
 
 @Component({
   selector: 'app-user-management-page',
@@ -137,10 +138,10 @@ export class UserManagementPageComponent implements OnInit {
       key: 'role',
       placeholder: 'All Roles',
       options: [
-        { label: 'Organizer', value: USER_ROLES.ORGANIZER },
+        { label: 'Organizer', value: USER_ROLES.ORGANIZER }, // 'ORGANISER'
         { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
         { label: 'Attendee', value: USER_ROLES.ATTENDEE },
-        { label: 'Venue Staff', value: USER_ROLES.VENUE_STAFF },
+        { label: 'Admin', value: USER_ROLES.ADMIN },
       ],
     },
     {
@@ -178,7 +179,7 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   public onPageChange(page: number): void {
-    this._loadUsers(page);
+    this._loadUsers(page - 1); // ✅ keep it consistent
   }
 
   protected openInviteModal(): void {
@@ -235,13 +236,19 @@ export class UserManagementPageComponent implements OnInit {
       return;
     }
 
-    const updatePayload = {
+    // ✅ Build UpdateUserPayload matching backend format
+    const updatePayload: UpdateUserPayload = {
       fullName: formData.fullName,
       email: formData.email,
-      phone: formData.phoneNumber,
-      address: formData.address,
-      profileImageUrl: formData.profileImage || selectedUser.profileImageUrl,
+      phone: formData.phone || formData.phoneNumber || '',
+      address: formData.address || '',
+      status: selectedUser.status === 'Active', // ✅ Convert to boolean
     };
+
+    // Add profile picture if provided
+    if (formData.profileImage) {
+      updatePayload.profilePicture = formData.profileImage;
+    }
 
     this._userService
       .updateUser(selectedUser.userId.toString(), updatePayload)
@@ -253,12 +260,11 @@ export class UserManagementPageComponent implements OnInit {
         },
         error: (error) => {
           console.error('Failed to update user:', error);
+          alert('Failed to update user. Please try again.');
         },
       });
   }
-
-  protected onRowExpanded(user: User): void {
-  }
+  protected onRowExpanded(user: User): void {}
 
   private _openInviteModal(): void {
     this.openInviteModal();
@@ -285,27 +291,16 @@ export class UserManagementPageComponent implements OnInit {
   private _toggleUserStatus(user: User): void {
     this.togglingUserId.set(user.userId);
 
-    const normalizedStatus =
-      typeof user.status === 'boolean'
-        ? user.status
-          ? 'Active'
-          : 'Inactive'
-        : user.status;
-    const isCurrentlyActive = normalizedStatus === 'Active';
-
     this._userService
-      .deactivateUser(user.userId)
+      .toggleUserStatusWithBackend(user.userId)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
-          this._userService.toggleUserStatus(user.userId);
-
           console.log(
-            isCurrentlyActive
+            user.status === 'Active'
               ? '✅ User deactivated successfully'
               : '✅ User reactivated successfully'
           );
-
           this.togglingUserId.set(null);
         },
         error: (err) => {

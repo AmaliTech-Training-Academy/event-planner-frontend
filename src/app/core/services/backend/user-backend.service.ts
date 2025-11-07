@@ -7,14 +7,16 @@ import {
   InviteUserResponse,
   User,
   UserManagementResponse,
+  UserSearchResponse,
 } from '../../models/user.model';
 
 export interface UpdateUserPayload {
   fullName: string;
   email: string;
-  phone?: string;
-  address?: string;
+  phone: string; // backend expects string, not optional
+  address: string; // backend expects string, not optional
   status: boolean;
+  profilePicture?: string;
 }
 
 export interface UserUpdateRequestPayload {
@@ -54,9 +56,10 @@ export class UserBackendService {
     return this.http.post<{ data: User }>(API_ENDPOINTS.CREATE_USER, user);
   }
 
+  // In your UserBackendService
   public updateUser(
     userId: string,
-    payload: UserUpdateRequestPayload
+    payload: UpdateUserPayload // <--- use the backend payload type
   ): Observable<{ data: User }> {
     return this.http.put<{ data: User }>(
       API_ENDPOINTS.UPDATE_USER(userId),
@@ -83,7 +86,8 @@ export class UserBackendService {
     status?: boolean,
     page: number = 0,
     size: number = 10
-  ): Observable<UserManagementResponse> {
+  ): Observable<UserSearchResponse> {
+    // ✅ FIX: return correct type
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -92,7 +96,7 @@ export class UserBackendService {
     if (role) params = params.set('role', role);
     if (status !== undefined) params = params.set('status', status.toString());
 
-    return this.http.get<UserManagementResponse>(API_ENDPOINTS.SEARCH_USERS, {
+    return this.http.get<UserSearchResponse>(API_ENDPOINTS.SEARCH_USERS, {
       params,
     });
   }

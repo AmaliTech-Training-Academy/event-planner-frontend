@@ -95,7 +95,7 @@ export class DataTableComponent<T extends Record<string, any>> {
 
   public setCurrentPage(page: number): void {
     this._currentPage.set(page);
-    this._performBackendSearch(page - 1);
+    this._performBackendSearch(page - 1); // ✅ backend expects 0-based
   }
 
   public readonly paginatedData = computed(() => this.filteredData());
@@ -109,7 +109,20 @@ export class DataTableComponent<T extends Record<string, any>> {
     selected.has(item) ? selected.delete(item) : selected.add(item);
     this._selectedItems.set(selected);
   }
+  /** Capitalizes the first letter of a string */
+  public capitalizeFirstLetter(value: string | undefined | null): string {
+    if (!value) return '';
+    value = value.toString().toLowerCase(); // convert entire string to lowercase first
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  }
 
+  public getRandomAvatar(item: T): string {
+    // Generate a consistent random avatar based on user ID or email
+    const identifier = item['userId'] || item['email'] || item['id'] || '';
+    const avatarNumber = (String(identifier).charCodeAt(0) % 70) + 1; // Random number 1-70
+
+    return `https://i.pravatar.cc/150?img=${avatarNumber}`;
+  }
   public isAllSelected(): boolean {
     const pageData = this.paginatedData();
     return (
@@ -189,10 +202,20 @@ export class DataTableComponent<T extends Record<string, any>> {
     return ['role', 'status'].includes(String(key));
   }
 
-  public getBadgeClass(value: unknown): string {
-    return `data-table__badge data-table__badge--${String(
-      value
-    ).toLowerCase()}`;
+  public getBadgeClass(value: string): string {
+    const normalized = value.toLowerCase();
+
+    // normalize British/American spelling if needed
+    const roleMap: Record<string, string> = {
+      organiser: 'organizer',
+      organizer: 'organizer',
+      attendee: 'attendee',
+      active: 'active',
+      inactive: 'inactive',
+    };
+
+    const badgeClass = roleMap[normalized] || normalized;
+    return `data-table__badge data-table__badge--${badgeClass}`;
   }
 
   public isActionVisible(action: TableAction<T>, item: T): boolean {
