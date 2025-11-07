@@ -1,0 +1,13 @@
+<div class="missions">
+    @for (mission of missions; track $index) {
+    <div class="mission-card">
+        <div class="icon-container">
+            <img [src]="mission.icon" alt="innovation icon">
+        </div>
+        <div class="info">
+            <p>{{mission.title}}</p>
+            <p>{{mission.description}}</p>
+        </div>
+    </div>
+    }
+</div>

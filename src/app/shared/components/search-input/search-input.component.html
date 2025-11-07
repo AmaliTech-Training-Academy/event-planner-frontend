@@ -1,12 +1,19 @@
 <div class="filter-input-wrapper search-wrapper">
-  @if (iconPath) {
-    <img [src]="iconPath" class="filter-icon" alt="Search" />
-  }
-  <input 
-    type="text" 
-    [placeholder]="placeholder"
+ 
+  <img
+    src="icons/search-icon.png"
+    alt="Search"
+    class="filter-icon"
+    aria-hidden="true"
+  />
+
+  <input
+    type="text"
+    [placeholder]="placeholder()"
+    [value]="value()"
+    (input)="onValueChange($event)"
+    (blur)="onBlur()"
     class="filter-search"
-    [(ngModel)]="value"
-    (ngModelChange)="onValueChange($event)"
   />
 </div>
+

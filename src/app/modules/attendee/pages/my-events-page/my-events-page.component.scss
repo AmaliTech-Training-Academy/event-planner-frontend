@@ -1,0 +1,54 @@
+:host {
+  display: block;
+  background-color: #ffffff;
+  min-height: 100vh; 
+}
+
+.my-events-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem 4rem; 
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem; 
+}
+
+.page-title {
+  font-family: 'Lato', sans-serif;
+  font-size: 2.5rem; 
+  font-weight: 700;
+  color: #292929;
+  margin: 0;
+}
+
+.filter-link {
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem; 
+  font-weight: 500;
+  color: #0787c2; 
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.event-grid {
+  display: grid;
+  gap: 1.5rem; 
+  grid-template-columns: repeat(1, 1fr);
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

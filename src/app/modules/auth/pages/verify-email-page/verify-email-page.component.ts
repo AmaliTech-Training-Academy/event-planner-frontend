@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 import { LogoComponent } from '../../components/logo/logo.component';
@@ -12,6 +12,7 @@ import { OtpInputComponent } from '../../../../shared/ui/otp-input/otp-input.com
 import { AuthService } from '../../../../core/services/auth.service';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { AuthResponseBody, OtpBodyData } from '../../../../core/models/auth-response.model';
 
 @Component({
   selector: 'app-verify-email-page',
@@ -62,13 +63,14 @@ export class VerifyEmailPageComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.authService.verifyEmail(this.currentOtpValue, this.email)
+    (this.authService.verifyEmail(this.currentOtpValue, this.email) as Observable<AuthResponseBody<OtpBodyData> | null>)
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (response) => {
-          this.notificationService.success(response.description);
+          if (response) {
+            this.notificationService.success(response.description);
+          }
         }
-
       });
   }
 
