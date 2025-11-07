@@ -287,3 +287,31 @@ app-tab-toggle ::ng-deep .tab-button {
     width: 100%;
   }
 }
+
+
+.filter-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+
+  span {
+    flex: 1;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.is-placeholder {
+      color: #9ca3af; 
+    }
+  }
+
+  .filter-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin-left: auto;
+  }
+}

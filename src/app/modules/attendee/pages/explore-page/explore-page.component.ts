@@ -49,8 +49,13 @@ import {
 export class ExplorePageComponent implements OnInit {
 
   private allEvents = signal<EventCard[]>([]);
+  private freeEventsPage = signal(1);
+  private paidEventsPage = signal(1);
+  private upcomingEventsPage = signal(1);
+  private pastEventsPage = signal(1);
+  private readonly EVENTS_PER_PAGE = 6;
 
- 
+
   public upcomingEvents = computed(() => {
     if (this.activeToggle() !== 'upcoming') return [];
     const now = new Date();
@@ -77,31 +82,23 @@ export class ExplorePageComponent implements OnInit {
     return filtered.slice(0, this.paidEventsPage() * this.EVENTS_PER_PAGE);
   });
 
-  private freeEventsPage = signal(1);
-  private paidEventsPage = signal(1);
-  private upcomingEventsPage = signal(1);
-  private pastEventsPage = signal(1);
-  private readonly EVENTS_PER_PAGE = 6;
 
-  showingAllFree = computed(() => !this.hasMoreFreeEvents());
-  showingAllPaid = computed(() => !this.hasMorePaidEvents());
-  showingAllUpcoming = computed(() => !this.hasMoreUpcomingEvents());
-  showingAllPast = computed(() => !this.hasMorePastEvents());
-
-  searchQuery = signal('');
-  selectedLocation = signal('Location');
-  selectedEventType = signal('All Events');
-  selectedDate = signal<Date | null>(null);
-
-  showLocationDropdown = signal(false);
-  showEventTypeDropdown = signal(false);
-  showDatePicker = signal(false);
-  activeToggle = signal<string>('all');
-
-  eventToggles = signal<TabToggle[]>([]);
-  eventTypeOptions = signal<string[]>([]);
-  recentSearches = signal<SearchLocation[]>([]);
-  popularLocations = signal<PopularLocation[]>([]);
+  public showingAllFree = computed(() => !this.hasMoreFreeEvents());
+  public showingAllPaid = computed(() => !this.hasMorePaidEvents());
+  public showingAllUpcoming = computed(() => !this.hasMoreUpcomingEvents());
+  public showingAllPast = computed(() => !this.hasMorePastEvents());
+  public searchQuery = signal('');
+  public selectedLocation = signal('Location');
+  public selectedEventType = signal('All Events');
+  public selectedDate = signal<Date | null>(null);
+  public showLocationDropdown = signal(false);
+  public showEventTypeDropdown = signal(false);
+  public showDatePicker = signal(false);
+  public activeToggle = signal<string>('all');
+  public eventToggles = signal<TabToggle[]>([]);
+  public eventTypeOptions = signal<string[]>([]);
+  public recentSearches = signal<SearchLocation[]>([]);
+  public popularLocations = signal<PopularLocation[]>([]);
 
   constructor(private router: Router) {
     this.router.events.pipe(
@@ -115,7 +112,7 @@ export class ExplorePageComponent implements OnInit {
   }
 
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
+  public onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     const clickedInsideDropdown = target.closest('.filter-dropdown-wrapper');
 
@@ -142,6 +139,7 @@ export class ExplorePageComponent implements OnInit {
     this.showDatePicker.set(false);
   }
 
+
   protected onTabChange(selectedTabKey: string): void {
     this.activeToggle.set(selectedTabKey);
     this.resetPagination();
@@ -151,6 +149,7 @@ export class ExplorePageComponent implements OnInit {
     this.searchQuery.set(query);
     this.resetPagination();
   }
+
 
   protected toggleLocationDropdown(): void {
     this.showLocationDropdown.update((v) => !v);
@@ -174,6 +173,7 @@ export class ExplorePageComponent implements OnInit {
     this.resetPagination();
   }
 
+
   protected toggleEventTypeDropdown(): void {
     this.showEventTypeDropdown.update((v) => !v);
     this.showLocationDropdown.set(false);
@@ -189,6 +189,7 @@ export class ExplorePageComponent implements OnInit {
     this.showEventTypeDropdown.set(false);
     this.resetPagination();
   }
+
 
   protected toggleDatePicker(): void {
     this.showDatePicker.update((v) => !v);
@@ -208,6 +209,7 @@ export class ExplorePageComponent implements OnInit {
     this.upcomingEventsPage.set(1);
     this.pastEventsPage.set(1);
   }
+
 
   protected hasMoreFreeEvents(): boolean {
     if (this.activeToggle() !== 'all') return false;
@@ -234,6 +236,7 @@ export class ExplorePageComponent implements OnInit {
     const allPast = this.getAllFilteredEvents().filter(e => e.date < now);
     return this.pastEvents().length < allPast.length;
   }
+
 
   private getAllFilteredEvents(): EventCard[] {
     let events = this.allEvents();
@@ -264,6 +267,7 @@ export class ExplorePageComponent implements OnInit {
     return events;
   }
 
+
   protected onLoadMoreUpcoming(): void {
     this.upcomingEventsPage.update(page => page + 1);
   }
@@ -279,6 +283,7 @@ export class ExplorePageComponent implements OnInit {
   protected onLoadMorePaid(): void {
     this.paidEventsPage.update(page => page + 1);
   }
+
 
   protected onShowLessUpcoming(): void {
     this.upcomingEventsPage.set(1);
