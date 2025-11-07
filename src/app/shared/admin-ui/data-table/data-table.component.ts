@@ -15,6 +15,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
 import { FilterSelectComponent } from '../filter-select/filter-select.component';
 import { InputComponent } from '../../ui/input/input.component';
 import { UserManagementService } from '../../../core/services/user-management.service';
+import { debounceTime, Subject, take } from 'rxjs';
 
 export interface TableColumn<T> {
   readonly key: Extract<keyof T, string>;
@@ -93,6 +94,16 @@ export class DataTableComponent<T extends Record<string, any>> {
 
   public readonly filteredData = computed(() => this.data());
 
+  private _searchSubject = new Subject<string>();
+  constructor() {
+    this._searchSubject
+      .pipe(debounceTime(300)) // wait 300ms after typing stops
+      .subscribe((query) => {
+        this._searchQuery.set(query);
+        this._currentPage.set(1);
+        this._performBackendSearch(0);
+      });
+  }
   public setCurrentPage(page: number): void {
     this._currentPage.set(page);
     this._performBackendSearch(page - 1); // ✅ backend expects 0-based
@@ -153,11 +164,8 @@ export class DataTableComponent<T extends Record<string, any>> {
   }
 
   public updateSearch(query: string): void {
-    this._searchQuery.set(query);
-    this._currentPage.set(1);
-    this._performBackendSearch(0);
+    this._searchSubject.next(query);
   }
-
   public updateFilter(filterKey: string, value: string): void {
     const filters = new Map(this._activeFilters());
     filters.set(filterKey, value);
@@ -166,8 +174,14 @@ export class DataTableComponent<T extends Record<string, any>> {
     this._performBackendSearch(0);
   }
 
+  private _totalFilteredItems = signal<number>(0);
+  public readonly totalFilteredItems = computed(() =>
+    this._totalFilteredItems()
+  );
+
   private _performBackendSearch(page: number): void {
-    if (!this.userService) return;
+    const userService = this.userService;
+    if (!userService) return; // early return if null
 
     const keyword = this._searchQuery().trim() || undefined;
     const filters = this._activeFilters();
@@ -179,7 +193,19 @@ export class DataTableComponent<T extends Record<string, any>> {
         ? this._normalizeStatusToBoolean(statusValue)
         : undefined;
 
-    this.userService.searchUsers(keyword, role, status, page).subscribe();
+    userService
+      .searchUsers(keyword, role, status, page)
+      .pipe(take(1))
+      .subscribe({
+        next: (users) => {
+          const total = userService.totalElements ?? users.length;
+          this._totalFilteredItems.set(total);
+        },
+        error: (err) => {
+          console.error('[DataTable] Search error:', err);
+          this._totalFilteredItems.set(0);
+        },
+      });
   }
 
   private _normalizeStatusToBoolean(status: string): boolean {

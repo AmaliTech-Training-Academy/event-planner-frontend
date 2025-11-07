@@ -5,14 +5,15 @@
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-        <app-input
-          class="md"
-          placeholder="Search users..."
-          [value]="searchQuery()"
-          (valueChange)="updateSearch($event)"
-          iconSrc="icons/search-icon.png"
-          [disabled]="loading()"
-        />
+       <app-input
+  class="md"
+  placeholder="Search users..."
+  [value]="searchQuery()"
+  (valueChange)="updateSearch($event)"
+  iconSrc="icons/search-icon.png"
+  [disabled]="loading()"
+/>
+
       </div>
       }
       <!-- Reusable Filter Select -->
@@ -106,26 +107,30 @@
         } @for (column of columns(); track column.key) {
         <td class="data-table__td">
           @if (column.key === 'fullName') {
-            <div class="data-table__user-cell">
-              <img 
-                [src]="getRandomAvatar(item)" 
-                [alt]="(column.getValue ? column.getValue(item) : item[column.key]) + ' avatar'"
-                class="data-table__user-avatar-img"
-              />
-              <div class="data-table__user-info">
-                <p class="data-table__user-name">
-                  {{ column.getValue ? column.getValue(item) : item[column.key] }}
-                </p>
-                <p class="data-table__user-email">{{ item['email'] || 'No email' }}</p>
-              </div>
+          <div class="data-table__user-cell">
+            <img
+              [src]="getRandomAvatar(item)"
+              [alt]="
+                (column.getValue ? column.getValue(item) : item[column.key]) +
+                ' avatar'
+              "
+              class="data-table__user-avatar-img"
+            />
+            <div class="data-table__user-info">
+              <p class="data-table__user-name">
+                {{ column.getValue ? column.getValue(item) : item[column.key] }}
+              </p>
+              <p class="data-table__user-email">
+                {{ item["email"] || "No email" }}
+              </p>
             </div>
+          </div>
           } @else if (isRoleOrStatus(column.key)) {
-  <span [class]="getBadgeClass(item[column.key])">
-    {{ capitalizeFirstLetter(item[column.key]) }}
-  </span>
-}
-@else {
-            {{ column.getValue ? column.getValue(item) : item[column.key] }}
+          <span [class]="getBadgeClass(item[column.key])">
+            {{ capitalizeFirstLetter(item[column.key]) }}
+          </span>
+          } @else {
+          {{ column.getValue ? column.getValue(item) : item[column.key] }}
           }
         </td>
         }
@@ -192,12 +197,13 @@
     <img src="/images/table-empty.png" alt="No data found" />
   </div>
   } } @if (filteredData().length > 0 && !loading()) {
-<app-pagination
-  [totalItems]="(userService?.totalElements$ | async) ?? 0"
+ <app-pagination
+  [totalItems]="totalFilteredItems()"
   [itemsPerPage]="itemsPerPage()"
   [currentPage]="currentPage()"
   (currentPageChange)="setCurrentPage($event)"
 ></app-pagination>
+
 
   }
 </div>

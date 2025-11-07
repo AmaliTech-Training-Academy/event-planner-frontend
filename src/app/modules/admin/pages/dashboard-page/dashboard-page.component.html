@@ -1,6 +1,6 @@
 <div class="dashboard-page">
   <div class="dashboard-page__cards">
-    @for (card of dashboardCards; track card.title) {
+    @for (card of dashboardCards(); track card.title) {
       <app-admin-user-card [data]="card" />
     }
   </div>

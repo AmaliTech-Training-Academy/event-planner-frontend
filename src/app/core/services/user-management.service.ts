@@ -6,6 +6,7 @@ import {
   catchError,
   finalize,
   map,
+  of,
   tap,
   throwError,
 } from 'rxjs';
@@ -38,6 +39,17 @@ export class UserManagementService {
   public readonly loading$ = this._loading$.asObservable();
   public readonly totalPages$ = this._totalPages$.asObservable();
   public readonly currentPage$ = this._currentPage$.asObservable();
+  private _usersCache: User[] = [];
+  private _searchCache = new Map<string, User[]>();
+
+  private _getCacheKey(
+    keyword?: string,
+    role?: string,
+    status?: boolean,
+    page: number = 0
+  ) {
+    return `${keyword ?? ''}|${role ?? ''}|${status ?? ''}|${page}`;
+  }
 
   constructor(
     private readonly userBackend: UserBackendService,
@@ -68,11 +80,23 @@ export class UserManagementService {
       tap((response) => {
         const pagination = response.data?.users ?? response.data;
         const users = pagination?.content ?? [];
+        const normalizedUsers: User[] = users.map(normalizeUserStatus);
 
-        this._users$.next(users);
+        // Update cache
+        if (pagination?.number === 0) {
+          // first page replaces the cache
+          this._usersCache = normalizedUsers;
+        } else {
+          // subsequent pages append
+          this._usersCache = [...this._usersCache, ...normalizedUsers];
+        }
+
+        this._users$.next(normalizedUsers);
         this._totalPages$.next(pagination?.totalPages ?? 1);
         this._currentPage$.next(pagination?.number ?? 0);
-        this._totalElements$.next(pagination?.totalElements ?? users.length);
+        this._totalElements$.next(
+          pagination?.totalElements ?? normalizedUsers.length
+        );
 
         this._updateUserCards(response.data ?? {});
       }),
@@ -86,6 +110,21 @@ export class UserManagementService {
       finalize(() => this.setLoading(false))
     );
   }
+  public get totalElements(): number {
+    return this._totalElements$.getValue(); // safe, BehaviorSubject
+  }
+
+  private _userStats: {
+    totalUsers: number;
+    totalOrganizers: number;
+    totalAttendees: number;
+    totalDeactivatedUsers: number;
+  } = {
+    totalUsers: 0,
+    totalOrganizers: 0,
+    totalAttendees: 0,
+    totalDeactivatedUsers: 0,
+  };
 
   public searchUsers(
     keyword?: string,
@@ -93,88 +132,82 @@ export class UserManagementService {
     status?: boolean,
     page: number = 0
   ) {
-    console.log('[UserManagementService] 🔍 searchUsers called with:', {
-      keyword,
-      role,
-      status,
-      page,
-    });
+    const cacheKey = this._getCacheKey(keyword, role, status, page);
+
+    // Return cached results if available
+    if (this._searchCache.has(cacheKey)) {
+      const cachedUsers = this._searchCache.get(cacheKey)!;
+      this._users$.next(cachedUsers);
+      return of(cachedUsers); // emit as observable
+    }
+
     this.setLoading(true);
 
     return this.userBackend.searchUsers(keyword, role, status, page).pipe(
       map((response: UserSearchResponse) => {
         const users = response.data?.content ?? [];
-        const normalizedUsers: User[] = users.map(normalizeUserStatus);
-
-        console.log(
-          '[UserManagementService] 🔄 Normalized users:',
-          normalizedUsers
-        );
-
-        return {
-          ...response,
-          data: {
-            ...response.data,
-            users: {
-              ...response.data,
-              content: normalizedUsers,
-            },
-          },
-        };
+        return users.map(normalizeUserStatus);
       }),
-      tap((response) => {
-        const parsedUsers = response.data?.users?.content ?? [];
-        console.log(
-          '[UserManagementService] ✅ Parsed users count:',
-          parsedUsers.length
-        );
-        console.log('[UserManagementService] ✅ First user:', parsedUsers[0]);
+      tap((users) => {
+        // Cache the results
+        this._searchCache.set(cacheKey, users);
 
-        this._users$.next(parsedUsers);
-        this._totalPages$.next(response.data?.users?.totalPages ?? 0);
-        this._currentPage$.next(response.data?.users?.number ?? 0);
-        this._updateUserCards(response.data ?? {});
+        // Update signals
+        this._users$.next(users);
       }),
       catchError((err) => {
         this.errorHandler.handle(err);
         console.error('[UserManagementService] ❌ searchUsers error', err);
-        return throwError(() => err);
+        return of([]); // return empty array on error
       }),
       finalize(() => this.setLoading(false))
     );
   }
 
-  private _updateUserCards(data: any): void {
+  private _updateUserCards(data?: any): void {
+    const stats = data?.totalUsers != null ? data : this._userStats;
+
+    // Store stats if data contains them
+    if (data?.totalUsers != null) {
+      this._userStats = {
+        totalUsers: data.totalUsers,
+        totalOrganizers: data.totalOrganizers,
+        totalAttendees: data.totalAttendees,
+        totalDeactivatedUsers: data.totalDeactivatedUsers,
+      };
+    }
+
     const cards: UserCardData[] = [
       {
         title: 'Total Users',
-        count: data.totalUsers,
+        count: stats.totalUsers,
         icon: 'icons/user-icon-orange.png',
         bgColor: '#FFF4ED',
         iconColor: '#FF6B2C',
       },
       {
         title: 'Active Organizers',
-        count: data.totalOrganizers,
+        count: stats.totalOrganizers,
         icon: 'icons/user-icon-green.png',
         bgColor: '#E8F5E9',
         iconColor: '#4CAF50',
       },
       {
         title: 'Attendees',
-        count: data.totalAttendees,
+        count: stats.totalAttendees,
         icon: 'icons/user-icon-blue.png',
         bgColor: '#E3F2FD',
         iconColor: '#2196F3',
       },
       {
         title: 'Deactivated',
-        count: data.totalDeactivatedUsers,
+        count: stats.totalDeactivatedUsers,
         icon: 'icons/user-icon-red.png',
         bgColor: '#FFEBEE',
         iconColor: '#F44336',
       },
     ];
+
     this._userCards$.next(cards);
   }
 
