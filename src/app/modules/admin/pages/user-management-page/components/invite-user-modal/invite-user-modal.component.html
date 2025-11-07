@@ -1,42 +1,110 @@
 <div class="modal-backdrop" (click)="onCancel()"></div>
 
-<div class="modal">
-  <h3 class="modal__title">Invite New User</h3>
+<div class="modal" (click)="$event.stopPropagation()">
+  <app-modal-header
+    title="Invite New User"
+    (close)="onCancel()"
+  ></app-modal-header>
 
   <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()">
-    <app-input formControlName="title" label="Invitation Title"></app-input>
+    <div class="form-field">
+      <label for="title">Invitation Title</label>
+      <app-input
+        id="title"
+        formControlName="title"
+        placeholder="Early Bird Registration Offer"
+        [errorMessage]="hasError('title') ? getErrorMessage('title') : ''"
+      ></app-input>
+    </div>
 
-    <app-input type="email" label="Email" formControlName="email"></app-input>
+    <div class="users-section">
+      <label>Users</label>
+      <div class="users-list" formArrayName="users">
+        @for (user of users.controls; track $index) {
+          <div class="user-row" [formGroupName]="$index">
+            <div class="user-fields">
+              <div class="form-field">
+                <app-input
+                  formControlName="name"
+                  placeholder="Kofi Manu"
+                  [errorMessage]="hasUserFieldError($index, 'name') ? getUserFieldErrorMessage($index, 'name') : ''"
+                ></app-input>
+              </div>
+              <div class="form-field">
+                <app-input
+                  type="email"
+                  formControlName="email"
+                  placeholder="kofimanu@gmail.com"
+                  [errorMessage]="hasUserFieldError($index, 'email') ? getUserFieldErrorMessage($index, 'email') : ''"
+                ></app-input>
+              </div>
+              <div class="form-field">
+                <app-filter-select
+                  formControlName="role"
+                  [options]="roles"
+                  placeholder="Select Role"
+                  size="md"
+                  [errorMessage]="hasUserFieldError($index, 'role') ? getUserFieldErrorMessage($index, 'role') : ''"
+                ></app-filter-select>
+              </div>
+            </div>
+            @if (users.length > 1) {
+              <app-button
+                type="danger"
+                color="delete"
+                (onClick)="removeUser($index)"
+                extraClass="btn-icon-only"
+              >
+                <img src="icons/delete-user.png" alt="Delete user" />
+              </app-button>
+            }
+          </div>
+        }
+      </div>
 
-    <label>Select Role</label>
-<label>Select Role</label>
-<app-filter-select
-  formControlName="role"
-  [options]="roles"
-></app-filter-select>
+      <app-button
+        type="social"
+        (onClick)="addUser()"
+        extraClass="btn-add-user"
+      >
+        <img src="icons/add-icon.png" alt="Add icon" />
+        <span>Add User</span>
+      </app-button>
+    </div>
 
+    <div class="form-field">
+      <label for="event">Select Event</label>
+      <app-filter-select
+        id="event"
+        formControlName="event"
+        [options]="events"
+        placeholder="Select Event"
+        size="lg"
+        [errorMessage]="hasError('event') ? getErrorMessage('event') : ''"
+      ></app-filter-select>
+    </div>
 
-
-    <label>Select Event</label>
-<label>Select Role</label>
-<app-filter-select
-  formControlName="role"
-  [options]="roles"
-></app-filter-select>
-
-
-
-    <label>Type Message (Optional)</label>
-    <textarea formControlName="message"></textarea>
+    <div class="form-field">
+      <label for="message">Type Message(Optional)</label>
+      <textarea
+        id="message"
+        formControlName="message"
+        placeholder="Type your message here"
+        rows="4"
+      ></textarea>
+    </div>
 
     <div class="modal__actions">
-      <app-button type="secondary" (click)="onCancel()">Cancel</app-button>
+      <app-button type="secondary" (onClick)="onSaveProgress()">
+        Save Progress
+      </app-button>
       <app-button
         type="primary"
+        buttonType="submit"
         [disabled]="inviteForm.invalid"
-        (click)="onSubmit()"
-        >Send Invite</app-button
       >
+        Send Invite
+      </app-button>
     </div>
   </form>
 </div>

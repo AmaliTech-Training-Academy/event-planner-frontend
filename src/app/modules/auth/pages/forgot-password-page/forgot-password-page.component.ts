@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -16,7 +16,7 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { LogoComponent } from '../../components/logo/logo.component';
-
+import { finalize } from 'rxjs/operators';
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
@@ -35,7 +35,8 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   constructor(
     private readonly fb: FormBuilder,
     private readonly authService: AuthService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -64,21 +65,21 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
     return APP_ROUTES;
   }
 
-  protected onSubmit() {
+
+  onSubmit(): void {
     if (this.forgotPasswordForm.invalid) {
       this.forgotPasswordForm.markAllAsTouched();
       return;
     }
+
     const { email } = this.forgotPasswordForm.value;
 
-    this.authService.forgotPassword(email).subscribe({
-      next: (response) => {
-        this.notificationService.success(response.description);
-      },
-      complete: () => {
-        this.forgotPasswordForm.reset();
-      }
-    })
-
+    this.authService.forgotPassword(email)
+      .subscribe({
+        next: (response) => {
+          this.notificationService.success(response.description);
+          this.forgotPasswordForm.reset();
+        }
+      });
   }
 }

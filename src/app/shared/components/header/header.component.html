@@ -1,12 +1,20 @@
 <header class="header">
   <div class="header__container container">
-    <!-- Logo -->
     <div class="header__logo">
       <span class="header__logo--orange">Event</span>
       <span class="header__logo--black">Hub</span>
     </div>
 
     <nav class="header__nav" [class.open]="isMenuOpen()">
+      <button
+        class="header__close-btn"
+        type="button"
+        *ngIf="isMenuOpen()"
+        (click)="closeMenu()"
+      >
+        <img src="icons/close.png" alt="Close menu" class="header__icon" />
+      </button>
+
       @for (link of navLinks(); track link.path) {
       <a
         [routerLink]="link.path"
@@ -24,17 +32,95 @@
       }
 
       <div class="header__actions">
+        @if (!isLoggedIn()) {
         <app-button
           type="secondary"
           [extraClass]="'header__button'"
           routerLink="/auth/login"
-          >Sign In</app-button
         >
+          Sign In
+        </app-button>
+        } @else {
+        <div class="header__user-dropdown">
+          <div
+            class="header__user header__user--desktop"
+            (click)="toggleUserMenu()"
+          >
+            <div class="header__user-avatar">
+              <img src="icons/avatar.png" alt="User Avatar" />
+            </div>
+            <span class="header__user-name">{{ getUserName() }}</span>
+            <img
+              src="icons/drop-down.png"
+              alt="Dropdown"
+              class="header__dropdown-icon"
+              [class.open]="isUserMenuOpen()"
+            />
+          </div>
+
+          @if (isUserMenuOpen()) {
+          <div class="header__user-menu header__user-menu--desktop">
+            <a class="header__dropdown-item" routerLink="/app/profile"
+              >Profile</a
+            >
+            <a class="header__dropdown-item" routerLink="/app/my-event"
+              >My Events</a
+            >
+            <a class="header__dropdown-item" routerLink="/app/payment-settings"
+              >Payment Settings</a
+            >
+            <a
+              class="header__dropdown-item header__logout"
+              (click)="logout()"
+              href="javascript:void(0)"
+              >Logout</a
+            >
+          </div>
+          }
+
+          <div class="header__user-menu header__user-menu--mobile">
+            <a
+              class="header__dropdown-item"
+              routerLink="/app/profile"
+              (click)="closeMenu()"
+              >Profile</a
+            >
+            <a
+              class="header__dropdown-item"
+              routerLink="/app/my-events"
+              (click)="closeMenu()"
+              >My Events</a
+            >
+            <a
+              class="header__dropdown-item"
+              routerLink="/app/payment-settings"
+              (click)="closeMenu()"
+              >Payment Settings</a
+            >
+            <a
+              class="header__dropdown-item header__logout"
+              (click)="logout()"
+              href="javascript:void(0)"
+              >Logout</a
+            >
+          </div>
+        </div>
+        }
       </div>
     </nav>
 
-    <button class="header__hamburger" (click)="toggleMenu()">
-      <img src="icons/menu.png" alt="Menu" class="header__icon" />
-    </button>
+    <div class="header__mobile-right">
+      <button
+        class="header__hamburger"
+        (click)="toggleMenu()"
+        [class.open]="isMenuOpen()"
+      >
+        <img
+          [src]="isMenuOpen() ? 'icons/close.png' : 'icons/menu.png'"
+          [alt]="isMenuOpen() ? 'Close' : 'Menu'"
+          class="header__icon"
+        />
+      </button>
+    </div>
   </div>
 </header>

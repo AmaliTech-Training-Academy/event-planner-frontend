@@ -35,7 +35,7 @@
     />
 
 
-  @if (type() === 'password') { 
+  @if (type() === 'password') {
     <button
         type="button"
         class="toggle-password"
@@ -62,7 +62,3 @@
     ></app-form-error>
   }
 </div>
-
-@if (errorMessage()) {
-  <div class="error">{{ errorMessage() }}</div>
-}

@@ -34,7 +34,9 @@ import { FormErrorComponent } from '../form-error/form-error.component';
 })
 export class InputComponent implements ControlValueAccessor {
   // Inputs - reactive values from parent
-  public readonly type = input<'text' | 'email' | 'password'>('text');
+  public readonly type = input<'text' | 'email' | 'password' | 'number'>(
+    'text'
+  );
   public readonly placeholder = input<string>('');
   public readonly label = input<string>('');
   public readonly formControlName = input<string>('');
@@ -42,7 +44,7 @@ export class InputComponent implements ControlValueAccessor {
   public readonly iconSrc = input<string | undefined>();
   public readonly required = input<boolean>(false);
   public readonly disabled = input<boolean>(false);
-  public readonly value = input<string>(''); // ✅ Add this
+  public readonly value = input<string>('');
 
   // Outputs
   public readonly valueChange = output<string>();
@@ -55,16 +57,21 @@ export class InputComponent implements ControlValueAccessor {
 
   // Computed values - derived state
   public readonly hasError = computed(() => !!this.errorMessage());
-  public readonly inputType = computed(() =>
-    this.type() === 'password' && !this._showPassword() ? 'password' : 'text'
-  );
+
+  // ✅ FIX: When password is shown, change type to 'text'
+  public readonly inputType = computed(() => {
+    if (this.type() === 'password') {
+      return this._showPassword() ? 'text' : 'password';
+    }
+    return this.type();
+  });
+
   public readonly showPassword = computed(() => this._showPassword());
   public readonly isFocused = computed(() => this._isFocused());
   public readonly isDisabled = computed(
     () => this.disabled() || this._isDisabled()
   );
 
-  // ✅ Add effect to sync external value input with internal state
   constructor() {
     effect(() => {
       const externalValue = this.value();
@@ -113,7 +120,7 @@ export class InputComponent implements ControlValueAccessor {
     this._isFocused.set(true);
   }
 
-  onBlur(): void {
+  public onBlur(): void {
     this._isFocused.set(false);
     this.onTouched();
   }

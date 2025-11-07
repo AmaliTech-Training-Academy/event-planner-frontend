@@ -1,0 +1,115 @@
+<div class="container">
+    <div class="loaction-pinter">
+        <a [routerLink]="APP_ROUTE.CREATE_EVENT">Create Event</a>
+        <img src="icons/chevron_right.svg" alt="chevron right icon" srcset="">
+        <a [routerLink]="APP_ROUTE.VENUE_SECTION">Venue Sectioning & Ticketing</a>
+    </div>
+    <div class="header">
+        <h2>Layout Builder</h2>
+        <app-button (onClick)="saveAndContinue()" type="secondary">
+            <div class="btn-content">
+                <p>Save & Continue</p>
+                <img src="icons/arrow-right.png" alt="arrow right icon" srcset="">
+            </div>
+        </app-button>
+    </div>
+    <div class="content">
+        <section class="form-container">
+            <div class="draw-tools">
+                <p>Drawing Tools</p>
+
+                <div class="tools">
+                    @for (tool of tools; track tool.name) {
+                    <app-button [ngClass]="{ 'active': activeTool === tool.name }" type="plain"
+                        (onClick)="selectTool(tool.name)">
+                        <div class="content">
+                            <img src="{{ tool.icon }}" alt="{{ tool.name }} icon" srcset="">
+                            <p>{{ tool.name }}</p>
+                        </div>
+                    </app-button>
+                    }
+                </div>
+            </div>
+            <form [formGroup]="sectionForm" method="post">
+                <p>Section Properties</p>
+
+                <div class="fields">
+                    <app-input type="text" [formControlName]="FORM_FIELD.VENUE_SECTION_NAME" label="Section Name"
+                        placeholder="Enter section name"></app-input>
+                    <app-input type="number" [formControlName]="FORM_FIELD.VENUE_SECTION_CAPACITY" label="Capacity"
+                        placeholder="Enter capacity" type="number"></app-input>
+                    <app-input type="number" [formControlName]="FORM_FIELD.PRICE" label="Price" placeholder="Enter price"
+                        type="number"></app-input>
+                    <div class="field">
+                        <label for="color"> What’s included in this?(Optional)</label>
+                        <app-rich-editor [controlName]="FORM_FIELD.VENUE_SECTION_DESCRIPTION"></app-rich-editor>
+                    </div>
+
+                    <div class="field">
+                        <label for="color"> Color</label>
+                        <div class="row">
+                            <div class="color-preview"
+                                [style.background-color]="sectionForm.get(FORM_FIELD.VENUE_SECTION_COLOR)?.value||'#FFFFFF'">
+                            </div>
+                            <app-input type="text" [formControlName]="FORM_FIELD.VENUE_SECTION_COLOR" id="color"
+                                placeholder="#FFFFFF" label="" type="text"></app-input>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <app-button type="primary" (onClick)="saveSection()">
+                Save Section
+            </app-button>
+        </section>
+        <app-venue-layout-editor [shapeColor]="sectionForm.get(FORM_FIELD.VENUE_SECTION_COLOR)?.value"
+            [activeTool]="activeTool"
+            (snapshot)="sectionForm.get(FORM_FIELD.VENUE_SECTION_IMAGE)?.setValue($event)"></app-venue-layout-editor>
+    </div>
+
+    <div class="sections-container">
+        <h3>Defined Sections</h3>
+
+        <table class="sections-table">
+            
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Capacity</th>
+                    <th>Price</th>
+                    <th>Color</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (group of venueSections.controls; track $index) {
+                <tr>
+                    <td>{{ group.get(FORM_FIELD.VENUE_SECTION_NAME)?.value }}</td>
+                    <td>{{ group.get(FORM_FIELD.VENUE_SECTION_CAPACITY)?.value }}</td>
+                    <td>${{ group.get(FORM_FIELD.VENUE_SECTION_PRICE)?.value }}</td>
+                    <td>
+                        <div class="color-indicator"
+                            [style.background-color]="group.get(FORM_FIELD.VENUE_SECTION_COLOR)?.value">
+                        </div>
+                    </td>
+                    <td class="actions-cell">
+                        <span class="action-link">
+                            <i class="fas fa-pen-to-square"></i> Edit
+                        </span>
+                        <span class="action-link delete">
+                            <i class="fas fa-trash"></i> Delete
+                        </span>
+                    </td>
+                </tr>
+                }
+
+                @if (venueSections.length === 0) {
+                <tr>
+                    <td colspan="5" class="empty-row">No sections defined yet.</td>
+                </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,19 +1,23 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
+import { APP_ROUTES } from '../../../../../../core/constants/app-routes.constants';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-hero-section',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage, ButtonComponent],
+  imports: [CommonModule, NgOptimizedImage, ButtonComponent, RouterLink],
   templateUrl: './hero-section.component.html',
   styleUrls: ['./hero-section.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroSectionComponent {
   protected readonly title = 'Plan, Host, Engage & Grow';
   protected readonly subtitle =
     'Bring your community together with powerful tools for hosting productive online and in-person events.';
   protected readonly heroImage = 'images/hero-image.png';
+  protected readonly APP_ROUTES = APP_ROUTES;
 
   protected readonly icons = {
     mic: 'icons/microphone-icon.svg',

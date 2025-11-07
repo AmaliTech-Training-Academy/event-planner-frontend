@@ -8,31 +8,27 @@
       <p class="subtitle">Enter the 6-digit code sent to your email</p>
     </div>
 
-    
+   <form (ngSubmit)="verifyAccount()">
+  <div class="field verification-field">
+    <app-otp-input
+      [length]="6"
+      (otpChange)="onOtpChange($event)">
+    </app-otp-input>
+  </div>
 
-    <form (ngSubmit)="verifyAccount()">
-      <div class="field verification-field">
+  <app-button 
+    type="primary"
+    buttonType="submit"          
+    [fullWidth]="true"
+    [disabled]="!isOtpComplete() || isLoading">
 
-        <app-otp-input
-          [length]="6"
-          (otpChange)="onOtpChange($event)">
-        </app-otp-input>
-
-      </div>
-
-      <app-button 
-        [type]="'primary'" 
-        [fullWidth]="true"
-        [disabled]="!isOtpComplete() || isLoading">
-
-        @if (!isLoading) {
-          <span>Verify</span>
-        } @else {
-          <span class="spinner"></span>
-        }
-
-      </app-button>
-    </form>
+    @if (!isLoading) {
+      <span>Verify</span>
+    } @else {
+      <span class="spinner"></span>
+    }
+  </app-button>
+</form>
 
     <div class="resend-otp-wrapper">
       Didn't receive an OTP?
