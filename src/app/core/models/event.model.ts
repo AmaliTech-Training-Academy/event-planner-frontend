@@ -1,4 +1,4 @@
-// --- Interfaces for Event Details Page ---
+
 
 export interface EventDetails {
   id: string;
@@ -35,7 +35,7 @@ export interface TicketInfo {
   buttonText: string;
 }
 
-// --- Interface for Registration Modal ---
+
 
 export interface RegistrationInfo {
   eventName: string;
@@ -43,7 +43,7 @@ export interface RegistrationInfo {
   ticketPrice: number;
 }
 
-// --- Interface for Explore & My Events Pages ---
+
 
 export interface EventCard {
   id: string;
@@ -55,7 +55,7 @@ export interface EventCard {
   attendees: number;
 }
 
-// --- Interfaces for Explore Page Filters ---
+
 
 export interface TabToggle {
   key: string;
