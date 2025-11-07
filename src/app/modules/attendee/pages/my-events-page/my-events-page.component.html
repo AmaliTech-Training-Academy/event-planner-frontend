@@ -1,1 +1,16 @@
-<p>my-event-page works!</p>
+<main class="my-events-content">
+  <div class="page-header">
+    <h1 class="page-title">My Events</h1>
+    <a [routerLink]="[]" class="filter-link">Last Week</a>
+  </div>
+
+  <section class="event-grid">
+    @for (event of myEvents(); track event.id) {
+    <app-event-card
+      [event]="event"
+      [variant]="'manage'"
+      (manageEvent)="handleManageEvent($event)"
+    ></app-event-card>
+    }
+  </section>
+</main>

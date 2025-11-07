@@ -35,17 +35,34 @@
       <div
         class="image-slide"
         [style.width.%]="slideWidthPercentage()"
+        (click)="onImageClick(image)"
+        (keydown.enter)="onImageClick(image)"
+        (keydown.space)="onImageClick(image); $event.preventDefault()"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'View ' + (image.alt || 'venue image') + ' in full size'"
       >
-        <img
-          [ngSrc]="image.url"
-          [alt]="image.alt"
-          class="venue-image"
-          width="300"
-          height="150"
-        />
+        <div class="image-wrapper">
+          <img
+            [ngSrc]="image.url"
+            [alt]="image.alt"
+            class="venue-image"
+            width="300"
+            height="150"
+          />
+          
+          @if (image.description) {
+          <div class="image-caption">
+            <span>{{ image.description }}</span>
+          </div>
+          }
+          
+          <div class="click-overlay">
+            <span class="view-full-text">Click to view full size</span>
+          </div>
+        </div>
       </div>
       }
     </div>
   </div>
 </div>
-
