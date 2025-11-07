@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, signal, WritableSignal } from '@angular/core';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   DataTableComponent,
   TableColumn,
   TableAction,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
+import { EditSavedInviteComponent } from './components/edit-saved-invite-modal/edit-saved-invite-modal.component';
+import { ViewSavedInviteComponent } from './components/view-saved-invite-modal/view-saved-invite-modal.component';
 
 interface SavedInvite {
   invitationTitle: string;
@@ -18,12 +20,17 @@ interface SavedInvite {
 @Component({
   selector: 'app-saved-invite',
   standalone: true,
-  imports: [DataTableComponent],
+  imports: [
+    DataTableComponent,
+    EditSavedInviteComponent,
+    ViewSavedInviteComponent,
+  ],
   templateUrl: './saved-invite.component.html',
   styleUrls: ['./saved-invite.component.scss'],
 })
 export class SavedInviteComponent {
-  public readonly mockInvites: ReadonlyArray<SavedInvite> = [
+  // Public properties for template access
+  public mockInvites: SavedInvite[] = [
     {
       invitationTitle: 'Early Bird Registration Offer',
       eventId: '#125678',
@@ -81,39 +88,151 @@ export class SavedInviteComponent {
       label: 'Preview',
       color: 'view',
       type: 'action',
-      handler: (item) => this.onPreview(item),
+      handler: (item: SavedInvite) => this.openPreviewModal(item),
     },
     {
       icon: 'icons/edit-icon.png',
       label: 'Edit',
       color: 'edit',
       type: 'action',
-      handler: (item) => this.onEdit(item),
+      handler: (item: SavedInvite) => this.openEditModal(item),
     },
     {
       icon: 'icons/delete.png',
       label: 'Delete',
       color: 'delete',
       type: 'action',
-      handler: (item) => this.onDelete(item),
+      handler: (item: SavedInvite) => this.onDelete(item),
     },
   ];
 
-  constructor(public layoutService: LayoutService) {
+  // Signals - only for reactive values that trigger UI updates
+  protected readonly isEditModalOpen: WritableSignal<boolean> = signal(false);
+  protected readonly isPreviewModalOpen: WritableSignal<boolean> =
+    signal(false);
+  protected readonly selectedInvite: WritableSignal<SavedInvite | undefined> =
+    signal(undefined);
+
+  // Private constants
+  private readonly _MODAL_CLOSE_DELAY_MS: number = 300;
+
+  constructor(public readonly layoutService: LayoutService) {
+    console.log('🏗️ SavedInviteComponent: Constructor called');
+
     this.layoutService.pageTitle.set('Saved Invites');
     this.layoutService.logoSrc.set('icons/save-icon.png');
     this.layoutService.logoAlt.set('Saved Invites');
+
+    console.log(
+      '📊 Initial mock invites loaded:',
+      this.mockInvites.length,
+      'items'
+    );
   }
 
-  private onPreview(invite: SavedInvite): void {
-    console.log('Preview invite:', invite);
+  // Edit modal handlers
+  protected openEditModal(invite: SavedInvite): void {
+    console.log('✏️ Opening edit modal for invite:', invite.eventId);
+    console.log('📋 Invite data:', invite);
+
+    // Create a deep copy to avoid reference issues
+    const inviteCopy: SavedInvite = { ...invite };
+    this.selectedInvite.set(inviteCopy);
+    this.isEditModalOpen.set(true);
+
+    console.log(
+      '✅ Edit modal opened, selectedInvite set to:',
+      this.selectedInvite()
+    );
   }
 
-  private onEdit(invite: SavedInvite): void {
-    console.log('Edit invite:', invite);
+  protected closeEditModal(): void {
+    console.log('❌ Closing edit modal');
+
+    this.isEditModalOpen.set(false);
+
+    // Clear selected invite after a small delay to allow animation
+    setTimeout(() => {
+      console.log('🧹 Clearing selectedInvite after animation delay');
+      this.selectedInvite.set(undefined);
+    }, this._MODAL_CLOSE_DELAY_MS);
   }
 
-  private onDelete(invite: SavedInvite): void {
-    console.log('Delete invite:', invite);
+  protected onSaveEdit(updatedInvite: SavedInvite): void {
+    console.log('💾 Saving edited invite:', updatedInvite);
+    console.log('🔍 Looking for invite with eventId:', updatedInvite.eventId);
+
+    // Find the index of the invite being updated
+    const index: number = this.mockInvites.findIndex(
+      (inv: SavedInvite) => inv.eventId === updatedInvite.eventId
+    );
+
+    if (index !== -1) {
+      console.log(`✅ Found invite at index ${index}, updating...`);
+
+      // Update the invite in the array immutably
+      this.mockInvites = [
+        ...this.mockInvites.slice(0, index),
+        updatedInvite,
+        ...this.mockInvites.slice(index + 1),
+      ];
+
+      console.log('✅ Invite updated successfully');
+      console.log('📊 Updated invites array:', this.mockInvites);
+    } else {
+      console.error('❌ Invite not found in array!');
+    }
+
+    this.closeEditModal();
+  }
+
+  // Preview modal handlers
+  protected openPreviewModal(invite: SavedInvite): void {
+    console.log('👁️ Opening preview modal for invite:', invite.eventId);
+
+    const inviteCopy: SavedInvite = { ...invite };
+    this.selectedInvite.set(inviteCopy);
+    this.isPreviewModalOpen.set(true);
+
+    console.log('✅ Preview modal opened');
+  }
+
+  protected closePreviewModal(): void {
+    console.log('❌ Closing preview modal');
+
+    this.isPreviewModalOpen.set(false);
+
+    setTimeout(() => {
+      console.log('🧹 Clearing selectedInvite after animation delay');
+      this.selectedInvite.set(undefined);
+    }, this._MODAL_CLOSE_DELAY_MS);
+  }
+
+  // Delete action
+  protected onDelete(invite: SavedInvite): void {
+    console.log('🗑️ Delete requested for invite:', invite.eventId);
+    console.log('📋 Invite data:', invite);
+
+    // Confirmation dialog
+    const confirmed: boolean = confirm(
+      `Are you sure you want to delete "${invite.invitationTitle}"?`
+    );
+
+    if (confirmed) {
+      console.log('✅ Deletion confirmed, removing invite...');
+
+      const beforeCount: number = this.mockInvites.length;
+
+      this.mockInvites = this.mockInvites.filter(
+        (inv: SavedInvite) => inv.eventId !== invite.eventId
+      );
+
+      const afterCount: number = this.mockInvites.length;
+
+      console.log(`✅ Invite deleted. Count: ${beforeCount} → ${afterCount}`);
+      console.log('📊 Remaining invites:', this.mockInvites);
+    } else {
+      console.log('❌ Deletion cancelled by user');
+    }
   }
 }

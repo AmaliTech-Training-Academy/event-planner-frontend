@@ -72,14 +72,7 @@ export class InputComponent implements ControlValueAccessor {
     () => this.disabled() || this._isDisabled()
   );
 
-  constructor() {
-    effect(() => {
-      const externalValue = this.value();
-      if (externalValue !== this._internalValue()) {
-        this._internalValue.set(externalValue);
-      }
-    });
-  }
+  constructor() {}
 
   // ControlValueAccessor callbacks
   private onChange: (value: string) => void = () => {};
