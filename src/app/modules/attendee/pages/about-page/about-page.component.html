@@ -1,7 +1,7 @@
 <div class="wrapper">
 
     <div class="header">
-        <a routerLink="/app/explore">
+        <a routerLink="/app">
             <img src="icons/arrow_backward.svg" alt="Event Hub Logo" class="logo">
             Back to event
         </a>
@@ -44,46 +44,7 @@
                 <h4>Our Our Story</h4>
                 <p>From a simple idea to a global platform connecting millions</p>
             </div>
-            <div class="stepper-container">
-                <div class="strip"></div>
-                <div class="left">
-                    <div class="card">
-                        <h5>2019 - The Beginning</h5>
-                        <p>Founded by a team of event professionals who saw the need for better virtual event solutions.
-                        </p>
-                        <img src="images/our-story-2.jpg" alt="">
-                    </div>
-                    <img src="images/our-story-2.jpg" alt="">
-
-                     <div class="card sm">
-                        <h5>2021 - Global Expansion</h5>
-                        <p>Reached 1 million users worldwide and launched advanced networking features.</p>
-                        <img src="images/our-story-1.jpg" alt="">
-                    </div>
-
-                    <div class="card">
-                        <h5>2024 - Innovation Leader</h5>
-                        <p>Became the leading platform for hybrid events with AI-powered matchmaking and immersive
-                            experiences.</p>
-                        <img src="images/our-story-2.jpg" alt="">
-
-                    </div>
-                </div>
-                <div class="right">
-                    <img src="images/our-story-1.jpg" alt="">
-                    <div class="card">
-                        <h5>2021 - Global Expansion</h5>
-                        <p>Reached 1 million users worldwide and launched advanced networking features.</p>
-                        <img src="images/our-story-1.jpg" alt="">
-                    </div>
-                    <img src="images/our-story-3.jpg" alt="">
-                </div>
-                <div class="pointers">
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                    <div class="circle"></div>
-                </div>
-            </div>
+            <app-steper></app-steper>
         </section>
 
 
@@ -95,19 +56,7 @@
                 </p>
             </div>
 
-            <div class="missions">
-                @for (mission of missions; track $index) {
-                <div class="mission-card">
-                    <div class="icon-container">
-                        <img [src]="mission.icon" alt="innovation icon">
-                    </div>
-                    <div class="info">
-                        <p>{{mission.title}}</p>
-                        <p>{{mission.description}}</p>
-                    </div>
-                </div>
-                }
-            </div>
+            <app-mission></app-mission>
 
         </section>
 
@@ -116,20 +65,7 @@
                 <h4>Meet Our Team</h4>
                 <p>The passionate people behind Event Hub</p>
             </div>
-            <div class="team">
-                @for (member of teamMembers; track $index) {
-                <div class="member">
-                    <img [src]="member.image" alt="" srcset="">
-                    <div class="info-container">
-                        <div class="header">
-                            <h5>{{member.name}}</h5>
-                            <p>{{member.role}}</p>
-                        </div>
-                        <p>{{member.description}}</p>
-                    </div>
-                </div>
-                }
-            </div>
+            <app-team></app-team>
 
         </section>
 
@@ -138,20 +74,23 @@
                 <h4>Trusted by Industry Leaders</h4>
                 <p>Join thousands of companies that rely on Event Hub</p>
             </div>
-            <!-- Partners component goes here  -->
 
+            <app-partners></app-partners>
             <div class="ready-container">
                 <div class="header">
                     <h5>Ready to Create Amazing Events?</h5>
                     <p>Join our community of event creators and start building unforgettable experiences today.</p>
                 </div>
                 <div class="action">
-                    <button class="primary">
+
+                    <app-button (click)="goTo(APP_ROUTE.CREATE_EVENT)" type="primary">
                         Start Your Event
-                    </button>
-                    <button class="secondary">
+                      </app-button>
+                      
+                      <app-button (click)="goTo(APP_ROUTE.SIGNUP)" type="secondary">
                         Join Our Community
-                    </button>
+                      </app-button>
+
                 </div>
             </div>
         </section>

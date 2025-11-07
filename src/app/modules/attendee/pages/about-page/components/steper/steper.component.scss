@@ -1,0 +1,134 @@
+@use "typography" as *;
+@use "variables" as *;
+@use "colors" as *;
+@use "theme" as *;
+@use "media_query" as *;
+
+.stepper-container {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: 4rem;
+    @include sm {
+        gap: 0;
+    }
+
+    .card {
+        background-color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        padding: 1.5rem;
+        text-align: right;
+        border-radius: 12px;
+
+        @include sm {
+            text-align: center;
+        }
+
+        h5 {
+            @include h-6;
+            color: $sub-header-dark;
+        }
+        p {
+            @include body-1;
+            color: #6b7280;
+
+            @include sm {
+                @include body-3;
+            }
+        }
+
+        img {
+            display: none;
+
+            @include sm {
+                display: flex;
+                width: 100%;
+            }
+        }
+        &.sm {
+            @include md {
+                display: none;
+            }
+            @include lg {
+                display: none;
+            }
+            @include xl {
+                display: none;
+            }
+        }
+    }
+
+    img {
+        width: 15.375rem;
+        height: 9.563rem;
+        border-radius: 24px;
+        object-fit: cover;
+        @include md {
+            width: 85%;
+        }
+        @include sm {
+            display: none;
+        }
+    }
+
+    .left,
+    .right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .left {
+        align-items: flex-end;
+    }
+
+    .right {
+        align-items: flex-start;
+        @include sm {
+            display: none;
+        }
+        .card {
+            text-align: left;
+        }
+    }
+
+    .strip {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 50%;
+        bottom: 0px;
+        border-right: 2px solid $orange-600;
+
+        @include sm {
+            display: none;
+        }
+    }
+
+    .pointers {
+        position: absolute;
+        top: 0;
+        left: calc(1.8rem / 2);
+        width: 50%;
+        bottom: 0px;
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 3.875rem 0;
+
+        @include sm {
+            display: none;
+        }
+
+        .circle {
+            height: 2rem;
+            width: 2rem;
+            background-color: $orange-600;
+            border: 3px solid white;
+            border-radius: 50%;
+        }
+    }
+}
