@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { ButtonComponent } from '../../ui/button/button.component';
+import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
 
 interface NavLink {
   label: string;
@@ -20,9 +21,9 @@ interface NavLink {
 })
 export class HeaderComponent {
   public readonly navLinks = signal<NavLink[]>([
-    { label: 'Home', path: '/', icon: 'icons/home-icon.png' },
-    { label: 'Explore Events', path: '/events', icon: 'icons/action.png' },
-    { label: 'About Us', path: '/about', icon: 'icons/users-icon.png' },
+    { label: 'Home', path: APP_ROUTES.LANDING_PAGE, icon: 'icons/home-icon.png' },
+    { label: 'Explore Events', path: APP_ROUTES.EXPLORE, icon: 'icons/action.png' },
+    { label: 'About Us', path: APP_ROUTES.ABOUT, icon: 'icons/users-icon.png' },
   ]);
 
   public readonly isMenuOpen = signal(false);
