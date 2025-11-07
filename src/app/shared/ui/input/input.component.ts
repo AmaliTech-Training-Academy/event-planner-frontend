@@ -56,7 +56,7 @@ export class InputComponent implements ControlValueAccessor {
   // Computed values - derived state
   public readonly hasError = computed(() => !!this.errorMessage());
   public readonly inputType = computed(() =>
-    this.type() === 'password' && !this._showPassword() ? 'password' : this.type()
+    this.type() === 'password' ? (this._showPassword() ? 'text' : 'password') : this.type()
   );
   public readonly showPassword = computed(() => this._showPassword());
   public readonly isFocused = computed(() => this._isFocused());
