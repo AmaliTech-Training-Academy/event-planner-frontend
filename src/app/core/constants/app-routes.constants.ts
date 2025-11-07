@@ -5,6 +5,7 @@ export const APP_ROUTES = {
     FORGOT_PASSWORD: "/auth/forgot-password",
     LANDING_PAGE : "/",
     EXPLORE:"/app/explore",
+    ABOUT:"/app/about",
     EVENT_DETAILS:(id:string)=>`/app/event/${id}`,
     VERIFY_EMAIL:'/auth/verify-email',
     ADMIN_LOGIN:'/auth/admin',
