@@ -13,6 +13,8 @@ import { APP_ROUTES } from '../constants/app-routes.constants';
 import { User } from '../models/user.model';
 import { AuthBackendService } from './backend/auth-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
+import { AUTH_STORAGE } from '../constants/storage.constants';
+import { AuthStorage } from '../models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -28,7 +30,9 @@ export class AuthService {
     private readonly authBackend: AuthBackendService,
     private readonly router: Router,
     private readonly errorHandlerService: ErrorHandlerService
-  ) { }
+  ) {
+    this.onload()
+  }
 
   public login(email: string, password: string) {
     this.setLoading(true);
@@ -94,10 +98,11 @@ export class AuthService {
 
     return this.authBackend.verifyEmail(otp, email).pipe(
       take(1),
-      tap(() => {
+      tap((response) => {
         this._loggedIn$.next(true);
         this._email = "";
         this._otp = "";
+        this.saveAuthToStorage(response?.data?.id || '')
         this.router.navigate([APP_ROUTES.LANDING_PAGE]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
@@ -123,6 +128,7 @@ export class AuthService {
       tap(() => {
         this._loggedIn$.next(false);
         this._userInfo$.next(null);
+        this.clearAuthStorage()
         this.router.navigate([APP_ROUTES.LOGIN]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
@@ -171,6 +177,28 @@ export class AuthService {
         finalize(() => this.setLoading(false))
       )
 
+  }
+
+  private onload() {
+    const stored = localStorage.getItem(AUTH_STORAGE.AUTH);
+    if (stored) {
+      const data = JSON.parse(stored) as AuthStorage;
+      this._loggedIn$.next(data[AUTH_STORAGE.AUTHENTICATED]);
+      if (data[AUTH_STORAGE.USER_ID]) {
+        this.checkAuthUser(data[AUTH_STORAGE.USER_ID]).subscribe();
+      }
+    }
+  }
+
+  private saveAuthToStorage(userId: string) {
+    localStorage.setItem(AUTH_STORAGE.AUTH, JSON.stringify({
+      [AUTH_STORAGE.AUTHENTICATED]: true,
+      [AUTH_STORAGE.USER_ID]: userId
+    }));
+  }
+
+  private clearAuthStorage() {
+    localStorage.removeItem(AUTH_STORAGE.AUTH);
   }
 
   public isLoggedIn(): Observable<boolean> {
