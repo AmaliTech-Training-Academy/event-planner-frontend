@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SavedInviteComponent } from './saved-invite.component';
+import { SavedInviteComponent } from './saved-invite-page.component';
 
 describe('SavedInviteComponent', () => {
   let component: SavedInviteComponent;
@@ -8,9 +8,8 @@ describe('SavedInviteComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SavedInviteComponent]
-    })
-    .compileComponents();
+      imports: [SavedInviteComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SavedInviteComponent);
     component = fixture.componentInstance;

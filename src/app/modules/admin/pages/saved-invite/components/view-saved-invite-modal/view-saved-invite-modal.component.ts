@@ -3,9 +3,7 @@ import {
   EventEmitter,
   Output,
   input,
-  signal,
   ChangeDetectionStrategy,
-  computed,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
@@ -29,7 +27,8 @@ export interface SavedInvite {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewSavedInviteComponent {
-  @Output() readonly close = new EventEmitter<void>();
+  @Output() public readonly close: EventEmitter<void> =
+    new EventEmitter<void>();
 
   public readonly inviteData = input<SavedInvite>();
 
@@ -38,7 +37,7 @@ export class ViewSavedInviteComponent {
   }
 
   public onBackdropClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-backdrop')) {
+    if ((event.target as HTMLElement)?.classList.contains('modal-backdrop')) {
       this.onClose();
     }
   }

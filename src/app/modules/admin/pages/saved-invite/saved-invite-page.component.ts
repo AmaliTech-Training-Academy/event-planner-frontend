@@ -25,8 +25,8 @@ interface SavedInvite {
     EditSavedInviteComponent,
     ViewSavedInviteComponent,
   ],
-  templateUrl: './saved-invite.component.html',
-  styleUrls: ['./saved-invite.component.scss'],
+  templateUrl: './saved-invite-page.component.html',
+  styleUrls: ['./saved-invite-page.component.scss'],
 })
 export class SavedInviteComponent {
   public mockInvites: SavedInvite[] = [

@@ -21,8 +21,8 @@ export const ADMIN_ROUTES: Routes = [
   {
     path: 'saved-invites',
     loadComponent: () =>
-      import('../admin/pages/saved-invite/saved-invite.component').then(
+      import('./pages/saved-invite/saved-invite-page.component').then(
         (m) => m.SavedInviteComponent
       ),
-  }
+  },
 ];

@@ -1,0 +1,30 @@
+<div class="saved-invite-page">
+  <app-data-table
+    [data]="mockInvites"
+    [columns]="columns"
+    [actions]="actions"
+    [searchable]="true"
+    [searchSize]="'lg'"
+    [showCheckboxes]="true"
+    [showFilters]="false"
+    [tableTitle]="'Saved Invitations'"
+    [searchPlaceholder]="'Search invitations...'"
+    [itemsPerPage]="10"
+  >
+  </app-data-table>
+
+  @if (isEditModalOpen() && selectedInvite()) {
+    <app-edit-saved-invite
+      [inviteData]="selectedInvite()"
+      (close)="closeEditModal()"
+      (save)="onSaveEdit($event)"
+    ></app-edit-saved-invite>
+  }
+
+  @if (isPreviewModalOpen() && selectedInvite()) {
+    <app-view-saved-invite
+      [inviteData]="selectedInvite()"
+      (close)="closePreviewModal()"
+    ></app-view-saved-invite>
+  }
+</div>

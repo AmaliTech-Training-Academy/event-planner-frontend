@@ -16,7 +16,7 @@ import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/m
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 
-interface SavedInvite {
+export interface SavedInvite {
   invitationTitle: string;
   eventId: string;
   event: string;
@@ -40,13 +40,15 @@ interface SavedInvite {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditSavedInviteComponent {
-  @Output() readonly close: EventEmitter<void> = new EventEmitter<void>();
-  @Output() readonly save: EventEmitter<SavedInvite> =
+  @Output() public readonly close: EventEmitter<void> =
+    new EventEmitter<void>();
+  @Output() public readonly save: EventEmitter<SavedInvite> =
     new EventEmitter<SavedInvite>();
 
   private _inviteData?: SavedInvite;
+
   @Input()
-  set inviteData(value: SavedInvite | undefined) {
+  public set inviteData(value: SavedInvite | undefined) {
     this._inviteData = value;
     if (value) {
       this.inviteForm.patchValue(value, { emitEvent: false });
@@ -54,11 +56,11 @@ export class EditSavedInviteComponent {
       this.inviteForm.markAsUntouched();
     }
   }
-  get inviteData(): SavedInvite | undefined {
+  public get inviteData(): SavedInvite | undefined {
     return this._inviteData;
   }
 
-  readonly inviteForm: FormGroup;
+  public readonly inviteForm: FormGroup;
 
   private readonly _fieldLabels: Record<string, string> = {
     invitationTitle: 'Invitation Title',
@@ -79,11 +81,11 @@ export class EditSavedInviteComponent {
     });
   }
 
-  getErrorMessage(fieldName: string): string | null {
+  public getErrorMessage(fieldName: string): string | null {
     const field = this.inviteForm.get(fieldName);
-    if (!field || !(field.dirty || field.touched)) return null;
+    if (!(field?.dirty || field?.touched)) return null;
 
-    const label = this._fieldLabels[fieldName] || fieldName;
+    const label = this._fieldLabels[fieldName] ?? fieldName;
 
     if (field.hasError('required')) return `${label} is required`;
     if (field.hasError('min')) return `${label} must be greater than 0`;
@@ -91,7 +93,7 @@ export class EditSavedInviteComponent {
     return 'Invalid value';
   }
 
-  onSubmit(): void {
+  public onSubmit(): void {
     if (this.inviteForm.valid) {
       const updatedInvite: SavedInvite = {
         ...this.inviteForm.value,
@@ -101,12 +103,12 @@ export class EditSavedInviteComponent {
     }
   }
 
-  onCancel(): void {
+  public onCancel(): void {
     this.close.emit();
   }
 
-  onBackdropClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement).classList.contains('modal-backdrop')) {
+  public onBackdropClick(event: MouseEvent): void {
+    if ((event.target as HTMLElement)?.classList.contains('modal-backdrop')) {
       this.onCancel();
     }
   }
