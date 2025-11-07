@@ -14,7 +14,6 @@ export class UnAuthenticatedUsersOnlyGuard implements CanActivate {
         return this.authService.isLoggedIn().pipe(
             take(1),
             map(isLoggedIn => {
-                // if logged in redirect users to landing or explore else allow access to auth pages
                 return isLoggedIn ? this.router.createUrlTree([APP_ROUTES.EXPLORE]) : true;
             })
         );

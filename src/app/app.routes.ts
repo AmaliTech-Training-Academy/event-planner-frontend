@@ -9,7 +9,7 @@ export const routes: Routes = [
   {
     path: 'auth',
     children: AUTH_ROUTES,
-    canActivateChild:[UnAuthenticatedUsersOnlyGuard],
+    canActivate: [UnAuthenticatedUsersOnlyGuard],
   },
   {
     path: 'app',
