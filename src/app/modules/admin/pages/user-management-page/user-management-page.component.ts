@@ -54,29 +54,25 @@ export class UserManagementPageComponent implements OnInit {
   protected readonly isEditModalOpen = signal<boolean>(false);
   protected readonly isViewModalOpen = signal<boolean>(false);
   protected readonly selectedUser = signal<User | null>(null);
-
   protected readonly togglingUserId = signal<number | string | null>(null);
 
   protected readonly userCards = toSignal(this._userService.userCards$, {
     initialValue: [],
   });
-
   protected readonly users = toSignal(this._userService.users$, {
     initialValue: [],
   });
-
   protected readonly loading = toSignal(this._userService.loading$, {
     initialValue: false,
   });
-
   protected readonly totalPages = toSignal(this._userService.totalPages$, {
     initialValue: 1,
   });
-
   protected readonly currentPage = toSignal(this._userService.currentPage$, {
     initialValue: 0,
   });
 
+  // Table columns & actions
   protected readonly tableColumns: TableColumn<User>[] = [
     {
       key: 'fullName',
@@ -99,16 +95,8 @@ export class UserManagementPageComponent implements OnInit {
           ? mapUserStatus(user.status)
           : user.status,
     },
-    {
-      key: 'eventsOrganized',
-      header: 'Events Organized',
-      sortable: true,
-    },
-    {
-      key: 'eventsAttended',
-      header: 'Events Attended',
-      sortable: true,
-    },
+    { key: 'eventsOrganized', header: 'Events Organized', sortable: true },
+    { key: 'eventsAttended', header: 'Events Attended', sortable: true },
   ];
 
   protected readonly tableActions: TableAction<User>[] = [
@@ -138,10 +126,10 @@ export class UserManagementPageComponent implements OnInit {
       key: 'role',
       placeholder: 'All Roles',
       options: [
-        { label: 'Organizer', value: USER_ROLES.ORGANIZER }, // 'ORGANISER'
+        { label: 'Organizer', value: USER_ROLES.ORGANIZER },
         { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
         { label: 'Attendee', value: USER_ROLES.ATTENDEE },
-        { label: 'Admin', value: USER_ROLES.ADMIN },
+        { label: 'Venue Staff', value: USER_ROLES.VENUE_STAFF },
       ],
     },
     {
@@ -179,7 +167,7 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   public onPageChange(page: number): void {
-    this._loadUsers(page - 1); // ✅ keep it consistent
+    this._loadUsers(page - 1);
   }
 
   protected openInviteModal(): void {
@@ -197,10 +185,7 @@ export class UserManagementPageComponent implements OnInit {
   protected onInviteSuccess(): void {
     this.closeInviteModal();
     this._loadUsers(this.currentPage() || 0);
-
-    setTimeout(() => {
-      this.isSuccessModalOpen.set(true);
-    }, 200);
+    setTimeout(() => this.isSuccessModalOpen.set(true), 200);
   }
 
   protected goToDashboard(): void {
@@ -215,9 +200,7 @@ export class UserManagementPageComponent implements OnInit {
 
   protected onEditFromView(): void {
     this.isViewModalOpen.set(false);
-    Promise.resolve().then(() => {
-      this.isEditModalOpen.set(true);
-    });
+    Promise.resolve().then(() => this.isEditModalOpen.set(true));
   }
 
   protected onToggleUserStatus(user: User): void {
@@ -232,23 +215,18 @@ export class UserManagementPageComponent implements OnInit {
 
   protected onSaveEdit(formData: any): void {
     const selectedUser = this.selectedUser();
-    if (!selectedUser?.userId) {
-      return;
-    }
+    if (!selectedUser?.userId) return;
 
-    // ✅ Build UpdateUserPayload matching backend format
     const updatePayload: UpdateUserPayload = {
       fullName: formData.fullName,
       email: formData.email,
       phone: formData.phone || formData.phoneNumber || '',
       address: formData.address || '',
-      status: selectedUser.status === 'Active', // ✅ Convert to boolean
+      status: selectedUser.status === 'Active',
     };
 
-    // Add profile picture if provided
-    if (formData.profileImage) {
+    if (formData.profileImage)
       updatePayload.profilePicture = formData.profileImage;
-    }
 
     this._userService
       .updateUser(selectedUser.userId.toString(), updatePayload)
@@ -264,6 +242,7 @@ export class UserManagementPageComponent implements OnInit {
         },
       });
   }
+
   protected onRowExpanded(user: User): void {}
 
   private _openInviteModal(): void {
@@ -272,16 +251,11 @@ export class UserManagementPageComponent implements OnInit {
 
   private _viewUser(user: User): void {
     this.selectedUser.set(user);
-    Promise.resolve().then(() => {
-      this.isViewModalOpen.set(true);
-    });
+    Promise.resolve().then(() => this.isViewModalOpen.set(true));
   }
 
   private _editUser(user: User): void {
-    if (this.isViewModalOpen()) {
-      this.closeViewModal();
-    }
-
+    if (this.isViewModalOpen()) this.closeViewModal();
     Promise.resolve().then(() => {
       this.selectedUser.set(user);
       this.isEditModalOpen.set(true);
