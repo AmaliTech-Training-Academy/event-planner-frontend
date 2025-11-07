@@ -1,17 +1,21 @@
 <div class="data-table">
   <div class="data-table__header">
-    <h2 class="data-table__title">User List</h2>
+    <h2 class="data-table__title">{{ tableTitle() }}</h2>
+
 
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-       <app-input
-  [ngClass]="searchSize"
-  [placeholder]="searchPlaceholder() || 'Search invitations...'"
-  [value]="searchQuery()"
-  (valueChange)="updateSearch($event)"
-  iconSrc="icons/search-icon.png"
-/>
+  <div class="data-table__search-box" [ngClass]="searchBoxClass">
+  <app-input
+    [ngClass]="searchSize"
+    [placeholder]="searchPlaceholder() || 'Search...'"
+    [value]="searchQuery()"
+    (valueChange)="updateSearch($event)"
+    iconSrc="icons/search-icon.png"
+  />
+</div>
+
 
       </div>
       }
