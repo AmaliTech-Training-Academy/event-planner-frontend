@@ -3,8 +3,8 @@ import { environment } from '../../../environments/environment';
 
 const API_VERSION = 'v1';
 const BASE = `${environment.API_URL}/${API_VERSION}`;
-
 export const API_ENDPOINTS = {
+
   AUTH_LOGOUT: `${BASE}/auth/logout`,
   AUTH_LOGIN: `${BASE}/auth/login`,
   AUTH_REGISTER: `${BASE}/auth/register`,
@@ -26,3 +26,4 @@ export const API_ENDPOINTS = {
     `${BASE}/users/${userId}/profile-image`,
   SEARCH_USERS: `${BASE}/users/search`,
 } as const;
+

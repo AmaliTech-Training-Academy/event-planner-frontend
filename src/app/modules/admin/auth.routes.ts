@@ -30,18 +30,18 @@ export const AUTH_ROUTES: Routes = [
         '../auth/pages/forgot-password-page/forgot-password-page.component'
       ).then((m) => m.ForgotPasswordComponent),
   },
-   {
-    path: 'reset-password',
-    loadComponent: () =>
-      import(
-        '../auth/pages/reset-password/reset-password.component'
-      ).then((m) => m.ResetPasswordComponent),
-  },
   {
     path: 'admin',
     loadComponent: () =>
       import('../auth/pages/admin-login-page/admin-login-page.component').then(
         (m) => m.AdminLoginPageComponent
+      ),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('../auth/pages/reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent
       ),
   },
 ];

@@ -1,0 +1,14 @@
+<div class="team">
+    @for (member of teamMembers; track $index) {
+    <div class="member">
+        <img [src]="member.image" alt="" srcset="">
+        <div class="info-container">
+            <div class="header">
+                <h5>{{member.name}}</h5>
+                <p>{{member.role}}</p>
+            </div>
+            <p>{{member.description}}</p>
+        </div>
+    </div>
+    }
+</div>

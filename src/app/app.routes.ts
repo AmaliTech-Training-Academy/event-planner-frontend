@@ -2,12 +2,14 @@ import { Routes } from '@angular/router';
 import { AUTH_ROUTES } from './modules/admin/auth.routes';
 import { ATTENDEE_ROUTES } from './modules/attendee/attendee.routes';
 import { ADMIN_ROUTES } from './modules/admin/admin.routes';
+import { UnAuthenticatedUsersOnlyGuard } from './core/guards/unauthenticated-users-only.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'app', pathMatch: 'full' },
   {
     path: 'auth',
     children: AUTH_ROUTES,
+    canActivate:[UnAuthenticatedUsersOnlyGuard],
   },
   {
     path: 'app',
