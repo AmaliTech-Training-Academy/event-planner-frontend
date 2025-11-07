@@ -224,7 +224,13 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
 
     // --- Flyer ---
     if (data[FIELDS.FLYER] instanceof File) {
-      formData.append(FIELDS.FLYER, data[FIELDS.FLYER] as File);
+      const flyerFile = data[FIELDS.FLYER] as File;
+      // formData.append(FIELDS.FLYER, flyerFile);
+      formData.append('flyerMeta', new Blob([JSON.stringify({
+        name: flyerFile.name,
+        size: flyerFile.size,
+        type: flyerFile.type
+      })], { type: 'application/json' }));
     }
 
     // --- Dates ---
@@ -260,9 +266,14 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
       });
 
       if (Array.isArray(inPerson[FIELDS.IMAGES])) {
+        const imagesMeta: { name: string; size: number; type: string }[] = [];
+
         (inPerson[FIELDS.IMAGES] as File[]).forEach((file: File) => {
-          formData.append(`${FIELDS.IMAGES}[]`, file);
+          // formData.append(`${FIELDS.IMAGES}[]`, file);
+          imagesMeta.push({ name: file.name, size: file.size, type: file.type });
         });
+
+        formData.append('inPersonImagesMeta', new Blob([JSON.stringify(imagesMeta)], { type: 'application/json' }));
       }
     }
 
