@@ -51,21 +51,26 @@ export class UserManagementService {
     this.setLoading(true);
     return this.userBackend.getAllUsers(page, size).pipe(
       map((response) => {
-        const normalizedUsers: User[] =
-          response.data.users.content.map(normalizeUserStatus);
+        const users = response.data?.users?.content ?? [];
+        const normalizedUsers: User[] = users.map(normalizeUserStatus);
+
         return {
           ...response,
           data: {
             ...response.data,
-            users: { ...response.data.users, content: normalizedUsers },
+            users: {
+              ...response.data?.users,
+              content: normalizedUsers,
+            },
           },
         };
       }),
       tap((response) => {
-        this._users$.next(response.data.users.content);
-        this._totalPages$.next(response.data.users.totalPages);
-        this._currentPage$.next(response.data.users.number);
-        this._updateUserCards(response.data);
+        const users = response.data?.users?.content ?? [];
+        this._users$.next(users);
+        this._totalPages$.next(response.data?.users?.totalPages ?? 0);
+        this._currentPage$.next(response.data?.users?.number ?? 0);
+        this._updateUserCards(response.data ?? {});
       }),
       catchError((err) => {
         this.errorHandler.handle(err);
@@ -84,21 +89,26 @@ export class UserManagementService {
     this.setLoading(true);
     return this.userBackend.searchUsers(keyword, role, status, page).pipe(
       map((response) => {
-        const normalizedUsers: User[] =
-          response.data.users.content.map(normalizeUserStatus);
+        const users = response.data?.users?.content ?? [];
+        const normalizedUsers: User[] = users.map(normalizeUserStatus);
+
         return {
           ...response,
           data: {
             ...response.data,
-            users: { ...response.data.users, content: normalizedUsers },
+            users: {
+              ...response.data?.users,
+              content: normalizedUsers,
+            },
           },
         };
       }),
       tap((response) => {
-        this._users$.next(response.data.users.content);
-        this._totalPages$.next(response.data.users.totalPages);
-        this._currentPage$.next(response.data.users.number);
-        this._updateUserCards(response.data);
+        const users = response.data?.users?.content ?? [];
+        this._users$.next(users);
+        this._totalPages$.next(response.data?.users?.totalPages ?? 0);
+        this._currentPage$.next(response.data?.users?.number ?? 0);
+        this._updateUserCards(response.data ?? {});
       }),
       catchError((err) => {
         this.errorHandler.handle(err);
