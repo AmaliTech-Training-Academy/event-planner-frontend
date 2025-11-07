@@ -5,13 +5,14 @@
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-        <app-input
+       <app-input
   [ngClass]="searchSize"
-  placeholder="Search users..."
+  [placeholder]="searchPlaceholder() || 'Search invitations...'"
   [value]="searchQuery()"
   (valueChange)="updateSearch($event)"
   iconSrc="icons/search-icon.png"
 />
+
       </div>
       }
       <!-- Reusable Filter Select -->

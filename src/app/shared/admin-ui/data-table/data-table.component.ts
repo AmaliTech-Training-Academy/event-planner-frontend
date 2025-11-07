@@ -62,10 +62,11 @@ export interface TableFilter {
 })
 export class DataTableComponent<T extends Record<string, any>> {
   public readonly tableTitle = input<string>('User List');
-  public readonly searchPlaceholder = input<string>('Search users...');
+  public readonly searchPlaceholder = input<string>();
+
   public readonly showCheckboxes = input<boolean>(true);
   public readonly showFilters = input<boolean>(true);
-  @Input() public   searchSize: 'md' | 'lg' = 'md';
+  @Input() public searchSize: 'md' | 'lg' = 'md';
 
   public readonly data = input.required<ReadonlyArray<T>>();
   public readonly columns = input.required<ReadonlyArray<TableColumn<T>>>();
