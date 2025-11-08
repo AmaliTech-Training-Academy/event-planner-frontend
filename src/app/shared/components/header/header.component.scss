@@ -4,9 +4,9 @@
 
 .header {
   background-color: $gray-50;
-  padding: $spacing-4 0;
+  padding: $spacing-3 0;
   font-family: $font-lato;
-  border-bottom: $stroke-0 solid $gray-100;
+  border-bottom: $stroke-0 solid $general-stroke-light;
   transition: background-color 0.3s ease, padding 0.3s ease;
 
   a {
@@ -135,7 +135,8 @@
     img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      border-radius: 50%;
+      object-fit: contain;
     }
   }
 

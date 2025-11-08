@@ -19,44 +19,54 @@
 
     <div class="users-section">
       <label>Users</label>
+      
+      <!-- Table Header -->
+      <div class="users-header">
+        <span class="header-name">Name</span>
+        <span class="header-email">Email</span>
+        <span class="header-role">Role</span>
+        <span class="header-action"></span>
+      </div>
+
       <div class="users-list" formArrayName="users">
         @for (user of users.controls; track $index) {
           <div class="user-row" [formGroupName]="$index">
-            <div class="user-fields">
-              <div class="form-field">
-                <app-input
-                  formControlName="name"
-                  placeholder="Kofi Manu"
-                  [errorMessage]="hasUserFieldError($index, 'name') ? getUserFieldErrorMessage($index, 'name') : ''"
-                ></app-input>
-              </div>
-              <div class="form-field">
-                <app-input
-                  type="email"
-                  formControlName="email"
-                  placeholder="kofimanu@gmail.com"
-                  [errorMessage]="hasUserFieldError($index, 'email') ? getUserFieldErrorMessage($index, 'email') : ''"
-                ></app-input>
-              </div>
-              <div class="form-field">
-                <app-filter-select
-                  formControlName="role"
-                  [options]="roles"
-                  placeholder="Select Role"
-                  size="md"
-                  [errorMessage]="hasUserFieldError($index, 'role') ? getUserFieldErrorMessage($index, 'role') : ''"
-                ></app-filter-select>
-              </div>
+            <div class="user-field user-field--name">
+              <app-input
+                formControlName="name"
+                placeholder="Kofi Manu"
+                [errorMessage]="hasUserFieldError($index, 'name') ? getUserFieldErrorMessage($index, 'name') : ''"
+              ></app-input>
             </div>
+            
+            <div class="user-field user-field--email">
+              <app-input
+                type="email"
+                formControlName="email"
+                placeholder="kofimanu@gmail.com"
+                [errorMessage]="hasUserFieldError($index, 'email') ? getUserFieldErrorMessage($index, 'email') : ''"
+              ></app-input>
+            </div>
+            
+            <div class="user-field user-field--role">
+              <app-filter-select
+                formControlName="role"
+                [options]="roles"
+                placeholder="Select Role"
+                size="md"
+                [errorMessage]="hasUserFieldError($index, 'role') ? getUserFieldErrorMessage($index, 'role') : ''"
+              ></app-filter-select>
+            </div>
+
             @if (users.length > 1) {
-              <app-button
-                type="danger"
-                color="delete"
-                (onClick)="removeUser($index)"
-                extraClass="btn-icon-only"
+              <button
+                type="button"
+                class="btn-delete"
+                (click)="removeUser($index)"
+                aria-label="Delete user"
               >
-                <img src="icons/delete-user.png" alt="Delete user" />
-              </app-button>
+                <img src="icons/delete-user.png" alt="Delete" />
+              </button>
             }
           </div>
         }
