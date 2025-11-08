@@ -1,6 +1,11 @@
 // event-management-page.component.ts
-import { Component, inject, signal } from '@angular/core';
-import { Router } from '@angular/router'; // ADD THIS IMPORT
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { Router } from '@angular/router';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   EventStatisticsComponent,
@@ -29,10 +34,11 @@ interface EventTableData {
   date: string;
   attendees: number;
   status: 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled';
-  time?: string; // Add this
-  location?: string; // Add this
-  description?: string; // Add this
+  time?: string;
+  location?: string;
+  description?: string;
 }
+
 @Component({
   selector: 'app-event-management-page',
   standalone: true,
@@ -44,12 +50,12 @@ interface EventTableData {
   ],
   templateUrl: './event-management-page.component.html',
   styleUrl: './event-management-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventManagementPageComponent {
   private readonly _layoutService = inject(LayoutService);
-  private readonly _router = inject(Router); // ADD THIS LINE
+  private readonly _router = inject(Router);
 
-  // Event Statistics Data
   private readonly _eventStatistics = signal<EventStatistic[]>([
     {
       label: 'Total Events',
@@ -78,7 +84,6 @@ export class EventManagementPageComponent {
     },
   ]);
 
-  // Top Organizers Data
   private readonly _topOrganizers = signal<Organizer[]>([
     {
       id: 1,
@@ -100,7 +105,6 @@ export class EventManagementPageComponent {
     },
   ]);
 
-  // Upcoming Events Data
   private readonly _upcomingEvents = signal<UpcomingEvent[]>([
     {
       id: 1,
@@ -125,7 +129,6 @@ export class EventManagementPageComponent {
     },
   ]);
 
-  // Event Table Data
   private readonly _eventTableData = signal<EventTableData[]>([
     {
       id: 1,
@@ -209,7 +212,6 @@ export class EventManagementPageComponent {
     },
   ]);
 
-  // Table Configuration
   public readonly eventTableColumns: TableColumn<EventTableData>[] = [
     { key: 'name', header: 'Event Name', sortable: true },
     { key: 'organizer', header: 'Organizer', sortable: true },
@@ -254,7 +256,6 @@ export class EventManagementPageComponent {
     handler: () => this._onCreateEvent(),
   };
 
-  // Public readonly signals
   public readonly eventStatistics = this._eventStatistics.asReadonly();
   public readonly topOrganizers = this._topOrganizers.asReadonly();
   public readonly upcomingEvents = this._upcomingEvents.asReadonly();
@@ -264,28 +265,22 @@ export class EventManagementPageComponent {
     this._layoutService.pageTitle.set('Event Management');
   }
 
-  // Event handlers - Statistics Section
   public onViewAllOrganizers(): void {
-    console.log('View all organizers clicked');
-    // TODO: Navigate to organizers page
+    this._router.navigate(['/admin/organizers']);
   }
 
   public onOrganizerClick(organizer: Organizer): void {
-    console.log('Organizer clicked:', organizer);
-    // TODO: Navigate to organizer detail page
+    this._router.navigate(['/admin/organizers', organizer.id]);
   }
 
   public onViewAllEvents(): void {
-    console.log('View all events clicked');
-    // TODO: Navigate to events page
+    this._router.navigate(['/admin/events']);
   }
 
   public onEventClick(event: UpcomingEvent): void {
-    console.log('Event clicked:', event);
-    // TODO: Navigate to event detail page
+    this._router.navigate(['/admin/events', event.id]);
   }
 
-  // Event handlers - Table Section
   private _onViewEvent(event: EventTableData): void {
     this._router.navigate(['/admin/events', event.id], {
       state: { eventData: event },
@@ -293,8 +288,6 @@ export class EventManagementPageComponent {
   }
 
   private _onCreateEvent(): void {
-    console.log('Create event clicked');
-    // Navigate to create event page
     this._router.navigate(['/admin/events/create']);
   }
 }

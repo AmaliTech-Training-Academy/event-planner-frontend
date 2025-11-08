@@ -16,17 +16,14 @@ export interface EventStatistic {
   styleUrls: ['./event-statistics.component.scss'],
 })
 export class EventStatisticsComponent {
-  // Inputs
   public statistics = input.required<EventStatistic[]>();
   public title = input<string>('Event Statistics');
 
-  // Computed signals for reactive derived values
   private readonly _maxCount = computed<number>(() => {
     const stats = this.statistics();
     return stats.length > 0 ? Math.max(...stats.map((stat) => stat.count)) : 0;
   });
 
-  // Constants - adjusted for the reference design
   private readonly _MAX_BAR_HEIGHT = 120;
   private readonly _MIN_BAR_HEIGHT = 80;
 

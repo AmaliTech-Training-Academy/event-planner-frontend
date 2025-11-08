@@ -3,7 +3,7 @@
 <div class="event-details-page">
   <!-- Breadcrumb -->
   <nav class="event-details-page__breadcrumb">
-    <button class="breadcrumb-link" (click)="onBack()">Event Overview</button>
+    <a class="breadcrumb-link" (click)="onBack()">Event Overview</a>
     <span class="breadcrumb-separator">›</span>
     <span class="breadcrumb-current">{{ event.name }}</span>
   </nav>
@@ -12,24 +12,33 @@
   <h1 class="event-details-page__title">{{ event.name }}</h1>
 
   <!-- Tabs -->
-  <div class="event-details-page__tabs">
+  <div class="event-details-page__tabs" role="tablist">
     <button
+      type="button"
+      role="tab"
       class="tab-button"
       [class.tab-button--active]="activeTab() === 'overview'"
+      [attr.aria-selected]="activeTab() === 'overview'"
       (click)="setActiveTab('overview')"
     >
       Overview
     </button>
     <button
+      type="button"
+      role="tab"
       class="tab-button"
       [class.tab-button--active]="activeTab() === 'guests'"
+      [attr.aria-selected]="activeTab() === 'guests'"
       (click)="setActiveTab('guests')"
     >
       Guests
     </button>
     <button
+      type="button"
+      role="tab"
       class="tab-button"
       [class.tab-button--active]="activeTab() === 'registration'"
+      [attr.aria-selected]="activeTab() === 'registration'"
       (click)="setActiveTab('registration')"
     >
       Registration
@@ -52,54 +61,30 @@
       <div class="info-card">
         <div class="info-card__header">
           <h3 class="info-card__title">Event Summary</h3>
-          <button
-            class="icon-button"
+          <app-button
+            type="action"
+            extraClass="icon-button"
             (click)="onEdit()"
-            aria-label="Edit event"
+            [ariaLabel]="'Edit event'"
           >
-            <svg
-              width="16"
+            <img 
+              ngSrc="/icons/edit-icon.png" 
+              alt="Edit" 
+              width="16" 
               height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M11.334 2.00004C11.5091 1.82494 11.7169 1.68605 11.9457 1.59129C12.1745 1.49653 12.4197 1.44775 12.6673 1.44775C12.9149 1.44775 13.1601 1.49653 13.3889 1.59129C13.6177 1.68605 13.8256 1.82494 14.0007 2.00004C14.1758 2.17513 14.3147 2.383 14.4094 2.61178C14.5042 2.84055 14.553 3.08575 14.553 3.33337C14.553 3.58099 14.5042 3.82619 14.4094 4.05497C14.3147 4.28374 14.1758 4.49161 14.0007 4.66671L5.00065 13.6667L1.33398 14.6667L2.33398 11L11.334 2.00004Z"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </button>
+            />
+          </app-button>
         </div>
 
         <div class="info-card__body">
           <div class="info-row">
-            <svg
+            <img 
+              ngSrc="/icons/user-icon.png" 
+              alt="Organizer" 
               class="info-icon"
               width="20"
               height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M16.6667 17.5V15.8333C16.6667 14.9493 16.3155 14.1014 15.6904 13.4763C15.0652 12.8512 14.2174 12.5 13.3333 12.5H6.66667C5.78261 12.5 4.93477 12.8512 4.30964 13.4763C3.68452 14.1014 3.33333 14.9493 3.33333 15.8333V17.5"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M10.0003 9.16667C11.8413 9.16667 13.3337 7.67428 13.3337 5.83333C13.3337 3.99238 11.8413 2.5 10.0003 2.5C8.15938 2.5 6.66699 3.99238 6.66699 5.83333C6.66699 7.67428 8.15938 9.16667 10.0003 9.16667Z"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            />
             <div class="info-content">
               <span class="info-label">Organizer:</span>
               <span class="info-value">{{ event.organizer }}</span>
@@ -107,43 +92,13 @@
           </div>
 
           <div class="info-row">
-            <svg
+            <img 
+              ngSrc="/icons/calender-icon.png" 
+              alt="Date" 
               class="info-icon"
               width="20"
               height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M15.8333 3.33337H4.16667C3.24619 3.33337 2.5 4.07957 2.5 5.00004V16.6667C2.5 17.5872 3.24619 18.3334 4.16667 18.3334H15.8333C16.7538 18.3334 17.5 17.5872 17.5 16.6667V5.00004C17.5 4.07957 16.7538 3.33337 15.8333 3.33337Z"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M13.333 1.66663V4.99996"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M6.66699 1.66663V4.99996"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M2.5 8.33337H17.5"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            />
             <div class="info-content">
               <span class="info-label">Date:</span>
               <span class="info-value">{{ formatDate(event.date) }}</span>
@@ -151,29 +106,13 @@
           </div>
 
           <div class="info-row">
-            <svg
+            <img 
+              ngSrc="/icons/clock.svg" 
+              alt="Time" 
               class="info-icon"
               width="20"
               height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M10 18.3334C14.6024 18.3334 18.3333 14.6025 18.3333 10C18.3333 5.39765 14.6024 1.66671 10 1.66671C5.39763 1.66671 1.66667 5.39765 1.66667 10C1.66667 14.6025 5.39763 18.3334 10 18.3334Z"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M10 5V10L13.3333 11.6667"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            />
             <div class="info-content">
               <span class="info-label">Time:</span>
               <span class="info-value">{{ event.time }}</span>
@@ -181,29 +120,13 @@
           </div>
 
           <div class="info-row">
-            <svg
+            <img 
+              ngSrc="/icons/map.png" 
+              alt="Location" 
               class="info-icon"
               width="20"
               height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M17.5 8.33337C17.5 14.1667 10 19.1667 10 19.1667C10 19.1667 2.5 14.1667 2.5 8.33337C2.5 6.34425 3.29018 4.43653 4.6967 3.03009C6.10322 1.62366 8.01088 0.833374 10 0.833374C11.9891 0.833374 13.8968 1.62366 15.3033 3.03009C16.7098 4.43653 17.5 6.34425 17.5 8.33337Z"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M10 10.8334C11.3807 10.8334 12.5 9.71409 12.5 8.33337C12.5 6.95266 11.3807 5.83337 10 5.83337C8.61929 5.83337 7.5 6.95266 7.5 8.33337C7.5 9.71409 8.61929 10.8334 10 10.8334Z"
-                stroke="#6B7280"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            />
             <div class="info-content">
               <span class="info-label">Location:</span>
               <span class="info-value">{{ event.location }}</span>
@@ -221,26 +144,22 @@
         <div class="info-card__body info-card__body--empty">
           <div class="empty-state">
             <div class="empty-state__icon">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M21 11.5C21.0034 12.8199 20.6951 14.1219 20.1 15.3C19.3944 16.7118 18.3098 17.8992 16.9674 18.7293C15.6251 19.5594 14.0782 19.9994 12.5 20C11.1801 20.0035 9.87812 19.6951 8.7 19.1L3 21L4.9 15.3C4.30493 14.1219 3.99656 12.8199 4 11.5C4.00061 9.92179 4.44061 8.37488 5.27072 7.03258C6.10083 5.69028 7.28825 4.6056 8.7 3.90003C9.87812 3.30496 11.1801 2.99659 12.5 3.00003H13C15.0843 3.11502 17.053 3.99479 18.5291 5.47089C20.0052 6.94699 20.885 8.91568 21 11V11.5Z"
-                  stroke="#9CA3AF"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+              <img 
+                ngSrc="/images/feedback.png" 
+                alt="No feedback"
+                width="48"
+                height="48"
+              />
             </div>
             <p class="empty-state__text">No Feedback Collected Yet</p>
-            <button class="link-button" (click)="onScheduleFeedback()">
+            <app-button 
+                       type="action"
+
+              extraClass="link-button"
+              (click)="onScheduleFeedback()"
+            >
               Schedule a Feedback Email
-            </button>
+            </app-button>
           </div>
         </div>
       </div>
@@ -254,33 +173,22 @@
         <div class="info-card__body info-card__body--empty">
           <div class="empty-state">
             <div class="empty-state__icon">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"
-                  stroke="#9CA3AF"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M22 6L12 13L2 6"
-                  stroke="#9CA3AF"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+              <img 
+                ngSrc="/icons/mail.png" 
+                alt="No invites"
+                width="48"
+                height="48"
+              />
             </div>
             <p class="empty-state__text">No Invite Sent</p>
-            <button class="link-button" (click)="onSendInvites()">
+            <app-button 
+                         type="action"
+
+              extraClass="link-button"
+              (click)="onSendInvites()"
+            >
               Send Invites via Email
-            </button>
+            </app-button>
           </div>
         </div>
       </div>
@@ -294,42 +202,12 @@
         <div class="info-card__body info-card__body--empty">
           <div class="empty-state">
             <div class="empty-state__icon">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M17 21V19C17 17.9391 16.5786 16.9217 15.8284 16.1716C15.0783 15.4214 14.0609 15 13 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21"
-                  stroke="#9CA3AF"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M9 11C11.2091 11 13 9.20914 13 7C13 4.79086 11.2091 3 9 3C6.79086 3 5 4.79086 5 7C5 9.20914 6.79086 11 9 11Z"
-                  stroke="#9CA3AF"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M23 21V19C22.9993 18.1137 22.7044 17.2528 22.1614 16.5523C21.6184 15.8519 20.8581 15.3516 20 15.13"
-                  stroke="#9CA3AF"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M16 3.13C16.8604 3.35031 17.623 3.85071 18.1676 4.55232C18.7122 5.25392 19.0078 6.11683 19.0078 7.005C19.0078 7.89318 18.7122 8.75608 18.1676 9.45769C17.623 10.1593 16.8604 10.6597 16 10.88"
-                  stroke="#9CA3AF"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
+              <img 
+                ngSrc="/icons/users-icon.png" 
+                alt="No guests"
+                width="48"
+                height="48"
+              />
             </div>
             <p class="empty-state__text">No Guest Added</p>
             <button class="link-button" (click)="onViewAllGuests()">
@@ -352,7 +230,12 @@
         <div class="host-item">
           <div class="host-item__avatar">
             @if (host.avatar) {
-            <img [src]="host.avatar" [alt]="host.name" />
+            <img 
+              [ngSrc]="host.avatar" 
+              [alt]="host.name"
+              width="40"
+              height="40"
+            />
             } @else {
             <div class="host-item__avatar-placeholder">
               {{ getInitials(host.name) }}
