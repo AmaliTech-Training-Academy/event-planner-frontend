@@ -11,19 +11,26 @@ import {
   throwError,
 } from 'rxjs';
 import {
+  FetchInvitationsResponse,
   InviteUserPayload,
   User,
   UserCardData,
   UserSearchResponse,
   mapStatusToBoolean,
   normalizeUserStatus,
-} from '../models/user.model';
+} from '../models/index';
 import {
   UserBackendService,
   UpdateUserPayload,
 } from './backend/user-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
-
+interface CachedSearchResult {
+  users: User[];
+  totalPages: number;
+  totalElements: number;
+  currentPage: number;
+  timestamp: number;
+}
 @Injectable({ providedIn: 'root' })
 export class UserManagementService {
   private _users$ = new BehaviorSubject<User[]>([]);
@@ -40,7 +47,8 @@ export class UserManagementService {
   public readonly totalPages$ = this._totalPages$.asObservable();
   public readonly currentPage$ = this._currentPage$.asObservable();
   private _usersCache: User[] = [];
-  private _searchCache = new Map<string, User[]>();
+  private _searchCache = new Map<string, CachedSearchResult>();
+  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
   private _getCacheKey(
     keyword?: string,
@@ -103,7 +111,6 @@ export class UserManagementService {
 
       catchError((err) => {
         this.errorHandler.handle(err);
-        console.error('[UserManagementService] ❌ fetchAllUsers error', err);
         return throwError(() => err);
       }),
 
@@ -134,34 +141,69 @@ export class UserManagementService {
   ) {
     const cacheKey = this._getCacheKey(keyword, role, status, page);
 
-    // Return cached results if available
+    // Check if we have valid cached results
     if (this._searchCache.has(cacheKey)) {
-      const cachedUsers = this._searchCache.get(cacheKey)!;
-      this._users$.next(cachedUsers);
-      return of(cachedUsers); // emit as observable
-    }
+      const cached = this._searchCache.get(cacheKey)!;
+      const isExpired = Date.now() - cached.timestamp > this.CACHE_DURATION;
 
-    this.setLoading(true);
+      if (!isExpired) {
+        // Update state with cached data
+        this._users$.next(cached.users);
+        this._totalPages$.next(cached.totalPages);
+        this._currentPage$.next(cached.currentPage);
+        this._totalElements$.next(cached.totalElements);
+
+        return of(cached.users);
+      } else {
+        this._searchCache.delete(cacheKey);
+      }
+    }
 
     return this.userBackend.searchUsers(keyword, role, status, page).pipe(
       map((response: UserSearchResponse) => {
-        const users = response.data?.content ?? [];
-        return users.map(normalizeUserStatus);
+        const pagination = response.data;
+        const users = pagination?.content ?? [];
+        return {
+          users: users.map(normalizeUserStatus),
+          pagination: pagination,
+        };
       }),
-      tap((users) => {
-        // Cache the results
-        this._searchCache.set(cacheKey, users);
+      tap(({ users, pagination }) => {
+        // Cache the complete result with pagination info
+        const cachedResult: CachedSearchResult = {
+          users,
+          totalPages: pagination?.totalPages ?? 1,
+          totalElements: pagination?.totalElements ?? users.length,
+          currentPage: pagination?.number ?? 0,
+          timestamp: Date.now(),
+        };
 
-        // Update signals
+        this._searchCache.set(cacheKey, cachedResult);
+
+        // Update state
         this._users$.next(users);
+        this._totalPages$.next(pagination?.totalPages ?? 1);
+        this._currentPage$.next(pagination?.number ?? 0);
+        this._totalElements$.next(pagination?.totalElements ?? users.length);
       }),
+      map(({ users }) => users),
       catchError((err) => {
         this.errorHandler.handle(err);
-        console.error('[UserManagementService] ❌ searchUsers error', err);
-        return of([]); // return empty array on error
-      }),
-      finalize(() => this.setLoading(false))
+
+        this._totalElements$.next(0);
+        this._totalPages$.next(0);
+        this._currentPage$.next(0);
+
+        return of([]);
+      })
     );
+  }
+  public invalidateCache(): void {
+    this._searchCache.clear();
+    this._usersCache = [];
+  }
+  private invalidateSearchCache(): void {
+    this._searchCache.clear();
   }
 
   private _updateUserCards(data?: any): void {
@@ -247,34 +289,22 @@ export class UserManagementService {
   public updateUser(userId: string, payload: UpdateUserPayload) {
     this.setLoading(true);
 
-    console.log('🔧 [UserManagementService] Updating user:', userId);
-    console.log(
-      '📤 [UserManagementService] Payload:',
-      JSON.stringify(payload, null, 2)
-    );
-
     return this.userBackend.updateUser(userId, payload).pipe(
       map((response) => ({
         ...response,
         data: normalizeUserStatus(response.data),
       })),
       tap((response) => {
-        console.log('✅ [UserManagementService] Update successful:', response);
         const users = this._users$
           .getValue()
           .map((u) =>
             String(u.userId) === String(userId) ? response.data : u
           );
         this._users$.next(users);
+
+        this.invalidateCache();
       }),
       catchError((err) => {
-        console.error('❌ [UserManagementService] Update failed:', err);
-        console.error('📋 Error details:', {
-          status: err.status,
-          statusText: err.statusText,
-          message: err.error?.message || err.message,
-          error: err.error,
-        });
         this.errorHandler.handle(err);
         return throwError(() => err);
       }),
@@ -297,6 +327,8 @@ export class UserManagementService {
           return u;
         });
         this._users$.next(updatedUsers);
+
+        this.invalidateCache();
       }),
       catchError((err) => {
         this.errorHandler.handle(err);
@@ -311,11 +343,35 @@ export class UserManagementService {
     return this.userBackend.inviteUsers(payload).pipe(
       tap((response) => {
         if (response.data.invitationsSent > 0) {
-          console.log(
-            `${response.data.invitationsSent} invitation(s) sent successfully`
-          );
+          this.invalidateCache();
         }
       }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+  public fetchInvitations(page?: number, size?: number) {
+    this.setLoading(true);
+    return this.userBackend.fetchInvitations(page, size).pipe(
+      map((response: FetchInvitationsResponse) => {
+        // Return just the invitations array from content
+        return response.data?.content ?? [];
+      }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return of([]); // Return empty array on error
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
+  // Add this method for when you need the full paginated response (event-management page)
+  public fetchInvitationsWithPagination(page: number = 0, size: number = 10) {
+    this.setLoading(true);
+    return this.userBackend.fetchInvitations(page, size).pipe(
       catchError((err) => {
         this.errorHandler.handle(err);
         return throwError(() => err);

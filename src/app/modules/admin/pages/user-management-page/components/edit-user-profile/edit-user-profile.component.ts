@@ -25,8 +25,9 @@ import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/m
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 import { UserManagementService } from '../../../../../../core/services/user-management.service';
-import { mapStatusToBoolean, mapUserStatus, User } from '../../../../../../core/models/user.model';
+
 import { UpdateUserPayload } from '../../../../../../core/services/backend/user-backend.service';
+import { User } from '../../../../../../core/models';
 
 interface CountryOption {
   readonly value: CountryCode;
@@ -57,9 +58,7 @@ export class EditUserProfileComponent {
   @ViewChild('fileInput') private _fileInput!: ElementRef<HTMLInputElement>;
 
   protected readonly profileForm: FormGroup;
-  protected readonly profileImage = signal<string>(
-    'https://ui-avatars.com/api/?name=User&background=FF6B35&color=fff&size=128'
-  );
+  protected readonly profileImage = signal<string>('images/profile-image.png');
   protected readonly saving = signal<boolean>(false);
   protected readonly uploadingImage = signal<boolean>(false);
   protected readonly error = signal<string | null>(null);
@@ -74,20 +73,14 @@ export class EditUserProfileComponent {
 
   protected readonly currentProfileImage = computed(() => {
     const user = this.userData();
-    if (!user) {
-      return 'https://ui-avatars.com/api/?name=User&background=FF6B35&color=fff&size=128';
-    }
-
-    if (user.profileImageUrl) {
-      return user.profileImageUrl;
-    } else if (user.avatar) {
-      return user.avatar;
-    } else {
-      const name = user.fullName || user.name || 'User';
-      return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    const name = user?.fullName || user?.name || 'User';
+    return (
+      user?.profileImageUrl ||
+      user?.avatar ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(
         name
-      )}&background=FF6B35&color=fff&size=128`;
-    }
+      )}&background=FF6B35&color=fff&size=128`
+    );
   });
 
   protected readonly phoneCodes: readonly CountryOption[] = [
@@ -146,6 +139,8 @@ export class EditUserProfileComponent {
       return;
     }
 
+    console.log('📋 User data for form:', user); // Debug
+
     if (user.phone) {
       try {
         const parsed = parsePhoneNumber(user.phone);
@@ -154,17 +149,20 @@ export class EditUserProfileComponent {
             fullName: user.fullName || user.name || '',
             email: user.email,
             phoneCode: parsed.country || this._defaultCountryCode,
-            phone: parsed.nationalNumber,
+            phone: parsed.nationalNumber.toString(), // ✅ Convert to string
             address: user.address || '',
           };
 
+          console.log('✅ Form data with parsed phone:', formData); // Debug
           this.profileForm.patchValue(formData, { emitEvent: false });
-
           return;
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error('❌ Phone parsing error:', error);
+      }
     }
 
+    // Fallback for users without phone or parsing failure
     const formData = {
       fullName: user.fullName || user.name || '',
       email: user.email,
@@ -173,6 +171,7 @@ export class EditUserProfileComponent {
       address: user.address || '',
     };
 
+    console.log('✅ Form data (fallback):', formData); // Debug
     this.profileForm.patchValue(formData, { emitEvent: false });
   }
 
@@ -282,74 +281,72 @@ export class EditUserProfileComponent {
     return phoneNumber;
   }
 
+  protected onSubmit(): void {
+    const user = this.userData();
+    if (!this.profileForm.valid || !user?.userId) {
+      this._markFormAsTouched();
+      return;
+    }
 
-protected onSubmit(): void {
-  const user = this.userData();
-  if (!this.profileForm.valid || !user?.userId) {
-    this._markFormAsTouched();
-    return;
+    if (this.saving()) return;
+
+    this.saving.set(true);
+    this.error.set(null);
+
+    const updatePayload: UpdateUserPayload = this._buildUpdatePayload();
+
+    this.userManagementService
+      .updateUser(String(user.userId), updatePayload)
+      .pipe(finalize(() => this.saving.set(false)))
+      .subscribe({
+        next: (response) => {
+          const updatedUser = response.data || response;
+          this.save.emit(updatedUser);
+          this._resetForm();
+          this.close.emit();
+        },
+        error: (err) => {
+          const errorMessage =
+            err?.error?.message ||
+            err?.message ||
+            'Failed to update profile. Please try again.';
+          this.error.set(errorMessage);
+        },
+      });
   }
 
-  if (this.saving()) return;
+  private _buildUpdatePayload(): UpdateUserPayload {
+    const phoneNumber = this.profileForm.get('phone')?.value;
+    const countryCode = this.profileForm.get('phoneCode')?.value as CountryCode;
+    let formattedPhone = phoneNumber || ''; // ✅ Default to empty string
 
-  this.saving.set(true);
-  this.error.set(null);
+    if (phoneNumber && countryCode) {
+      try {
+        const phoneNumberObj = parsePhoneNumber(phoneNumber, countryCode);
+        if (phoneNumberObj?.isValid()) {
+          formattedPhone = phoneNumberObj.number;
+        }
+      } catch {}
+    }
 
-  const updatePayload: UpdateUserPayload = this._buildUpdatePayload();
+    const user = this.userData();
+    if (!user) throw new Error('No user data available');
 
-  this.userManagementService
-    .updateUser(String(user.userId), updatePayload)
-    .pipe(finalize(() => this.saving.set(false)))
-    .subscribe({
-      next: (response) => {
-        const updatedUser = response.data || response;
-        this.save.emit(updatedUser);
-        this._resetForm();
-        this.close.emit();
-      },
-      error: (err) => {
-        const errorMessage =
-          err?.error?.message ||
-          err?.message ||
-          'Failed to update profile. Please try again.';
-        this.error.set(errorMessage);
-      },
-    });
-}
+    const payload: UpdateUserPayload = {
+      fullName: this.profileForm.value.fullName,
+      email: this.profileForm.value.email,
+      phone: formattedPhone, // ✅ Always string, never undefined
+      address: this.profileForm.value.address || '', // ✅ Always string, never undefined
+      status: user.status === 'Active',
+    };
 
-private _buildUpdatePayload(): UpdateUserPayload {
-  const phoneNumber = this.profileForm.get('phone')?.value;
-  const countryCode = this.profileForm.get('phoneCode')?.value as CountryCode;
-  let formattedPhone = phoneNumber;
+    // Include new profile image if uploaded
+    if (this._newImageBase64) {
+      payload.profilePicture = this._newImageBase64;
+    }
 
-  if (phoneNumber && countryCode) {
-    try {
-      const phoneNumberObj = parsePhoneNumber(phoneNumber, countryCode);
-      if (phoneNumberObj?.isValid()) {
-        formattedPhone = phoneNumberObj.number;
-      }
-    } catch {}
+    return payload;
   }
-
-  const user = this.userData();
-  if (!user) throw new Error('No user data available');
-
-  const payload: UpdateUserPayload = {
-    fullName: this.profileForm.value.fullName,
-    email: this.profileForm.value.email,
-    phone: formattedPhone || undefined,
-    address: this.profileForm.value.address || undefined,
-    status: user.status === 'Active', // boolean for backend
-  };
-
-  // Include new profile image if uploaded
-  if (this._newImageBase64) {
-    payload.profilePicture = this._newImageBase64;
-  }
-
-  return payload;
-}
-
 
   private _markFormAsTouched(): void {
     Object.keys(this.profileForm.controls).forEach((key) => {

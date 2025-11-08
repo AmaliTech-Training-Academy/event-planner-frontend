@@ -9,11 +9,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { USER_ROLES } from '../../../../core/constants/user.constants';
-import {
-  User,
-  UserCardData,
-  mapUserStatus,
-} from '../../../../core/models/user.model';
+
 import { LayoutService } from '../../../../core/services/layout.service';
 import { UserManagementService } from '../../../../core/services/user-management.service';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
@@ -28,6 +24,7 @@ import { SuccessModalComponent } from './components/success-modal/success-modal.
 import { EditUserProfileComponent } from './components/edit-user-profile/edit-user-profile.component';
 import { ViewUserProfileComponent } from './components/view-user-profile/view-user-profile.component';
 import { UpdateUserPayload } from '../../../../core/services/backend/user-backend.service';
+import { mapUserStatus, User } from '../../../../core/models';
 
 @Component({
   selector: 'app-user-management-page',
@@ -48,6 +45,12 @@ export class UserManagementPageComponent implements OnInit {
   private readonly _userService = inject(UserManagementService);
   private readonly _router = inject(Router);
   private readonly _destroyRef = inject(DestroyRef);
+  protected readonly totalElements = toSignal(
+    this._userService.totalElements$,
+    {
+      initialValue: 0,
+    }
+  );
 
   protected readonly isInviteModalOpen = signal<boolean>(false);
   protected readonly isSuccessModalOpen = signal<boolean>(false);
@@ -72,6 +75,8 @@ export class UserManagementPageComponent implements OnInit {
     initialValue: 0,
   });
 
+  private readonly _currentSearch = signal<string>('');
+  private readonly _currentFilters = signal<Map<string, string>>(new Map());
   // Table columns & actions
   protected readonly tableColumns: TableColumn<User>[] = [
     {
@@ -129,7 +134,7 @@ export class UserManagementPageComponent implements OnInit {
         { label: 'Organizer', value: USER_ROLES.ORGANIZER },
         { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
         { label: 'Attendee', value: USER_ROLES.ATTENDEE },
-        { label: 'Venue Staff', value: USER_ROLES.VENUE_STAFF },
+        { label: 'Admin', value: USER_ROLES.ADMIN },
       ],
     },
     {
@@ -160,14 +165,44 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   private _loadUsers(page: number = 0): void {
-    this._userService
-      .fetchAllUsers(page)
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe();
-  }
+    const search = this._currentSearch();
+    const filters = this._currentFilters();
 
+    const keyword = search.trim() || undefined;
+    const role = filters.get('role');
+    const roleValue = role && role !== 'all' ? role : undefined;
+    const status = filters.get('status');
+    const statusValue =
+      status && status !== 'all' ? this._normalizeStatus(status) : undefined;
+
+    if (keyword || roleValue || statusValue !== undefined) {
+      this._userService
+        .searchUsers(keyword, roleValue, statusValue, page)
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe();
+    } else {
+      this._userService
+        .fetchAllUsers(page)
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe();
+    }
+  }
+  private _normalizeStatus(value: string): boolean {
+    return value.toLowerCase() === 'active' || value === 'true';
+  }
   public onPageChange(page: number): void {
     this._loadUsers(page - 1);
+  }
+  public onSearchChange(query: string): void {
+    this._currentSearch.set(query);
+    this._loadUsers(0);
+  }
+
+  public onFilterChange(event: { key: string; value: string }): void {
+    const filters = new Map(this._currentFilters());
+    filters.set(event.key, event.value);
+    this._currentFilters.set(filters);
+    this._loadUsers(0);
   }
 
   protected openInviteModal(): void {
@@ -250,16 +285,45 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   private _viewUser(user: User): void {
-    this.selectedUser.set(user);
-    Promise.resolve().then(() => this.isViewModalOpen.set(true));
+    // Fetch complete user details first
+    this._userService
+      .getUser(user.userId.toString())
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response) => {
+          // Set the complete user data with phone and address
+          this.selectedUser.set(response.data);
+          this.isViewModalOpen.set(true);
+        },
+        error: (err) => {
+          console.error('Failed to fetch user details:', err);
+          // Fallback: use partial data from list
+          this.selectedUser.set(user);
+          this.isViewModalOpen.set(true);
+        },
+      });
   }
 
   private _editUser(user: User): void {
     if (this.isViewModalOpen()) this.closeViewModal();
-    Promise.resolve().then(() => {
-      this.selectedUser.set(user);
-      this.isEditModalOpen.set(true);
-    });
+
+    // Fetch complete user details first
+    this._userService
+      .getUser(user.userId.toString())
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response) => {
+          // Set the complete user data with phone and address
+          this.selectedUser.set(response.data);
+          this.isEditModalOpen.set(true);
+        },
+        error: (err) => {
+          console.error('Failed to fetch user details:', err);
+          // Fallback: use partial data from list
+          this.selectedUser.set(user);
+          this.isEditModalOpen.set(true);
+        },
+      });
   }
 
   private _toggleUserStatus(user: User): void {

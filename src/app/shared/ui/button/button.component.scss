@@ -197,34 +197,7 @@ button.app-button--danger {
   &:hover:not(:disabled) {
   }
 }
-button.status-button,
-.app-button.status-button {
-  position: absolute;
-  bottom: -4px;
-  right: -4px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background:transparent !important;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.2s ease;
-  
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-  }
-  
-  img.status-icon {
-    width: 16px;
-    height: 16px;
-    background:transparent !important;
-    object-fit: contain;
-  }
-}
+
 button.app-button.filter-reset {
   width: 16px;
   height: 16px;

@@ -197,12 +197,13 @@
     <img src="/images/table-empty.png" alt="No data found" />
   </div>
   } } @if (filteredData().length > 0 && !loading()) {
- <app-pagination
-  [totalItems]="totalFilteredItems()"
+<app-pagination
+  [totalItems]="totalItems()"
   [itemsPerPage]="itemsPerPage()"
   [currentPage]="currentPage()"
-  (currentPageChange)="setCurrentPage($event)"
+  (pageChange)="setCurrentPage($event)"
 ></app-pagination>
+
 
 
   }

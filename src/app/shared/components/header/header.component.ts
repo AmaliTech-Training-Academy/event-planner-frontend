@@ -13,6 +13,7 @@ import { ButtonComponent } from '../../ui/button/button.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
 import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
+import { OtpBodyData } from '../../../core/models/auth-response.model';
 
 interface NavLink {
   label: string;
@@ -39,7 +40,8 @@ export class HeaderComponent implements OnInit {
   ]);
 
   public readonly isMenuOpen = signal(false);
-  public readonly currentUser = signal<User | null>(null);
+  public readonly currentUser = signal<OtpBodyData | null>(null); // Changed from User to OtpBodyData
+
   public readonly isLoggedIn = signal(false);
   public readonly isUserMenuOpen = signal(false);
 

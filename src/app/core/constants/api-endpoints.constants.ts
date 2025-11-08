@@ -15,10 +15,12 @@ export const API_ENDPOINTS = {
   UPDATE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   DELETE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   CREATE_USER: `${BASE}/users`,
-  INVITE_USER: `${BASE}/users/event-invitations`, // Add this line
+  INVITE_USER: `${BASE}/event-invitations`,
+  GET_ALL_INVITATIONS: `${BASE}/event-invitations`,
   AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
   AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
+  AUTH_ME: `${BASE}/auth/me`,
   DEACTIVATE_USER: (userId: string | number) =>
     `${BASE}/users/${userId}/deactivate`,
 
