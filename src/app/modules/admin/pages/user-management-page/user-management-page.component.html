@@ -6,16 +6,20 @@
   </div>
 
   <div class="user-management-page__table">
-    <app-data-table
-      [data]="users()"
-      [columns]="tableColumns"
-      [actions]="tableActions"
-      [filters]="tableFilters"
-      [searchable]="true"
-      [expandable]="false"
-      [primaryAction]="primaryAction"
-      (rowExpanded)="onRowExpanded($event)"
-    />
+   <app-data-table
+  title="User List"
+  searchPlaceholder="Search users..."
+  [data]="users()"
+  [columns]="tableColumns"
+  [actions]="tableActions"
+  [filters]="tableFilters"
+  [searchable]="true"
+  [expandable]="false"
+  [showAvatar]="true"
+  [showCheckboxes]="true"
+  [primaryAction]="primaryAction"
+  (rowExpanded)="onRowExpanded($event)"
+/>
   </div>
 
   @if (isInviteModalOpen()) {

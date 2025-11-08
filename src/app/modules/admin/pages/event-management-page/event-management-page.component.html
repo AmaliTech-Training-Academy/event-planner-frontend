@@ -1,4 +1,4 @@
-
+<!-- event-management-page.component.html -->
 <div class="event-management-page">
   <app-event-statistics 
     [statistics]="eventStatistics()"
@@ -17,15 +17,22 @@
       (eventClicked)="onEventClick($event)"
     />
   </div>
-   <!-- Events Table Section -->
+  
+  <!-- Events Table Section -->
   <section class="event-management-page__table">
     <app-data-table
+      title="Event List"
+      searchPlaceholder="Search events or organizers..."
       [data]="eventTableData()"
       [columns]="eventTableColumns"
       [actions]="eventTableActions"
       [filters]="eventTableFilters"
       [searchable]="true"
       [expandable]="false"
+      [showAvatar]="false"
+      [showCheckboxes]="true"
+      [showExport]="true"
+      [showActionLabels]="true"
       [primaryAction]="eventTablePrimaryAction"
       [itemsPerPage]="10"
     />

@@ -1,5 +1,6 @@
 // event-management-page.component.ts
 import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router'; // ADD THIS IMPORT
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   EventStatisticsComponent,
@@ -28,8 +29,10 @@ interface EventTableData {
   date: string;
   attendees: number;
   status: 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled';
+  time?: string; // Add this
+  location?: string; // Add this
+  description?: string; // Add this
 }
-
 @Component({
   selector: 'app-event-management-page',
   standalone: true,
@@ -38,13 +41,13 @@ interface EventTableData {
     TopOrganizersComponent,
     UpcomingEventsComponent,
     DataTableComponent,
-    
-],
+  ],
   templateUrl: './event-management-page.component.html',
   styleUrl: './event-management-page.component.scss',
 })
 export class EventManagementPageComponent {
   private readonly _layoutService = inject(LayoutService);
+  private readonly _router = inject(Router); // ADD THIS LINE
 
   // Event Statistics Data
   private readonly _eventStatistics = signal<EventStatistic[]>([
@@ -131,6 +134,8 @@ export class EventManagementPageComponent {
       date: '2023-10-15',
       attendees: 120,
       status: 'Pending',
+      time: '09:00am GMT',
+      location: 'Virtual (Zoom meeting)',
     },
     {
       id: 2,
@@ -139,38 +144,68 @@ export class EventManagementPageComponent {
       date: '2023-09-28',
       attendees: 45,
       status: 'Completed',
+      time: '02:00pm GMT',
+      location: 'Conference Room A',
     },
     {
       id: 3,
-      name: 'Leadership Summit',
-      organizer: 'Michael Brown',
-      date: '2023-11-10',
-      attendees: 85,
-      status: 'Draft',
+      name: 'Product Launch',
+      organizer: 'John Smith',
+      date: '2023-10-15',
+      attendees: 120,
+      status: 'Pending',
+      time: '09:00am GMT',
+      location: 'Virtual (Zoom meeting)',
     },
     {
       id: 4,
-      name: 'Product Launch',
-      organizer: 'Sarah Davis',
-      date: '2023-10-22',
-      attendees: 150,
-      status: 'Active',
+      name: 'Marketing Workshop',
+      organizer: 'Lisa Johnson',
+      date: '2023-09-28',
+      attendees: 45,
+      status: 'Completed',
+      time: '02:00pm GMT',
+      location: 'Conference Room A',
     },
     {
       id: 5,
-      name: 'Annual Networking Event',
-      organizer: 'Robert Wilson',
-      date: '2023-12-05',
-      attendees: 200,
-      status: 'Active',
+      name: 'Product Launch',
+      organizer: 'John Smith',
+      date: '2023-10-15',
+      attendees: 120,
+      status: 'Pending',
+      time: '09:00am GMT',
+      location: 'Virtual (Zoom meeting)',
     },
     {
       id: 6,
-      name: 'Design Workshop',
-      organizer: 'Jennifer Lee',
-      date: '2023-09-15',
-      attendees: 35,
+      name: 'Marketing Workshop',
+      organizer: 'Lisa Johnson',
+      date: '2023-09-28',
+      attendees: 45,
       status: 'Completed',
+      time: '02:00pm GMT',
+      location: 'Conference Room A',
+    },
+    {
+      id: 7,
+      name: 'Product Launch',
+      organizer: 'John Smith',
+      date: '2023-10-15',
+      attendees: 120,
+      status: 'Pending',
+      time: '09:00am GMT',
+      location: 'Virtual (Zoom meeting)',
+    },
+    {
+      id: 8,
+      name: 'Marketing Workshop',
+      organizer: 'Lisa Johnson',
+      date: '2023-09-28',
+      attendees: 45,
+      status: 'Completed',
+      time: '02:00pm GMT',
+      location: 'Conference Room A',
     },
   ]);
 
@@ -183,11 +218,18 @@ export class EventManagementPageComponent {
     { key: 'status', header: 'Status', filterable: true },
   ];
 
+  public readonly exportOptions: ReadonlyArray<FilterOption> = [
+    { label: 'Export As', value: 'export' },
+    { label: 'CSV', value: 'csv' },
+    { label: 'JSON', value: 'json' },
+    { label: 'PDF', value: 'pdf' },
+  ];
+
   public readonly eventTableActions: TableAction<EventTableData>[] = [
     {
-      icon: 'icons/view-event.png',
+      icon: 'icons/eye-open.svg',
       label: 'View',
-      color: 'view',
+      extraClass: 'plain-action',
       handler: (event: EventTableData) => this._onViewEvent(event),
     },
   ];
@@ -245,175 +287,14 @@ export class EventManagementPageComponent {
 
   // Event handlers - Table Section
   private _onViewEvent(event: EventTableData): void {
-    console.log('View event:', event);
-    // TODO: Navigate to event detail page
-    // this._router.navigate(['/admin/events', event.id]);
+    this._router.navigate(['/admin/events', event.id], {
+      state: { eventData: event },
+    });
   }
 
   private _onCreateEvent(): void {
     console.log('Create event clicked');
-    // TODO: Navigate to create event page or open modal
-    // this._router.navigate(['/admin/events/create']);
+    // Navigate to create event page
+    this._router.navigate(['/admin/events/create']);
   }
 }
-
-// ===================================================================
-// OPTIONAL: event-management.service.ts (Best Practice)
-// ===================================================================
-/*
-import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap, catchError, of } from 'rxjs';
-import { EventStatistic } from '../../../../shared/dashboard/event-statistics/event-statistics.component';
-import { Organizer } from '../../../../shared/dashboard/top-organizers/top-organizers.component';
-import { UpcomingEvent } from '../../../../shared/dashboard/upcoming-events/upcoming-events.component';
-
-export interface EventDashboardData {
-  statistics: EventStatistic[];
-  topOrganizers: Organizer[];
-  upcomingEvents: UpcomingEvent[];
-}
-
-@Injectable({
-  providedIn: 'root'
-})
-export class EventManagementService {
-  private readonly _apiUrl = '/api/events';
-  
-  private _statistics = signal<EventStatistic[]>([]);
-  private _topOrganizers = signal<Organizer[]>([]);
-  private _upcomingEvents = signal<UpcomingEvent[]>([]);
-  private _loading = signal<boolean>(false);
-  private _error = signal<string | null>(null);
-
-  // Public readonly signals
-  public readonly statistics = this._statistics.asReadonly();
-  public readonly topOrganizers = this._topOrganizers.asReadonly();
-  public readonly upcomingEvents = this._upcomingEvents.asReadonly();
-  public readonly loading = this._loading.asReadonly();
-  public readonly error = this._error.asReadonly();
-
-  constructor(private readonly _http: HttpClient) {}
-
-  public loadDashboardData(): void {
-    this._loading.set(true);
-    this._error.set(null);
-
-    this._http.get<EventDashboardData>(`${this._apiUrl}/dashboard`).pipe(
-      tap((data) => {
-        this._statistics.set(data.statistics);
-        this._topOrganizers.set(data.topOrganizers);
-        this._upcomingEvents.set(data.upcomingEvents);
-        this._loading.set(false);
-      }),
-      catchError((error) => {
-        this._error.set('Failed to load dashboard data. Please try again.');
-        this._loading.set(false);
-        console.error('Error loading dashboard data:', error);
-        return of(null);
-      })
-    ).subscribe();
-  }
-
-  public getStatistics(): Observable<EventStatistic[]> {
-    return this._http.get<EventStatistic[]>(`${this._apiUrl}/statistics`).pipe(
-      tap((stats) => this._statistics.set(stats)),
-      catchError((error) => {
-        console.error('Error loading statistics:', error);
-        throw error;
-      })
-    );
-  }
-
-  public getTopOrganizers(limit: number = 10): Observable<Organizer[]> {
-    return this._http.get<Organizer[]>(`${this._apiUrl}/top-organizers`, {
-      params: { limit: limit.toString() }
-    }).pipe(
-      tap((organizers) => this._topOrganizers.set(organizers)),
-      catchError((error) => {
-        console.error('Error loading top organizers:', error);
-        throw error;
-      })
-    );
-  }
-
-  public getUpcomingEvents(limit: number = 5): Observable<UpcomingEvent[]> {
-    return this._http.get<UpcomingEvent[]>(`${this._apiUrl}/upcoming`, {
-      params: { limit: limit.toString() }
-    }).pipe(
-      tap((events) => this._upcomingEvents.set(events)),
-      catchError((error) => {
-        console.error('Error loading upcoming events:', error);
-        throw error;
-      })
-    );
-  }
-
-  public refreshData(): void {
-    this.loadDashboardData();
-  }
-}
-*/
-
-// ===================================================================
-// USAGE WITH SERVICE (event-management-page.component.ts alternative)
-// ===================================================================
-/*
-import { Component, inject, OnInit } from '@angular/core';
-import { LayoutService } from '../../../../core/services/layout.service';
-import { EventManagementService } from '../../../../core/services/event-management.service';
-import { EventStatisticsComponent } from '../../../../shared/dashboard/event-statistics/event-statistics.component';
-import { TopOrganizersComponent } from '../../../../shared/dashboard/top-organizers/top-organizers.component';
-import { UpcomingEventsComponent } from '../../../../shared/dashboard/upcoming-events/upcoming-events.component';
-
-@Component({
-  selector: 'app-event-management-page',
-  standalone: true,
-  imports: [
-    EventStatisticsComponent,
-    TopOrganizersComponent,
-    UpcomingEventsComponent
-  ],
-  templateUrl: './event-management-page.component.html',
-  styleUrl: './event-management-page.component.scss',
-})
-export class EventManagementPageComponent implements OnInit {
-  private readonly _layoutService = inject(LayoutService);
-  private readonly _eventManagementService = inject(EventManagementService);
-
-  // Access signals from service
-  public eventStatistics = this._eventManagementService.statistics;
-  public topOrganizers = this._eventManagementService.topOrganizers;
-  public upcomingEvents = this._eventManagementService.upcomingEvents;
-  public loading = this._eventManagementService.loading;
-  public error = this._eventManagementService.error;
-
-  constructor() {
-    this._layoutService.pageTitle.set('Event Management');
-  }
-
-  ngOnInit(): void {
-    this._eventManagementService.loadDashboardData();
-  }
-
-  public onViewAllOrganizers(): void {
-    // Navigate to organizers page
-  }
-
-  public onOrganizerClick(organizer: Organizer): void {
-    // Navigate to organizer detail
-  }
-
-  public onViewAllEvents(): void {
-    // Navigate to events page
-  }
-
-  public onEventClick(event: UpcomingEvent): void {
-    // Navigate to event detail
-  }
-
-  public onRefresh(): void {
-    this._eventManagementService.refreshData();
-  }
-}
-*/

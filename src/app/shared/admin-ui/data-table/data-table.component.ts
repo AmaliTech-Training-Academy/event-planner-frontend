@@ -1,3 +1,4 @@
+// data-table.component.ts
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -6,6 +7,9 @@ import {
   signal,
   input,
   output,
+  HostListener,
+  ElementRef,
+  inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -25,6 +29,7 @@ export interface TableAction<T> {
   readonly icon: string;
   readonly label: string;
   readonly color?: string;
+  readonly extraClass?: string;
   readonly handler: (item: T) => void;
   readonly visible?: (item: T) => boolean;
   readonly disabled?: boolean | ((item: T) => boolean);
@@ -60,17 +65,25 @@ export interface TableFilter {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataTableComponent<T extends Record<string, any>> {
+  private readonly elementRef = inject(ElementRef);
+
+  public readonly title = input<string>('Data Table');
   public readonly data = input.required<ReadonlyArray<T>>();
   public readonly columns = input.required<ReadonlyArray<TableColumn<T>>>();
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
   public readonly filters = input<ReadonlyArray<TableFilter>>([]);
   public readonly searchable = input<boolean>(true);
+  public readonly searchPlaceholder = input<string>('Search...');
   public readonly expandable = input<boolean>(false);
+  public readonly showAvatar = input<boolean>(true);
+  public readonly showExport = input<boolean>(false);
   public readonly primaryAction = input<{
     label: string;
     handler: () => void;
   }>();
   public readonly itemsPerPage = input<number>(10);
+  public readonly showCheckboxes = input<boolean>(true);
+  public readonly showActionLabels = input<boolean>(false);
 
   public readonly rowExpanded = output<T>();
 
@@ -79,8 +92,16 @@ export class DataTableComponent<T extends Record<string, any>> {
   private readonly _selectedItems = signal<Set<T>>(new Set());
   private readonly _searchQuery = signal<string>('');
   private readonly _currentPage = signal<number>(1);
-  public readonly currentPage = computed(() => this._currentPage());
 
+  // Export options as FilterOption array
+  public readonly exportOptions: ReadonlyArray<FilterOption> = [
+    { label: 'Export As', value: '' },
+    { label: 'CSV', value: 'csv' },
+    { label: 'JSON', value: 'json' },
+    { label: 'PDF', value: 'pdf' },
+  ];
+
+  public readonly currentPage = computed(() => this._currentPage());
   public readonly searchQuery = computed(() => this._searchQuery());
 
   public readonly filteredData = computed(() => {
@@ -102,9 +123,7 @@ export class DataTableComponent<T extends Record<string, any>> {
 
     return result;
   });
-  public setCurrentPage(page: number): void {
-    this._currentPage.set(page);
-  }
+
   public readonly paginatedData = computed(() => {
     const filtered = this.filteredData();
     const page = this._currentPage();
@@ -112,6 +131,10 @@ export class DataTableComponent<T extends Record<string, any>> {
     const start = (page - 1) * perPage;
     return filtered.slice(start, start + perPage);
   });
+
+  public setCurrentPage(page: number): void {
+    this._currentPage.set(page);
+  }
 
   public isSelected(item: T): boolean {
     return this._selectedItems().has(item);
@@ -200,6 +223,71 @@ export class DataTableComponent<T extends Record<string, any>> {
 
   public trackByIndex(index: number): number {
     return index;
+  }
+
+  public handleExportChange(format: string): void {
+    // Ignore the placeholder value
+    if (!format || format === '') return;
+
+    const dataToExport = this.filteredData();
+
+    switch (format) {
+      case 'csv':
+        this._exportAsCSV(dataToExport);
+        break;
+      case 'json':
+        this._exportAsJSON(dataToExport);
+        break;
+      case 'pdf':
+        this._exportAsPDF(dataToExport);
+        break;
+    }
+  }
+
+  private _exportAsCSV(data: ReadonlyArray<T>): void {
+    if (data.length === 0) return;
+
+    const columns = this.columns();
+    const headers = columns.map((col) => col.header).join(',');
+    const rows = data.map((item) =>
+      columns
+        .map((col) => {
+          const value = item[col.key];
+          return typeof value === 'string' &&
+            (value.includes(',') || value.includes('"'))
+            ? `"${value.replace(/"/g, '""')}"`
+            : value;
+        })
+        .join(',')
+    );
+
+    const csv = [headers, ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    this._downloadFile(blob, 'export.csv');
+  }
+
+  private _exportAsJSON(data: ReadonlyArray<T>): void {
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    this._downloadFile(blob, 'export.json');
+  }
+
+  private _exportAsPDF(data: ReadonlyArray<T>): void {
+    console.log(
+      'PDF export functionality to be implemented with jsPDF library'
+    );
+    alert('PDF export will be implemented with jsPDF library');
+  }
+
+  private _downloadFile(blob: Blob, filename: string): void {
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   private _matchesSearch(item: T, query: string): boolean {

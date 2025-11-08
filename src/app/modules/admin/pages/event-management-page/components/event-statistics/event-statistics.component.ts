@@ -26,9 +26,9 @@ export class EventStatisticsComponent {
     return stats.length > 0 ? Math.max(...stats.map((stat) => stat.count)) : 0;
   });
 
-  // Constants
-  private readonly _MAX_BAR_HEIGHT = 160;
-  private readonly _MIN_BAR_HEIGHT = 60;
+  // Constants - adjusted for the reference design
+  private readonly _MAX_BAR_HEIGHT = 120;
+  private readonly _MIN_BAR_HEIGHT = 80;
 
   /**
    * Formats a number to display with K suffix for thousands
@@ -50,7 +50,10 @@ export class EventStatisticsComponent {
       return this._MIN_BAR_HEIGHT;
     }
 
-    const calculatedHeight = (count / maxCount) * this._MAX_BAR_HEIGHT;
+    const ratio = count / maxCount;
+    const heightRange = this._MAX_BAR_HEIGHT - this._MIN_BAR_HEIGHT;
+    const calculatedHeight = this._MIN_BAR_HEIGHT + ratio * heightRange;
+
     return Math.max(this._MIN_BAR_HEIGHT, calculatedHeight);
   }
 

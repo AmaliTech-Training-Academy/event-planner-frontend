@@ -25,23 +25,21 @@
     gap: $spacing-3;
     line-height: 50px;
     justify-content: flex-end;
-    flex: 0 0  70%;
-}
+    flex: 0 0 70%;
+  }
 
   &__search-box {
     position: relative;
     flex: 0 0 30%;
-
   }
 
   &__search-input {
-
     &::placeholder {
       color: $gray-400;
     }
 
     &:focus {
-    //   border-color: $primary-color;
+      // border-color: $primary-color;
     }
   }
 
@@ -70,7 +68,7 @@
     }
 
     &:focus {
-    //   border-color: $primary-color;
+      // border-color: $primary-color;
     }
   }
 
@@ -108,12 +106,16 @@
 
   &__th {
     @include label-1;
-    padding: $spacing-4 $spacing-5; 
-
+    padding: $spacing-4 $spacing-5;
     text-align: left;
     font-weight: 600;
     color: $paragraph-text;
     border-bottom: $stroke-1 solid $general-stroke-light;
+
+    &--checkbox {
+      width: 48px;
+      padding: $spacing-4 $spacing-3;
+    }
 
     &--expand {
       width: 50px;
@@ -143,9 +145,13 @@
 
   &__td {
     @include body-2;
-    padding: $spacing-4 $spacing-5; 
-
+    padding: $spacing-4 $spacing-5;
     color: $text-primary;
+
+    &--checkbox {
+      width: 48px;
+      padding: $spacing-4 $spacing-3;
+    }
 
     &--expand {
       width: 50px;
@@ -186,10 +192,8 @@
   }
 
   &__action-btn {
-  
     border: none;
     border-radius: 50%;
-
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -199,17 +203,13 @@
     color: $gray-50;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      // transform: translateY(-2px);
+      // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
     &:active {
       transform: translateY(0);
     }
-
-   
-
-  
   }
 
   &__no-data {
@@ -244,6 +244,30 @@
       background: $green-50;
       color: $green-700;
       border: 1px solid $green-300;
+    }
+
+    &--pending {
+      background: #FFF3E0;
+      color: #E65100;
+      border: 1px solid #FFE0B2;
+    }
+
+    &--completed {
+      background: #E3F2FD;
+      color: #1565C0;
+      border: 1px solid #BBDEFB;
+    }
+
+    &--draft {
+      background: #FFF8E1;
+      color: #F57C00;
+      border: 1px solid #FFECB3;
+    }
+
+    &--cancelled {
+      background: #FFEBEE;
+      color: #C62828;
+      border: 1px solid #FFCDD2;
     }
 
     &--inactive {
@@ -289,6 +313,86 @@
     color: $paragraph-text;
     margin: 0;
   }
+
+  // Export dropdown styles
+  &__export-dropdown {
+    position: relative;
+  }
+
+  &__export-btn {
+    @include body-2;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-2 $spacing-4;
+    background: $gray-50;
+    border: $stroke-1 solid $general-stroke-light;
+    border-radius: $radius-3;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: $text-primary;
+    font-weight: 500;
+
+    &:hover {
+      background: $gray-100;
+      border-color: $gray-300;
+    }
+
+    img {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.3s ease;
+    }
+  }
+
+  &__export-menu {
+    position: absolute;
+    top: calc(100% + $spacing-2);
+    right: 0;
+    background-color: $gray-50;
+    border: $stroke-1 solid $general-stroke-light;
+    border-radius: $radius-3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 140px;
+    z-index: 100;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease;
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  &__export-item {
+    @include body-2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-3 $spacing-4;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: $text-primary;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+
+    &:hover {
+      background-color: $gray-100;
+    }
+
+    &:not(:last-child) {
+      border-bottom: $stroke-0 solid $gray-200;
+    }
+  }
 }
 
 // Responsive adjustments
@@ -303,10 +407,16 @@
     &__controls {
       flex-direction: column;
       width: 100%;
-      
+      flex: 1;
+
       > * {
         width: 100%;
       }
+    }
+
+    &__search-box {
+      flex: 1;
+      width: 100%;
     }
 
     &__search-input {
@@ -316,5 +426,20 @@
 }
 
 .invite-btn {
-// flex: 1;
+  // flex: 1;
+}
+.data-table__action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.data-table__action-label {
+  font-size: 14px;
+  font-weight: 500;
 }

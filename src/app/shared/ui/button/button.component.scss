@@ -225,4 +225,11 @@ button.status-button,
   }
 }
 
-.app-button.delete-button {}
+button.app-button.plain-action{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  &:hover{
+    background: transparent;
+  }
+}

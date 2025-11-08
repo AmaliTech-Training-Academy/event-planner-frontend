@@ -1,36 +1,44 @@
 <div class="data-table">
   <div class="data-table__header">
-    <h2 class="data-table__title">User List</h2>
+    <h2 class="data-table__title">{{ title() }}</h2>
 
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
         <app-input
           class="md"
-          placeholder="Search users..."
+          [placeholder]="searchPlaceholder()"
           [value]="searchQuery()"
           (valueChange)="updateSearch($event)"
           iconSrc="icons/search-icon.png"
         />
       </div>
       }
-      <!-- Reusable Filter Select -->
-      @for (filter of filters(); track filter.key) {
-      <app-filter-select
-        [placeholder]="filter.placeholder"
-        [options]="filter.options"
-        [value]="getFilterValue(filter.key)"
-        (valueChange)="updateFilter(filter.key, $event)"
-      ></app-filter-select>
-      }
+      
+    @for (filter of filters(); track filter.key) {
+  <app-filter-select
+    [placeholder]="filter.placeholder"
+    [options]="filter.options"
+    [value]="getFilterValue(filter.key)"
+    (valueChange)="updateFilter(filter.key, $event)"
+  ></app-filter-select>
+}
 
-      <!-- Reusable Button -->
+@if (showExport()) {
+  <app-filter-select
+    placeholder="Export As"
+    [options]="exportOptions"
+    value=""
+    (valueChange)="handleExportChange($event)"
+  ></app-filter-select>
+}
+
       @if (primaryAction(); as action) {
       <div class="invite-btn">
         <app-button
           type="primary"
           (click)="executePrimaryAction()"
-          aria-label="Add new user"
+          [attr.aria-label]="'Add new ' + title().toLowerCase()"
         >
           + {{ action.label }}
         </app-button>
@@ -42,19 +50,25 @@
   <table class="data-table__table" role="table">
     <thead class="data-table__thead">
       <tr>
+        @if (showCheckboxes()) {
         <th class="data-table__th data-table__th--checkbox">
           <app-checkbox
             [checked]="isAllSelected()"
             (checkedChange)="toggleSelectAll()"
-            [ariaLabel]="'Select all users'"
+            [ariaLabel]="'Select all items'"
           ></app-checkbox>
         </th>
+        }
 
         @if (expandable()) {
         <th class="data-table__th data-table__th--expand"></th>
-        } @for (column of columns(); track column.key) {
+        } 
+        
+        @for (column of columns(); track column.key) {
         <th class="data-table__th" scope="col">{{ column.header }}</th>
-        } @if (actions().length > 0) {
+        } 
+        
+        @if (actions().length > 0) {
         <th class="data-table__th data-table__th--actions" scope="col">
           Actions
         </th>
@@ -65,13 +79,15 @@
     <tbody class="data-table__tbody">
       @for (item of paginatedData(); track trackByIndex($index)) {
       <tr class="data-table__tr">
+        @if (showCheckboxes()) {
         <td class="data-table__td data-table__td--checkbox">
           <app-checkbox
             [checked]="isSelected(item)"
             (checkedChange)="toggleSelect(item)"
-            [ariaLabel]="'Select user ' + (item['name'] || '')"
+            [ariaLabel]="'Select item ' + (item['name'] || item['title'] || '')"
           ></app-checkbox>
         </td>
+        }
 
         @if (expandable()) {
         <td class="data-table__td data-table__td--expand">
@@ -79,9 +95,11 @@
             {{ isRowExpanded($index) ? "−" : "+" }}
           </app-button>
         </td>
-        } @for (column of columns(); track column.key) {
+        } 
+        
+        @for (column of columns(); track column.key) {
         <td class="data-table__td">
-          @if (column.key === 'name' && item['email']) {
+          @if (column.key === 'name' && item['email'] && showAvatar()) {
           <div class="data-table__user-cell">
             <img
               [ngSrc]="item['avatar']"
@@ -99,18 +117,15 @@
             </div>
           </div>
           } @else if (isRoleOrStatus(column.key)) {
-
           <span [class]="getBadgeClass(item[column.key])">
             {{ item[column.key] }}
           </span>
-
           } @else {
           {{ item[column.key] }}
           }
         </td>
         }
 
-        <!-- ✅ Actions column -->
         @if (actions().length > 0) {
         <td class="data-table__td data-table__td--actions">
           @for (action of actions(); track action.label) {
@@ -121,15 +136,16 @@
                 ? item['status'] === 'Active'
                   ? 'power-active'
                   : 'power-inactive'
-                : action.color
+                : action.extraClass || action.color
             "
+            [showLabel]="showActionLabels()"
             (click)="executeAction(action, item)"
             [disabled]="isActionDisabled(action, item)"
             [attr.aria-label]="
               action.color === 'power'
                 ? item['status'] === 'Active'
-                  ? 'Deactivate user'
-                  : 'Activate user'
+                  ? 'Deactivate item'
+                  : 'Activate item'
                 : action.label
             "
             class="data-table__action-btn"
@@ -145,33 +161,35 @@
               [alt]="
                 action.color === 'power'
                   ? item['status'] === 'Active'
-                    ? 'Deactivate user icon'
-                    : 'Activate user icon'
+                    ? 'Deactivate icon'
+                    : 'Activate icon'
                   : action.label + ' icon'
               "
             />
+            @if (showActionLabels()) {
+            <span class="action-label">{{ action.label }}</span>
+            }
           </app-button>
           }
         </td>
-
         }
       </tr>
       }
     </tbody>
   </table>
 
-  <!-- ✅ No data -->
   @if (filteredData().length === 0) {
   <div class="data-table__no-data">
     <img src="/images/table-empty.png" alt="No data found" />
   </div>
-  } @if (filteredData().length > 0) {
+  } 
+  
+  @if (filteredData().length > 0) {
   <app-pagination
     [totalItems]="filteredData().length"
     [itemsPerPage]="itemsPerPage()"
     [currentPage]="currentPage()"
     (currentPageChange)="setCurrentPage($event)"
   ></app-pagination>
-
   }
 </div>
