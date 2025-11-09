@@ -18,4 +18,11 @@ export const ADMIN_ROUTES: Routes = [
       ).then((m) => m.UserManagementPageComponent),
     // canActivate: [AdminGuard],
   },
+  {
+    path: 'transactions',
+    loadComponent: () =>
+      import(
+        '../admin/pages/transactions-page/transactions-page.component'
+      ).then((m) => m.TransactionsPageComponent),
+  }
 ];

@@ -1,0 +1,194 @@
+@use 'colors' as *;
+@use 'typography' as *;
+@use 'variables' as *;
+@use 'media_query' as *;
+
+.transactions-page {
+  width: 100%;
+  padding: $spacing-6;
+  background: $white;
+  min-height: 100vh;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: $spacing-6;
+    padding-bottom: $spacing-5;
+    border-bottom: 1px solid $general-stroke-light;
+  }
+
+  &__header-content {
+    flex: 1;
+  }
+
+  &__title {
+    @include h-1;
+    color: $header-dark;
+    margin: 0 0 $spacing-2 0;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    @include body-2;
+    color: $gray-600;
+    margin: 0;
+  }
+
+  &__user-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $gray-100;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $gray-200;
+      transform: scale(1.05);
+    }
+
+    img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+  }
+
+  &__content {
+    background: white;
+    border-radius: $radius-4;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  // Transaction-specific table styling
+  ::ng-deep {
+    .data-table {
+      // Create Event button styling
+      &__controls {
+        .invite-btn {
+          app-button {
+            button {
+              padding: 12px 28px;
+              min-width: 180px;
+              font-weight: 600;
+              font-size: 1rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: $spacing-2;
+            }
+          }
+        }
+      }
+
+      // Status badge colors matching the design
+      &__badge {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.875rem;
+        display: inline-block;
+        text-align: center;
+        min-width: 100px;
+
+        // Completed - Light green background with dark green text
+        &--completed {
+          background-color: #D4EDDA;
+          color: #155724;
+        }
+
+        // Pending - Light yellow/orange background with dark yellow text
+        &--pending {
+          background-color: #FFF3CD;
+          color: #856404;
+        }
+
+        // Refunded - Light gray background with gray text
+        &--refunded {
+          background-color: #E9ECEF;
+          color: #6C757D;
+        }
+
+        // Failed - Light red background with dark red text
+        &--failed {
+          background-color: #F8D7DA;
+          color: #721C24;
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@include md {
+  .transactions-page {
+    padding: $spacing-4;
+
+    &__header {
+      flex-direction: column;
+      gap: $spacing-3;
+      margin-bottom: $spacing-4;
+    }
+
+    &__user-icon {
+      align-self: flex-end;
+    }
+
+    &__title {
+      font-size: 1.5rem;
+    }
+
+    ::ng-deep {
+      .data-table {
+        &__controls {
+          .invite-btn {
+            width: 100%;
+            
+            app-button button {
+              width: 100%;
+            }
+          }
+        }
+
+        &__badge {
+          min-width: 90px;
+          font-size: 0.8125rem;
+          padding: 5px 14px;
+        }
+      }
+    }
+  }
+}
+
+@include sm {
+  .transactions-page {
+    padding: $spacing-3;
+
+    &__header {
+      padding-bottom: $spacing-3;
+      margin-bottom: $spacing-3;
+    }
+
+    &__title {
+      font-size: 1.25rem;
+    }
+
+    &__subtitle {
+      font-size: 0.875rem;
+    }
+
+    ::ng-deep {
+      .data-table {
+        &__badge {
+          min-width: 80px;
+          font-size: 0.75rem;
+          padding: 4px 12px;
+        }
+      }
+    }
+  }
+}
