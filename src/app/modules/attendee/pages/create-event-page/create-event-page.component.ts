@@ -145,7 +145,6 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     this.eventFormService.controlValueChanged(this.eventFormService.requireApproval);
   }
 
-
   protected removeCapacityLimit() {
     this.eventFormService.capacity?.setValue(0);
     this.eventFormService.controlValueChanged(this.eventFormService.capacity);
@@ -166,11 +165,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     this.connectZoomModal = !this.connectZoomModal;
   }
 
-
-
-
   protected createEvent() {
-
 
     if (this.form.invalid) {
 
@@ -189,11 +184,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const formData = this.parseObjectToFormdata()
-
-    // TODO: remove this line
-    // const plainObject = Object.fromEntries(formData.entries());
-    // console.log(plainObject);
+    const formData = this.parseObjectToFormdataV2()
 
     this.eventService.createEvent(formData).subscribe({
       next: () => {
@@ -202,8 +193,6 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
       },
     });
   }
-
-
 
   private parseObjectToFormdata(): FormData {
     const data = this.form.getRawValue();
@@ -310,5 +299,48 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
 
     return formData;
   }
+
+  private parseObjectToFormdataV2(): FormData {
+    const data = this.form.getRawValue();
+    const formData = new FormData();
+  
+    const eventInfo: any = {
+      title: data[FIELDS.TITLE],
+      description: data[FIELDS.DESCRIPTION] || '',
+      event_type_id: this.backendEventTypes.find(v => v.name === data[FIELDS.EVENT_TYPE])?.id || 0,
+      event_meeting_type_id: this.backendMeetingTypes.find(v => v.name === data[FIELDS.MEETING_TYPE])?.id || 0,
+      event_date: data[FIELDS.DATES]?.[0]?.[FIELDS.DATE] || '',
+      event_time: data[FIELDS.DATES]?.[0]?.[FIELDS.TIME] || '',
+      location: data[FIELDS.LOCATION] || '',
+      zoomUrl: data[FIELDS.MEETING_LINK] || '',
+      event_time_zone_id: data[FIELDS.DATES]?.[0]?.[FIELDS.TIME_ZONE] || '',
+      event_start_time_date: data[FIELDS.DATES]?.[0]?.[FIELDS.DATE] || '',
+      event_end_time_date: data[FIELDS.DATES]?.[1]?.[FIELDS.DATE] || data[FIELDS.DATES]?.[0]?.[FIELDS.DATE] || '',
+      event_start_time: data[FIELDS.DATES]?.[0]?.[FIELDS.TIME] || '',
+      event_end_time: data[FIELDS.DATES]?.[1]?.[FIELDS.TIME] || data[FIELDS.DATES]?.[0]?.[FIELDS.TIME] || '',
+      event_start_time_zone_id: data[FIELDS.DATES]?.[0]?.[FIELDS.TIME_ZONE] || '',
+      event_end_time_zone_id: data[FIELDS.DATES]?.[1]?.[FIELDS.TIME_ZONE] || data[FIELDS.DATES]?.[0]?.[FIELDS.TIME_ZONE] || '',
+      eventOptionsRequest: {
+        ticketPrice: data[FIELDS.PRICE] ?? 0,
+        requiresApproval: !!data[FIELDS.REQUIRE_APPROVAL],
+        capacity: data[FIELDS.CAPACITY] ?? 0,
+      },
+    };
+  
+    if (data[FIELDS.FLYER] instanceof File) {
+      formData.append('image', data[FIELDS.FLYER]); 
+    }
+  
+    if (Array.isArray(data[FIELDS.IMAGES])) {
+      (data[FIELDS.IMAGES] as File[]).forEach(file => {
+        formData.append('eventImages[]', file);
+      });
+    }
+  
+    formData.append('event', new Blob([JSON.stringify(eventInfo)], { type: 'application/json' }));
+  
+    return formData;
+  }
+  
 
 }
