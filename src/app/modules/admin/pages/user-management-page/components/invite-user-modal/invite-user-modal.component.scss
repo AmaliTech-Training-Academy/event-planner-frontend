@@ -17,39 +17,42 @@
 }
 
 .modal {
-  background: $gray-50;
+  background: white;
   border-radius: $radius-4;
-  padding: $spacing-6;
+  padding: 0;
   width: 90%;
-  max-width: 600px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
   max-height: 90vh;
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    width: 4px !important;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 2px;
-    width: 1rem !important;
-    border: none;
-  }
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   form {
     display: flex;
     flex-direction: column;
     gap: $spacing-6;
+    padding: $spacing-6 $spacing-8;
+    overflow-y: auto;
+    flex: 1;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $gray-100;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $gray-300;
+      border-radius: 3px;
+    }
   }
 
   .form-field {
@@ -68,35 +71,56 @@
   textarea {
     @include body-2;
     width: 100%;
-    min-height: 80px;
+    min-height: 100px;
     padding: $spacing-3 $spacing-4;
-    border: 1px solid $general-stroke-light;
+    border: 1px solid $gray-300;
     border-radius: $radius-3;
-    background: $gray-50;
+    background: white;
     color: $text-primary;
     resize: vertical;
     font-family: inherit;
     outline: none;
-    transition: border-color 0.2s ease;
+    transition: all 0.2s ease;
 
     &::placeholder {
       color: $gray-400;
     }
 
     &:focus {
-      border-color: $orange-600;
+      border-color: $orange-500;
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
     }
   }
 
   .users-section {
     display: flex;
     flex-direction: column;
-    gap: $spacing-3;
+    gap: $spacing-4;
 
     > label {
       @include body-2;
       color: $header-dark;
       font-weight: 500;
+    }
+  }
+
+  // Table Header
+  .users-header {
+    display: grid;
+    grid-template-columns: 1.2fr 1.8fr 1.2fr 50px;
+    gap: $spacing-3;
+    padding: $spacing-3 $spacing-4;
+    background: $gray-100;
+    border-radius: $radius-3;
+
+    span {
+      @include body-2;
+      color: $header-dark;
+      font-weight: 600;
+    }
+
+    .header-action {
+      width: 50px;
     }
   }
 
@@ -107,28 +131,45 @@
   }
 
   .user-row {
-    display: flex;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 1.2fr 1.8fr 1.2fr 50px;
     gap: $spacing-3;
-    padding: $spacing-4;
-    background: white;
-    border: 1px solid $general-stroke-light;
-    border-radius: $radius-3;
-    position: relative;
+    align-items: start;
 
-    .user-fields {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 1fr 1.2fr 1fr;
-      gap: $spacing-3;
-      align-items: start;
-
-      .form-field {
-        margin: 0;
-      }
+    .user-field {
+      display: flex;
+      flex-direction: column;
     }
 
-  
+    .btn-delete {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      border-radius: $radius-2;
+      transition: all 0.2s ease;
+      padding: 0;
+      margin-top: 4px;
+
+      img {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+      }
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.1);
+        transform: scale(1.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
   }
 
   // Add User button styling
@@ -137,9 +178,11 @@
     align-items: center;
     justify-content: center;
     gap: $spacing-2;
+    align-self: flex-start;
     
-    svg {
-      flex-shrink: 0;
+    img {
+      width: 16px;
+      height: 16px;
     }
     
     span {
@@ -150,55 +193,67 @@
 
   &__actions {
     display: flex;
-    gap: $spacing-3;
+    gap: $spacing-4;
     justify-content: flex-end;
-    margin-top: $spacing-2;
+    padding: $spacing-5 $spacing-8;
+    border-top: 1px solid $gray-200;
+    background: $gray-50;
   }
 
   @include md {
     width: 95%;
-    padding: $spacing-5;
+    max-width: 95%;
+
+    form {
+      padding: $spacing-5 $spacing-6;
+    }
 
     &__actions {
+      padding: $spacing-4 $spacing-6;
       flex-direction: column;
 
-      button {
+      app-button {
         width: 100%;
       }
     }
 
-    .user-row {
-      .user-fields {
-        grid-template-columns: 1fr 1.2fr 1fr;
-        gap: $spacing-2;
-      }
+    .users-header {
+      display: none;
     }
-  }
-
-  @include sm {
-    width: 100%;
-    padding: $spacing-4;
 
     .user-row {
-      flex-direction: column;
+      grid-template-columns: 1fr;
       gap: $spacing-3;
+      padding: $spacing-4;
+      background: $gray-50;
+      border: 1px solid $gray-200;
+      border-radius: $radius-3;
+      position: relative;
 
-      .user-fields {
-        grid-template-columns: 1fr;
-        gap: $spacing-3;
-        width: 100%;
-      }
-
-      .btn-remove {
+      .btn-delete {
         position: absolute;
         top: $spacing-3;
         right: $spacing-3;
         margin-top: 0;
       }
     }
+  }
+
+  @include sm {
+    width: 100%;
+    border-radius: $radius-3;
+
+    form {
+      padding: $spacing-4 $spacing-5;
+    }
+
+    &__actions {
+      padding: $spacing-4 $spacing-5;
+    }
 
     .btn-add-user {
       font-size: 0.875rem;
+      width: 100%;
     }
   }
 }

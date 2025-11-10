@@ -10,7 +10,7 @@
 .event-page-content {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 1.5rem 2.5rem;
+  padding: 1.5rem 0rem;
   @include sm {
     padding: 1rem;
   }
@@ -160,6 +160,10 @@
 
   @include lg {
     grid-template-columns: 1fr;
+  }
+  @media (max-width:768px) {
+    grid-template-columns: 1fr;
+    
   }
 }
 
