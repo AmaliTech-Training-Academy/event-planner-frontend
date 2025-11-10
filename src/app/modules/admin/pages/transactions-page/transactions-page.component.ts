@@ -401,13 +401,9 @@ export class TransactionsPageComponent implements OnInit {
     handler: () => this._openCreateEventModal(),
   };
 
-  constructor() {
-    console.log('🏗️ TransactionsPageComponent: Constructor called');
-    console.log('📊 Loaded transactions:', this._transactions().length);
-  }
+  constructor() {}
 
   public ngOnInit(): void {
-    console.log('🔄 TransactionsPageComponent: ngOnInit called');
     this._layoutService.pageTitle.set('Transaction History');
     this._layoutService.logoSrc.set('icons/transaction-icon.png');
     this._layoutService.logoAlt.set('Transaction History');
@@ -415,31 +411,26 @@ export class TransactionsPageComponent implements OnInit {
 
   // Chart tab handler
   protected onTabChange(tab: TransactionFilter): void {
-    console.log('📊 Switching to tab:', tab);
     this.activeTab.set(tab);
   }
 
   // Action handlers
   private _viewTransaction(transaction: Transaction): void {
-    console.log('👁️ View transaction:', transaction.transactionId);
     this.selectedTransaction.set(transaction);
     // TODO: Open view transaction modal
   }
 
   private _downloadReceipt(transaction: Transaction): void {
-    console.log('📥 Download receipt for:', transaction.transactionId);
     // TODO: Implement receipt download
     alert(`Downloading receipt for ${transaction.transactionId}`);
   }
 
   private _openCreateEventModal(): void {
-    console.log('➕ Opening create event modal');
     this.isCreateEventModalOpen.set(true);
     // TODO: Implement create event modal
   }
 
   protected closeCreateEventModal(): void {
-    console.log('❌ Closing create event modal');
     this.isCreateEventModalOpen.set(false);
   }
 }

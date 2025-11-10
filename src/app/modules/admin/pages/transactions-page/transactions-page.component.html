@@ -2,7 +2,9 @@
   <div class="transactions-page__header">
     <div class="transactions-page__header-content">
       <h1 class="transactions-page__title">Transaction History</h1>
-      <p class="transactions-page__subtitle">View and manage all payment transactions</p>
+      <p class="transactions-page__subtitle">
+        View and manage all payment transactions
+      </p>
     </div>
     <div class="transactions-page__user-icon">
       <img src="icons/users-icon.png" alt="Users" />
@@ -13,13 +15,13 @@
   <div class="transactions-page__chart-container">
     <div class="transactions-page__chart-tabs">
       @for (tab of chartTabs; track tab.key) {
-        <button
-          class="transactions-page__tab"
-          [class.transactions-page__tab--active]="activeTab() === tab.key"
-          (click)="onTabChange(tab.key)"
-        >
-          {{ tab.label }}
-        </button>
+      <button
+        class="transactions-page__tab"
+        [class.transactions-page__tab--active]="activeTab() === tab.key"
+        (click)="onTabChange(tab.key)"
+      >
+        {{ tab.label }}
+      </button>
       }
     </div>
 
@@ -37,10 +39,9 @@
     <app-data-table
       [data]="transactions()"
       [columns]="tableColumns"
-      [actions]="tableActions"
       [filters]="tableFilters"
       [searchable]="true"
-      [expandable]="true"
+      [expandable]="false"
       [primaryAction]="primaryAction"
       [itemsPerPage]="10"
     />
