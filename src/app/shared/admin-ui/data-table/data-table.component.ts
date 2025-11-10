@@ -20,6 +20,11 @@ export interface TableColumn<T> {
   readonly sortable?: boolean;
   readonly filterable?: boolean;
 }
+export interface EmptyState {
+  readonly imageSrc: string;
+  readonly imageAlt: string;
+  readonly message: string;
+}
 
 export interface TableAction<T> {
   readonly icon: string;
@@ -116,7 +121,11 @@ export class DataTableComponent<T extends Record<string, any>> {
   public isSelected(item: T): boolean {
     return this._selectedItems().has(item);
   }
-
+  public readonly emptyState = input<EmptyState>({
+    imageSrc: '/images/table-empty.png',
+    imageAlt: 'No data found',
+    message: 'No data available',
+  });
   public toggleSelect(item: T): void {
     const selected = new Set(this._selectedItems());
     selected.has(item) ? selected.delete(item) : selected.add(item);

@@ -160,10 +160,17 @@
     </tbody>
   </table>
 
-  <!-- ✅ No data -->
+  <!-- ✅ No data - NOW DYNAMIC -->
   @if (filteredData().length === 0) {
   <div class="data-table__no-data">
-    <img src="/images/table-empty.png" alt="No data found" />
+    <img 
+      [src]="emptyState().imageSrc" 
+      [alt]="emptyState().imageAlt"
+      class="data-table__no-data-image"
+    />
+    @if (emptyState().message) {
+      <p class="data-table__no-data-message">{{ emptyState().message }}</p>
+    }
   </div>
   } @if (filteredData().length > 0) {
   <app-pagination

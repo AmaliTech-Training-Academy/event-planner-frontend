@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   DataTableComponent,
+  EmptyState,
   TableAction,
   TableColumn,
   TableFilter,
@@ -41,13 +42,11 @@ type TransactionFilter =
 export class TransactionsPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
 
-  // Signals for modal states
   protected readonly isCreateEventModalOpen = signal<boolean>(false);
   protected readonly selectedTransaction = signal<Transaction | undefined>(
     undefined
   );
 
-  // Chart-related signals
   protected readonly activeTab = signal<TransactionFilter>('Total');
 
   protected readonly chartTabs = [
@@ -57,8 +56,12 @@ export class TransactionsPageComponent implements OnInit {
     { key: 'Failed' as const, label: 'Failed' },
     { key: 'Refund' as const, label: 'Refund' },
   ];
-
-  // Base transaction data for chart (more realistic/volatile)
+  protected readonly transactionsEmptyState: EmptyState = {
+    imageSrc: 'images/no-transactions.png',
+    imageAlt: 'No transactions found',
+    message:
+      'No transactions found. When events with payments are created, they will appear here.',
+  };
   private readonly _allTransactionsChartData: LineSeriesConfig[] = [
     {
       name: 'This Year',
@@ -261,7 +264,6 @@ export class TransactionsPageComponent implements OnInit {
     }
   });
 
-  // Mock transaction data
   private readonly _transactions = signal<Transaction[]>([
     {
       transactionId: 'TX123',
@@ -333,7 +335,6 @@ export class TransactionsPageComponent implements OnInit {
 
   protected readonly transactions = this._transactions.asReadonly();
 
-  // Table columns configuration
   protected readonly tableColumns: TableColumn<Transaction>[] = [
     { key: 'transactionId', header: 'Transaction ID', sortable: true },
     { key: 'date', header: 'Date', sortable: true },
@@ -345,13 +346,11 @@ export class TransactionsPageComponent implements OnInit {
     { key: 'status', header: 'Status', filterable: true },
   ];
 
-  // Helper method to format amount
   protected formatAmount(amount: number): string {
     if (amount === 0) return 'Free';
     return `${amount.toFixed(2)}`;
   }
 
-  // Table actions
   protected readonly tableActions: TableAction<Transaction>[] = [
     {
       icon: 'icons/view-icon.png',
@@ -369,7 +368,6 @@ export class TransactionsPageComponent implements OnInit {
     },
   ];
 
-  // Table filters
   protected readonly tableFilters: TableFilter[] = [
     {
       key: 'status',
@@ -395,7 +393,6 @@ export class TransactionsPageComponent implements OnInit {
     },
   ];
 
-  // Primary action button
   protected readonly primaryAction = {
     label: 'Create Event',
     handler: () => this._openCreateEventModal(),
@@ -409,25 +406,20 @@ export class TransactionsPageComponent implements OnInit {
     this._layoutService.logoAlt.set('Transaction History');
   }
 
-  // Chart tab handler
   protected onTabChange(tab: TransactionFilter): void {
     this.activeTab.set(tab);
   }
 
-  // Action handlers
   private _viewTransaction(transaction: Transaction): void {
     this.selectedTransaction.set(transaction);
-    // TODO: Open view transaction modal
   }
 
   private _downloadReceipt(transaction: Transaction): void {
-    // TODO: Implement receipt download
     alert(`Downloading receipt for ${transaction.transactionId}`);
   }
 
   private _openCreateEventModal(): void {
     this.isCreateEventModalOpen.set(true);
-    // TODO: Implement create event modal
   }
 
   protected closeCreateEventModal(): void {
