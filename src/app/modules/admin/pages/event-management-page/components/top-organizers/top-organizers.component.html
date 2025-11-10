@@ -2,88 +2,97 @@
   <div class="top-organizers__header">
     <h3 class="top-organizers__title">{{ title() }}</h3>
     @if (showViewAll()) {
-      <button 
-        class="top-organizers__view-all" 
-        (click)="onViewAll()"
-        type="button"
-        aria-label="View all organizers"
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <path d="M13 10C13 9.44772 13.4477 9 14 9H16C16.5523 9 17 9.44772 17 10C17 10.5523 16.5523 11 16 11H14C13.4477 11 13 10.5523 13 10Z" fill="currentColor"/>
-          <path d="M9 10C9 9.44772 9.44772 9 10 9C10.5523 9 11 9.44772 11 10C11 10.5523 10.5523 11 10 11C9.44772 11 9 10.5523 9 10Z" fill="currentColor"/>
-          <path d="M4 9C3.44772 9 3 9.44772 3 10C3 10.5523 3.44772 11 4 11H6C6.55228 11 7 10.5523 7 10C7 9.44772 6.55228 9 6 9H4Z" fill="currentColor"/>
-        </svg>
-      </button>
+    <app-button
+      type="plain"
+      [extraClass]="'top-organizers__view-all'"
+      (onClick)="onViewAll()"
+      [showLabel]="false"
+      ariaLabel="View all organizers"
+    >
+      <img
+        ngSrc="icons/users-group.png"
+        alt=""
+        width="20"
+        height="20"
+        aria-hidden="true"
+      />
+    </app-button>
     }
   </div>
 
   @if (hasOrganizers()) {
-    <div class="top-organizers__list">
-      @for (organizer of organizers(); track trackByOrganizer($index, organizer)) {
-        <div 
-          class="top-organizers__item"
-          (click)="onOrganizerClick(organizer)"
-          role="button"
-          tabindex="0"
-          [attr.aria-label]="'View details for ' + organizer.name"
-          (keydown.enter)="onOrganizerClick(organizer)"
-          (keydown.space)="onOrganizerClick(organizer)"
+  <div class="top-organizers__list">
+    @for (organizer of organizers().length >= 50; track trackByOrganizer($index, organizer)) {
+    <div
+      class="top-organizers__item"
+      (click)="onOrganizerClick(organizer)"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="'View details for ' + organizer.name"
+      (keydown.enter)="onOrganizerClick(organizer)"
+      (keydown.space)="onOrganizerClick(organizer)"
+    >
+      <div class="top-organizers__avatar">
+        @if (organizer.avatar) {
+        <img
+          [src]="organizer.avatar"
+          [alt]="organizer.name + ' avatar'"
+          loading="lazy"
+        />
+        } @else {
+        <span aria-hidden="true">{{ getInitial(organizer.name) }}</span>
+        }
+      </div>
+
+      <div class="top-organizers__info">
+        <h4 class="top-organizers__name">{{ organizer.name }}</h4>
+        <p class="top-organizers__email">{{ organizer.email }}</p>
+      </div>
+
+      <div class="top-organizers__stats">
+        <span class="top-organizers__event-count">
+          {{ organizer.eventCount }} Events
+        </span>
+
+        @if (hasTrendData(organizer)) {
+        <img
+          [ngSrc]="getGrowthIcon(organizer.growthPercentage)"
+          alt="Trend indicator"
+          width="80"
+          height="24"
+          class="top-organizers__sparkline"
+          aria-hidden="true"
+        />
+        }
+
+        <span
+          class="top-organizers__growth"
+          [class.top-organizers__growth--positive]="
+            isPositiveGrowth(organizer.growthPercentage)
+          "
+          [class.top-organizers__growth--negative]="
+            isNegativeGrowth(organizer.growthPercentage)
+          "
+          [attr.aria-label]="
+            formatGrowth(organizer.growthPercentage) + ' growth'
+          "
         >
-          <div class="top-organizers__avatar">
-            @if (organizer.avatar) {
-              <img 
-                [src]="organizer.avatar" 
-                [alt]="organizer.name + ' avatar'" 
-                loading="lazy"
-              />
-            } @else {
-              <span aria-hidden="true">{{ getInitial(organizer.name) }}</span>
-            }
-          </div>
-
-          <div class="top-organizers__info">
-            <h4 class="top-organizers__name">{{ organizer.name }}</h4>
-            <p class="top-organizers__email">{{ organizer.email }}</p>
-          </div>
-
-          <div class="top-organizers__stats">
-            <span class="top-organizers__event-count">
-              {{ organizer.eventCount }} Events
-            </span>
-            
-            @if (hasTrendData(organizer)) {
-              <svg 
-                class="top-organizers__sparkline" 
-                width="80" 
-                height="24" 
-                viewBox="0 0 80 24"
-                [attr.aria-label]="'Trend data for ' + organizer.name"
-                role="img"
-              >
-                <polyline
-                  [attr.points]="getSparklinePoints(organizer.trendData!)"
-                  fill="none"
-                  stroke="currentColor"
-                  [attr.stroke-width]="2"
-                />
-              </svg>
-            }
-
-            <span 
-              class="top-organizers__growth"
-              [class.top-organizers__growth--positive]="isPositiveGrowth(organizer.growthPercentage)"
-              [class.top-organizers__growth--negative]="isNegativeGrowth(organizer.growthPercentage)"
-              [attr.aria-label]="formatGrowth(organizer.growthPercentage) + ' growth'"
-            >
-              {{ formatGrowth(organizer.growthPercentage) }}
-            </span>
-          </div>
-        </div>
-      }
+          {{ formatGrowth(organizer.growthPercentage) }}
+        </span>
+      </div>
     </div>
+    }
+  </div>
   } @else {
-    <div class="top-organizers__empty">
-      <p>No organizers found</p>
-    </div>
+  <div class="top-organizers__empty">
+    <img
+      ngSrc="icons/empty-folder.png"
+      alt=""
+      width="48"
+      height="48"
+      aria-hidden="true"
+    />
+    <p>No organizers found</p>
+  </div>
   }
 </div>

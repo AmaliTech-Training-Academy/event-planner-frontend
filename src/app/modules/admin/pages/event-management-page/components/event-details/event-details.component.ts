@@ -4,7 +4,8 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { LayoutService } from '../../../../../../core/services/layout.service';
-import { ButtonComponent } from "../../../../../../shared/ui/button/button.component";
+import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
+import { APP_ROUTES } from '../../../../../../core/constants/app-routes.constants';
 
 export interface EventDetails {
   id: number;
@@ -17,6 +18,10 @@ export interface EventDetails {
   location?: string;
   description?: string;
 }
+interface EventDetailsPageState {
+  eventData?: EventDetails;
+}
+
 
 export interface EventHost {
   name: string;
@@ -38,23 +43,25 @@ export class EventDetailsPageComponent implements OnInit {
   private readonly _route = inject(ActivatedRoute);
   private readonly _location = inject(Location);
   private readonly _layoutService = inject(LayoutService);
+  protected readonly APP_ROUTES = APP_ROUTES;
 
   // Reactive signals
   protected readonly eventDetails = signal<EventDetails | null>(null);
   protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
 
-  public ngOnInit(): void {
-    const state = this._location.getState() as any;
-    const eventData = state?.eventData;
+public ngOnInit(): void {
+  const state = this._location.getState() as EventDetailsPageState;
+  const eventData = state.eventData;
 
-    if (eventData) {
-      this._loadEventFromState(eventData);
-    } else {
-      console.warn('No event data in state. Redirecting back to events list.');
-      this._router.navigate(['/admin/events']);
-    }
+  if (eventData) {
+    this._loadEventFromState(eventData);
+  } else {
+     this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS]);
+
   }
+}
+
 
   private _loadEventFromState(eventData: EventDetails): void {
     const event: EventDetails = {
@@ -81,7 +88,7 @@ export class EventDetailsPageComponent implements OnInit {
   }
 
   protected onBack(): void {
-    this._router.navigate(['/admin/events']);
+    this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS]);
   }
 
   protected onEdit(): void {
@@ -92,7 +99,6 @@ export class EventDetailsPageComponent implements OnInit {
   }
 
   protected onSendInvites(): void {
-    console.log('Send invites via email');
     // TODO: Implement send invites functionality
   }
 
@@ -101,7 +107,6 @@ export class EventDetailsPageComponent implements OnInit {
   }
 
   protected onScheduleFeedback(): void {
-    console.log('Schedule feedback email');
     // TODO: Implement schedule feedback functionality
   }
 

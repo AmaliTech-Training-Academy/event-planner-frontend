@@ -1,5 +1,6 @@
 import { Component, input, output, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 
 export interface Organizer {
   id: number;
@@ -14,104 +15,89 @@ export interface Organizer {
 @Component({
   selector: 'app-top-organizers',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent, NgOptimizedImage],
   templateUrl: './top-organizers.component.html',
   styleUrls: ['./top-organizers.component.scss'],
 })
 export class TopOrganizersComponent {
-  // Inputs
-  public organizers = input.required<Organizer[]>();
-  public title = input<string>('Top Organizers');
-  public showViewAll = input<boolean>(true);
+  public readonly organizers = input.required<Organizer[]>();
+  public readonly title = input<string>('Top Organizers');
+  public readonly showViewAll = input<boolean>(true);
 
-  // Outputs
-  public viewAllClicked = output<void>();
-  public organizerClicked = output<Organizer>();
+  public readonly viewAllClicked = output<void>();
+  public readonly organizerClicked = output<Organizer>();
 
-  // Constants
-  private readonly _SPARKLINE_WIDTH = 80;
-  private readonly _SPARKLINE_HEIGHT = 24;
-  private readonly _SPARKLINE_STROKE_WIDTH = 2;
+  public readonly hasOrganizers = computed<boolean>(() =>
+    this._hasOrganizersData()
+  );
 
-  // Computed
-  public hasOrganizers = computed<boolean>(() => this.organizers().length > 0);
-
-  /**
-   * Handles view all button click
-   */
   public onViewAll(): void {
     this.viewAllClicked.emit();
   }
 
-  /**
-   * Handles organizer card click
-   */
   public onOrganizerClick(organizer: Organizer): void {
-    this.organizerClicked.emit(organizer);
+    this._emitOrganizerEvent(organizer);
   }
 
-  /**
-   * Gets the first initial from organizer name for avatar fallback
-   */
   public getInitial(name: string): string {
-    return name.charAt(0).toUpperCase();
+    return this._extractInitial(name);
   }
 
-  /**
-   * Generates SVG polyline points for sparkline chart
-   */
-  public getSparklinePoints(data: number[]): string {
-    if (!data || data.length === 0) {
-      return '';
-    }
-
-    const max = Math.max(...data);
-    const min = Math.min(...data);
-    const range = max - min || 1;
-
-    return data
-      .map((value, index) => {
-        const x = (index / (data.length - 1)) * this._SPARKLINE_WIDTH;
-        const y =
-          this._SPARKLINE_HEIGHT -
-          ((value - min) / range) * this._SPARKLINE_HEIGHT;
-        return `${x},${y}`;
-      })
-      .join(' ');
-  }
-
-  /**
-   * Determines if growth percentage is positive
-   */
   public isPositiveGrowth(percentage: number): boolean {
-    return percentage > 0;
+    return this._checkPositiveGrowth(percentage);
   }
 
-  /**
-   * Determines if growth percentage is negative
-   */
   public isNegativeGrowth(percentage: number): boolean {
-    return percentage < 0;
+    return this._checkNegativeGrowth(percentage);
   }
 
-  /**
-   * Formats growth percentage with sign
-   */
   public formatGrowth(percentage: number): string {
-    return percentage > 0 ? `+${percentage}%` : `${percentage}%`;
+    return this._formatGrowthPercentage(percentage);
   }
 
-  /**
-   * TrackBy function for performance optimization
-   */
   public trackByOrganizer(_index: number, organizer: Organizer): number {
     return organizer.id;
   }
 
-  /**
-   * Checks if organizer has trend data
-   */
   public hasTrendData(organizer: Organizer): boolean {
+    return this._validateTrendData(organizer);
+  }
+
+  public getGrowthIcon(growthPercentage: number): string {
+    return this._selectGrowthIcon(growthPercentage);
+  }
+
+  private _hasOrganizersData(): boolean {
+    return this.organizers().length > 0;
+  }
+
+  private _emitOrganizerEvent(organizer: Organizer): void {
+    this.organizerClicked.emit(organizer);
+  }
+
+  private _extractInitial(name: string): string {
+    return name.charAt(0).toUpperCase();
+  }
+
+  private _checkPositiveGrowth(percentage: number): boolean {
+    return percentage > 0;
+  }
+
+  private _checkNegativeGrowth(percentage: number): boolean {
+    return percentage < 0;
+  }
+
+  private _formatGrowthPercentage(percentage: number): string {
+    return percentage > 0 ? `+${percentage}%` : `${percentage}%`;
+  }
+
+  private _validateTrendData(organizer: Organizer): boolean {
     return !!organizer.trendData && organizer.trendData.length > 0;
+  }
+
+  private _selectGrowthIcon(growthPercentage: number): string {
+    if (growthPercentage > 0) return 'icons/graph-chart-1.png';
+    if (growthPercentage < 0) return 'icons/graph-chart-2.png';
+    return 'icons/graph-chart-1.png';
   }
 }

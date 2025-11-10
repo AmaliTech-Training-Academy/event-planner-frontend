@@ -4,6 +4,7 @@ import {
   inject,
   signal,
   ChangeDetectionStrategy,
+  OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { LayoutService } from '../../../../core/services/layout.service';
@@ -52,7 +53,7 @@ interface EventTableData {
   styleUrl: './event-management-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EventManagementPageComponent {
+export class EventManagementPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   private readonly _router = inject(Router);
 
@@ -261,7 +262,8 @@ export class EventManagementPageComponent {
   public readonly upcomingEvents = this._upcomingEvents.asReadonly();
   public readonly eventTableData = this._eventTableData.asReadonly();
 
-  constructor() {
+  constructor() {}
+  ngOnInit(): void {
     this._layoutService.pageTitle.set('Event Management');
   }
 
