@@ -1,5 +1,3 @@
-// Complete user-management.service.ts updateUser implementation:
-
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
@@ -90,12 +88,9 @@ export class UserManagementService {
         const users = pagination?.content ?? [];
         const normalizedUsers: User[] = users.map(normalizeUserStatus);
 
-        // Update cache
         if (pagination?.number === 0) {
-          // first page replaces the cache
           this._usersCache = normalizedUsers;
         } else {
-          // subsequent pages append
           this._usersCache = [...this._usersCache, ...normalizedUsers];
         }
 
@@ -141,13 +136,11 @@ export class UserManagementService {
   ) {
     const cacheKey = this._getCacheKey(keyword, role, status, page);
 
-    // Check if we have valid cached results
     if (this._searchCache.has(cacheKey)) {
       const cached = this._searchCache.get(cacheKey)!;
       const isExpired = Date.now() - cached.timestamp > this.CACHE_DURATION;
 
       if (!isExpired) {
-        // Update state with cached data
         this._users$.next(cached.users);
         this._totalPages$.next(cached.totalPages);
         this._currentPage$.next(cached.currentPage);
@@ -169,7 +162,6 @@ export class UserManagementService {
         };
       }),
       tap(({ users, pagination }) => {
-        // Cache the complete result with pagination info
         const cachedResult: CachedSearchResult = {
           users,
           totalPages: pagination?.totalPages ?? 1,
@@ -180,7 +172,6 @@ export class UserManagementService {
 
         this._searchCache.set(cacheKey, cachedResult);
 
-        // Update state
         this._users$.next(users);
         this._totalPages$.next(pagination?.totalPages ?? 1);
         this._currentPage$.next(pagination?.number ?? 0);
@@ -209,7 +200,6 @@ export class UserManagementService {
   private _updateUserCards(data?: any): void {
     const stats = data?.totalUsers != null ? data : this._userStats;
 
-    // Store stats if data contains them
     if (data?.totalUsers != null) {
       this._userStats = {
         totalUsers: data.totalUsers,
@@ -357,18 +347,16 @@ export class UserManagementService {
     this.setLoading(true);
     return this.userBackend.fetchInvitations(page, size).pipe(
       map((response: FetchInvitationsResponse) => {
-        // Return just the invitations array from content
         return response.data?.content ?? [];
       }),
       catchError((err) => {
         this.errorHandler.handle(err);
-        return of([]); // Return empty array on error
+        return of([]);
       }),
       finalize(() => this.setLoading(false))
     );
   }
 
-  // Add this method for when you need the full paginated response (event-management page)
   public fetchInvitationsWithPagination(page: number = 0, size: number = 10) {
     this.setLoading(true);
     return this.userBackend.fetchInvitations(page, size).pipe(

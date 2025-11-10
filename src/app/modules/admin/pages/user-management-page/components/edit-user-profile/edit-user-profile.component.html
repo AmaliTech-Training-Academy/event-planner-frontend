@@ -10,18 +10,18 @@
     <div class="modal__content">
       <!-- Error Banner -->
       @if (error()) {
-        <div class="error-banner">
-          <span class="error-icon">⚠️</span>
-          <span class="error-text">{{ error() }}</span>
-        </div>
+      <div class="error-banner">
+        <span class="error-icon">⚠️</span>
+        <span class="error-text">{{ error() }}</span>
+      </div>
       }
 
       <!-- Upload Progress Indicator -->
       @if (uploadingImage()) {
-        <div class="upload-indicator">
-          <span class="spinner"></span>
-          <span>Uploading image...</span>
-        </div>
+      <div class="upload-indicator">
+        <span class="spinner"></span>
+        <span>Uploading image...</span>
+      </div>
       }
 
       <div class="profile-section">
@@ -43,9 +43,7 @@
             (click)="triggerFileInput()"
             [disabled]="uploadingImage()"
           >
-            <span class="button-content">
-             
-            </span>
+            <span class="button-content"> </span>
           </app-button>
 
           <input
@@ -97,9 +95,9 @@
 
         <!-- Display formatted phone number -->
         @if (getFormattedPhoneNumber()) {
-          <div class="formatted-phone">
-            <small>Formatted: {{ getFormattedPhoneNumber() }}</small>
-          </div>
+        <div class="formatted-phone">
+          <small>Formatted: {{ getFormattedPhoneNumber() }}</small>
+        </div>
         }
 
         <app-input
@@ -112,20 +110,16 @@
     </div>
 
     <div class="modal__actions">
-      <app-button 
-        type="secondary" 
-        (click)="onCancel()"
-        [disabled]="saving()"
-      >
+      <app-button type="secondary" (click)="onCancel()" [disabled]="saving()">
         Cancel
       </app-button>
-      
+
       <app-button
         type="primary"
         [disabled]="profileForm.invalid || saving() || uploadingImage()"
         buttonType="submit"
       >
-        {{ saving() ? 'Saving...' : 'Save Changes' }}
+        {{ saving() ? "Saving..." : "Save Changes" }}
       </app-button>
     </div>
   </form>

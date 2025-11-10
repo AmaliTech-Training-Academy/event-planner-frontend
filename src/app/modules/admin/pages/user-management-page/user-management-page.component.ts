@@ -77,7 +77,6 @@ export class UserManagementPageComponent implements OnInit {
 
   private readonly _currentSearch = signal<string>('');
   private readonly _currentFilters = signal<Map<string, string>>(new Map());
-  // Table columns & actions
   protected readonly tableColumns: TableColumn<User>[] = [
     {
       key: 'fullName',
@@ -272,7 +271,7 @@ export class UserManagementPageComponent implements OnInit {
           this._loadUsers(this.currentPage() || 0);
         },
         error: (error) => {
-          console.error('Failed to update user:', error);
+        
           alert('Failed to update user. Please try again.');
         },
       });
@@ -285,19 +284,15 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   private _viewUser(user: User): void {
-    // Fetch complete user details first
     this._userService
       .getUser(user.userId.toString())
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response) => {
-          // Set the complete user data with phone and address
           this.selectedUser.set(response.data);
           this.isViewModalOpen.set(true);
         },
         error: (err) => {
-          console.error('Failed to fetch user details:', err);
-          // Fallback: use partial data from list
           this.selectedUser.set(user);
           this.isViewModalOpen.set(true);
         },
@@ -307,19 +302,15 @@ export class UserManagementPageComponent implements OnInit {
   private _editUser(user: User): void {
     if (this.isViewModalOpen()) this.closeViewModal();
 
-    // Fetch complete user details first
     this._userService
       .getUser(user.userId.toString())
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (response) => {
-          // Set the complete user data with phone and address
           this.selectedUser.set(response.data);
           this.isEditModalOpen.set(true);
         },
         error: (err) => {
-          console.error('Failed to fetch user details:', err);
-          // Fallback: use partial data from list
           this.selectedUser.set(user);
           this.isEditModalOpen.set(true);
         },
@@ -334,15 +325,10 @@ export class UserManagementPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
-          console.log(
-            user.status === 'Active'
-              ? '✅ User deactivated successfully'
-              : '✅ User reactivated successfully'
-          );
+       
           this.togglingUserId.set(null);
         },
         error: (err) => {
-          console.error('❌ Failed to toggle user status:', err);
           this.togglingUserId.set(null);
         },
       });

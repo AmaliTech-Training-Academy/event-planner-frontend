@@ -14,8 +14,8 @@ import {
 export interface UpdateUserPayload {
   fullName: string;
   email: string;
-  phone: string; // backend expects string, not optional
-  address: string; // backend expects string, not optional
+  phone: string; 
+  address: string; 
   status: boolean;
   profilePicture?: string;
 }
@@ -57,10 +57,9 @@ export class UserBackendService {
     return this.http.post<{ data: User }>(API_ENDPOINTS.CREATE_USER, user);
   }
 
-  // In your UserBackendService
   public updateUser(
     userId: string,
-    payload: UpdateUserPayload // <--- use the backend payload type
+    payload: UpdateUserPayload 
   ): Observable<{ data: User }> {
     return this.http.put<{ data: User }>(
       API_ENDPOINTS.UPDATE_USER(userId),
@@ -102,7 +101,6 @@ export class UserBackendService {
     page: number = 0,
     size: number = 10
   ): Observable<UserSearchResponse> {
-    // ✅ FIX: return correct type
     let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());

@@ -36,27 +36,23 @@ export class ViewUserProfileComponent {
   public readonly userData = input<User>();
   public readonly isEditMode = signal<boolean>(false);
 
-  // Correctly handle boolean or string statuses
   protected readonly isActive = computed(() => {
     const status = this.userData()?.status;
 
-    // Normalize both boolean and string statuses
     if (typeof status === 'boolean') {
-      return status; // true = Active, false = Inactive
+      return status;
     }
     if (typeof status === 'string') {
       return status.toLowerCase() === 'active';
     }
 
-    return false; // fallback if undefined
+    return false;
   });
 
-  // Update status icon based on active/inactive
   protected readonly statusIcon = computed(() =>
     this.isActive() ? 'icons/power-red.png' : 'icons/power-green.png'
   );
 
-  // Update button text dynamically
   protected readonly statusButtonText = computed(() =>
     this.isActive() ? 'Deactivate User' : 'Activate User'
   );

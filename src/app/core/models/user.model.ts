@@ -1,4 +1,4 @@
-import { USER_ROLES } from "../constants/user.constants";
+import { USER_ROLES } from '../constants/user.constants';
 
 /** User model (frontend representation) */
 export interface User {
@@ -18,5 +18,4 @@ export interface User {
   lastActive?: string;
 }
 
-/** Role types */
 export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
