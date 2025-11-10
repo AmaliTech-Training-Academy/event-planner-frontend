@@ -16,5 +16,8 @@ export const APP_ROUTES = {
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   ADMIN_DASHBOARD: '/admin',
   ADMIN_EVENTS: '/admin/events',
+  ADMIN_EVENT_DETAILS: '/admin/events/:id',
+  ADMIN_ORGANIZERS: '/admin/organizers',
+  
 };
 

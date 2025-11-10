@@ -14,6 +14,7 @@ import { InviteUserModalComponent } from './components/invite-user-modal/invite-
 import { SuccessModalComponent } from './components/success-modal/success-modal.component';
 import { EditUserProfileComponent } from './components/edit-user-profile/edit-user-profile.component';
 import { ViewUserProfileComponent } from './components/view-user-profile/view-user-profile.component';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
 @Component({
   selector: 'app-user-management-page',
@@ -38,6 +39,7 @@ export class UserManagementPageComponent implements OnInit {
   protected readonly isEditModalOpen = signal<boolean>(false);
   protected readonly isViewModalOpen = signal<boolean>(false);
   protected readonly selectedUser = signal<User | null>(null);
+  protected readonly APP_ROUTES = APP_ROUTES;
 
   protected readonly userCards = signal<UserCardData[]>([
     {
@@ -357,7 +359,7 @@ export class UserManagementPageComponent implements OnInit {
 
   protected goToDashboard(): void {
     this.closeSuccessModal();
-    this._router.navigate(['/dashboard']);
+    this._router.navigate([this.APP_ROUTES.ADMIN_DASHBOARD]);
   }
 
   protected closeViewModal(): void {

@@ -22,7 +22,6 @@ interface EventDetailsPageState {
   eventData?: EventDetails;
 }
 
-
 export interface EventHost {
   name: string;
   email: string;
@@ -50,18 +49,16 @@ export class EventDetailsPageComponent implements OnInit {
   protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
 
-public ngOnInit(): void {
-  const state = this._location.getState() as EventDetailsPageState;
-  const eventData = state.eventData;
+  public ngOnInit(): void {
+    const state = this._location.getState() as EventDetailsPageState;
+    const eventData = state.eventData;
 
-  if (eventData) {
-    this._loadEventFromState(eventData);
-  } else {
-     this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS]);
-
+    if (eventData) {
+      this._loadEventFromState(eventData);
+    } else {
+      this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS]);
+    }
   }
-}
-
 
   private _loadEventFromState(eventData: EventDetails): void {
     const event: EventDetails = {
@@ -94,7 +91,7 @@ public ngOnInit(): void {
   protected onEdit(): void {
     const event = this.eventDetails();
     if (event?.id) {
-      this._router.navigate(['/admin/events', event.id, 'edit']);
+      this._router.navigate([this.APP_ROUTES.ADMIN_EVENT_DETAILS, event.id]);
     }
   }
 

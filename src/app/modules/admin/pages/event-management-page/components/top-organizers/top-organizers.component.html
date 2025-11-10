@@ -10,7 +10,7 @@
       ariaLabel="View all organizers"
     >
       <img
-        ngSrc="icons/users-group.png"
+        ngSrc="icons/user-group.png"
         alt=""
         width="20"
         height="20"
@@ -22,7 +22,8 @@
 
   @if (hasOrganizers()) {
   <div class="top-organizers__list">
-    @for (organizer of organizers().length >= 50; track trackByOrganizer($index, organizer)) {
+    @for (organizer of organizers(); track trackByOrganizer($index, organizer))
+    {
     <div
       class="top-organizers__item"
       (click)="onOrganizerClick(organizer)"
@@ -58,8 +59,8 @@
         <img
           [ngSrc]="getGrowthIcon(organizer.growthPercentage)"
           alt="Trend indicator"
-          width="80"
-          height="24"
+          width="160"
+          height="40"
           class="top-organizers__sparkline"
           aria-hidden="true"
         />

@@ -27,6 +27,7 @@ import {
   FilterOption,
   DataTableComponent,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
 interface EventTableData {
   id: number;
@@ -56,6 +57,7 @@ interface EventTableData {
 export class EventManagementPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   private readonly _router = inject(Router);
+  protected readonly APP_ROUTES = APP_ROUTES;
 
   private readonly _eventStatistics = signal<EventStatistic[]>([
     {
@@ -268,28 +270,28 @@ export class EventManagementPageComponent implements OnInit {
   }
 
   public onViewAllOrganizers(): void {
-    this._router.navigate(['/admin/organizers']);
+    this._router.navigate([this.APP_ROUTES.ADMIN_ORGANIZERS]);
   }
 
   public onOrganizerClick(organizer: Organizer): void {
-    this._router.navigate(['/admin/organizers', organizer.id]);
+    this._router.navigate([this.APP_ROUTES.ADMIN_ORGANIZERS, organizer.id]);
   }
 
   public onViewAllEvents(): void {
-    this._router.navigate(['/admin/events']);
+    this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS]);
   }
 
   public onEventClick(event: UpcomingEvent): void {
-    this._router.navigate(['/admin/events', event.id]);
+    this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS, event.id]);
   }
 
   private _onViewEvent(event: EventTableData): void {
-    this._router.navigate(['/admin/events', event.id], {
+    this._router.navigate([this.APP_ROUTES.ADMIN_EVENT_DETAILS, event.id], {
       state: { eventData: event },
     });
   }
 
   private _onCreateEvent(): void {
-    this._router.navigate(['/admin/events/create']);
+    this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
   }
 }
