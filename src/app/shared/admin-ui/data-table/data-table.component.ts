@@ -6,7 +6,6 @@ import {
   signal,
   input,
   output,
-  Input,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -63,12 +62,10 @@ export interface TableFilter {
 export class DataTableComponent<T extends Record<string, any>> {
   public readonly tableTitle = input<string>('User List');
   public readonly searchPlaceholder = input<string>();
-  @Input() public searchBoxClass?: string;
-
+  public readonly searchBoxClass = input<string>();
+  public readonly searchSize = input<'md' | 'lg'>('md');
   public readonly showCheckboxes = input<boolean>(true);
   public readonly showFilters = input<boolean>(true);
-  @Input() public searchSize: 'md' | 'lg' = 'md';
-
   public readonly data = input.required<ReadonlyArray<T>>();
   public readonly columns = input.required<ReadonlyArray<TableColumn<T>>>();
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
@@ -76,8 +73,8 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly searchable = input<boolean>(true);
   public readonly expandable = input<boolean>(false);
   public readonly primaryAction = input<{
-    label: string;
-    handler: () => void;
+    readonly label: string;
+    readonly handler: () => void;
   }>();
   public readonly itemsPerPage = input<number>(10);
 
@@ -88,77 +85,40 @@ export class DataTableComponent<T extends Record<string, any>> {
   private readonly _selectedItems = signal<Set<T>>(new Set());
   private readonly _searchQuery = signal<string>('');
   private readonly _currentPage = signal<number>(1);
-  public readonly currentPage = computed(() => this._currentPage());
 
-  public readonly searchQuery = computed(() => this._searchQuery());
+  public readonly currentPage = computed<number>(() => this._currentPage());
+  public readonly searchQuery = computed<string>(() => this._searchQuery());
 
-  public readonly filteredData = computed(() => {
-    let result = this.data();
-    const query = this._searchQuery().trim().toLowerCase();
+  public readonly filteredData = computed<ReadonlyArray<T>>(() => {
+    let result: ReadonlyArray<T> = this.data();
+    const query: string = this._searchQuery().trim().toLowerCase();
 
     if (query) {
-      result = result.filter((item) => this._matchesSearch(item, query));
+      result = result.filter((item: T) => this._matchesSearch(item, query));
     }
 
-    const filters = this._activeFilters();
-    filters.forEach((value, key) => {
+    const filters: Map<string, string> = this._activeFilters();
+    filters.forEach((value: string, key: string) => {
       if (value !== 'all') {
         result = result.filter(
-          (item) => String(item[key]).toLowerCase() === value.toLowerCase()
+          (item: T) => String(item[key]).toLowerCase() === value.toLowerCase()
         );
       }
     });
 
     return result;
   });
-  public setCurrentPage(page: number): void {
-    this._currentPage.set(page);
-  }
-  public readonly paginatedData = computed(() => {
-    const filtered = this.filteredData();
-    const page = this._currentPage();
-    const perPage = this.itemsPerPage();
-    const start = (page - 1) * perPage;
+
+  public readonly paginatedData = computed<ReadonlyArray<T>>(() => {
+    const filtered: ReadonlyArray<T> = this.filteredData();
+    const page: number = this._currentPage();
+    const perPage: number = this.itemsPerPage();
+    const start: number = (page - 1) * perPage;
     return filtered.slice(start, start + perPage);
   });
 
-  public isSelected(item: T): boolean {
-    return this._selectedItems().has(item);
-  }
-
-  public toggleSelect(item: T): void {
-    const selected = new Set(this._selectedItems());
-    selected.has(item) ? selected.delete(item) : selected.add(item);
-    this._selectedItems.set(selected);
-  }
-
-  public isAllSelected(): boolean {
-    const pageData = this.paginatedData();
-    return (
-      pageData.length > 0 &&
-      pageData.every((item) => this._selectedItems().has(item))
-    );
-  }
-
-  public toggleSelectAll(): void {
-    const pageData = this.paginatedData();
-    const selected = new Set(this._selectedItems());
-
-    if (this.isAllSelected()) {
-      pageData.forEach((item) => selected.delete(item));
-    } else {
-      pageData.forEach((item) => selected.add(item));
-    }
-    this._selectedItems.set(selected);
-  }
-
-  public executeAction(action: TableAction<T>, item: T): void {
-    action.handler(item);
-  }
-
-  public executePrimaryAction(): void {
-    const action = this.primaryAction();
-    action?.handler();
+  public setCurrentPage(page: number): void {
+    this._currentPage.set(page);
   }
 
   public updateSearch(query: string): void {
@@ -167,65 +127,90 @@ export class DataTableComponent<T extends Record<string, any>> {
   }
 
   public updateFilter(filterKey: string, value: string): void {
-    const filters = new Map(this._activeFilters());
+    const filters: Map<string, string> = new Map(this._activeFilters());
     filters.set(filterKey, value);
     this._activeFilters.set(filters);
     this._currentPage.set(1);
   }
 
-  public toggleRow(index: number): void {
-    const expanded = new Set(this._expandedRows());
+  public executePrimaryAction(): void {
+    const action = this.primaryAction();
+    action?.handler();
+  }
+
+  protected isSelected(item: T): boolean {
+    return this._selectedItems().has(item);
+  }
+
+  protected toggleSelect(item: T): void {
+    const selected: Set<T> = new Set(this._selectedItems());
+    selected.has(item) ? selected.delete(item) : selected.add(item);
+    this._selectedItems.set(selected);
+  }
+
+  protected isAllSelected(): boolean {
+    const pageData: ReadonlyArray<T> = this.paginatedData();
+    return (
+      pageData.length > 0 &&
+      pageData.every((item: T) => this._selectedItems().has(item))
+    );
+  }
+
+  protected toggleSelectAll(): void {
+    const pageData: ReadonlyArray<T> = this.paginatedData();
+    const selected: Set<T> = new Set(this._selectedItems());
+
+    if (this.isAllSelected()) {
+      pageData.forEach((item: T) => selected.delete(item));
+    } else {
+      pageData.forEach((item: T) => selected.add(item));
+    }
+    this._selectedItems.set(selected);
+  }
+
+  protected executeAction(action: TableAction<T>, item: T): void {
+    action.handler(item);
+  }
+
+  protected toggleRow(index: number): void {
+    const expanded: Set<number> = new Set(this._expandedRows());
     expanded.has(index) ? expanded.delete(index) : expanded.add(index);
     this._expandedRows.set(expanded);
   }
 
-  public isRowExpanded(index: number): boolean {
+  protected isRowExpanded(index: number): boolean {
     return this._expandedRows().has(index);
   }
 
-  public isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
+  protected isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
     return ['role', 'status'].includes(String(key));
   }
 
-  public getBadgeClass(value: unknown): string {
+  protected getBadgeClass(value: unknown): string {
     return `data-table__badge data-table__badge--${String(
       value
     ).toLowerCase()}`;
   }
 
-  public isActionVisible(action: TableAction<T>, item: T): boolean {
+  protected isActionVisible(action: TableAction<T>, item: T): boolean {
     return action.visible ? action.visible(item) : true;
   }
 
-  public isActionDisabled(action: TableAction<T>, item: T): boolean {
+  protected isActionDisabled(action: TableAction<T>, item: T): boolean {
     return typeof action.disabled === 'function'
       ? action.disabled(item)
       : !!action.disabled;
   }
 
-  public getFilterValue(filterKey: string): string {
+  protected getFilterValue(filterKey: string): string {
     return this._activeFilters().get(filterKey) ?? 'all';
   }
 
-  public trackByIndex(index: number): number {
+  protected trackByIndex(index: number): number {
     return index;
   }
 
-  private _matchesSearch(item: T, query: string): boolean {
-    return Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(query)
-    );
-  }
-  // Add these helper methods to data-table.component.ts:
-
-  public getActionColor(action: TableAction<T>, item: T): string | undefined {
-    if (action.color === 'power') {
-      return item['status'] === 'Active' ? 'power-active' : 'power-inactive';
-    }
-    return action.color;
-  }
-
-  public getActionExtraClass(
+  protected getActionColor(
     action: TableAction<T>,
     item: T
   ): string | undefined {
@@ -235,7 +220,17 @@ export class DataTableComponent<T extends Record<string, any>> {
     return action.color;
   }
 
-  public getActionIcon(action: TableAction<T>, item: T): string {
+  protected getActionExtraClass(
+    action: TableAction<T>,
+    item: T
+  ): string | undefined {
+    if (action.color === 'power') {
+      return item['status'] === 'Active' ? 'power-active' : 'power-inactive';
+    }
+    return action.color;
+  }
+
+  protected getActionIcon(action: TableAction<T>, item: T): string {
     if (action.color === 'power') {
       return item['status'] === 'Active'
         ? 'icons/power-icon-red.png'
@@ -244,7 +239,7 @@ export class DataTableComponent<T extends Record<string, any>> {
     return action.icon;
   }
 
-  public getActionIconAlt(action: TableAction<T>, item: T): string {
+  protected getActionIconAlt(action: TableAction<T>, item: T): string {
     if (action.color === 'power') {
       return item['status'] === 'Active'
         ? 'Deactivate user icon'
@@ -253,10 +248,16 @@ export class DataTableComponent<T extends Record<string, any>> {
     return `${action.label} icon`;
   }
 
-  public getActionAriaLabel(action: TableAction<T>, item: T): string {
+  protected getActionAriaLabel(action: TableAction<T>, item: T): string {
     if (action.color === 'power') {
       return item['status'] === 'Active' ? 'Deactivate user' : 'Activate user';
     }
     return action.label;
+  }
+
+  private _matchesSearch(item: T, query: string): boolean {
+    return Object.values(item).some((value: unknown) =>
+      String(value).toLowerCase().includes(query)
+    );
   }
 }

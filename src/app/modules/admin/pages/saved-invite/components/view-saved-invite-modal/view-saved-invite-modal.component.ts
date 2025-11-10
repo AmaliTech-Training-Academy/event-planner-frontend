@@ -1,8 +1,7 @@
 import {
   Component,
-  EventEmitter,
-  Output,
   input,
+  output,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -10,12 +9,12 @@ import { ButtonComponent } from '../../../../../../shared/ui/button/button.compo
 import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/modal-header.component';
 
 export interface SavedInvite {
-  invitationTitle: string;
-  eventId: string;
-  event: string;
-  createdBy: string;
-  lastEdited: string;
-  recipients: number;
+  readonly invitationTitle: string;
+  readonly eventId: string;
+  readonly event: string;
+  readonly createdBy: string;
+  readonly lastEdited: string;
+  readonly recipients: number;
 }
 
 @Component({
@@ -27,18 +26,20 @@ export interface SavedInvite {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewSavedInviteComponent {
-  @Output() public readonly close: EventEmitter<void> =
-    new EventEmitter<void>();
-
   public readonly inviteData = input<SavedInvite>();
+  public readonly close = output<void>();
 
-  public onClose(): void {
+  protected onClose(): void {
     this.close.emit();
   }
 
-  public onBackdropClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement)?.classList.contains('modal-backdrop')) {
+  protected onBackdropClick(event: MouseEvent): void {
+    if (this._isBackdropClick(event)) {
       this.onClose();
     }
+  }
+
+  private _isBackdropClick(event: MouseEvent): boolean {
+    return (event.target as HTMLElement)?.classList.contains('modal-backdrop');
   }
 }

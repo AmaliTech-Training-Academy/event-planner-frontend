@@ -1,4 +1,4 @@
-import { Component, signal, WritableSignal } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   DataTableComponent,
@@ -9,12 +9,12 @@ import { EditSavedInviteComponent } from './components/edit-saved-invite-modal/e
 import { ViewSavedInviteComponent } from './components/view-saved-invite-modal/view-saved-invite-modal.component';
 
 interface SavedInvite {
-  invitationTitle: string;
-  eventId: string;
-  event: string;
-  createdBy: string;
-  lastEdited: string;
-  recipients: number;
+  readonly invitationTitle: string;
+  readonly eventId: string;
+  readonly event: string;
+  readonly createdBy: string;
+  readonly lastEdited: string;
+  readonly recipients: number;
 }
 
 @Component({
@@ -29,7 +29,8 @@ interface SavedInvite {
   styleUrls: ['./saved-invite-page.component.scss'],
 })
 export class SavedInviteComponent {
-  public mockInvites: SavedInvite[] = [
+  // Private reactive state
+  private readonly _invites = signal<ReadonlyArray<SavedInvite>>([
     {
       invitationTitle: 'Early Bird Registration Offer',
       eventId: '#125678',
@@ -70,9 +71,29 @@ export class SavedInviteComponent {
       lastEdited: '2023-12-05',
       recipients: 20,
     },
-  ];
+  ]);
 
-  public readonly columns: ReadonlyArray<TableColumn<SavedInvite>> = [
+  private readonly _isEditModalOpen = signal<boolean>(false);
+  private readonly _isPreviewModalOpen = signal<boolean>(false);
+  private readonly _selectedInvite = signal<SavedInvite | undefined>(undefined);
+  private readonly _MODAL_CLOSE_DELAY_MS: number = 300;
+
+  // Public computed - exposed to template
+  protected readonly invites = computed<ReadonlyArray<SavedInvite>>(() =>
+    this._invites()
+  );
+  protected readonly isEditModalOpen = computed<boolean>(() =>
+    this._isEditModalOpen()
+  );
+  protected readonly isPreviewModalOpen = computed<boolean>(() =>
+    this._isPreviewModalOpen()
+  );
+  protected readonly selectedInvite = computed<SavedInvite | undefined>(() =>
+    this._selectedInvite()
+  );
+
+  // Protected readonly - template configuration
+  protected readonly columns: ReadonlyArray<TableColumn<SavedInvite>> = [
     { key: 'invitationTitle', header: 'Invitation Title' },
     { key: 'eventId', header: 'Event ID' },
     { key: 'event', header: 'Event' },
@@ -81,7 +102,7 @@ export class SavedInviteComponent {
     { key: 'recipients', header: 'Recipients' },
   ];
 
-  public readonly actions: ReadonlyArray<TableAction<SavedInvite>> = [
+  protected readonly actions: ReadonlyArray<TableAction<SavedInvite>> = [
     {
       icon: 'icons/view-icon.png',
       label: 'Preview',
@@ -105,94 +126,67 @@ export class SavedInviteComponent {
     },
   ];
 
-  protected readonly isEditModalOpen: WritableSignal<boolean> = signal(false);
-  protected readonly isPreviewModalOpen: WritableSignal<boolean> =
-    signal(false);
-  protected readonly selectedInvite: WritableSignal<SavedInvite | undefined> =
-    signal(undefined);
-
-  private readonly _MODAL_CLOSE_DELAY_MS: number = 300;
-
-  constructor(public readonly layoutService: LayoutService) {
-
-    this.layoutService.pageTitle.set('Saved Invites');
-    this.layoutService.logoSrc.set('icons/save-icon.png');
-    this.layoutService.logoAlt.set('Saved Invites');
-
-    
+  constructor(private readonly _layoutService: LayoutService) {
+    this._layoutService.pageTitle.set('Saved Invites');
+    this._layoutService.logoSrc.set('icons/save-icon.png');
+    this._layoutService.logoAlt.set('Saved Invites');
   }
 
   protected openEditModal(invite: SavedInvite): void {
-  
     const inviteCopy: SavedInvite = { ...invite };
-    this.selectedInvite.set(inviteCopy);
-    this.isEditModalOpen.set(true);
-
-  
+    this._selectedInvite.set(inviteCopy);
+    this._isEditModalOpen.set(true);
   }
 
   protected closeEditModal(): void {
-
-    this.isEditModalOpen.set(false);
-
+    this._isEditModalOpen.set(false);
     setTimeout(() => {
-      this.selectedInvite.set(undefined);
+      this._selectedInvite.set(undefined);
     }, this._MODAL_CLOSE_DELAY_MS);
   }
 
   protected onSaveEdit(updatedInvite: SavedInvite): void {
-  
-    const index: number = this.mockInvites.findIndex(
+    const currentInvites: ReadonlyArray<SavedInvite> = this._invites();
+    const index: number = currentInvites.findIndex(
       (inv: SavedInvite) => inv.eventId === updatedInvite.eventId
     );
 
     if (index !== -1) {
-
-      this.mockInvites = [
-        ...this.mockInvites.slice(0, index),
+      const updatedInvites: ReadonlyArray<SavedInvite> = [
+        ...currentInvites.slice(0, index),
         updatedInvite,
-        ...this.mockInvites.slice(index + 1),
+        ...currentInvites.slice(index + 1),
       ];
-
-    } 
+      this._invites.set(updatedInvites);
+    }
 
     this.closeEditModal();
   }
 
   protected openPreviewModal(invite: SavedInvite): void {
-
     const inviteCopy: SavedInvite = { ...invite };
-    this.selectedInvite.set(inviteCopy);
-    this.isPreviewModalOpen.set(true);
-
+    this._selectedInvite.set(inviteCopy);
+    this._isPreviewModalOpen.set(true);
   }
 
   protected closePreviewModal(): void {
-
-    this.isPreviewModalOpen.set(false);
-
+    this._isPreviewModalOpen.set(false);
     setTimeout(() => {
-      this.selectedInvite.set(undefined);
+      this._selectedInvite.set(undefined);
     }, this._MODAL_CLOSE_DELAY_MS);
   }
 
   protected onDelete(invite: SavedInvite): void {
-
     const confirmed: boolean = confirm(
       `Are you sure you want to delete "${invite.invitationTitle}"?`
     );
 
     if (confirmed) {
-     
-
-      const beforeCount: number = this.mockInvites.length;
-
-      this.mockInvites = this.mockInvites.filter(
+      const currentInvites: ReadonlyArray<SavedInvite> = this._invites();
+      const filteredInvites: ReadonlyArray<SavedInvite> = currentInvites.filter(
         (inv: SavedInvite) => inv.eventId !== invite.eventId
       );
-
-
-    
-    } 
+      this._invites.set(filteredInvites);
+    }
   }
 }

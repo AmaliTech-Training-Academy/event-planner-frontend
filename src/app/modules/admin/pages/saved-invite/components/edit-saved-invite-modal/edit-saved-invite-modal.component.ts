@@ -1,8 +1,8 @@
 import {
   Component,
-  EventEmitter,
-  Output,
-  Input,
+  input,
+  output,
+  effect,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,12 +17,12 @@ import { InputComponent } from '../../../../../../shared/ui/input/input.componen
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 
 export interface SavedInvite {
-  invitationTitle: string;
-  eventId: string;
-  event: string;
-  createdBy: string;
-  lastEdited: string;
-  recipients: number;
+  readonly invitationTitle: string;
+  readonly eventId: string;
+  readonly event: string;
+  readonly createdBy: string;
+  readonly lastEdited: string;
+  readonly recipients: number;
 }
 
 @Component({
@@ -40,27 +40,11 @@ export interface SavedInvite {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditSavedInviteComponent {
-  @Output() public readonly close: EventEmitter<void> =
-    new EventEmitter<void>();
-  @Output() public readonly save: EventEmitter<SavedInvite> =
-    new EventEmitter<SavedInvite>();
+  public readonly inviteData = input<SavedInvite>();
+  public readonly close = output<void>();
+  public readonly save = output<SavedInvite>();
 
-  private _inviteData?: SavedInvite;
-
-  @Input()
-  public set inviteData(value: SavedInvite | undefined) {
-    this._inviteData = value;
-    if (value) {
-      this.inviteForm.patchValue(value, { emitEvent: false });
-      this.inviteForm.markAsPristine();
-      this.inviteForm.markAsUntouched();
-    }
-  }
-  public get inviteData(): SavedInvite | undefined {
-    return this._inviteData;
-  }
-
-  public readonly inviteForm: FormGroup;
+  protected readonly inviteForm: FormGroup;
 
   private readonly _fieldLabels: Record<string, string> = {
     invitationTitle: 'Invitation Title',
@@ -79,21 +63,36 @@ export class EditSavedInviteComponent {
       lastEdited: [''],
       recipients: [0, [Validators.required, Validators.min(1)]],
     });
+
+    effect(() => {
+      const data: SavedInvite | undefined = this.inviteData();
+      if (data) {
+        this.inviteForm.patchValue(data, { emitEvent: false });
+        this.inviteForm.markAsPristine();
+        this.inviteForm.markAsUntouched();
+      }
+    });
   }
 
-  public getErrorMessage(fieldName: string): string | null {
+  protected getErrorMessage(fieldName: string): string | null {
     const field = this.inviteForm.get(fieldName);
-    if (!(field?.dirty || field?.touched)) return null;
+    if (!(field?.dirty || field?.touched)) {
+      return null;
+    }
 
-    const label = this._fieldLabels[fieldName] ?? fieldName;
+    const label: string = this._fieldLabels[fieldName] ?? fieldName;
 
-    if (field.hasError('required')) return `${label} is required`;
-    if (field.hasError('min')) return `${label} must be greater than 0`;
+    if (field.hasError('required')) {
+      return `${label} is required`;
+    }
+    if (field.hasError('min')) {
+      return `${label} must be greater than 0`;
+    }
 
     return 'Invalid value';
   }
 
-  public onSubmit(): void {
+  protected onSubmit(): void {
     if (this.inviteForm.valid) {
       const updatedInvite: SavedInvite = {
         ...this.inviteForm.value,
@@ -103,13 +102,17 @@ export class EditSavedInviteComponent {
     }
   }
 
-  public onCancel(): void {
+  protected onCancel(): void {
     this.close.emit();
   }
 
-  public onBackdropClick(event: MouseEvent): void {
-    if ((event.target as HTMLElement)?.classList.contains('modal-backdrop')) {
+  protected onBackdropClick(event: MouseEvent): void {
+    if (this._isBackdropClick(event)) {
       this.onCancel();
     }
+  }
+
+  private _isBackdropClick(event: MouseEvent): boolean {
+    return (event.target as HTMLElement)?.classList.contains('modal-backdrop');
   }
 }

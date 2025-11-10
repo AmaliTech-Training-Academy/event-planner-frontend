@@ -1,6 +1,6 @@
 <div class="saved-invite-page">
   <app-data-table
-    [data]="mockInvites"
+    [data]="invites()"
     [columns]="columns"
     [actions]="actions"
     [searchable]="true"
@@ -14,17 +14,15 @@
   </app-data-table>
 
   @if (isEditModalOpen() && selectedInvite()) {
-    <app-edit-saved-invite
-      [inviteData]="selectedInvite()"
-      (close)="closeEditModal()"
-      (save)="onSaveEdit($event)"
-    ></app-edit-saved-invite>
-  }
-
-  @if (isPreviewModalOpen() && selectedInvite()) {
-    <app-view-saved-invite
-      [inviteData]="selectedInvite()"
-      (close)="closePreviewModal()"
-    ></app-view-saved-invite>
+  <app-edit-saved-invite
+    [inviteData]="selectedInvite()"
+    (close)="closeEditModal()"
+    (save)="onSaveEdit($event)"
+  ></app-edit-saved-invite>
+  } @if (isPreviewModalOpen() && selectedInvite()) {
+  <app-view-saved-invite
+    [inviteData]="selectedInvite()"
+    (close)="closePreviewModal()"
+  ></app-view-saved-invite>
   }
 </div>
