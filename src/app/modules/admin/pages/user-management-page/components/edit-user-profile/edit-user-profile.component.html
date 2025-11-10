@@ -8,9 +8,24 @@
 
   <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
     <div class="modal__content">
+      <!-- Error Banner -->
+      @if (error()) {
+      <div class="error-banner">
+        <span class="error-icon">⚠️</span>
+        <span class="error-text">{{ error() }}</span>
+      </div>
+      }
+
+      <!-- Upload Progress Indicator -->
+      @if (uploadingImage()) {
+      <div class="upload-indicator">
+        <span class="spinner"></span>
+        <span>Uploading image...</span>
+      </div>
+      }
+
       <div class="profile-section">
         <div class="profile-avatar">
-          <!-- Optimized profile image -->
           <img
             [ngSrc]="profileImage()"
             width="128"
@@ -26,17 +41,9 @@
             size="small"
             class="status-button"
             (click)="triggerFileInput()"
+            [disabled]="uploadingImage()"
           >
-            <span class="button-content">
-              <!-- Optimized status icon -->
-              <img
-                [ngSrc]="statusIcon"
-                width="16"
-                height="16"
-                class="status-icon"
-                alt="Status icon"
-              />
-            </span>
+            <span class="button-content"> </span>
           </app-button>
 
           <input
@@ -60,7 +67,7 @@
         <app-input
           type="text"
           label="Full Name"
-          placeholder="Andrew"
+          placeholder="Enter your full name"
           formControlName="fullName"
           [errorMessage]="getErrorMessage('fullName')"
         ></app-input>
@@ -77,13 +84,21 @@
       <div class="form-section">
         <h4 class="section-title">Contact Information</h4>
 
+        <!-- Phone Number (no country code selector) -->
         <app-input
           type="text"
           label="Phone Number"
-          placeholder="+233 345 6785 423"
-          formControlName="phoneNumber"
-          [errorMessage]="getErrorMessage('phoneNumber')"
+          placeholder="+233241234567"
+          formControlName="phone"
+          [errorMessage]="getErrorMessage('phone')"
         ></app-input>
+
+        <!-- Display formatted phone number -->
+        @if (getFormattedPhoneNumber()) {
+        <div class="formatted-phone">
+          <small>Formatted: {{ getFormattedPhoneNumber() }}</small>
+        </div>
+        }
 
         <app-input
           type="text"
@@ -95,13 +110,16 @@
     </div>
 
     <div class="modal__actions">
-      <app-button type="secondary" (click)="onCancel()">Cancel</app-button>
+      <app-button type="secondary" (click)="onCancel()" [disabled]="saving()">
+        Cancel
+      </app-button>
+
       <app-button
         type="primary"
-        [disabled]="profileForm.invalid || !profileForm.dirty"
+        [disabled]="profileForm.invalid || saving() || uploadingImage()"
         buttonType="submit"
       >
-        Save Changes
+        {{ saving() ? "Saving..." : "Save Changes" }}
       </app-button>
     </div>
   </form>

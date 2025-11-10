@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, finalize, take, tap } from 'rxjs';
 import { EventBackendServiceService } from './backend/event-backend-service.service';
 import { ErrorHandlerService } from './error-handler.service';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { APP_ROUTES } from '../constants/app-routes.constants';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class EventsServiceService {
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
-  constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router:Router) { }
+  constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router: Router) { }
 
   public timeZones() {
     this.setLoading(true)
@@ -40,12 +40,14 @@ export class EventsServiceService {
     )
   }
 
-  public createEvent(formData: FormData){
+  public createEvent(formData: FormData) {
     this.setLoading(true)
     return this.eventBackendService.createEvent(formData).pipe(
       take(1),
-      tap(() => {
-        this.router.navigate([APP_ROUTES.CREATE_EVENT_SUCCESS]);
+      tap((response) => {
+        this.router.navigate([APP_ROUTES.CREATE_EVENT_SUCCESS], {
+          state: { eventResponse: response }
+        });
       }),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))

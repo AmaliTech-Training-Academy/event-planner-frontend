@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EVENTS_API_ENDPOINTS } from '../../constants/api-endpoints.constants';
-import { BaseType, EventType, TimeZone } from '../../models/event.model';
+import { BaseType, EventResponse, EventType, TimeZone } from '../../models/event.model';
 import { CacheHttpService } from '../util/CacheHttpClient';
 
 
@@ -29,8 +29,15 @@ export class EventBackendServiceService {
     return this.cacheHttp.get<BaseType[]>(EVENTS_API_ENDPOINTS.GET_MEETING_TYPES);
   }
 
-  public createEvent(data: FormData) {
-    return this.http.post(EVENTS_API_ENDPOINTS.CREATE_EVENT, data);
+  public createEvent(data: FormData): Observable<EventResponse> {
+    return this.http.post<EventResponse>(EVENTS_API_ENDPOINTS.CREATE_EVENT, data);
+  }
+
+  public getEvent(id: string): Observable<Event> {
+    return this.http.get<Event>(EVENTS_API_ENDPOINTS.GET_EVENT(id));
+  }
+  public getEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(EVENTS_API_ENDPOINTS.GET_EVENTS);
   }
 
 }

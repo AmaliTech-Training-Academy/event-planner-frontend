@@ -52,6 +52,17 @@ export interface BaseType {
   name: string;
 }
 
+
+export interface EventResponse {
+  id: string;
+  title: string;
+  description: string;
+  startTime: Date;
+  meetingLocation: string;
+  flyerUrl: string;
+  timeZoneOffSet: string;
+}
+
 export type EventType = BaseType;
 export type MeetingType = BaseType;
 

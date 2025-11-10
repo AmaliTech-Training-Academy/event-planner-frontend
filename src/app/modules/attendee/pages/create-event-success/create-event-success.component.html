@@ -1,7 +1,7 @@
 <div class="container">
     <div class="left">
-        <img width="282"
-        height="331" ngSrc="images/flyer.jpg" alt="flyer cover image" srcset="">
+        <img width="282" height="331" [ngSrc]="createdEvent?.flyerUrl || 'images/flyer.jpg'" alt="flyer cover image"
+            srcset="">
         <div class="action-container">
             <p>You have manage access to this event.</p>
             <app-button type="secondary">Manage</app-button>
@@ -13,7 +13,7 @@
     </div>
     <div class="right">
         <div class="summary">
-            <h2>UI/UX Mentorship</h2>
+            <h2>{{createdEvent?.title}}</h2>
 
             <div class="info">
                 <div class="organizer">
