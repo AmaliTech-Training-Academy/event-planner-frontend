@@ -29,7 +29,6 @@ interface SavedInvite {
   styleUrls: ['./saved-invite-page.component.scss'],
 })
 export class SavedInviteComponent {
-  // Private reactive state
   private readonly _invites = signal<ReadonlyArray<SavedInvite>>([
     {
       invitationTitle: 'Early Bird Registration Offer',
@@ -78,21 +77,11 @@ export class SavedInviteComponent {
   private readonly _selectedInvite = signal<SavedInvite | undefined>(undefined);
   private readonly _MODAL_CLOSE_DELAY_MS: number = 300;
 
-  // Public computed - exposed to template
-  protected readonly invites = computed<ReadonlyArray<SavedInvite>>(() =>
-    this._invites()
-  );
-  protected readonly isEditModalOpen = computed<boolean>(() =>
-    this._isEditModalOpen()
-  );
-  protected readonly isPreviewModalOpen = computed<boolean>(() =>
-    this._isPreviewModalOpen()
-  );
-  protected readonly selectedInvite = computed<SavedInvite | undefined>(() =>
-    this._selectedInvite()
-  );
+  protected readonly invites = this._invites.asReadonly();
+  protected readonly isEditModalOpen = this._isEditModalOpen.asReadonly();
+  protected readonly isPreviewModalOpen = this._isPreviewModalOpen.asReadonly();
+  protected readonly selectedInvite = this._selectedInvite.asReadonly();
 
-  // Protected readonly - template configuration
   protected readonly columns: ReadonlyArray<TableColumn<SavedInvite>> = [
     { key: 'invitationTitle', header: 'Invitation Title' },
     { key: 'eventId', header: 'Event ID' },
