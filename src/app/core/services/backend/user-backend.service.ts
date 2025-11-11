@@ -67,15 +67,11 @@ export class UserBackendService {
     );
   }
 
-  /**
-   * ✅ NEW: Update user with FormData (for profile picture upload)
-   * Sends userUpdateRequest as JSON string + profilePicture as File
-   */
+
   public updateUserWithFormData(
     userId: string,
     formData: FormData
   ): Observable<{ data: User }> {
-    // ⚠️ DO NOT set Content-Type header - let browser set it with boundary
     return this.http.put<{ data: User }>(
       API_ENDPOINTS.UPDATE_USER(userId),
       formData

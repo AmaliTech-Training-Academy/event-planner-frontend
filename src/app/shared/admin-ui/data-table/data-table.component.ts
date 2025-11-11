@@ -277,8 +277,8 @@ export class DataTableComponent<T extends Record<string, any>> {
     return ['role', 'status'].includes(String(key));
   }
 
-  public getBadgeClass(value: string): string {
-    const normalized = value.toLowerCase();
+  public getBadgeClass(value: any): string {
+    const normalized = String(value || '').toLowerCase();
 
     const roleMap: Record<string, string> = {
       organiser: 'organizer',
@@ -288,7 +288,7 @@ export class DataTableComponent<T extends Record<string, any>> {
       inactive: 'inactive',
     };
 
-    const badgeClass = roleMap[normalized] || normalized;
+    const badgeClass = roleMap[normalized] || normalized || 'unknown';
     return `data-table__badge data-table__badge--${badgeClass}`;
   }
 

@@ -191,11 +191,9 @@ export class EditUserProfileComponent {
 
     if (!this._validateImageFile(file)) return;
 
-    // ✅ Store the file for FormData upload
     this._selectedImageFile = file;
     this.error.set(null);
 
-    // Preview the image
     const reader = new FileReader();
     reader.onload = (e) => {
       if (e.target?.result) {
@@ -314,7 +312,6 @@ export class EditUserProfileComponent {
     const user = this.userData();
     if (!user) throw new Error('No user data available');
 
-    // ✅ Build the userUpdateRequest object
     const userUpdateRequest = {
       fullName: this.profileForm.value.fullName,
       email: this.profileForm.value.email,
@@ -323,13 +320,10 @@ export class EditUserProfileComponent {
       status: user.status === 'Active',
     };
 
-    // ✅ Create FormData
     const formData = new FormData();
 
-    // Add userUpdateRequest as JSON string
     formData.append('userUpdateRequest', JSON.stringify(userUpdateRequest));
 
-    // Add profile picture file if exists
     if (this._selectedImageFile) {
       formData.append('profilePicture', this._selectedImageFile);
     }

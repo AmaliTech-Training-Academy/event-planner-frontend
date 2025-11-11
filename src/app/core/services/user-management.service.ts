@@ -307,9 +307,7 @@ export class UserManagementService {
     );
   }
 
-  /**
-   * ✅ NEW: Update user with FormData (for profile picture upload)
-   */
+ 
   public updateUserWithFormData(userId: string, formData: FormData) {
     this.setLoading(true);
 
