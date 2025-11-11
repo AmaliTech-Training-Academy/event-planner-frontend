@@ -22,6 +22,7 @@ import {
   UpdateUserPayload,
 } from './backend/user-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
+
 interface CachedSearchResult {
   users: User[];
   totalPages: number;
@@ -29,6 +30,7 @@ interface CachedSearchResult {
   currentPage: number;
   timestamp: number;
 }
+
 @Injectable({ providedIn: 'root' })
 export class UserManagementService {
   private _users$ = new BehaviorSubject<User[]>([]);
@@ -112,8 +114,9 @@ export class UserManagementService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public get totalElements(): number {
-    return this._totalElements$.getValue(); // safe, BehaviorSubject
+    return this._totalElements$.getValue();
   }
 
   private _userStats: {
@@ -189,10 +192,12 @@ export class UserManagementService {
       })
     );
   }
+
   public invalidateCache(): void {
     this._searchCache.clear();
     this._usersCache = [];
   }
+
   private invalidateSearchCache(): void {
     this._searchCache.clear();
   }
@@ -302,6 +307,35 @@ export class UserManagementService {
     );
   }
 
+  /**
+   * ✅ NEW: Update user with FormData (for profile picture upload)
+   */
+  public updateUserWithFormData(userId: string, formData: FormData) {
+    this.setLoading(true);
+
+    return this.userBackend.updateUserWithFormData(userId, formData).pipe(
+      map((response) => ({
+        ...response,
+        data: normalizeUserStatus(response.data),
+      })),
+      tap((response) => {
+        const users = this._users$
+          .getValue()
+          .map((u) =>
+            String(u.userId) === String(userId) ? response.data : u
+          );
+        this._users$.next(users);
+
+        this.invalidateCache();
+      }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
   public toggleUserStatusWithBackend(userId: number | string) {
     this.setLoading(true);
 
@@ -343,6 +377,7 @@ export class UserManagementService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public fetchInvitations(page?: number, size?: number) {
     this.setLoading(true);
     return this.userBackend.fetchInvitations(page, size).pipe(

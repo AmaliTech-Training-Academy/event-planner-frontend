@@ -14,8 +14,8 @@ import {
 export interface UpdateUserPayload {
   fullName: string;
   email: string;
-  phone: string; 
-  address: string; 
+  phone: string;
+  address: string;
   status: boolean;
   profilePicture?: string;
 }
@@ -59,11 +59,26 @@ export class UserBackendService {
 
   public updateUser(
     userId: string,
-    payload: UpdateUserPayload 
+    payload: UpdateUserPayload
   ): Observable<{ data: User }> {
     return this.http.put<{ data: User }>(
       API_ENDPOINTS.UPDATE_USER(userId),
       payload
+    );
+  }
+
+  /**
+   * ✅ NEW: Update user with FormData (for profile picture upload)
+   * Sends userUpdateRequest as JSON string + profilePicture as File
+   */
+  public updateUserWithFormData(
+    userId: string,
+    formData: FormData
+  ): Observable<{ data: User }> {
+    // ⚠️ DO NOT set Content-Type header - let browser set it with boundary
+    return this.http.put<{ data: User }>(
+      API_ENDPOINTS.UPDATE_USER(userId),
+      formData
     );
   }
 
@@ -79,6 +94,7 @@ export class UserBackendService {
       payload
     );
   }
+
   public fetchInvitations(
     page: number = 0,
     size: number = 10,
@@ -94,6 +110,7 @@ export class UserBackendService {
       { params }
     );
   }
+
   public searchUsers(
     keyword?: string,
     role?: string,

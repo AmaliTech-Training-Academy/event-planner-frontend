@@ -69,7 +69,6 @@ export class EditUserProfileComponent {
   private readonly _maxImageSize = 5 * 1024 * 1024;
   private _selectedImageFile: File | null = null;
   private _originalImageUrl: string | null = null;
-  private _newImageBase64: string | null = null;
 
   protected readonly currentProfileImage = computed(() => {
     const user = this.userData();
@@ -139,7 +138,7 @@ export class EditUserProfileComponent {
       return;
     }
 
-    console.log('📋 User data for form:', user); // Debug
+    console.log('📋 User data for form:', user);
 
     if (user.phone) {
       try {
@@ -149,11 +148,11 @@ export class EditUserProfileComponent {
             fullName: user.fullName || user.name || '',
             email: user.email,
             phoneCode: parsed.country || this._defaultCountryCode,
-            phone: parsed.nationalNumber.toString(), // ✅ Convert to string
+            phone: parsed.nationalNumber.toString(),
             address: user.address || '',
           };
 
-          console.log('✅ Form data with parsed phone:', formData); // Debug
+          console.log('✅ Form data with parsed phone:', formData);
           this.profileForm.patchValue(formData, { emitEvent: false });
           return;
         }
@@ -162,7 +161,6 @@ export class EditUserProfileComponent {
       }
     }
 
-    // Fallback for users without phone or parsing failure
     const formData = {
       fullName: user.fullName || user.name || '',
       email: user.email,
@@ -171,7 +169,7 @@ export class EditUserProfileComponent {
       address: user.address || '',
     };
 
-    console.log('✅ Form data (fallback):', formData); // Debug
+    console.log('✅ Form data (fallback):', formData);
     this.profileForm.patchValue(formData, { emitEvent: false });
   }
 
@@ -193,22 +191,18 @@ export class EditUserProfileComponent {
 
     if (!this._validateImageFile(file)) return;
 
-    // ⚠️ Temporarily disable profile picture upload
-    this.error.set(
-      'Profile picture updates are temporarily unavailable. Please update other details.'
-    );
+    // ✅ Store the file for FormData upload
+    this._selectedImageFile = file;
+    this.error.set(null);
 
-    // Reset the file input
-    if (this._fileInput) {
-      this._fileInput.nativeElement.value = '';
-    }
-
-    return;
-
-    // TODO: Re-enable when backend FormData endpoint is fixed
-    // this._selectedImageFile = file;
-    // this.error.set(null);
-    // this._convertImageToBase64(file);
+    // Preview the image
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        this.profileImage.set(e.target.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
   }
 
   private _validateImageFile(file: File): boolean {
@@ -223,18 +217,6 @@ export class EditUserProfileComponent {
     }
 
     return true;
-  }
-
-  private _convertImageToBase64(file: File): void {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        const base64String = e.target.result as string;
-        this._newImageBase64 = base64String;
-        this.profileImage.set(base64String);
-      }
-    };
-    reader.readAsDataURL(file);
   }
 
   protected hasError(fieldName: string): boolean {
@@ -293,10 +275,10 @@ export class EditUserProfileComponent {
     this.saving.set(true);
     this.error.set(null);
 
-    const updatePayload: UpdateUserPayload = this._buildUpdatePayload();
+    const formData = this._buildFormData();
 
     this.userManagementService
-      .updateUser(String(user.userId), updatePayload)
+      .updateUserWithFormData(String(user.userId), formData)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
         next: (response) => {
@@ -315,10 +297,10 @@ export class EditUserProfileComponent {
       });
   }
 
-  private _buildUpdatePayload(): UpdateUserPayload {
+  private _buildFormData(): FormData {
     const phoneNumber = this.profileForm.get('phone')?.value;
     const countryCode = this.profileForm.get('phoneCode')?.value as CountryCode;
-    let formattedPhone = phoneNumber || ''; // ✅ Default to empty string
+    let formattedPhone = phoneNumber || '';
 
     if (phoneNumber && countryCode) {
       try {
@@ -332,20 +314,32 @@ export class EditUserProfileComponent {
     const user = this.userData();
     if (!user) throw new Error('No user data available');
 
-    const payload: UpdateUserPayload = {
+    // ✅ Build the userUpdateRequest object
+    const userUpdateRequest = {
       fullName: this.profileForm.value.fullName,
       email: this.profileForm.value.email,
-      phone: formattedPhone, // ✅ Always string, never undefined
-      address: this.profileForm.value.address || '', // ✅ Always string, never undefined
+      phone: formattedPhone,
+      address: this.profileForm.value.address || '',
       status: user.status === 'Active',
     };
 
-    // Include new profile image if uploaded
-    if (this._newImageBase64) {
-      payload.profilePicture = this._newImageBase64;
+    // ✅ Create FormData
+    const formData = new FormData();
+
+    // Add userUpdateRequest as JSON string
+    formData.append('userUpdateRequest', JSON.stringify(userUpdateRequest));
+
+    // Add profile picture file if exists
+    if (this._selectedImageFile) {
+      formData.append('profilePicture', this._selectedImageFile);
     }
 
-    return payload;
+    console.log('📤 Sending FormData:', {
+      userUpdateRequest,
+      hasProfilePicture: !!this._selectedImageFile,
+    });
+
+    return formData;
   }
 
   private _markFormAsTouched(): void {
@@ -357,7 +351,6 @@ export class EditUserProfileComponent {
   private _resetForm(): void {
     this._selectedImageFile = null;
     this._originalImageUrl = null;
-    this._newImageBase64 = null;
     this.profileForm.reset();
     this.error.set(null);
   }
