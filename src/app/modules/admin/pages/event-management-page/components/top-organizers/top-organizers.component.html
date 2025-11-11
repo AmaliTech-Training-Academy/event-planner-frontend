@@ -41,7 +41,9 @@
           loading="lazy"
         />
         } @else {
-        <span aria-hidden="true">{{ getInitial(organizer.name) }}</span>
+        <span aria-hidden="true" class="initial-name">{{
+          getInitial(organizer.name)
+        }}</span>
         }
       </div>
 

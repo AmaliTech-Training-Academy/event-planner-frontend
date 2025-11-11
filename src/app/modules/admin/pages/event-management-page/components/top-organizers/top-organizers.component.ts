@@ -28,31 +28,31 @@ export class TopOrganizersComponent {
   public readonly organizerClicked = output<Organizer>();
 
   public readonly hasOrganizers = computed<boolean>(() =>
-    this._hasOrganizersData()
+    this.hasOrganizersData()
   );
 
   public onViewAll(): void {
-    this.viewAllClicked.emit();
+    this.emitOrganizerEvent();
   }
 
   public onOrganizerClick(organizer: Organizer): void {
-    this._emitOrganizerEvent(organizer);
+    this.emitOrganizerEvent(organizer);
   }
 
   public getInitial(name: string): string {
-    return this._extractInitial(name);
+    return this.extractInitial(name);
   }
 
   public isPositiveGrowth(percentage: number): boolean {
-    return this._checkPositiveGrowth(percentage);
+    return this.checkPositiveGrowth(percentage);
   }
 
   public isNegativeGrowth(percentage: number): boolean {
-    return this._checkNegativeGrowth(percentage);
+    return this.checkNegativeGrowth(percentage);
   }
 
   public formatGrowth(percentage: number): string {
-    return this._formatGrowthPercentage(percentage);
+    return this.formatGrowthPercentage(percentage);
   }
 
   public trackByOrganizer(_index: number, organizer: Organizer): number {
@@ -60,42 +60,46 @@ export class TopOrganizersComponent {
   }
 
   public hasTrendData(organizer: Organizer): boolean {
-    return this._validateTrendData(organizer);
+    return this.validateTrendData(organizer);
   }
 
   public getGrowthIcon(growthPercentage: number): string {
-    return this._selectGrowthIcon(growthPercentage);
+    return this.selectGrowthIcon(growthPercentage);
   }
 
-  private _hasOrganizersData(): boolean {
+  protected hasOrganizersData(): boolean {
     return this.organizers().length > 0;
   }
 
-  private _emitOrganizerEvent(organizer: Organizer): void {
-    this.organizerClicked.emit(organizer);
+  protected emitOrganizerEvent(organizer?: Organizer): void {
+    if (organizer) {
+      this.organizerClicked.emit(organizer);
+    } else {
+      this.viewAllClicked.emit();
+    }
   }
 
-  private _extractInitial(name: string): string {
+  protected extractInitial(name: string): string {
     return name.charAt(0).toUpperCase();
   }
 
-  private _checkPositiveGrowth(percentage: number): boolean {
+  protected checkPositiveGrowth(percentage: number): boolean {
     return percentage > 0;
   }
 
-  private _checkNegativeGrowth(percentage: number): boolean {
+  protected checkNegativeGrowth(percentage: number): boolean {
     return percentage < 0;
   }
 
-  private _formatGrowthPercentage(percentage: number): string {
+  protected formatGrowthPercentage(percentage: number): string {
     return percentage > 0 ? `+${percentage}%` : `${percentage}%`;
   }
 
-  private _validateTrendData(organizer: Organizer): boolean {
+  protected validateTrendData(organizer: Organizer): boolean {
     return !!organizer.trendData && organizer.trendData.length > 0;
   }
 
-  private _selectGrowthIcon(growthPercentage: number): string {
+  protected selectGrowthIcon(growthPercentage: number): string {
     if (growthPercentage > 0) return 'icons/graph-chart-1.png';
     if (growthPercentage < 0) return 'icons/graph-chart-2.png';
     return 'icons/graph-chart-1.png';
