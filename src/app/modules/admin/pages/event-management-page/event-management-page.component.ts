@@ -191,6 +191,16 @@ export class EventManagementPageComponent implements OnInit {
         { label: 'Cancelled', value: 'Cancelled' },
       ],
     },
+    {
+      key: 'export',
+      placeholder: 'Export As',
+      options: [
+        { label: 'Export As', value: '' },
+        { label: 'CSV', value: 'csv' },
+        { label: 'JSON', value: 'json' },
+        { label: 'PDF', value: 'pdf' },
+      ],
+    },
   ];
 
   public readonly eventTablePrimaryAction = {
@@ -208,13 +218,13 @@ export class EventManagementPageComponent implements OnInit {
     this._eventManagementService.dashboardData$
       .pipe(takeUntilDestroyed())
       .subscribe((data) => {
-        this._dashboardData.set(data); 
+        this._dashboardData.set(data);
       });
   }
 
   public ngOnInit(): void {
     this._layoutService.pageTitle.set('Event Management');
-    this._loadDashboardData(); 
+    this._loadDashboardData();
   }
 
   public refreshData(): void {

@@ -5,15 +5,14 @@
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-       <app-input
-  class="md"
-  placeholder="Search users..."
-  [value]="searchQuery()"
-  (valueChange)="updateSearch($event)"
-  iconSrc="icons/search-icon.png"
-  [disabled]="loading()"
-/>
-
+        <app-input
+          class="md"
+          [placeholder]="searchPlaceholder()"
+          [value]="searchQuery()"
+          (valueChange)="updateSearch($event)"
+          iconSrc="icons/search-icon.png"
+          [disabled]="loading()"
+        />
       </div>
       }
       <!-- Reusable Filter Select -->
@@ -34,7 +33,7 @@
           type="primary"
           (click)="executePrimaryAction()"
           [disabled]="loading()"
-          aria-label="Add new user"
+          [attr.aria-label]="'Add new ' + action.label.toLowerCase()"
         >
           + {{ action.label }}
         </app-button>
@@ -49,9 +48,11 @@
     <div class="data-table__skeleton">
       @for (row of [1,2,3,4,5]; track row) {
       <div class="data-table__skeleton-row">
+        @if (showCheckboxes()) {
         <div
           class="data-table__skeleton-cell data-table__skeleton-cell--checkbox"
         ></div>
+        }
         @for (col of columns(); track col.key) {
         <div class="data-table__skeleton-cell"></div>
         } @if (actions().length > 0) {
@@ -116,7 +117,7 @@
         
         @for (column of columns(); track column.key) {
         <td class="data-table__td">
-          @if (column.key === 'fullName') {
+          @if (column.key === 'fullName' && showAvatar()) {
           <div class="data-table__user-cell">
             <img
               [src]="getRandomAvatar(item)"
@@ -134,6 +135,15 @@
                 {{ item["email"] || "No email" }}
               </p>
             </div>
+          </div>
+          } @else if (column.key === 'fullName' && !showAvatar()) {
+          <div class="data-table__user-info">
+            <p class="data-table__user-name">
+              {{ column.getValue ? column.getValue(item) : item[column.key] }}
+            </p>
+            <p class="data-table__user-email">
+              {{ item["email"] || "No email" }}
+            </p>
           </div>
           } @else if (isRoleOrStatus(column.key)) {
           <span [class]="getBadgeClass(item[column.key])">
@@ -202,19 +212,19 @@
     </tbody>
   </table>
 
-  @if (filteredData().length === 0) {
+  @if (filteredData().length === 0 && !loading()) {
   <div class="data-table__no-data">
     <img src="/images/table-empty.png" alt="No data found" />
   </div>
-  } } @if (filteredData().length > 0 && !loading()) {
-<app-pagination
-  [totalItems]="totalItems()"
-  [itemsPerPage]="itemsPerPage()"
-  [currentPage]="currentPage()"
-  (pageChange)="setCurrentPage($event)"
-></app-pagination>
-
-
-
+  } 
+  } 
+  
+  @if (filteredData().length > 0 && !loading()) {
+    <app-pagination
+      [totalItems]="totalItems()"
+      [itemsPerPage]="itemsPerPage()"
+      [currentPage]="currentPage()"
+      (pageChange)="setCurrentPage($event)"
+    ></app-pagination>
   }
 </div>

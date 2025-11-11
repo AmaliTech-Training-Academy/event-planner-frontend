@@ -25,6 +25,7 @@ import { EditUserProfileComponent } from './components/edit-user-profile/edit-us
 import { ViewUserProfileComponent } from './components/view-user-profile/view-user-profile.component';
 import { UpdateUserPayload } from '../../../../core/services/backend/user-backend.service';
 import { mapUserStatus, User } from '../../../../core/models';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
 @Component({
   selector: 'app-user-management-page',
@@ -45,6 +46,8 @@ export class UserManagementPageComponent implements OnInit {
   private readonly _userService = inject(UserManagementService);
   private readonly _router = inject(Router);
   private readonly _destroyRef = inject(DestroyRef);
+    protected readonly APP_ROUTES = APP_ROUTES;
+  
   protected readonly totalElements = toSignal(
     this._userService.totalElements$,
     {
