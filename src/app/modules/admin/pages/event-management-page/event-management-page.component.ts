@@ -1,13 +1,15 @@
-// event-management-page.component.ts
 import {
   Component,
   inject,
   signal,
+  computed,
   ChangeDetectionStrategy,
   OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LayoutService } from '../../../../core/services/layout.service';
+import { EventManagementService } from '../../../../core/services/event-management.service';
 import {
   EventStatisticsComponent,
   EventStatistic,
@@ -28,6 +30,7 @@ import {
   DataTableComponent,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { DashboardData } from '../../../../core/models/event.model';
 
 interface EventTableData {
   id: number;
@@ -57,163 +60,99 @@ interface EventTableData {
 export class EventManagementPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   private readonly _router = inject(Router);
+  private readonly _eventManagementService = inject(EventManagementService);
   protected readonly APP_ROUTES = APP_ROUTES;
 
-  private readonly _eventStatistics = signal<EventStatistic[]>([
-    {
-      label: 'Total Events',
-      count: 193000,
-      color: '#3DC0F3',
-    },
-    {
-      label: 'Active Events',
-      count: 120000,
-      color: '#656565',
-    },
-    {
-      label: 'Completed Events',
-      count: 150000,
-      color: '#292929',
-    },
-    {
-      label: 'Cancelled Events',
-      count: 75000,
-      color: '#FF5A00',
-    },
-    {
-      label: 'Draft Events',
-      count: 170000,
-      color: '#0787C2',
-    },
-  ]);
+  // Backend data signal
+  private readonly _dashboardData = signal<DashboardData | null>(null);
+  private readonly _isLoading = signal<boolean>(false);
+  private readonly _error = signal<string | null>(null);
 
-  private readonly _topOrganizers = signal<Organizer[]>([
-    {
-      id: 1,
-      name: 'Sarah Wilson',
-      email: 'sarah@example.com',
+  // This computed signal uses backend data
+  public readonly eventStatistics = computed<EventStatistic[]>(() => {
+    const data = this._dashboardData();
+    if (!data) return [];
+
+    const stats = data.eventStats; // ← From API!
+    return [
+      {
+        label: 'Total Events',
+        count: stats.totalEvents, // ← Will be 10
+        color: '#3DC0F3',
+      },
+      {
+        label: 'Active Events',
+        count: stats.activeEvents, // ← Will be 1
+        color: '#656565',
+      },
+      {
+        label: 'Completed Events',
+        count: stats.completedEvents, // ← Will be 2
+        color: '#292929',
+      },
+      {
+        label: 'Cancelled Events',
+        count: stats.canceledEvents, // ← Will be 0
+        color: '#FF5A00',
+      },
+      {
+        label: 'Draft Events',
+        count: stats.draftEvents, // ← Will be 7
+        color: '#0787C2',
+      },
+    ];
+  });
+
+  public readonly topOrganizers = computed<Organizer[]>(() => {
+    const data = this._dashboardData();
+    if (!data) return [];
+
+    return data.topOrganizers.map((org, index) => ({
+      id: index + 1,
+      name: org.name,
+      email: org.email,
       avatar: undefined,
-      eventCount: 8,
-      growthPercentage: 34,
-      trendData: [10, 15, 12, 18, 22, 20, 25, 28],
-    },
-    {
-      id: 2,
-      name: 'Sarah Wilson',
-      email: 'sarah@example.com',
-      avatar: undefined,
-      eventCount: 8,
-      growthPercentage: 34,
-      trendData: [8, 10, 14, 16, 15, 18, 20, 22],
-    },
-  ]);
+      eventCount: org.eventCount,
+      growthPercentage: org.growthPercentage,
+      trendData: this._generateTrendData(org.growthPercentage),
+    }));
+  });
 
-  private readonly _upcomingEvents = signal<UpcomingEvent[]>([
-    {
-      id: 1,
-      title: 'Industry Panel Discussion',
-      date: '2025-10-12',
-      attendeeCount: 90,
-      status: 'upcoming',
-    },
-    {
-      id: 2,
-      title: 'Tech Conference 2025',
-      date: '2025-10-15',
-      attendeeCount: 120,
-      status: 'upcoming',
-    },
-    {
-      id: 3,
-      title: 'Product Launch',
-      date: '2025-10-22',
-      attendeeCount: 150,
-      status: 'upcoming',
-    },
-  ]);
+  public readonly upcomingEvents = computed<UpcomingEvent[]>(() => {
+    const data = this._dashboardData();
+    if (!data) return [];
 
-  private readonly _eventTableData = signal<EventTableData[]>([
-    {
-      id: 1,
-      name: 'Tech Conference 2023',
-      organizer: 'John Smith',
-      date: '2023-10-15',
-      attendees: 120,
-      status: 'Pending',
-      time: '09:00am GMT',
-      location: 'Virtual (Zoom meeting)',
-    },
-    {
-      id: 2,
-      name: 'Marketing Workshop',
-      organizer: 'Lisa Johnson',
-      date: '2023-09-28',
-      attendees: 45,
-      status: 'Completed',
-      time: '02:00pm GMT',
-      location: 'Conference Room A',
-    },
-    {
-      id: 3,
-      name: 'Product Launch',
-      organizer: 'John Smith',
-      date: '2023-10-15',
-      attendees: 120,
-      status: 'Pending',
-      time: '09:00am GMT',
-      location: 'Virtual (Zoom meeting)',
-    },
-    {
-      id: 4,
-      name: 'Marketing Workshop',
-      organizer: 'Lisa Johnson',
-      date: '2023-09-28',
-      attendees: 45,
-      status: 'Completed',
-      time: '02:00pm GMT',
-      location: 'Conference Room A',
-    },
-    {
-      id: 5,
-      name: 'Product Launch',
-      organizer: 'John Smith',
-      date: '2023-10-15',
-      attendees: 120,
-      status: 'Pending',
-      time: '09:00am GMT',
-      location: 'Virtual (Zoom meeting)',
-    },
-    {
-      id: 6,
-      name: 'Marketing Workshop',
-      organizer: 'Lisa Johnson',
-      date: '2023-09-28',
-      attendees: 45,
-      status: 'Completed',
-      time: '02:00pm GMT',
-      location: 'Conference Room A',
-    },
-    {
-      id: 7,
-      name: 'Product Launch',
-      organizer: 'John Smith',
-      date: '2023-10-15',
-      attendees: 120,
-      status: 'Pending',
-      time: '09:00am GMT',
-      location: 'Virtual (Zoom meeting)',
-    },
-    {
-      id: 8,
-      name: 'Marketing Workshop',
-      organizer: 'Lisa Johnson',
-      date: '2023-09-28',
-      attendees: 45,
-      status: 'Completed',
-      time: '02:00pm GMT',
-      location: 'Conference Room A',
-    },
-  ]);
+    return data.upcomingEvents.map((event, index) => ({
+      id: index + 1,
+      title: event.eventTitle,
+      date: new Date(event.startTime).toISOString().split('T')[0],
+      attendeeCount: event.attendeeCount,
+      status: 'upcoming' as const,
+    }));
+  });
+
+  public readonly eventTableData = computed<EventTableData[]>(() => {
+    const data = this._dashboardData();
+    if (!data) return [];
+
+    return data.eventManagement.map((event) => ({
+      id: event.id,
+      name: event.title,
+      organizer: event.organizer,
+      date: new Date(event.startTime).toISOString().split('T')[0],
+      attendees: event.attendeeCount,
+      status: this._mapStatusToTableStatus(event.status),
+      time: new Date(event.startTime).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short',
+      }),
+      location: 'N/A', // Not provided in API
+    }));
+  });
+
+  public readonly isLoading = computed(() => this._isLoading());
+  public readonly error = computed(() => this._error());
 
   public readonly eventTableColumns: TableColumn<EventTableData>[] = [
     { key: 'name', header: 'Event Name', sortable: true },
@@ -259,14 +198,27 @@ export class EventManagementPageComponent implements OnInit {
     handler: () => this._onCreateEvent(),
   };
 
-  public readonly eventStatistics = this._eventStatistics.asReadonly();
-  public readonly topOrganizers = this._topOrganizers.asReadonly();
-  public readonly upcomingEvents = this._upcomingEvents.asReadonly();
-  public readonly eventTableData = this._eventTableData.asReadonly();
+  constructor() {
+    this._eventManagementService.loading$
+      .pipe(takeUntilDestroyed())
+      .subscribe((loading) => {
+        this._isLoading.set(loading);
+      });
 
-  constructor() {}
-  ngOnInit(): void {
+    this._eventManagementService.dashboardData$
+      .pipe(takeUntilDestroyed())
+      .subscribe((data) => {
+        this._dashboardData.set(data); 
+      });
+  }
+
+  public ngOnInit(): void {
     this._layoutService.pageTitle.set('Event Management');
+    this._loadDashboardData(); 
+  }
+
+  public refreshData(): void {
+    this._loadDashboardData();
   }
 
   public onViewAllOrganizers(): void {
@@ -285,6 +237,16 @@ export class EventManagementPageComponent implements OnInit {
     this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS, event.id]);
   }
 
+  private _loadDashboardData(): void {
+    this._error.set(null);
+    this._eventManagementService.loadDashboardData().subscribe({
+      error: (err) => {
+        this._error.set('Failed to load dashboard data');
+        console.error('Dashboard error:', err);
+      },
+    });
+  }
+
   private _onViewEvent(event: EventTableData): void {
     this._router.navigate([this.APP_ROUTES.ADMIN_EVENT_DETAILS, event.id], {
       state: { eventData: event },
@@ -293,5 +255,28 @@ export class EventManagementPageComponent implements OnInit {
 
   private _onCreateEvent(): void {
     this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
+  }
+
+  private _mapStatusToTableStatus(
+    status: string
+  ): 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled' {
+    const statusMap: Record<
+      string,
+      'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled'
+    > = {
+      ACTIVE: 'Active',
+      DRAFT: 'Draft',
+      COMPLETED: 'Completed',
+      CANCELED: 'Cancelled',
+    };
+    return statusMap[status] || 'Pending';
+  }
+
+  private _generateTrendData(growthPercentage: number): number[] {
+    const baseValue = 10;
+    const growth = growthPercentage / 100;
+    return Array.from({ length: 8 }, (_, i) => {
+      return Math.round(baseValue * (1 + (growth * i) / 7));
+    });
   }
 }
