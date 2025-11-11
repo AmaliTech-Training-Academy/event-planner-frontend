@@ -14,10 +14,21 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   transition: all 0.2s ease;
   background: transparent;
   height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  img[icon] {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
   }
 
   &.app-button--plain {
@@ -34,6 +45,7 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
       opacity: 0.5;
     }
   }
+  
   &.app-button--primary {
     background-color: $orange-700;
     color: $gray-50;
@@ -41,19 +53,6 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
     &:hover:not(:disabled) {
       background-color: $orange-600;
     }
-  }
-
-  &.app-button--plain {
-    background: transparent;
-    color: inherit;
-    padding: 0;
-    height: auto;
-    width: auto;
-
-    &:hover:not(:disabled) {
-      opacity: 0.7;
-    }
-
   }
 
   &.app-button--secondary {
@@ -73,6 +72,30 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
     &:disabled {
       cursor: not-allowed;
       opacity: 0.5;
+    }
+  }
+
+  &.app-button--success {
+    background-color: #2a9d8f;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background-color: #21867a;
+    }
+  }
+
+  &.app-button--danger {
+    background-color: transparent;
+    color: #D70000;
+    border: 1px solid #e5e7eb;
+
+    &:hover:not(:disabled) {
+      background-color: #FEF2F2;
+      border-color: #D70000;
+    }
+
+    &:active:not(:disabled) {
+      background-color: #FEE2E2;
     }
   }
 
@@ -177,26 +200,11 @@ button.app-button.power-inactive {
 }
 
 button.app-button.back-button {
-    display: flex;
-    align-items: center;
-    gap: $spacing-1;
-  
-}
-button.app-button--success {
-  background-color: #2a9d8f !important;
-  color: #fff;
-
-  &:hover:not(:disabled) {
-    background-color: #21867a;
-  }
+  display: flex;
+  align-items: center;
+  gap: $spacing-1;
 }
 
-button.app-button--danger {
-  color: #fff;
-
-  &:hover:not(:disabled) {
-  }
-}
 button.status-button,
 .app-button.status-button {
   position: absolute;
@@ -209,7 +217,7 @@ button.status-button,
   display: flex;
   align-items: center;
   justify-content: center;
-  background:transparent !important;
+  background: transparent !important;
   cursor: pointer;
   padding: 0;
   transition: all 0.2s ease;
@@ -221,7 +229,7 @@ button.status-button,
   img.status-icon {
     width: 16px;
     height: 16px;
-    background:transparent !important;
+    background: transparent !important;
     object-fit: contain;
   }
 }
