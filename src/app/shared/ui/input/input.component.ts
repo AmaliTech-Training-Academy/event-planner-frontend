@@ -45,6 +45,7 @@ export class InputComponent implements ControlValueAccessor {
   public readonly required = input<boolean>(false);
   public readonly disabled = input<boolean>(false);
   public readonly value = input<string>('');
+  public readonly showValidIcon = input<boolean>(false);
 
   // Outputs
   public readonly valueChange = output<string>();

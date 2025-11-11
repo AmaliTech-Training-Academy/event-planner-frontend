@@ -27,5 +27,6 @@ export const API_ENDPOINTS = {
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
   SEARCH_USERS: `${BASE}/users/search`,
+  ACCEPT_INVITE: (token: string): string => `${BASE}/invites/accept/${token}`,
 } as const;
 

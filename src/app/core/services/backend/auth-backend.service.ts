@@ -1,7 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_ENDPOINTS } from '../../constants/api-endpoints.constants';
-import { AuthResponseBody, OtpBodyData, RegisterBodyData } from '../../models/auth-response.model';
+import {
+  AuthResponseBody,
+  OtpBodyData,
+  RegisterBodyData,
+} from '../../models/auth-response.model';
 import { User } from '../../models/user.model';
 
 @Injectable({
@@ -59,6 +63,12 @@ export class AuthBackendService {
   public getAuthenticatedUser() {
     return this.http.get<AuthResponseBody<OtpBodyData>>(
       API_ENDPOINTS.AUTH_ME // Add this constant
+    );
+  }
+  public acceptInvite(token: string, fullName: string, password: string) {
+    return this.http.post<AuthResponseBody<OtpBodyData>>(
+      API_ENDPOINTS.ACCEPT_INVITE(token),
+      { token, fullName, password }
     );
   }
 }

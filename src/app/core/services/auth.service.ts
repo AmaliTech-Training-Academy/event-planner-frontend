@@ -15,7 +15,7 @@ import { AuthBackendService } from './backend/auth-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
 import { AUTH_STORAGE } from '../constants/storage.constants';
 import { AuthStorage } from '../models/auth.model';
-import { OtpBodyData } from '../models/auth-response.model';
+import { AuthResponseBody, OtpBodyData } from '../models/auth-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -262,5 +262,8 @@ export class AuthService {
 
   public getOtp(): string {
     return this._otp;
+  }
+  public acceptInvite(token: string, fullName: string, password: string) {
+   
   }
 }

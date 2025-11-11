@@ -1,0 +1,77 @@
+<div class="accept-invite-container">
+  <div class="accept-invite-card">
+    <h2 class="app-name">Event <span>Hub</span></h2>
+
+    <h3 class="welcome-text">Set New Password</h3>
+    <p class="subtitle">
+      By setting a new password, you accept the invitation for your account registered with your email address,
+      <strong>{{ inviteEmail() }}</strong>
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+      <app-input
+        formControlName="fullName"
+        label="Full Name"
+        type="text"
+        placeholder="John Doe"
+        [required]="true"
+        [showValidIcon]="isFieldValid('fullName')"
+        [errorMessage]="
+          hasFieldError('fullName') ? getFieldErrorMessage('fullName') : ''
+        "
+        [iconSrc]="'icons/user.png'"
+      ></app-input>
+
+      <app-input
+        formControlName="password"
+        label="Enter New Password"
+        type="password"
+        placeholder="••••••••"
+        [required]="true"
+        [showValidIcon]="isFieldValid('password')"
+        [errorMessage]="
+          hasFieldError('password') ? getFieldErrorMessage('password') : ''
+        "
+        [iconSrc]="'icons/lock.png'"
+      ></app-input>
+
+      <app-input
+        formControlName="confirmPassword"
+        label="Confirm Password"
+        type="password"
+        placeholder="••••••••"
+        [required]="true"
+        [showValidIcon]="isFieldValid('confirmPassword')"
+        [errorMessage]="
+          hasFieldError('confirmPassword') ? getFieldErrorMessage('confirmPassword') : ''
+        "
+        [iconSrc]="'icons/lock.png'"
+      ></app-input>
+
+      <p class="terms-text">
+        By Clicking "Accept Invite" you accept the terms of the
+        <a href="#">Platform Subscription Agreement</a> and <a href="#">Terms of Use</a>
+      </p>
+
+      <app-button
+        buttonType="submit"
+        type="primary"
+        [fullWidth]="true"
+        [disabled]="isSubmitting() || form.invalid"
+        [attr.aria-busy]="isSubmitting()"
+      >
+        <ng-container *ngIf="!isSubmitting(); else loadingTemplate">
+          Accept Invite
+        </ng-container>
+
+        <ng-template #loadingTemplate>
+          <span class="loading-text">
+            Accepting Invite<span class="dots"></span>
+          </span>
+        </ng-template>
+      </app-button>
+    </form>
+
+    <app-secure-text></app-secure-text>
+  </div>
+</div>
