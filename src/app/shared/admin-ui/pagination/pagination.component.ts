@@ -5,6 +5,7 @@ import {
   computed,
   model,
   ChangeDetectionStrategy,
+  output,
 } from '@angular/core';
 import { ButtonComponent } from '../../ui/button/button.component';
 
@@ -17,10 +18,12 @@ import { ButtonComponent } from '../../ui/button/button.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginationComponent {
-  public readonly totalItems = input.required<number>();
+  public readonly totalItems = input<number>(0); // ADD THIS
+
   public readonly itemsPerPage = input<number>(10);
   public readonly maxVisiblePages = input<number>(5);
-
+  public readonly pageChange = output<number>();
+  
   public readonly currentPage = model<number>(1);
 
   public readonly totalPages = computed(() =>
@@ -66,6 +69,8 @@ export class PaginationComponent {
   public goToPage(page: number | string): void {
     if (typeof page === 'number' && page >= 1 && page <= this.totalPages()) {
       this.currentPage.set(page);
+      this.pageChange.emit(page); // Emit the 1-based page number
     }
   }
+  public readonly serverSidePagination = input<boolean>(false); // ADD THIS
 }

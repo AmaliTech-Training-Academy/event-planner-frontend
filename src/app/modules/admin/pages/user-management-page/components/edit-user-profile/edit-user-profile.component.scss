@@ -14,199 +14,268 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
 }
 
 .modal {
-  background: white;
+  background: $gray-50;
+  border-radius: $radius-4;
+  padding: $spacing-6;
   width: 90%;
-  max-width: 700px;
+  max-width: 600px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  position: absolute;
-  top: 0%;
-  right: 0%;
+  position: fixed;
+  top: 0;
+  right: 0;
   z-index: 1001;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  max-height: 100vh;
+  overflow-y: auto;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-6;
+  }
 
   &__content {
-    padding: $spacing-6;
-    overflow-y: auto;
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-5;
   }
 
   &__actions {
-    background-color: transparent;
     display: flex;
     gap: $spacing-3;
-    justify-content: flex-start;
-    padding: $spacing-5 $spacing-6;
+    justify-content: flex-end;
+    margin-top: $spacing-3;
+    padding-top: $spacing-5;
     border-top: 1px solid $general-stroke-light;
-    flex-shrink: 0;
   }
 }
 
+// Error Banner
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-3 $spacing-4;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: $radius-3;
+  margin-bottom: $spacing-4;
+
+  .error-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .error-text {
+    @include body-2;
+    color: #dc2626;
+    flex: 1;
+  }
+}
+
+// Upload Indicator
+.upload-indicator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-3 $spacing-4;
+  background: rgba(249, 115, 22, 0.1);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  border-radius: $radius-3;
+  margin-bottom: $spacing-4;
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(249, 115, 22, 0.3);
+    border-top-color: $orange-600;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  span:last-child {
+    @include body-2;
+    color: $orange-700;
+  }
+}
+
+// Profile Section
 .profile-section {
   display: flex;
   align-items: center;
-  gap: $spacing-4;
-  padding-bottom: $spacing-5;
-  border-bottom: 1px solid $general-stroke-light;
+  gap: $spacing-5;
+  padding: $spacing-4;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 107, 53, 0.02) 100%);
+  border-radius: $radius-3;
+  border: 1px solid rgba(255, 107, 53, 0.1);
 }
 
 .profile-avatar {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 96px;
+  height: 96px;
   flex-shrink: 0;
 
-  img {
+  .profile-picture {
     width: 100%;
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid $gray-200;
+    border: 3px solid $gray-50;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  .avatar-edit-btn {
-    position: absolute;
-    bottom: -2px;
-    right: -2px;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: $orange-600;
-    border: 3px solid white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
+.status-button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
 
-    .edit-icon {
-      font-size: 13px;
-      filter: grayscale(1) brightness(2);
-    }
+  border-radius: 50%;
+  padding: 0 !important;
+  background: #ffffff; // plain white circle
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 
-    &:hover {
-      background: $orange-700;
-      transform: scale(1.05);
-    }
+  .button-content {
+    display: block;
+    width: 36px;
+    height: 36px;
+    background: url('../../../../../../../assets/icons/camera.png') no-repeat center center;
+    background-size: contain;
   }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+
 }
 
 .profile-info {
   flex: 1;
 
   h3 {
-    @include body-1;
-    @include body-1;
+    @include h-5;
     color: $header-dark;
     margin: 0 0 $spacing-1 0;
     font-weight: 600;
   }
 
   p {
-    @include body-3;
-    @include body-3;
+    @include body-2;
     color: $gray-600;
     margin: 0;
   }
 }
 
+// Form Sections
 .form-section {
   display: flex;
   flex-direction: column;
   gap: $spacing-4;
 
   .section-title {
-    @include body-2;
-    @include body-2;
+    @include h-6;
     color: $header-dark;
     font-weight: 600;
-    margin: 0;
-    padding-bottom: $spacing-3;
-    border-bottom: none;
+    margin: 0 0 $spacing-2 0;
+    padding-bottom: $spacing-2;
+    border-bottom: 1px solid $general-stroke-light;
   }
 }
 
-.form-row {
+// Phone Input Group
+.phone-input-group {
   display: flex;
   flex-direction: column;
-  gap: $spacing-2;
+  gap: $spacing-3;
 
-  label {
-    @include body-3;
-    color: $gray-700;
-    font-weight: 500;
-    margin: 0;
-  }
+  .phone-code-select {
+    flex: 0 0 auto;
 
-  .form-input {
-    @include body-2;
-    width: 100%;
-    padding: 12px $spacing-4;
-    border: 1px solid $general-stroke-light;
-    border-radius: $radius-3;
-    background: white;
-    background: white;
-    color: $text-primary;
-    font-family: inherit;
-    outline: none;
-    transition: all 0.2s ease;
-
-    &::placeholder {
-      color: $gray-400;
+    .input-label {
+      @include body-2;
+      color: $header-dark;
+      font-weight: 500;
+      display: block;
+      margin-bottom: $spacing-2;
     }
 
-    &:focus {
-      border-color: $orange-600;
-      box-shadow: 0 0 0 3px rgba($orange-600, 0.1);
-    }
+    .country-code-dropdown {
+      @include body-2;
+      width: 100%;
+      padding: $spacing-3 $spacing-4;
+      border-radius: $radius-3;
+      border: 1px solid $general-stroke-light;
+      background: $gray-50;
+      color: $text-primary;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
 
-    &:disabled {
-      background: $gray-100;
-      cursor: not-allowed;
-    }
-  }
+      &:focus {
+        border-color: $orange-600;
+        box-shadow: 0 0 0 3px rgba($orange-600, 0.1);
+      }
 
-  .error-text {
-    @include body-3;
-    color: $red-600;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: $spacing-1;
-
-    &::before {
-      content: '⚠';
-      font-size: 14px;
+      &:hover {
+        border-color: $gray-400;
+      }
     }
   }
 
-  .success-text {
-    @include body-3;
-    color: $green-600;
-    margin: 0;
-    font-weight: 500;
+  .phone-number-input {
+    flex: 1;
   }
 }
 
+.formatted-phone {
+  margin-top: -$spacing-2;
+  padding-left: $spacing-2;
+
+  small {
+    @include body-3;
+    color: $gray-500;
+    font-style: italic;
+  }
+}
+
+// Responsive Design
 @include md {
   .modal {
     width: 95%;
-
-    form {
-      padding: $spacing-5;
-    }
+    padding: $spacing-5;
 
     &__actions {
       flex-direction: column;
-      padding: $spacing-4 $spacing-5;
-      padding: $spacing-4 $spacing-5;
 
-      button {
+      app-button {
         width: 100%;
       }
     }
@@ -215,37 +284,44 @@
   .profile-section {
     flex-direction: column;
     text-align: center;
-    padding-bottom: $spacing-4;
+    gap: $spacing-4;
+  }
+
+  .phone-input-group {
+    gap: $spacing-3;
   }
 }
 
 @include sm {
   .modal {
     width: 100%;
+    padding: $spacing-4;
     max-height: 95vh;
-
-    form {
-      padding: $spacing-4;
-      gap: $spacing-4;
-    }
-
-    &__actions {
-      padding: $spacing-3 $spacing-4;
-    }
   }
 
   .profile-avatar {
-    width: 64px;
-    height: 64px;
-    position:relative;
+    width: 80px;
+    height: 80px;
 
-   
+    .status-button {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+
+      .status-icon {
+        width: 14px;
+        height: 14px;
+      }
+    }
   }
 
-  .form-row {
-    .form-input {
-      padding: 10px $spacing-3;
-      font-size: 0.9375rem;
+  .profile-info {
+    h3 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 13px;
     }
   }
 
@@ -253,164 +329,7 @@
     gap: $spacing-3;
 
     .section-title {
-      padding-bottom: $spacing-2;
-    }
-  }
-}
-.phone-input-group {
-  margin-bottom: 1.5rem;
-
-  .input-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #374151;
-  }
-}
-
-.phone-input-wrapper {
-  display: flex;
-  gap: 0.5rem;
-  align-items: stretch;
-
-  .country-code-select {
-    min-width: 130px;
-    padding: 0.75rem 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background: white;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #1f2937;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    
-    &:hover {
-      border-color: #9ca3af;
-    }
-
-    &:focus {
-      outline: none;
-      border-color: #ff6b35;
-      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-    }
-
-    // Custom dropdown arrow
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    padding-right: 2rem;
-  }
-
-  .phone-input {
-    flex: 1;
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    color: #1f2937;
-    transition: all 0.2s ease;
-    
-    &::placeholder {
-      color: #9ca3af;
-    }
-
-    &:hover {
-      border-color: #9ca3af;
-    }
-
-    &:focus {
-      outline: none;
-      border-color: #ff6b35;
-      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-    }
-
-    &.error {
-      border-color: #ef4444;
-      
-      &:focus {
-        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-      }
-    }
-  }
-}
-
-// Ensure form-input class doesn't conflict
-.form-input.phone-input {
-  margin: 0;
-}
-
-// Form section spacing
-.form-section {
-  margin-bottom: 2rem;
-
-  .section-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 1rem;
-  }
-}
-
-// Profile section (if not already styled)
-.profile-section {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid #e5e7eb;
-  margin-bottom: 2rem;
-
-  .profile-avatar {
-    position: relative;
-
-    img.profile-picture {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .avatar-edit-btn {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #ff6b35;
-      border: 2px solid white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #ff5722;
-        transform: scale(1.1);
-      }
-
-      .edit-icon {
-        font-size: 1rem;
-      }
-    }
-  }
-
-  .profile-info {
-    h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0 0 0.25rem 0;
-    }
-
-    p {
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin: 0;
+      font-size: 15px;
     }
   }
 }

@@ -1,31 +1,54 @@
 <header class="header">
   <div class="header__container container">
-    <div class="header__logo">
+    <a
+      [routerLink]="APP_ROUTES.LANDING_PAGE"
+      class="header__logo"
+      aria-label="EventHub Home"
+    >
       <span class="header__logo--orange">Event</span>
       <span class="header__logo--black">Hub</span>
-    </div>
+    </a>
 
-    <nav class="header__nav" [class.open]="isMenuOpen()">
+    <nav
+      class="header__nav"
+      [class.open]="isMenuOpen()"
+      role="navigation"
+      aria-label="Main navigation"
+    >
+      @if (isMenuOpen()) {
       <button
         class="header__close-btn"
         type="button"
-        *ngIf="isMenuOpen()"
         (click)="closeMenu()"
+        aria-label="Close menu"
       >
-        <img src="icons/close.png" alt="Close menu" class="header__icon" />
+        <img
+          src="icons/close.png"
+          alt=""
+          class="header__icon"
+          width="24"
+          height="24"
+          loading="lazy"
+        />
       </button>
-
+      } 
+      
       @for (link of navLinks(); track link.path) {
       <a
         [routerLink]="link.path"
         routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: link.path === '/' }"
         class="header__link"
         (click)="closeMenu()"
+        [attr.aria-label]="link.label"
       >
         <img
           [src]="link.icon"
-          [alt]="link.label + ' icon'"
+          [alt]="''"
           class="header__icon"
+          width="18"
+          height="18"
+          loading="lazy"
         />
         <span>{{ link.label }}</span>
       </a>
@@ -47,7 +70,11 @@
             (click)="toggleUserMenu()"
           >
             <div class="header__user-avatar">
-              <img src="icons/avatar.png" alt="User Avatar" />
+              <img
+                src="icons/profile-avata.png"
+                class="avatar"
+                alt="User Avatar"
+              />
             </div>
             <span class="header__user-name">{{ getUserName() }}</span>
             <img
@@ -60,13 +87,15 @@
 
           @if (isUserMenuOpen()) {
           <div class="header__user-menu header__user-menu--desktop">
-            <a class="header__dropdown-item" routerLink="/app/profile"
+            <a class="header__dropdown-item" [routerLink]="APP_ROUTES.PROFILE"
               >Profile</a
             >
-            <a class="header__dropdown-item" routerLink="/app/my-event"
+            <a class="header__dropdown-item" [routerLink]="APP_ROUTES.MY_EVENTS"
               >My Events</a
             >
-            <a class="header__dropdown-item" routerLink="/app/payment-settings"
+            <a
+              class="header__dropdown-item"
+              [routerLink]="APP_ROUTES.PAYMENT_SETTINGS"
               >Payment Settings</a
             >
             <a
@@ -109,11 +138,18 @@
       </div>
     </nav>
 
-    <div class="header__mobile-right">
+    <div class="header__mobile-actions">
+      @if (isLoggedIn()) {
+      <div class="header__user-avatar">
+        <img src="icons/profile-avata.png" class="avatar" alt="User Avatar" />
+      </div>
+      <span class="header__user-name">{{ getUserName() }}</span>
+      }
       <button
         class="header__hamburger"
         (click)="toggleMenu()"
         [class.open]="isMenuOpen()"
+        [attr.aria-label]="isMenuOpen() ? 'Close menu' : 'Open menu'"
       >
         <img
           [src]="isMenuOpen() ? 'icons/close.png' : 'icons/menu.png'"

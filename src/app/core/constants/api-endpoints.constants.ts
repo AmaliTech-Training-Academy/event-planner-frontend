@@ -26,11 +26,5 @@ export const API_ENDPOINTS = {
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
   SEARCH_USERS: `${BASE}/users/search`,
-  EVENT_MANAGEMENT: `${BASE}/events/event-management`,
-  EVENT_DETAILS: (eventId: number) => `${BASE}/events/${eventId}`,
-  GET_ALL_EVENTS: `${BASE}/events`,
-  CREATE_EVENT: `${BASE}/events`,
-  UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
-  DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
 } as const;
 
