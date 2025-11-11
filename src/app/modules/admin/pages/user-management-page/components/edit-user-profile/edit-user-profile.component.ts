@@ -191,9 +191,11 @@ export class EditUserProfileComponent {
 
     if (!this._validateImageFile(file)) return;
 
+    // ✅ Store the file for FormData upload
     this._selectedImageFile = file;
     this.error.set(null);
 
+    // Preview the image
     const reader = new FileReader();
     reader.onload = (e) => {
       if (e.target?.result) {
@@ -286,11 +288,20 @@ export class EditUserProfileComponent {
           this.close.emit();
         },
         error: (err) => {
-          const errorMessage =
-            err?.error?.message ||
-            err?.message ||
-            'Failed to update profile. Please try again.';
-          this.error.set(errorMessage);
+          // Check if backend indicates duplicate email
+          if (
+            err?.error?.message?.toLowerCase().includes('email already exists')
+          ) {
+            this.error.set(
+              'This email is already in use. Please choose another.'
+            );
+          } else {
+            const errorMessage =
+              err?.error?.message ||
+              err?.message ||
+              'Failed to update profile. Please try again.';
+            this.error.set(errorMessage);
+          }
         },
       });
   }
@@ -312,6 +323,7 @@ export class EditUserProfileComponent {
     const user = this.userData();
     if (!user) throw new Error('No user data available');
 
+    // ✅ Build the userUpdateRequest object
     const userUpdateRequest = {
       fullName: this.profileForm.value.fullName,
       email: this.profileForm.value.email,
@@ -320,10 +332,13 @@ export class EditUserProfileComponent {
       status: user.status === 'Active',
     };
 
+    // ✅ Create FormData
     const formData = new FormData();
 
+    // Add userUpdateRequest as JSON string
     formData.append('userUpdateRequest', JSON.stringify(userUpdateRequest));
 
+    // Add profile picture file if exists
     if (this._selectedImageFile) {
       formData.append('profilePicture', this._selectedImageFile);
     }

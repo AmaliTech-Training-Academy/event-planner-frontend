@@ -251,7 +251,7 @@ export class UserManagementPageComponent implements OnInit {
     const selectedUser = this.selectedUser();
     if (!selectedUser?.userId) return;
 
-    const updatePayload: UpdateUserPayload = {
+    const userUpdateRequest = {
       fullName: formData.fullName,
       email: formData.email,
       phone: formData.phone || formData.phoneNumber || '',
@@ -259,11 +259,17 @@ export class UserManagementPageComponent implements OnInit {
       status: selectedUser.status === 'Active',
     };
 
-    if (formData.profileImage)
-      updatePayload.profilePicture = formData.profileImage;
+    const fd = new FormData();
+    fd.append('userUpdateRequest', JSON.stringify(userUpdateRequest));
+
+    if (formData.profileImage instanceof File) {
+      fd.append('profilePicture', formData.profileImage);
+    } else if (typeof formData.profileImage === 'string') {
+      fd.append('profilePicture', formData.profileImage);
+    }
 
     this._userService
-      .updateUser(selectedUser.userId.toString(), updatePayload)
+      .updateUserWithFormData(selectedUser.userId.toString(), fd)
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
@@ -271,7 +277,6 @@ export class UserManagementPageComponent implements OnInit {
           this._loadUsers(this.currentPage() || 0);
         },
         error: (error) => {
-        
           alert('Failed to update user. Please try again.');
         },
       });
@@ -325,7 +330,6 @@ export class UserManagementPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
-       
           this.togglingUserId.set(null);
         },
         error: (err) => {
