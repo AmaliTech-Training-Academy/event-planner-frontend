@@ -25,6 +25,7 @@
   }
 }
 
+// ===== Modal Container =====
 .modal {
   background: $gray-50;
   border-radius: $radius-4;
@@ -61,7 +62,7 @@
   }
 }
 
-// Error Banner
+// ===== Status Banners =====
 .error-banner {
   display: flex;
   align-items: center;
@@ -84,7 +85,6 @@
   }
 }
 
-// Upload Indicator
 .upload-indicator {
   display: flex;
   align-items: center;
@@ -104,25 +104,29 @@
     animation: spin 0.8s linear infinite;
   }
 
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
   span:last-child {
     @include body-2;
     color: $orange-700;
   }
 }
 
-// Profile Section
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ===== Profile Section =====
 .profile-section {
   display: flex;
   align-items: center;
   gap: $spacing-5;
   padding: $spacing-4;
-  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 107, 53, 0.02) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 53, 0.05) 0%,
+    rgba(255, 107, 53, 0.02) 100%
+  );
   border-radius: $radius-3;
   border: 1px solid rgba(255, 107, 53, 0.1);
 }
@@ -142,38 +146,42 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-.status-button {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 32px !important;
-  height: 32px !important;
-  min-width: 32px !important;
+  .status-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 50%;
+    padding: 0 !important;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
 
-  border-radius: 50%;
-  padding: 0 !important;
-  background: #ffffff; // plain white circle
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+    .button-content {
+      display: block;
+      width: 36px;
+      height: 36px;
+      background: url('../../../../../../../assets/icons/camera.png') no-repeat
+        center center;
+      background-size: contain;
+    }
 
-  .button-content {
-    display: block;
-    width: 36px;
-    height: 36px;
-    background: url('../../../../../../../assets/icons/camera.png') no-repeat center center;
-    background-size: contain;
+    &:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-
 }
 
 .profile-info {
@@ -193,21 +201,12 @@
   }
 }
 
-// Form Sections
+// ===== Form Sections =====
 .form-section {
   display: flex;
   flex-direction: column;
   gap: $spacing-4;
 
-    .section-title {
-      @include body-2;
-      color: $header-dark;
-      font-weight: 600;
-      margin: 0 0 $spacing-3 0;
-      padding-bottom: $spacing-3;
-      border-bottom: 1px solid $general-stroke-light;
-    }
-  }
   .section-title {
     @include h-6;
     color: $header-dark;
@@ -216,27 +215,12 @@
     padding-bottom: $spacing-2;
     border-bottom: 1px solid $general-stroke-light;
   }
-}
 
   .form-row {
     display: flex;
     flex-direction: column;
     gap: $spacing-2;
-// Phone Input Group
-.phone-input-group {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-3;
 
-  .phone-code-select {
-    flex: 0 0 auto;
-
-    label {
-      @include body-3;
-      color: $gray-700;
-      font-weight: 500;
-      margin: 0;
-    }
     .input-label {
       @include body-2;
       color: $header-dark;
@@ -249,7 +233,6 @@
       width: 100%;
     }
 
-    // Override any app-input internal styles if needed
     ::ng-deep {
       .input-wrapper,
       input {
@@ -270,6 +253,39 @@
         &::placeholder {
           color: $gray-400;
         }
+
+        &:focus {
+          border-color: $orange-600;
+          box-shadow: 0 0 0 3px rgba($orange-600, 0.1);
+        }
+
+        &:disabled {
+          background: $gray-100;
+          cursor: not-allowed;
+          color: $gray-500;
+        }
+      }
+    }
+  }
+}
+
+// ===== Phone Input Group =====
+.phone-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+
+  .phone-code-select {
+    flex: 0 0 auto;
+
+    label {
+      @include body-3;
+      color: $gray-700;
+      font-weight: 500;
+      margin: 0 0 $spacing-2 0;
+      display: block;
+    }
+
     .country-code-dropdown {
       @include body-2;
       width: 100%;
@@ -283,21 +299,11 @@
       cursor: pointer;
       transition: all 0.2s ease;
 
-        &:focus {
-          border-color: $orange-600;
-          box-shadow: 0 0 0 3px rgba($orange-600, 0.1);
-        }
       &:focus {
         border-color: $orange-600;
         box-shadow: 0 0 0 3px rgba($orange-600, 0.1);
       }
 
-        &:disabled {
-          background: $gray-100;
-          cursor: not-allowed;
-          color: $gray-500;
-        }
-      }
       &:hover {
         border-color: $gray-400;
       }
@@ -320,7 +326,7 @@
   }
 }
 
-// Responsive Design
+// ===== Responsive Design =====
 @include md {
   .modal {
     width: 95%;
@@ -355,6 +361,8 @@
 
   .edit-invite-form {
     gap: $spacing-3;
+  }
+
   .profile-avatar {
     width: 80px;
     height: 80px;
@@ -364,19 +372,13 @@
       height: 28px !important;
       min-width: 28px !important;
 
-      .status-icon {
-        width: 14px;
-        height: 14px;
+      .button-content {
+        width: 32px;
+        height: 32px;
       }
     }
   }
 
-    .form-row {
-      ::ng-deep input {
-        padding: 10px $spacing-3;
-        font-size: 0.9375rem;
-      }
-    }
   .profile-info {
     h3 {
       font-size: 18px;
@@ -387,11 +389,18 @@
     }
   }
 
-    .form-section {
-      gap: $spacing-3;
+  .form-section {
+    gap: $spacing-3;
 
     .section-title {
       font-size: 15px;
+    }
+
+    .form-row {
+      ::ng-deep input {
+        padding: 10px $spacing-3;
+        font-size: 0.9375rem;
+      }
     }
   }
 }
