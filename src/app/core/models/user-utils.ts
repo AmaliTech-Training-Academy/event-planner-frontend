@@ -1,12 +1,17 @@
 import { User } from './user.model';
 
 /** Convert backend boolean status to User status */
-export function normalizeUserStatus(rawUser: any): User {
+export function normalizeUserStatus(user: User): User {
+  const isActive =
+    typeof user.status === 'boolean'
+      ? user.status
+      : String(user.status).toLowerCase() === 'active';
   return {
-    ...rawUser,
-    status: rawUser.status ? 'Active' : 'Inactive',
+    ...user,
+    status: mapUserStatus(isActive),
   };
 }
+
 
 /** Convert User status to backend boolean */
 export function mapStatusToBoolean(status: 'Active' | 'Inactive'): boolean {

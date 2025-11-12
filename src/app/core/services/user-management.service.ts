@@ -112,6 +112,22 @@ export class UserManagementService {
       finalize(() => this.setLoading(false))
     );
   }
+  public refreshUserStats(): void {
+    this.userBackend
+      .getAllUsers(0, 1)
+      .pipe(
+        tap((response) => {
+          const data = response.data;
+          if (data) this._updateUserCards(data);
+        }),
+        catchError((err) => {
+          this.errorHandler.handle(err);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
   public get totalElements(): number {
     return this._totalElements$.getValue(); // safe, BehaviorSubject
   }
@@ -319,6 +335,7 @@ export class UserManagementService {
         this._users$.next(updatedUsers);
 
         this.invalidateCache();
+        this.refreshUserStats();
       }),
       catchError((err) => {
         this.errorHandler.handle(err);

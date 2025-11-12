@@ -283,8 +283,14 @@ export class DataTableComponent<T extends Record<string, any>> {
     return ['role', 'status'].includes(String(key));
   }
 
-  public getBadgeClass(value: string): string {
-    const normalized = value.toLowerCase();
+  public getBadgeClass(value: string | boolean): string {
+    let normalized = '';
+
+    if (typeof value === 'boolean') {
+      normalized = value ? 'active' : 'inactive';
+    } else if (typeof value === 'string') {
+      normalized = value.toLowerCase();
+    }
 
     const roleMap: Record<string, string> = {
       organiser: 'organizer',
@@ -297,7 +303,12 @@ export class DataTableComponent<T extends Record<string, any>> {
     const badgeClass = roleMap[normalized] || normalized;
     return `data-table__badge data-table__badge--${badgeClass}`;
   }
-
+  public isUserActive(item: T): boolean {
+    const status = item['status'];
+    if (typeof status === 'boolean') return status;
+    if (typeof status === 'string') return status.toLowerCase() === 'active';
+    return false;
+  }
   protected isActionVisible(action: TableAction<T>, item: T): boolean {
     return action.visible ? action.visible(item) : true;
   }
