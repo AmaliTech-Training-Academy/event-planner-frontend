@@ -62,6 +62,9 @@ const DEFAULT_X_AXIS: Omit<XAXisComponentOption, 'data'> = {
 
 const DEFAULT_Y_AXIS: YAXisComponentOption = {
   type: 'value',
+  min: 0, 
+  max: 30000, 
+  interval: 10000,
   axisLine: { show: false },
   axisTick: { show: false },
   splitLine: {

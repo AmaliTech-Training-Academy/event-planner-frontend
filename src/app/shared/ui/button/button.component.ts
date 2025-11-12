@@ -9,7 +9,7 @@ import { Component, input, computed, output } from '@angular/core';
   styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent {
-  // Extended to include "danger" and "success"
+  
   public readonly type = input<
     | 'primary'
     | 'secondary'

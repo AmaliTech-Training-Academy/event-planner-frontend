@@ -18,13 +18,16 @@ export interface User {
   
 }
 export interface UserCardData {
+  
   title: string;
   count: number;
   icon: string;
   bgColor: string;
-  iconColor: string;
+  iconColor?: string;
   percentageChange?: number;
 }
+
+
 
 
 export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];

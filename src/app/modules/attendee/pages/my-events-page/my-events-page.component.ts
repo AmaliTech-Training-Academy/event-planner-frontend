@@ -1,30 +1,53 @@
-import { Component, OnInit, signal, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
+import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
+import { LineChartComponent } from '../../../admin/pages/dashboard-page/components/line-chart/line-chart.component';
 import { EventCard } from '../../../../core/models/event.model';
-import { MOCK_MY_EVENTS_CARDS } from '../../../../core/data/mock-data'; 
-import { Router } from '@angular/router';
+import { UserCardData } from '../../../../core/models/user.model';
+import { LineSeriesConfig } from '../../../../core/models/chart.model';
+import {ButtonComponent} from "../../../../shared/ui/button/button.component";
+import {
+  MOCK_MY_EVENTS_CARDS,
+  MOCK_STAT_CARDS,
+  MOCK_CHART_SERIES,
+} from '../../../../core/data/mock-data';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
 @Component({
   selector: 'app-my-events-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, EventCardComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    EventCardComponent,
+    AdminUserCardComponent,
+    LineChartComponent,
+    ButtonComponent
+  ],
   templateUrl: './my-events-page.component.html',
   styleUrl: './my-events-page.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyEventsPageComponent implements OnInit {
-  public myEvents = signal<EventCard[]>([]);
   private readonly router = inject(Router);
   protected readonly routes = APP_ROUTES;
 
+  public myEvents = signal<EventCard[]>([]);
+  public statCards = signal<UserCardData[]>([]);
+  public chartSeries = signal<LineSeriesConfig[]>([]);
   public ngOnInit(): void {
-    this.myEvents.set(MOCK_MY_EVENTS_CARDS); 
+    
+    this.myEvents.set(MOCK_MY_EVENTS_CARDS);
+    this.statCards.set(MOCK_STAT_CARDS);
+    this.chartSeries.set(MOCK_CHART_SERIES);
+    }
+
+  protected onManageEvent(event: EventCard): void {
+    
   }
 
-  protected handleManageEvent(event: EventCard): void {
-  this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
+  protected onViewEvent(event: EventCard): void {
+    this.router.navigate([this.routes.EVENT_DETAILS, event.id]);
   }
 }
