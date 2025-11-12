@@ -68,9 +68,12 @@ export interface TableFilter {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataTableComponent<T extends Record<string, any>> {
-  private readonly elementRef = inject(ElementRef);
-
-  public readonly title = input<string>('Data Table');
+  public readonly tableTitle = input<string>('User List');
+  public readonly searchPlaceholder = input<string>();
+  public readonly searchBoxClass = input<string>();
+  public readonly searchSize = input<'md' | 'lg'>('md');
+  public readonly showCheckboxes = input<boolean>(true);
+  public readonly showFilters = input<boolean>(true);
   public readonly data = input.required<ReadonlyArray<T>>();
   public readonly columns = input.required<ReadonlyArray<TableColumn<T>>>();
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
@@ -89,8 +92,8 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly filterChange = output<{ key: string; value: string }>();
   public readonly loading = input<boolean>(false);
   public readonly primaryAction = input<{
-    label: string;
-    handler: () => void;
+    readonly label: string;
+    readonly handler: () => void;
   }>();
   public readonly itemsPerPage = input<number>(10);
   public readonly serverSidePagination = input<boolean>(false);
@@ -171,8 +174,8 @@ export class DataTableComponent<T extends Record<string, any>> {
     return this._selectedItems().has(item);
   }
 
-  public toggleSelect(item: T): void {
-    const selected = new Set(this._selectedItems());
+  protected toggleSelect(item: T): void {
+    const selected: Set<T> = new Set(this._selectedItems());
     selected.has(item) ? selected.delete(item) : selected.add(item);
     this._selectedItems.set(selected);
   }
@@ -192,23 +195,23 @@ export class DataTableComponent<T extends Record<string, any>> {
     const pageData = this.paginatedData();
     return (
       pageData.length > 0 &&
-      pageData.every((item) => this._selectedItems().has(item))
+      pageData.every((item: T) => this._selectedItems().has(item))
     );
   }
 
-  public toggleSelectAll(): void {
-    const pageData = this.paginatedData();
-    const selected = new Set(this._selectedItems());
+  protected toggleSelectAll(): void {
+    const pageData: ReadonlyArray<T> = this.paginatedData();
+    const selected: Set<T> = new Set(this._selectedItems());
 
     if (this.isAllSelected()) {
-      pageData.forEach((item) => selected.delete(item));
+      pageData.forEach((item: T) => selected.delete(item));
     } else {
-      pageData.forEach((item) => selected.add(item));
+      pageData.forEach((item: T) => selected.add(item));
     }
     this._selectedItems.set(selected);
   }
 
-  public executeAction(action: TableAction<T>, item: T): void {
+  protected executeAction(action: TableAction<T>, item: T): void {
     action.handler(item);
   }
 
@@ -393,16 +396,22 @@ export class DataTableComponent<T extends Record<string, any>> {
     this.rowExpanded.emit(item);
   }
 
-  public isRowExpanded(index: number): boolean {
+  protected isRowExpanded(index: number): boolean {
     return this._expandedRows().has(index);
   }
 
-  public isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
+  protected isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
     return ['role', 'status'].includes(String(key));
   }
 
-  public getBadgeClass(value: string): string {
-    const normalized = value.toLowerCase();
+  public getBadgeClass(value: string | boolean): string {
+    let normalized = '';
+
+    if (typeof value === 'boolean') {
+      normalized = value ? 'active' : 'inactive';
+    } else if (typeof value === 'string') {
+      normalized = value.toLowerCase();
+    }
 
     const roleMap: Record<string, string> = {
       organiser: 'organizer',
@@ -415,8 +424,13 @@ export class DataTableComponent<T extends Record<string, any>> {
     const badgeClass = roleMap[normalized] || normalized;
     return `data-table__badge data-table__badge--${badgeClass}`;
   }
-
-  public isActionVisible(action: TableAction<T>, item: T): boolean {
+  public isUserActive(item: T): boolean {
+    const status = item['status'];
+    if (typeof status === 'boolean') return status;
+    if (typeof status === 'string') return status.toLowerCase() === 'active';
+    return false;
+  }
+  protected isActionVisible(action: TableAction<T>, item: T): boolean {
     return action.visible ? action.visible(item) : true;
   }
 
@@ -433,11 +447,11 @@ export class DataTableComponent<T extends Record<string, any>> {
     return action.isLoading ? action.isLoading(item) : false;
   }
 
-  public getFilterValue(filterKey: string): string {
+  protected getFilterValue(filterKey: string): string {
     return this._activeFilters().get(filterKey) ?? 'all';
   }
 
-  public trackByIndex(index: number): number {
+  protected trackByIndex(index: number): number {
     return index;
   }
 }
