@@ -6,16 +6,24 @@
   </div>
 
   <div class="user-management-page__table">
-    <app-data-table
-      [data]="users()"
-      [columns]="tableColumns"
-      [actions]="tableActions"
-      [filters]="tableFilters"
-      [searchable]="true"
-      [expandable]="false"
-      [primaryAction]="primaryAction"
-      (rowExpanded)="onRowExpanded($event)"
-    />
+   <app-data-table
+  [data]="users()"
+  [columns]="tableColumns"
+  [actions]="tableActions"
+  [filters]="tableFilters"
+  [loading]="loading()"
+  [primaryAction]="primaryAction"
+  [searchable]="true"
+  [serverSidePagination]="true"    
+  [totalItems]="totalElements()"    
+  (pageChange)="onPageChange($event)" 
+  (rowExpanded)="onRowExpanded($event)"
+  [serverSidePagination]="true"
+[totalItems]="totalElements()"
+(pageChange)="onPageChange($event)"
+(searchChange)="onSearchChange($event)"
+(filterChange)="onFilterChange($event)"
+/>
   </div>
 
   @if (isInviteModalOpen()) {

@@ -1,15 +1,17 @@
 export interface AuthResponseBody<T> {
-    description: string,
-    data: T
+  description: string;
+  data: T;
 }
 
 export interface OtpBodyData {
-    id: string;
-    email: string;
-    role: string;
-}
-export interface RegisterBodyData {
-    id: number;
-    fullName: string;
+  id: number; // Changed from string to number to match API
+  email: string;
+  role: string;
+  fullName: string;
+  profilePicture: string | null;
 }
 
+export interface RegisterBodyData {
+  id: number;
+  fullName: string;
+}

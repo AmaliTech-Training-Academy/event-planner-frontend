@@ -5,13 +5,15 @@
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-        <app-input
-          class="md"
-          placeholder="Search users..."
-          [value]="searchQuery()"
-          (valueChange)="updateSearch($event)"
-          iconSrc="icons/search-icon.png"
-        />
+       <app-input
+  class="md"
+  placeholder="Search users..."
+  [value]="searchQuery()"
+  (valueChange)="updateSearch($event)"
+  iconSrc="icons/search-icon.png"
+  [disabled]="loading()"
+/>
+
       </div>
       }
       <!-- Reusable Filter Select -->
@@ -21,6 +23,7 @@
         [options]="filter.options"
         [value]="getFilterValue(filter.key)"
         (valueChange)="updateFilter(filter.key, $event)"
+        [disabled]="loading()"
       ></app-filter-select>
       }
 
@@ -30,6 +33,7 @@
         <app-button
           type="primary"
           (click)="executePrimaryAction()"
+          [disabled]="loading()"
           aria-label="Add new user"
         >
           + {{ action.label }}
@@ -39,6 +43,27 @@
     </div>
   </div>
 
+  <!-- ✅ Loading State -->
+  @if (loading()) {
+  <div class="data-table__loading">
+    <div class="data-table__skeleton">
+      @for (row of [1,2,3,4,5]; track row) {
+      <div class="data-table__skeleton-row">
+        <div
+          class="data-table__skeleton-cell data-table__skeleton-cell--checkbox"
+        ></div>
+        @for (col of columns(); track col.key) {
+        <div class="data-table__skeleton-cell"></div>
+        } @if (actions().length > 0) {
+        <div
+          class="data-table__skeleton-cell data-table__skeleton-cell--actions"
+        ></div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  } @else {
   <table class="data-table__table" role="table">
     <thead class="data-table__thead">
       <tr>
@@ -75,42 +100,42 @@
 
         @if (expandable()) {
         <td class="data-table__td data-table__td--expand">
-          <app-button type="social" (click)="toggleRow($index)">
+          <app-button type="social" (click)="toggleRow($index, item)">
             {{ isRowExpanded($index) ? "−" : "+" }}
           </app-button>
         </td>
         } @for (column of columns(); track column.key) {
         <td class="data-table__td">
-          @if (column.key === 'name' && item['email']) {
+          @if (column.key === 'fullName') {
           <div class="data-table__user-cell">
             <img
-              [ngSrc]="item['avatar']"
-              alt="User avatar"
-              class="data-table__user-avatar"
-              width="40"
-              height="40"
+              [src]="getRandomAvatar(item)"
+              [alt]="
+                (column.getValue ? column.getValue(item) : item[column.key]) +
+                ' avatar'
+              "
+              class="data-table__user-avatar-img"
             />
-
             <div class="data-table__user-info">
               <p class="data-table__user-name">
-                {{ item[column.key] }}
+                {{ column.getValue ? column.getValue(item) : item[column.key] }}
               </p>
-              <p class="data-table__user-email">{{ item["email"] }}</p>
+              <p class="data-table__user-email">
+                {{ item["email"] || "No email" }}
+              </p>
             </div>
           </div>
           } @else if (isRoleOrStatus(column.key)) {
-
           <span [class]="getBadgeClass(item[column.key])">
-            {{ item[column.key] }}
+            {{ capitalizeFirstLetter(item[column.key]) }}
           </span>
-
           } @else {
-          {{ item[column.key] }}
+          {{ column.getValue ? column.getValue(item) : item[column.key] }}
           }
         </td>
         }
 
-        <!-- ✅ Actions column -->
+        <!-- ✅ Actions column with loading states -->
         @if (actions().length > 0) {
         <td class="data-table__td data-table__td--actions">
           @for (action of actions(); track action.label) {
@@ -133,7 +158,13 @@
                 : action.label
             "
             class="data-table__action-btn"
+            [class.data-table__action-btn--loading]="
+              isActionLoading(action, item)
+            "
           >
+            @if (isActionLoading(action, item)) {
+            <span class="data-table__action-spinner"></span>
+            } @else {
             <img
               [src]="
                 action.color === 'power'
@@ -150,10 +181,10 @@
                   : action.label + ' icon'
               "
             />
+            }
           </app-button>
           }
         </td>
-
         }
       </tr>
       }
@@ -172,13 +203,15 @@
       <p class="data-table__no-data-message">{{ emptyState().message }}</p>
     }
   </div>
-  } @if (filteredData().length > 0) {
-  <app-pagination
-    [totalItems]="filteredData().length"
-    [itemsPerPage]="itemsPerPage()"
-    [currentPage]="currentPage()"
-    (currentPageChange)="setCurrentPage($event)"
-  ></app-pagination>
+  } } @if (filteredData().length > 0 && !loading()) {
+<app-pagination
+  [totalItems]="totalItems()"
+  [itemsPerPage]="itemsPerPage()"
+  [currentPage]="currentPage()"
+  (pageChange)="setCurrentPage($event)"
+></app-pagination>
+
+
 
   }
 </div>

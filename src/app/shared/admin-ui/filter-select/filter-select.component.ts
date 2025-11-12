@@ -8,6 +8,8 @@ import {
   computed,
   forwardRef,
   effect,
+  HostListener,
+  ElementRef,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -16,6 +18,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { FormErrorComponent } from '../../ui/form-error/form-error.component';
+import { ButtonComponent } from "../../ui/button/button.component";
 
 interface FilterOption {
   readonly label: string;
@@ -25,7 +28,7 @@ interface FilterOption {
 @Component({
   selector: 'app-filter-select',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorComponent, ButtonComponent],
   templateUrl: './filter-select.component.html',
   styleUrls: ['./filter-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,7 +46,10 @@ export class FilterSelectComponent implements ControlValueAccessor {
   public readonly size = input<'sm' | 'md' | 'lg'>('md');
   public readonly errorMessage = input<string | null>(null);
   public readonly value = input<string>('');
+  public readonly disabled = input<boolean>(false);
+  public readonly showReset = input<boolean>(true);
   public readonly valueChange = output<string>();
+  public readonly reset = output<void>();
 
   private readonly _value = signal<string>('');
   private readonly _isOpen = signal(false);
@@ -51,19 +57,40 @@ export class FilterSelectComponent implements ControlValueAccessor {
   private readonly _activeIndex = signal<number>(-1);
 
   public readonly isOpen = computed(() => this._isOpen());
+  public readonly isDisabled = computed(
+    () => this.disabled() || this._disabled()
+  );
   public readonly selectedLabel = computed(() => {
     const selected = this.options()?.find((o) => o.value === this._value());
     return selected?.label ?? this.placeholder();
   });
-  public readonly filterClass = computed(() => `filter-select--${this.size()}`);
+  public readonly filterClass = computed(() => {
+    const classes = [`filter-select--${this.size()}`];
+    if (this.isDisabled()) {
+      classes.push('filter-select--disabled');
+    }
+    return classes.join(' ');
+  });
+  public readonly hasValue = computed(() => {
+    const val = this._value();
+    return val !== '' && val !== 'all';
+  });
 
-  constructor() {
+  constructor(private elementRef: ElementRef) {
     effect(() => {
       const externalValue = this.value();
       if (externalValue && externalValue !== this._value()) {
         this._value.set(externalValue);
       }
     });
+  }
+
+  @HostListener('document:click', ['$event'])
+  public onClickOutside(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this._isOpen.set(false);
+      this._activeIndex.set(-1);
+    }
   }
 
   private _onChange: (value: string) => void = () => {};
@@ -86,7 +113,7 @@ export class FilterSelectComponent implements ControlValueAccessor {
   }
 
   public toggleDropdown(): void {
-    if (this._disabled()) return;
+    if (this.isDisabled()) return;
     this._isOpen.update((open) => !open);
 
     if (!this._isOpen()) {
@@ -96,7 +123,7 @@ export class FilterSelectComponent implements ControlValueAccessor {
   }
 
   public selectOption(option: FilterOption): void {
-    if (this._disabled()) return;
+    if (this.isDisabled()) return;
 
     this._value.set(option.value);
     this._onChange(option.value);
@@ -106,8 +133,19 @@ export class FilterSelectComponent implements ControlValueAccessor {
     this._onTouched();
   }
 
+  public resetFilter(event: Event): void {
+    event.stopPropagation();
+    if (this.isDisabled()) return;
+
+    this._value.set('all');
+    this._onChange('all');
+    this.valueChange.emit('all');
+    this.reset.emit();
+    this._onTouched();
+  }
+
   public onKeydown(event: KeyboardEvent): void {
-    if (this._disabled()) return;
+    if (this.isDisabled()) return;
 
     if (!this._isOpen()) {
       if (event.key === 'Enter' || event.key === ' ') {

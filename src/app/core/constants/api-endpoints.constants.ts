@@ -1,3 +1,4 @@
+// core/constants/api-endpoints.constants.ts
 import { environment } from '../../../environments/environment';
 
 const API_VERSION = 'v1';
@@ -8,10 +9,23 @@ export const API_ENDPOINTS = {
   AUTH_LOGIN: `${BASE}/auth/login`,
   AUTH_REGISTER: `${BASE}/auth/register`,
   AUTH_VERIFY_OTP: `${BASE}/auth/verify-otp`,
+  AUTH_FORGOT_PASSWORD: `${BASE}/auth/forgot-password`,
+  GET_USER: (userId: string): string => `${BASE}/users/${userId}`,
+  GET_ALL_USERS: `${BASE}/users/management`,
+  UPDATE_USER: (userId: string): string => `${BASE}/users/${userId}`,
+  DELETE_USER: (userId: string): string => `${BASE}/users/${userId}`,
+  CREATE_USER: `${BASE}/users`,
+  INVITE_USER: `${BASE}/event-invitations`,
+  GET_ALL_INVITATIONS: `${BASE}/event-invitations`,
+  AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
   AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
-  AUTH_FORGOT_PASSWORD: `${BASE}/auth/forgot-password`,
-  AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
-  GET_USER: (userId: string): string => `${BASE}/users/${userId}`,
+  AUTH_ME: `${BASE}/auth/me`,
+  DEACTIVATE_USER: (userId: string | number) =>
+    `${BASE}/users/${userId}/deactivate`,
+
+  UPLOAD_PROFILE_IMAGE: (userId: string): string =>
+    `${BASE}/users/${userId}/profile-image`,
+  SEARCH_USERS: `${BASE}/users/search`,
 } as const;
 
