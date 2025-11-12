@@ -6,9 +6,12 @@
     <header class="profile-header">
       <div class="avatar">
         <img
-          src="images/profile.png"
-          alt="User Avatar"
-        />
+  [ngSrc]="avatarUrl()"
+  [alt]="fullName() + ' avatar'"
+  width="64"
+  height="64"
+  priority
+/>
       </div>
       <div class="header-text">
         <h1>Edit Profile</h1>
@@ -87,10 +90,12 @@
         (click)="onLogout()"
       >
         <img
-          icon
-          src="icons/logout.png"
-          alt="Logout"
-        />
+  [ngSrc]="'icons/logout.png'"
+  alt="Logout icon"
+  width="18"
+  height="18"
+  priority
+/>
         Logout
       </app-button>
     </footer>
