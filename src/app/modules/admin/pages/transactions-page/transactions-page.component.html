@@ -27,7 +27,7 @@
 
     <div class="transactions-page__chart">
       <app-line-chart
-        [seriesConfig]="chartSeriesConfig()"
+        [seriesConfig]="chartSeriesConfig().slice()"
         [height]="'350px'"
         [showLegend]="true"
         [smooth]="true"
