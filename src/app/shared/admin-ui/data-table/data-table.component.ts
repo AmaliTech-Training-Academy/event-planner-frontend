@@ -218,11 +218,17 @@ export class DataTableComponent<T extends Record<string, any>> {
   }
 
   public getRandomAvatar(item: T): string {
-    const identifier = item['userId'] || item['email'] || item['id'] || '';
-    const avatarNumber = (String(identifier).charCodeAt(0) % 70) + 1;
-
-    return `https://i.pravatar.cc/150?img=${avatarNumber}`;
+  // Priority 1: Check for custom avatar property
+  if (item['avatar']) {
+    return item['avatar'] as string;
   }
+  
+  // Priority 2: Fallback to generated avatar based on identifier
+  const identifier = item['userId'] || item['email'] || item['id'] || '';
+  const avatarNumber = (String(identifier).charCodeAt(0) % 70) + 1;
+
+  return `https://i.pravatar.cc/150?img=${avatarNumber}`;
+}
   public isAllSelected(): boolean {
     const pageData = this.paginatedData();
     return (
