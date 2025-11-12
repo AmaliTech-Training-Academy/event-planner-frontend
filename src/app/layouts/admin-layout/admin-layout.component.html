@@ -1,6 +1,9 @@
 <app-admin-sidebar></app-admin-sidebar>
 
-<div class="admin-layout__main" [class.admin-layout__main--collapsed]="layoutService.sidebarCollapsed()">
+<div
+  class="admin-layout__main"
+  [class.admin-layout__main--collapsed]="layoutService.sidebarCollapsed()"
+>
   <app-admin-top-nav
     [pageTitle]="layoutService.pageTitle()"
     [notificationsCount]="layoutService.notificationsCount()"
@@ -8,9 +11,10 @@
     [avatarSrc]="layoutService.avatarSrc()"
     [logoSrc]="layoutService.logoSrc()"
     [logoAlt]="layoutService.logoAlt()"
+    [isCollapsed]="layoutService.sidebarCollapsed()"
   ></app-admin-top-nav>
 
   <div class="admin-layout__content">
     <router-outlet></router-outlet>
   </div>
-</div>~
+</div>

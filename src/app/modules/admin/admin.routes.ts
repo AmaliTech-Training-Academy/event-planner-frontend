@@ -34,4 +34,11 @@ export const ADMIN_ROUTES: Routes = [
       ).then((m) => m.EventDetailsPageComponent),
     // canActivate: [AdminGuard],
   },
+  {
+    path: 'saved-invites',
+    loadComponent: () =>
+      import('./pages/saved-invite/saved-invite-page.component').then(
+        (m) => m.SavedInviteComponent
+      ),
+  },
 ];
