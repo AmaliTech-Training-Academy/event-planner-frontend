@@ -3,12 +3,18 @@
     <h3 class="upcoming-events__title">{{ title() }}</h3>
     @if (showViewAll()) {
     <app-button
-      class="upcoming-events__view-all"
+      [extraClass]="'upcoming-events__view-all'"
       (click)="onViewAll()"
-      type="social"
+      type="plain"
       aria-label="View all events"
     >
-      View All
+       <img
+        ngSrc="icons/user-group.png"
+        alt=""
+        width="20"
+        height="20"
+        aria-hidden="true"
+      />
     </app-button>
     }
   </div>
