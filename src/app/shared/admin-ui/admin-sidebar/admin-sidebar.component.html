@@ -1,59 +1,122 @@
-<aside class="admin-sidebar" role="navigation">
+<aside 
+  class="admin-sidebar" 
+  [class.admin-sidebar--collapsed]="isCollapsed()"
+  role="navigation"
+>
+  <!-- Toggle Button -->
+  <button
+    type="button"
+    class="admin-sidebar__toggle"
+    (click)="toggleSidebar()"
+    [attr.aria-label]="isCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+    [attr.aria-expanded]="!isCollapsed()"
+  >
+    <svg 
+      class="admin-sidebar__toggle-icon" 
+      width="20" 
+      height="20" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      stroke-width="2"
+    >
+      @if (isCollapsed()) {
+        <polyline points="9 18 15 12 9 6"></polyline>
+      } @else {
+        <polyline points="15 18 9 12 15 6"></polyline>
+      }
+    </svg>
+  </button>
+
   <div class="admin-sidebar__header">
-    <h1 class="admin-sidebar__title"><span>Event</span> Hub</h1>
+    <h1 class="admin-sidebar__title">
+      <span>Event</span>
+      @if (!isCollapsed()) {
+        <span> Hub</span>
+      }
+    </h1>
   </div>
 
   <nav class="admin-sidebar__nav">
     @for (section of menuSections(); track section?.title) {
     <div class="admin-sidebar__section">
-      @if (section?.title) {
+      @if (section?.title && !isCollapsed()) {
       <h2 class="admin-sidebar__section-title">{{ section.title }}</h2>
-      } @if (section?.items?.length) {
+      }
+      @if (section?.items?.length) {
       <ul class="admin-sidebar__list" role="menu">
         @for (item of section.items; track item?.route) {
         <li class="admin-sidebar__item" role="menuitem">
-       <a
-  [routerLink]="item?.route"
-  routerLinkActive="admin-sidebar__link--active"
-  [routerLinkActiveOptions]="{ exact: true }"
-  class="admin-sidebar__link"
-  [attr.aria-label]="item?.label"
->
-  <img
-    ngSrc="{{ item?.iconPath }}"
-    width="20"
-    height="20"
-    class="admin-sidebar__icon"
-    [alt]="item?.label + ' icon'"
-  />
-  <span class="admin-sidebar__label">{{ item?.label }}</span>
-</a>
-
+          <a
+            [routerLink]="item?.route"
+            routerLinkActive="admin-sidebar__link--active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="admin-sidebar__link"
+            [attr.aria-label]="item?.label"
+            [attr.title]="isCollapsed() ? item?.label : null"
+          >
+            <img
+              [ngSrc]="item?.iconPath || ''"
+              width="20"
+              height="20"
+              class="admin-sidebar__icon"
+              [alt]="item?.label + ' icon'"
+            />
+            @if (!isCollapsed()) {
+            <span class="admin-sidebar__label">{{ item?.label }}</span>
+            }
+          </a>
         </li>
         }
       </ul>
       } @else {
-      <p class="admin-sidebar__empty">No items available</p>
+        @if (!isCollapsed()) {
+        <p class="admin-sidebar__empty">No items available</p>
+        }
       }
     </div>
     }
   </nav>
 
   <div class="admin-sidebar__footer">
+    <!-- Settings Link -->
     <a
       [routerLink]="settingsItem().route"
       routerLinkActive="admin-sidebar__link--active"
       class="admin-sidebar__link"
       [attr.aria-label]="settingsItem().label"
+      [attr.title]="isCollapsed() ? settingsItem().label : null"
     >
       <img
-        ngSrc="{{ settingsItem().iconPath }}"
+        [ngSrc]="settingsItem().iconPath"
         width="20"
         height="20"
         class="admin-sidebar__icon"
         [alt]="settingsItem().label + ' icon'"
       />
+      @if (!isCollapsed()) {
       <span class="admin-sidebar__label">{{ settingsItem().label }}</span>
+      }
     </a>
+
+    <!-- Logout Button -->
+    <button
+      type="button"
+      class="admin-sidebar__link admin-sidebar__link--logout"
+      (click)="handleLogout()"
+      [attr.aria-label]="logoutItem().label"
+      [attr.title]="isCollapsed() ? logoutItem().label : null"
+    >
+      <img
+        [ngSrc]="logoutItem().iconPath"
+        width="20"
+        height="20"
+        class="admin-sidebar__icon"
+        [alt]="logoutItem().label + ' icon'"
+      />
+      @if (!isCollapsed()) {
+      <span class="admin-sidebar__label">{{ logoutItem().label }}</span>
+      }
+    </button>
   </div>
 </aside>

@@ -160,6 +160,8 @@ export class UserManagementPageComponent implements OnInit {
 
   ngOnInit(): void {
     this._layoutService.pageTitle.set('User Management');
+    this._layoutService.logoSrc.set('icons/users-icon.png');
+    this._layoutService.logoAlt.set('User Management Icon');
     this._loadUsers();
   }
 

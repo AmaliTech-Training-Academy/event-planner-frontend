@@ -137,7 +137,8 @@ button.app-button.edit {
 }
 
 button.app-button.delete {
-  background-color: $red-50;
+  background-color: transparent;
+  border:none;
 
   &:hover:not(:disabled) {
     border-color: $red-400;

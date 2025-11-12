@@ -1,6 +1,7 @@
 <div class="data-table">
   <div class="data-table__header">
-    <h2 class="data-table__title">User List</h2>
+    <h2 class="data-table__title">{{ tableTitle() }}</h2>
+
 
     <div class="data-table__controls">
       @if (searchable()) {
@@ -90,6 +91,7 @@
     <tbody class="data-table__tbody">
       @for (item of paginatedData(); track trackByIndex($index)) {
       <tr class="data-table__tr">
+        <!-- ✅ Checkbox column -->
         <td class="data-table__td data-table__td--checkbox">
           <app-checkbox
             [checked]="isSelected(item)"
@@ -126,9 +128,10 @@
             </div>
           </div>
           } @else if (isRoleOrStatus(column.key)) {
-          <span [class]="getBadgeClass(item[column.key])">
-            {{ capitalizeFirstLetter(item[column.key]) }}
-          </span>
+         <span [class]="getBadgeClass(item[column.key]?.toLowerCase())">
+  {{ capitalizeFirstLetter(item[column.key]) }}
+</span>
+
           } @else {
           {{ column.getValue ? column.getValue(item) : item[column.key] }}
           }
@@ -165,22 +168,23 @@
             @if (isActionLoading(action, item)) {
             <span class="data-table__action-spinner"></span>
             } @else {
-            <img
-              [src]="
-                action.color === 'power'
-                  ? item['status'] === 'Active'
-                    ? 'icons/power-icon-red.png'
-                    : 'icons/power-icon-green.png'
-                  : action.icon
-              "
-              [alt]="
-                action.color === 'power'
-                  ? item['status'] === 'Active'
-                    ? 'Deactivate user icon'
-                    : 'Activate user icon'
-                  : action.label + ' icon'
-              "
-            />
+           <img
+  [src]="
+    action.color === 'power'
+      ? isUserActive(item)
+        ? 'icons/power-icon-red.png'
+        : 'icons/power-icon-green.png'
+      : action.icon
+  "
+  [alt]="
+    action.color === 'power'
+      ? isUserActive(item)
+        ? 'Deactivate user icon'
+        : 'Activate user icon'
+      : action.label + ' icon'
+  "
+/>
+
             }
           </app-button>
           }
@@ -208,3 +212,4 @@
 
   }
 </div>
+

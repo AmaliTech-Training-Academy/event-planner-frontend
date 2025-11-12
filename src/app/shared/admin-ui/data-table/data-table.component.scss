@@ -18,6 +18,7 @@
   &__title {
     @include h-4;
     color: $header-dark;
+    margin-top: -1rem;
   }
 
   &__controls {
@@ -26,12 +27,32 @@
     line-height: 50px;
     justify-content: flex-end;
     flex: 0 0  70%;
+    
+     &--expanded {
+      flex: 1;
+    }
 }
 
   &__search-box {
     position: relative;
+    flex: 1;
+    .search-box--user-management {
     flex: 0 0 30%;
+  }
 
+  .search-box--full-width {
+     flex: 1;
+
+  }
+.md {
+    width: 100%;
+  }
+
+  .lg {
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+  }
   }
 
   &__search-input {
