@@ -27,79 +27,43 @@ export class TopOrganizersComponent {
   public readonly viewAllClicked = output<void>();
   public readonly organizerClicked = output<Organizer>();
 
-  public readonly hasOrganizers = computed<boolean>(() =>
-    this.hasOrganizersData()
+  public readonly hasOrganizers = computed<boolean>(
+    () => this.organizers().length > 0
   );
 
-  public onViewAll(): void {
-    this.emitOrganizerEvent();
+  protected onViewAll(): void {
+    this.viewAllClicked.emit();
   }
 
-  public onOrganizerClick(organizer: Organizer): void {
-    this.emitOrganizerEvent(organizer);
+  protected onOrganizerClick(organizer: Organizer): void {
+    this.organizerClicked.emit(organizer);
   }
 
-  public getInitial(name: string): string {
-    return this.extractInitial(name);
-  }
-
-  public isPositiveGrowth(percentage: number): boolean {
-    return this.checkPositiveGrowth(percentage);
-  }
-
-  public isNegativeGrowth(percentage: number): boolean {
-    return this.checkNegativeGrowth(percentage);
-  }
-
-  public formatGrowth(percentage: number): string {
-    return this.formatGrowthPercentage(percentage);
-  }
-
-  public trackByOrganizer(_index: number, organizer: Organizer): number {
-    return organizer.id;
-  }
-
-  public hasTrendData(organizer: Organizer): boolean {
-    return this.validateTrendData(organizer);
-  }
-
-  public getGrowthIcon(growthPercentage: number): string {
-    return this.selectGrowthIcon(growthPercentage);
-  }
-
-  protected hasOrganizersData(): boolean {
-    return this.organizers().length > 0;
-  }
-
-  protected emitOrganizerEvent(organizer?: Organizer): void {
-    if (organizer) {
-      this.organizerClicked.emit(organizer);
-    } else {
-      this.viewAllClicked.emit();
-    }
-  }
-
-  protected extractInitial(name: string): string {
+  protected getInitial(name: string): string {
     return name.charAt(0).toUpperCase();
   }
 
-  protected checkPositiveGrowth(percentage: number): boolean {
+  protected isPositiveGrowth(percentage: number): boolean {
     return percentage > 0;
   }
 
-  protected checkNegativeGrowth(percentage: number): boolean {
+  protected isNegativeGrowth(percentage: number): boolean {
     return percentage < 0;
   }
 
-  protected formatGrowthPercentage(percentage: number): string {
+  protected formatGrowth(percentage: number): string {
     return percentage > 0 ? `+${percentage}%` : `${percentage}%`;
   }
 
-  protected validateTrendData(organizer: Organizer): boolean {
+  protected trackByOrganizer(_index: number, organizer: Organizer): number {
+    return organizer.id;
+  }
+
+  protected hasTrendData(organizer: Organizer): boolean {
     return !!organizer.trendData && organizer.trendData.length > 0;
   }
 
-  protected selectGrowthIcon(growthPercentage: number): string {
+  protected getGrowthIcon(growthPercentage: number): string {
     if (growthPercentage > 0) return 'icons/graph-chart-1.png';
     if (growthPercentage < 0) return 'icons/graph-chart-2.png';
     return 'icons/graph-chart-1.png';
