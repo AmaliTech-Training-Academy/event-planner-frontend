@@ -78,7 +78,7 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
   public readonly filters = input<ReadonlyArray<TableFilter>>([]);
   public readonly searchable = input<boolean>(true);
-  public readonly searchKey = input<string>(''); 
+  public readonly searchKey = input<string>('');
 
   public readonly expandable = input<boolean>(false);
   public readonly showCheckboxes = input<boolean>(false); // Add this
@@ -117,25 +117,47 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly filteredData = computed(() => {
     const localQuery = this._localSearchQuery().toLowerCase().trim();
     const items = this.data();
+    const activeFilters = this._activeFilters();
 
-    if (!localQuery || !this.serverSidePagination()) {
+    if (this.serverSidePagination()) {
       return items;
     }
 
-    return items.filter((item) => {
-      const searchableFields = [
-        item['fullName'],
-        item['name'],
-        item['email'],
-        item['role'],
-      ]
-        .filter(Boolean)
-        .map((field) => String(field))
-        .join(' ')
-        .toLowerCase();
+    let filtered = items;
 
-      return searchableFields.includes(localQuery);
+    if (localQuery) {
+      filtered = filtered.filter((item) => {
+        const searchableFields = [
+          item['fullName'],
+          item['name'],
+          item['email'],
+          item['role'],
+          item['user'],
+          item['timestamp'],
+          item['ipAddress'],
+          item['status'],
+          item['invitationTitle'],
+          item['event'],
+          item['createdBy'],
+        ]
+          .filter(Boolean)
+          .map((field) => String(field))
+          .join(' ')
+          .toLowerCase();
+
+        return searchableFields.includes(localQuery);
+      });
+    }
+    activeFilters.forEach((value, key) => {
+      if (value && value !== 'all') {
+        filtered = filtered.filter((item) => {
+          const itemValue = String(item[key] || '').toLowerCase();
+          return itemValue === value.toLowerCase();
+        });
+      }
     });
+
+    return filtered;
   });
 
   private _searchSubject = new Subject<string>();
@@ -166,8 +188,20 @@ export class DataTableComponent<T extends Record<string, any>> {
     }
   }
 
-  public readonly paginatedData = computed(() => this.filteredData());
+  public readonly paginatedData = computed(() => {
+    const filtered = this.filteredData();
 
+    if (this.serverSidePagination()) {
+      return filtered;
+    }
+
+    const itemsPerPage = this.itemsPerPage();
+    const currentPage = this._currentPage();
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    return filtered.slice(startIndex, endIndex);
+  });
   public isSelected(item: T): boolean {
     return this._selectedItems().has(item);
   }
@@ -224,7 +258,6 @@ export class DataTableComponent<T extends Record<string, any>> {
     this._searchSubject.next(query);
   }
   public updateFilter(filterKey: string, value: string): void {
-    // Handle export separately
     if (filterKey === 'export' && value) {
       this._handleExport(value);
       return; // Don't add to filters
@@ -266,7 +299,6 @@ export class DataTableComponent<T extends Record<string, any>> {
       columns
         .map((col) => {
           const value = col.getValue ? col.getValue(item) : item[col.key];
-          // Escape commas and quotes
           return `"${String(value).replace(/"/g, '""')}"`;
         })
         .join(',')
@@ -296,8 +328,6 @@ export class DataTableComponent<T extends Record<string, any>> {
     data: readonly T[],
     columns: readonly TableColumn<T>[]
   ): void {
-    // For PDF, you'd typically use a library like jsPDF
-    // For now, we'll create a simple HTML representation
     alert('PDF export requires additional library. Exporting as HTML instead.');
 
     let html =
@@ -347,11 +377,12 @@ export class DataTableComponent<T extends Record<string, any>> {
     window.URL.revokeObjectURL(url);
   }
   private _totalFilteredItems = signal<number>(0);
+
   public readonly totalFilteredItems = computed(() => {
     if (this.serverSidePagination()) {
       return this.totalItems();
     }
-    return this._totalFilteredItems();
+    return this.filteredData().length;
   });
 
   private _performBackendSearch(page: number): void {
@@ -417,6 +448,8 @@ export class DataTableComponent<T extends Record<string, any>> {
       attendee: 'attendee',
       active: 'active',
       inactive: 'inactive',
+      successful: 'successful', // Add this line
+      failed: 'failed',
     };
 
     const badgeClass = roleMap[normalized] || normalized;

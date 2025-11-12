@@ -219,9 +219,7 @@
     color: $gray-50;
 
     &:hover {
-      // transform: translateY(-2px);
-      // box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
+        }
 
     &:active {
       transform: translateY(0);
@@ -239,10 +237,10 @@
   @include body-3;
   display: inline-flex;
   align-items: center;
-  padding: 4px $spacing-3; // Reduced horizontal padding
+  padding: 4px $spacing-3; 
   border-radius: $radius-full;
   font-weight: 500;
-  font-size: 12px; // Reduced from 13px
+  font-size: 12px; 
   white-space: nowrap;
 
   &--organizer {
@@ -269,6 +267,19 @@
     color: $red-600;
     border: 1px solid $red-300;
   }
+     &--successful {
+      background: $green-50;
+      color: $green-700;
+      border: 1px solid $green-300;
+      font-size: .75rem;
+    }
+
+    &--failed {
+      background: $red-50;
+      color: $red-600;
+      border: 1px solid $red-300;
+      font-size: .75rem;
+    }
 }
   &__user-cell {
     display: flex;
@@ -337,7 +348,6 @@
 .invite-btn {
 }
 
-/* ===== Loading States ===== */
 .data-table__loading {
   padding: $spacing-4;
 }

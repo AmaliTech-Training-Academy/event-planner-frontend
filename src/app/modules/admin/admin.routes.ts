@@ -41,4 +41,11 @@ export const ADMIN_ROUTES: Routes = [
         (m) => m.SavedInviteComponent
       ),
   },
+  {
+    path: 'audit-logs',
+    loadComponent: () =>
+      import('./pages/audit-logs-page/audit-logs-page.component').then(
+        (m) => m.AuditLogsComponent
+      ),
+  },
 ];
