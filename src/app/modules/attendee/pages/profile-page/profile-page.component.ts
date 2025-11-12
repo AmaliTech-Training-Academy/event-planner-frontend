@@ -33,7 +33,7 @@ export class ProfilePageComponent implements OnInit {
   protected email = signal('user@eventhub.com');
   protected phone = signal('+233 345 6785 423');
   protected address = signal('123 Main Street, City, State, 12345');
-  protected avatarUrl = signal('images/profile.png'); // TODO: Replace with API URL
+  protected avatarUrl = signal('images/profile.png'); 
   protected isBasicInfoDisabled = signal(true);
   protected isContactInfoDisabled = signal(true);
 
