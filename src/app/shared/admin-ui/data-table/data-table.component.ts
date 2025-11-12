@@ -1,3 +1,4 @@
+// data-table.component.ts
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -7,6 +8,7 @@ import {
   input,
   output,
   inject,
+  ElementRef,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -29,6 +31,7 @@ export interface TableAction<T> {
   readonly icon: string;
   readonly label: string;
   readonly color?: string;
+  readonly extraClass?: string;
   readonly handler: (item: T) => void;
   readonly visible?: (item: T) => boolean;
   readonly disabled?: boolean | ((item: T) => boolean);
@@ -69,14 +72,20 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly searchPlaceholder = input<string>();
   public readonly searchBoxClass = input<string>();
   public readonly searchSize = input<'md' | 'lg'>('md');
-  public readonly showCheckboxes = input<boolean>(true);
   public readonly showFilters = input<boolean>(true);
   public readonly data = input.required<ReadonlyArray<T>>();
   public readonly columns = input.required<ReadonlyArray<TableColumn<T>>>();
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
   public readonly filters = input<ReadonlyArray<TableFilter>>([]);
   public readonly searchable = input<boolean>(true);
+  public readonly searchKey = input<string>(''); 
+
   public readonly expandable = input<boolean>(false);
+  public readonly showCheckboxes = input<boolean>(false); // Add this
+  public readonly showActionLabels = input<boolean>(false); // Add this
+
+  public readonly showExport = input<boolean>(false); // Add this
+  public readonly showAvatar = input<boolean>(true);
   public readonly searchChange = output<string>();
   public readonly filterChange = output<{ key: string; value: string }>();
   public readonly loading = input<boolean>(false);
@@ -215,6 +224,12 @@ export class DataTableComponent<T extends Record<string, any>> {
     this._searchSubject.next(query);
   }
   public updateFilter(filterKey: string, value: string): void {
+    // Handle export separately
+    if (filterKey === 'export' && value) {
+      this._handleExport(value);
+      return; // Don't add to filters
+    }
+
     const filters = new Map(this._activeFilters());
     filters.set(filterKey, value);
     this._activeFilters.set(filters);
@@ -226,7 +241,111 @@ export class DataTableComponent<T extends Record<string, any>> {
       this._performBackendSearch(0);
     }
   }
+  private _handleExport(format: string): void {
+    const data = this.filteredData();
+    const columns = this.columns();
 
+    switch (format) {
+      case 'csv':
+        this._exportAsCSV(data, columns);
+        break;
+      case 'json':
+        this._exportAsJSON(data, columns);
+        break;
+      case 'pdf':
+        this._exportAsPDF(data, columns);
+        break;
+    }
+  }
+  private _exportAsCSV(
+    data: readonly T[],
+    columns: readonly TableColumn<T>[]
+  ): void {
+    const headers = columns.map((col) => col.header).join(',');
+    const rows = data.map((item) =>
+      columns
+        .map((col) => {
+          const value = col.getValue ? col.getValue(item) : item[col.key];
+          // Escape commas and quotes
+          return `"${String(value).replace(/"/g, '""')}"`;
+        })
+        .join(',')
+    );
+
+    const csv = [headers, ...rows].join('\n');
+    this._downloadFile(csv, 'text/csv', 'csv');
+  }
+
+  private _exportAsJSON(
+    data: readonly T[],
+    columns: readonly TableColumn<T>[]
+  ): void {
+    const exportData = data.map((item) => {
+      const row: Record<string, any> = {};
+      columns.forEach((col) => {
+        row[col.header] = col.getValue ? col.getValue(item) : item[col.key];
+      });
+      return row;
+    });
+
+    const json = JSON.stringify(exportData, null, 2);
+    this._downloadFile(json, 'application/json', 'json');
+  }
+
+  private _exportAsPDF(
+    data: readonly T[],
+    columns: readonly TableColumn<T>[]
+  ): void {
+    // For PDF, you'd typically use a library like jsPDF
+    // For now, we'll create a simple HTML representation
+    alert('PDF export requires additional library. Exporting as HTML instead.');
+
+    let html =
+      '<html><head><style>table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:8px;text-align:left;}th{background-color:#4CAF50;color:white;}</style></head><body>';
+    html += '<table><thead><tr>';
+
+    columns.forEach((col) => {
+      html += `<th>${col.header}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    data.forEach((item) => {
+      html += '<tr>';
+      columns.forEach((col) => {
+        const value = col.getValue ? col.getValue(item) : item[col.key];
+        html += `<td>${value}</td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></body></html>';
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${this.tableTitle()}-${
+      new Date().toISOString().split('T')[0]
+    }.html`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  private _downloadFile(
+    content: string,
+    mimeType: string,
+    extension: string
+  ): void {
+    const blob = new Blob([content], { type: mimeType });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${this.tableTitle()}-${
+      new Date().toISOString().split('T')[0]
+    }.${extension}`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
   private _totalFilteredItems = signal<number>(0);
   public readonly totalFilteredItems = computed(() => {
     if (this.serverSidePagination()) {

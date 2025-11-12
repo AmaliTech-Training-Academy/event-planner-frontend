@@ -52,11 +52,10 @@
     }
   }
 
-  // Toggle Button
   &__toggle {
     position: absolute;
     top: 1.5rem;
-    right: -0.75rem;
+    right: -0.45rem;
     width: 1.5rem;
     height: 1.5rem;
     background: $gray-50;
@@ -66,10 +65,11 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 10;
+    z-index: 100;
     transition: all 0.2s ease;
     color: $gray-600;
     padding: 0;
+
 
     &:hover {
       background: $gray-100;
