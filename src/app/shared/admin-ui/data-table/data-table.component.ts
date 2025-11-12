@@ -72,15 +72,13 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly searchPlaceholder = input<string>();
   public readonly searchBoxClass = input<string>();
   public readonly searchSize = input<'md' | 'lg'>('md');
-  public readonly showCheckboxes = input<boolean>(true);
   public readonly showFilters = input<boolean>(true);
   public readonly data = input.required<ReadonlyArray<T>>();
   public readonly columns = input.required<ReadonlyArray<TableColumn<T>>>();
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
   public readonly filters = input<ReadonlyArray<TableFilter>>([]);
   public readonly searchable = input<boolean>(true);
-  public readonly searchPlaceholder = input<string>('Search...');
-  public readonly searchKey = input<string>(''); // Add this for dynamic search field
+  public readonly searchKey = input<string>(''); 
 
   public readonly expandable = input<boolean>(false);
   public readonly showCheckboxes = input<boolean>(false); // Add this
@@ -326,7 +324,7 @@ export class DataTableComponent<T extends Record<string, any>> {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${this.title()}-${
+    link.download = `${this.tableTitle()}-${
       new Date().toISOString().split('T')[0]
     }.html`;
     link.click();
@@ -342,7 +340,7 @@ export class DataTableComponent<T extends Record<string, any>> {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${this.title()}-${
+    link.download = `${this.tableTitle()}-${
       new Date().toISOString().split('T')[0]
     }.${extension}`;
     link.click();

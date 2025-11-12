@@ -2,13 +2,12 @@
   <div class="data-table__header">
     <h2 class="data-table__title">{{ tableTitle() }}</h2>
 
-
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
         <app-input
           class="md"
-          [placeholder]="searchPlaceholder()"
+          [placeholder]="searchPlaceholder() ?? 'Search...'"
           [value]="searchQuery()"
           (valueChange)="updateSearch($event)"
           iconSrc="icons/search-icon.png"
@@ -99,6 +98,7 @@
       @for (item of paginatedData(); track trackByIndex($index)) {
       <tr class="data-table__tr">
         <!-- ✅ Checkbox column -->
+        @if (showCheckboxes()) {
         <td class="data-table__td data-table__td--checkbox">
           <app-checkbox
             [checked]="isSelected(item)"
@@ -147,10 +147,9 @@
             </p>
           </div>
           } @else if (isRoleOrStatus(column.key)) {
-         <span [class]="getBadgeClass(item[column.key]?.toLowerCase())">
-  {{ capitalizeFirstLetter(item[column.key]) }}
-</span>
-
+          <span [class]="getBadgeClass(item[column.key]?.toLowerCase())">
+            {{ capitalizeFirstLetter(item[column.key]) }}
+          </span>
           } @else {
           {{ column.getValue ? column.getValue(item) : item[column.key] }}
           }
@@ -188,23 +187,22 @@
             @if (isActionLoading(action, item)) {
             <span class="data-table__action-spinner"></span>
             } @else {
-           <img
-  [src]="
-    action.color === 'power'
-      ? isUserActive(item)
-        ? 'icons/power-icon-red.png'
-        : 'icons/power-icon-green.png'
-      : action.icon
-  "
-  [alt]="
-    action.color === 'power'
-      ? isUserActive(item)
-        ? 'Deactivate user icon'
-        : 'Activate user icon'
-      : action.label + ' icon'
-  "
-/>
-
+            <img
+              [src]="
+                action.color === 'power'
+                  ? isUserActive(item)
+                    ? 'icons/power-icon-red.png'
+                    : 'icons/power-icon-green.png'
+                  : action.icon
+              "
+              [alt]="
+                action.color === 'power'
+                  ? isUserActive(item)
+                    ? 'Deactivate user icon'
+                    : 'Activate user icon'
+                  : action.label + ' icon'
+              "
+            />
             }
           </app-button>
           }
@@ -223,12 +221,11 @@
   } 
   
   @if (filteredData().length > 0 && !loading()) {
-    <app-pagination
-      [totalItems]="totalItems()"
-      [itemsPerPage]="itemsPerPage()"
-      [currentPage]="currentPage()"
-      (pageChange)="setCurrentPage($event)"
-    ></app-pagination>
+  <app-pagination
+    [totalItems]="totalItems()"
+    [itemsPerPage]="itemsPerPage()"
+    [currentPage]="currentPage()"
+    (pageChange)="setCurrentPage($event)"
+  ></app-pagination>
   }
 </div>
-
