@@ -65,7 +65,6 @@
     overflow: hidden;
   }
 
-  // Chart container styles
   &__chart-container {
     background: white;
     border-radius: $radius-4;
@@ -111,10 +110,8 @@
     padding: $spacing-5;
   }
 
-  // Transaction-specific table styling
   ::ng-deep {
     .data-table {
-      // Create Event button styling
       &__controls {
         .invite-btn {
           app-button {
@@ -132,7 +129,6 @@
         }
       }
 
-      // Status badge colors matching the design
       &__badge {
         padding: 6px 16px;
         border-radius: 20px;
@@ -142,25 +138,21 @@
         text-align: center;
         min-width: 100px;
 
-        // Completed - Light green background with dark green text
         &--completed {
           background-color: #D4EDDA;
           color: #155724;
         }
 
-        // Pending - Light yellow/orange background with dark yellow text
         &--pending {
           background-color: #FFF3CD;
           color: #856404;
         }
 
-        // Refunded - Light gray background with gray text
         &--refunded {
           background-color: #E9ECEF;
           color: #6C757D;
         }
 
-        // Failed - Light red background with dark red text
         &--failed {
           background-color: #F8D7DA;
           color: #721C24;

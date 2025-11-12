@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, Signal } from '@angular/core';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   DataTableComponent,
@@ -10,7 +10,6 @@ import {
 import {
   LineChartComponent,
   LineSeriesConfig,
-  TimeSeriesDataPoint,
 } from '../../pages/dashboard-page/components/line-chart/line-chart.component';
 
 interface Transaction {
@@ -25,12 +24,17 @@ interface Transaction {
   status: 'Completed' | 'Refunded' | 'Pending' | 'Failed';
 }
 
-type TransactionFilter =
-  | 'Total'
-  | 'Completed'
-  | 'Pending'
-  | 'Failed'
-  | 'Refund';
+type TransactionFilter = 'Total' | 'Completed' | 'Pending' | 'Failed' | 'Refund';
+
+interface ChartTab {
+  readonly key: TransactionFilter;
+  readonly label: string;
+}
+
+interface PrimaryAction {
+  readonly label: string;
+  readonly handler: () => void;
+}
 
 @Component({
   selector: 'app-transactions-page',
@@ -42,27 +46,23 @@ type TransactionFilter =
 export class TransactionsPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
 
-  protected readonly isCreateEventModalOpen = signal<boolean>(false);
-  protected readonly selectedTransaction = signal<Transaction | undefined>(
-    undefined
-  );
-
   protected readonly activeTab = signal<TransactionFilter>('Total');
 
-  protected readonly chartTabs = [
-    { key: 'Total' as const, label: 'Total' },
-    { key: 'Completed' as const, label: 'Completed' },
-    { key: 'Pending' as const, label: 'Pending' },
-    { key: 'Failed' as const, label: 'Failed' },
-    { key: 'Refund' as const, label: 'Refund' },
-  ];
+  protected readonly chartTabs: readonly ChartTab[] = [
+    { key: 'Total', label: 'Total' },
+    { key: 'Completed', label: 'Completed' },
+    { key: 'Pending', label: 'Pending' },
+    { key: 'Failed', label: 'Failed' },
+    { key: 'Refund', label: 'Refund' },
+  ] as const;
+
   protected readonly transactionsEmptyState: EmptyState = {
     imageSrc: 'images/no-transactions.png',
     imageAlt: 'No transactions found',
-    message:
-      'No transactions found. When events with payments are created, they will appear here.',
+    message: 'No transactions found. When events with payments are created, they will appear here.',
   };
-  private readonly _allTransactionsChartData: LineSeriesConfig[] = [
+
+  private readonly _allTransactionsChartData: readonly LineSeriesConfig[] = [
     {
       name: 'This Year',
       data: [
@@ -97,9 +97,9 @@ export class TransactionsPageComponent implements OnInit {
       showArea: false,
       lineStyle: 'dashed',
     },
-  ];
+  ] as const;
 
-  private readonly _completedChartData: LineSeriesConfig[] = [
+  private readonly _completedChartData: readonly LineSeriesConfig[] = [
     {
       name: 'This Year',
       data: [
@@ -134,9 +134,9 @@ export class TransactionsPageComponent implements OnInit {
       showArea: false,
       lineStyle: 'dashed',
     },
-  ];
+  ] as const;
 
-  private readonly _pendingChartData: LineSeriesConfig[] = [
+  private readonly _pendingChartData: readonly LineSeriesConfig[] = [
     {
       name: 'This Year',
       data: [
@@ -171,9 +171,9 @@ export class TransactionsPageComponent implements OnInit {
       showArea: false,
       lineStyle: 'dashed',
     },
-  ];
+  ] as const;
 
-  private readonly _failedChartData: LineSeriesConfig[] = [
+  private readonly _failedChartData: readonly LineSeriesConfig[] = [
     {
       name: 'This Year',
       data: [
@@ -208,9 +208,9 @@ export class TransactionsPageComponent implements OnInit {
       showArea: false,
       lineStyle: 'dashed',
     },
-  ];
+  ] as const;
 
-  private readonly _refundChartData: LineSeriesConfig[] = [
+  private readonly _refundChartData: readonly LineSeriesConfig[] = [
     {
       name: 'This Year',
       data: [
@@ -245,26 +245,21 @@ export class TransactionsPageComponent implements OnInit {
       showArea: false,
       lineStyle: 'dashed',
     },
-  ];
+  ] as const;
 
-  protected readonly chartSeriesConfig = computed(() => {
-    switch (this.activeTab()) {
-      case 'Total':
-        return this._allTransactionsChartData;
-      case 'Completed':
-        return this._completedChartData;
-      case 'Pending':
-        return this._pendingChartData;
-      case 'Failed':
-        return this._failedChartData;
-      case 'Refund':
-        return this._refundChartData;
-      default:
-        return this._allTransactionsChartData;
-    }
+  protected readonly chartSeriesConfig: Signal<readonly LineSeriesConfig[]> = computed(() => {
+    const chartDataMap: Record<TransactionFilter, readonly LineSeriesConfig[]> = {
+      Total: this._allTransactionsChartData,
+      Completed: this._completedChartData,
+      Pending: this._pendingChartData,
+      Failed: this._failedChartData,
+      Refund: this._refundChartData,
+    };
+    
+    return chartDataMap[this.activeTab()];
   });
 
-  private readonly _transactions = signal<Transaction[]>([
+  private readonly _transactions = signal<readonly Transaction[]>([
     {
       transactionId: 'TX123',
       date: '2023-10-15',
@@ -333,9 +328,9 @@ export class TransactionsPageComponent implements OnInit {
     },
   ]);
 
-  protected readonly transactions = this._transactions.asReadonly();
+  protected readonly transactions: Signal<readonly Transaction[]> = this._transactions.asReadonly();
 
-  protected readonly tableColumns: TableColumn<Transaction>[] = [
+  protected readonly tableColumns: readonly TableColumn<Transaction>[] = [
     { key: 'transactionId', header: 'Transaction ID', sortable: true },
     { key: 'date', header: 'Date', sortable: true },
     { key: 'eventName', header: 'Event Name', sortable: true },
@@ -346,29 +341,24 @@ export class TransactionsPageComponent implements OnInit {
     { key: 'status', header: 'Status', filterable: true },
   ];
 
-  protected formatAmount(amount: number): string {
-    if (amount === 0) return 'Free';
-    return `${amount.toFixed(2)}`;
-  }
-
-  protected readonly tableActions: TableAction<Transaction>[] = [
+  protected readonly tableActions: readonly TableAction<Transaction>[] = [
     {
       icon: 'icons/view-icon.png',
       label: 'View Transaction Details',
       color: 'view',
       type: 'action',
-      handler: (transaction) => this._viewTransaction(transaction),
+      handler: (transaction: Transaction) => this._viewTransaction(transaction),
     },
     {
       icon: 'icons/download-icon.png',
       label: 'Download Receipt',
       color: 'edit',
       type: 'action',
-      handler: (transaction) => this._downloadReceipt(transaction),
+      handler: (transaction: Transaction) => this._downloadReceipt(transaction),
     },
   ];
 
-  protected readonly tableFilters: TableFilter[] = [
+  protected readonly tableFilters: readonly TableFilter[] = [
     {
       key: 'status',
       placeholder: 'All Status',
@@ -393,12 +383,10 @@ export class TransactionsPageComponent implements OnInit {
     },
   ];
 
-  protected readonly primaryAction = {
+  protected readonly primaryAction: PrimaryAction = {
     label: 'Create Event',
     handler: () => this._openCreateEventModal(),
   };
-
-  constructor() {}
 
   public ngOnInit(): void {
     this._layoutService.pageTitle.set('Transaction History');
@@ -411,18 +399,11 @@ export class TransactionsPageComponent implements OnInit {
   }
 
   private _viewTransaction(transaction: Transaction): void {
-    this.selectedTransaction.set(transaction);
   }
 
   private _downloadReceipt(transaction: Transaction): void {
-    alert(`Downloading receipt for ${transaction.transactionId}`);
   }
 
   private _openCreateEventModal(): void {
-    this.isCreateEventModalOpen.set(true);
-  }
-
-  protected closeCreateEventModal(): void {
-    this.isCreateEventModalOpen.set(false);
   }
 }
