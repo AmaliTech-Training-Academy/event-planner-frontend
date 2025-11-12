@@ -142,6 +142,20 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
+public adminLogout() {
+  this.setLoading(true);
+  return this.authBackend.logout().pipe(
+    take(1),
+    tap(() => {
+      this._loggedIn$.next(false);
+      this._userInfo$.next(null);
+      this.clearAuthStorage();
+      this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+    }),
+    catchError((err) => this.errorHandlerService.handle(err)),
+    finalize(() => this.setLoading(false))
+  );
+}
 
   public checkAuthUser(userId: string) {
     this.setLoading(true);

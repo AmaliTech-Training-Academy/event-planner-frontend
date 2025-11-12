@@ -1,7 +1,7 @@
-
 @use 'typography' as *;
 @use 'colors' as *;
 @use 'variables' as *;
+
 .admin-sidebar {
   width: 17.5rem;
   height: 100vh;
@@ -12,7 +12,80 @@
   position: fixed;
   left: 0;
   top: 0;
-  
+  transition: width 0.3s ease;
+  z-index: 100;
+
+  // Collapsed state
+  &--collapsed {
+    width: 5rem;
+
+    .admin-sidebar__title {
+      justify-content: center;
+      
+      span:last-child {
+        display: none;
+      }
+    }
+
+    .admin-sidebar__link {
+      justify-content: center;
+      padding: $spacing-3 $spacing-2;
+
+      &::before {
+        left: 0;
+        right: auto;
+      }
+    }
+
+    .admin-sidebar__toggle-icon {
+      transform: rotate(0deg);
+    }
+
+    // When collapsed, adjust the adjacent main content
+    ~ .admin-layout__main {
+      margin-left: 5rem;
+    }
+  }
+
+  // Toggle Button
+  &__toggle {
+    position: absolute;
+    top: 1.5rem;
+    right: -0.75rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: $gray-50;
+    border: $stroke-0 solid $gray-200;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    color: $gray-600;
+    padding: 0;
+
+    &:hover {
+      background: $gray-100;
+      border-color: $gray-300;
+      color: $orange-600;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $orange-600;
+      outline-offset: 2px;
+    }
+  }
+
+  &__toggle-icon {
+    transition: transform 0.3s ease;
+  }
 
   &__header {
     padding: $spacing-6 $spacing-4;
@@ -20,18 +93,23 @@
 
   &__title {
     @include h-5;
-        color:$gray-950;
-   
+    color: $gray-950;
     margin: 0;
-    span{
-         color: $orange-600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.3s ease;
+
+    span:first-child {
+      color: $orange-600;
     }
   }
 
   &__nav {
     flex: 1;
     overflow-y: auto;
-    padding: $spacing-6 .5rem;
+    overflow-x: hidden;
+    padding: $spacing-6 0.5rem;
 
     &::-webkit-scrollbar {
       width: 0.25rem;
@@ -44,7 +122,6 @@
     &::-webkit-scrollbar-thumb {
       background: $gray-300;
       border-radius: $radius-full;
-      
 
       &:hover {
         background: $gray-400;
@@ -66,6 +143,10 @@
     padding: 0 $spacing-4;
     margin: 0 0 $spacing-3 0;
     text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s ease;
   }
 
   &__list {
@@ -88,6 +169,7 @@
     transition: all 0.2s ease;
     position: relative;
     @include body-2;
+    white-space: nowrap;
 
     &::before {
       content: '';
@@ -97,17 +179,18 @@
       bottom: 0;
       width: 0.25rem;
       background-color: transparent;
-      transition: background-color 0.4s ease;
+      transition: all 0.3s ease;
     }
 
     &:hover {
-      
       color: $orange-700;
-      border-radius: .5rem;
+      border-radius: 0.5rem;
+      background: rgba($orange-600, 0.05);
 
       .admin-sidebar__icon {
-        filter: brightness(0) saturate(100%) invert(45%) sepia(89%) saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
-        transform: rotate(360deg);
+        filter: brightness(0) saturate(100%) invert(45%) sepia(89%)
+          saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
+        transform: scale(1.1);
       }
     }
 
@@ -115,13 +198,16 @@
       background-color: $gray-100;
       color: $gray-600;
       font-weight: 600;
-      border-radius: .5rem 0 0rem .5rem;
+      border-radius: 0.5rem 0 0 0.5rem;
 
       &::before {
         background-color: $orange-600;
       }
 
-    
+      .admin-sidebar__icon {
+        filter: brightness(0) saturate(100%) invert(45%) sepia(89%)
+          saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
+      }
     }
   }
 
@@ -130,21 +216,81 @@
     height: 1.25rem;
     display: block;
     flex-shrink: 0;
-    transition: filter 0.2s ease;
+    transition: all 0.3s ease;
     object-fit: contain;
-    transition: .4s ease;
-    &:hover{
-      filter: brightness(0) saturate(100%) invert(45%) sepia(89%) saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
-    }
   }
 
   &__label {
     flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s ease;
   }
 
   &__footer {
     padding: $spacing-4;
     border-top: $stroke-0 solid $gray-200;
     margin-top: auto;
+  }
+
+  &__empty {
+    @include body-3;
+    color: $gray-400;
+    padding: $spacing-3 $spacing-4;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+// Adjust main content when sidebar is expanded (default)
+.admin-layout__main {
+  margin-left: 17.5rem;
+  transition: margin-left 0.3s ease;
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    
+    &--collapsed {
+      transform: translateX(0);
+      width: 5rem;
+    }
+  }
+
+  .admin-layout__main {
+    margin-left: 0;
+  }
+
+  .admin-sidebar--collapsed ~ .admin-layout__main {
+    margin-left: 5rem;
+  }
+}
+.admin-sidebar__link--logout {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: #dc2626; // Red color for logout
+  margin-top: 0.5rem; // Add spacing between settings and logout
+
+  &:hover {
+    color: #b91c1c;
+    background: rgba(220, 38, 38, 0.05);
+
+    .admin-sidebar__icon {
+      filter: brightness(0) saturate(100%) invert(27%) sepia(93%)
+        saturate(4367%) hue-rotate(348deg) brightness(95%) contrast(90%);
+      transform: scale(1.1);
+    }
+  }
+
+  .admin-sidebar__icon {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(93%)
+      saturate(4367%) hue-rotate(348deg) brightness(95%) contrast(90%);
   }
 }

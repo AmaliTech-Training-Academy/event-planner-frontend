@@ -3,14 +3,19 @@ import {
   Component,
   computed,
   signal,
+  inject,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { LayoutService } from '../../../core/services/layout.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 export interface MenuItem {
   readonly label: string;
   readonly iconPath: string;
-  readonly route: string;
+  readonly route?: string;
+  readonly action?: () => void;
+  readonly isLogout?: boolean;
 }
 
 export interface MenuSection {
@@ -27,6 +32,11 @@ export interface MenuSection {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminSidebarComponent {
+  private readonly layoutService = inject(LayoutService);
+  private readonly authService = inject(AuthService);
+
+  protected readonly isCollapsed = this.layoutService.sidebarCollapsed;
+
   private readonly _menuSections = signal<ReadonlyArray<MenuSection>>([
     {
       title: 'Dashboard',
@@ -50,6 +60,11 @@ export class AdminSidebarComponent {
           label: 'Event Overview',
           iconPath: 'icons/calender-icon.png',
           route: '/admin/events',
+        },
+        {
+          label: 'Audit Logs',
+          iconPath: 'icons/audit.png',
+          route: '/admin/audit-logs',
         },
       ],
     },
@@ -76,6 +91,29 @@ export class AdminSidebarComponent {
     route: '/admin/settings',
   });
 
+  private readonly _logoutItem = signal<MenuItem>({
+    label: 'Logout',
+    iconPath: 'icons/logout.png',
+    isLogout: true,
+    action: () => this.handleLogout(),
+  });
+
   public readonly menuSections = computed(() => this._menuSections());
   public readonly settingsItem = computed(() => this._settingsItem());
+  public readonly logoutItem = computed(() => this._logoutItem());
+
+  protected toggleSidebar(): void {
+    this.layoutService.toggleSidebar();
+  }
+
+  protected handleLogout(): void {
+    this.authService.adminLogout().subscribe();
+  }
+
+  protected handleItemClick(item: MenuItem, event: Event): void {
+    if (item.isLogout) {
+      event.preventDefault();
+      item.action?.();
+    }
+  }
 }

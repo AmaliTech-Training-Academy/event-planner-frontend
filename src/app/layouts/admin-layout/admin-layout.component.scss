@@ -5,11 +5,15 @@
   min-height: 100vh;
   flex-direction: column;
   background-color: #f5f5f5;
+  transition: margin-left 0.3s ease; // Add transition here!
 
   /* Scrollbar styling */
   overflow-y: auto;
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent; /* Firefox thumb color and track */
+   &--collapsed {
+    margin-left: 5rem;
+  }
 }
 
 /* Chrome, Edge, Safari */
@@ -30,4 +34,20 @@
 .admin-layout__content {
   flex: 1;
   padding: 2rem;
+}
+
+// Handle collapsed sidebar state
+.admin-sidebar--collapsed ~ .admin-layout__main {
+  margin-left: 5rem;
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .admin-layout__main {
+    margin-left: 0;
+  }
+
+  .admin-sidebar--collapsed ~ .admin-layout__main {
+    margin-left: 5rem;
+  }
 }

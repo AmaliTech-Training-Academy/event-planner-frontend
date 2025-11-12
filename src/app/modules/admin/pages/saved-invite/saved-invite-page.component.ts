@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit } from '@angular/core';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   DataTableComponent,
@@ -28,7 +28,7 @@ interface SavedInvite {
   templateUrl: './saved-invite-page.component.html',
   styleUrls: ['./saved-invite-page.component.scss'],
 })
-export class SavedInviteComponent {
+export class SavedInviteComponent implements OnInit {
   private readonly _invites = signal<ReadonlyArray<SavedInvite>>([
     {
       invitationTitle: 'Early Bird Registration Offer',
@@ -115,12 +115,12 @@ export class SavedInviteComponent {
     },
   ];
 
-  constructor(private readonly _layoutService: LayoutService) {
+  constructor(private readonly _layoutService: LayoutService) {}
+  ngOnInit(): void {
     this._layoutService.pageTitle.set('Saved Invites');
     this._layoutService.logoSrc.set('icons/save-icon.png');
-    this._layoutService.logoAlt.set('Saved Invites');
+    this._layoutService.logoAlt.set('Saved Invites Icon');
   }
-
   protected openEditModal(invite: SavedInvite): void {
     const inviteCopy: SavedInvite = { ...invite };
     this._selectedInvite.set(inviteCopy);
