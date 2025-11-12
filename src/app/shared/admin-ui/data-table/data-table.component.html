@@ -6,16 +6,14 @@
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-  <div class="data-table__search-box" [ngClass]="searchBoxClass">
-  <app-input
-    [ngClass]="searchSize"
-    [placeholder]="searchPlaceholder() || 'Search...'"
-    [value]="searchQuery()"
-    (valueChange)="updateSearch($event)"
-    iconSrc="icons/search-icon.png"
-  />
-</div>
-
+       <app-input
+  class="md"
+  placeholder="Search users..."
+  [value]="searchQuery()"
+  (valueChange)="updateSearch($event)"
+  iconSrc="icons/search-icon.png"
+  [disabled]="loading()"
+/>
 
       </div>
       }
@@ -26,6 +24,7 @@
         [options]="filter.options"
         [value]="getFilterValue(filter.key)"
         (valueChange)="updateFilter(filter.key, $event)"
+        [disabled]="loading()"
       ></app-filter-select>
       }
 
@@ -35,6 +34,7 @@
         <app-button
           type="primary"
           (click)="executePrimaryAction()"
+          [disabled]="loading()"
           aria-label="Add new user"
         >
           + {{ action.label }}
@@ -44,6 +44,27 @@
     </div>
   </div>
 
+  <!-- ✅ Loading State -->
+  @if (loading()) {
+  <div class="data-table__loading">
+    <div class="data-table__skeleton">
+      @for (row of [1,2,3,4,5]; track row) {
+      <div class="data-table__skeleton-row">
+        <div
+          class="data-table__skeleton-cell data-table__skeleton-cell--checkbox"
+        ></div>
+        @for (col of columns(); track col.key) {
+        <div class="data-table__skeleton-cell"></div>
+        } @if (actions().length > 0) {
+        <div
+          class="data-table__skeleton-cell data-table__skeleton-cell--actions"
+        ></div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  } @else {
   <table class="data-table__table" role="table">
     <thead class="data-table__thead">
       <tr>
@@ -81,65 +102,92 @@
 
         @if (expandable()) {
         <td class="data-table__td data-table__td--expand">
-          <app-button type="social" (click)="toggleRow($index)">
+          <app-button type="social" (click)="toggleRow($index, item)">
             {{ isRowExpanded($index) ? "−" : "+" }}
           </app-button>
         </td>
         } @for (column of columns(); track column.key) {
         <td class="data-table__td">
-          @if (column.key === 'name' && item['email']) {
+          @if (column.key === 'fullName') {
           <div class="data-table__user-cell">
             <img
-  [ngSrc]="item['avatar']"
-  alt="User avatar"
-  class="data-table__user-avatar"
-  width="40"
-  height="40"
-/>
-
+              [src]="getRandomAvatar(item)"
+              [alt]="
+                (column.getValue ? column.getValue(item) : item[column.key]) +
+                ' avatar'
+              "
+              class="data-table__user-avatar-img"
+            />
             <div class="data-table__user-info">
               <p class="data-table__user-name">
-                {{ item[column.key] }}
+                {{ column.getValue ? column.getValue(item) : item[column.key] }}
               </p>
-              <p class="data-table__user-email">{{ item["email"] }}</p>
+              <p class="data-table__user-email">
+                {{ item["email"] || "No email" }}
+              </p>
             </div>
           </div>
           } @else if (isRoleOrStatus(column.key)) {
-
           <span [class]="getBadgeClass(item[column.key])">
-            {{ item[column.key] }}
+            {{ capitalizeFirstLetter(item[column.key]) }}
           </span>
-
           } @else {
-          {{ item[column.key] }}
+          {{ column.getValue ? column.getValue(item) : item[column.key] }}
           }
         </td>
         }
 
-     <!-- In data-table.component.html, replace the actions section: -->
-
-@if (actions().length > 0) {
-<td class="data-table__td data-table__td--actions">
-  @for (action of actions(); track action.label) {
-    @if (isActionVisible(action, item)) {
-    <app-button
-      [type]="action.type || 'action'"
-      [color]="getActionColor(action, item)"
-      [extraClass]="getActionExtraClass(action, item)"
-      (onClick)="executeAction(action, item)"
-      [disabled]="isActionDisabled(action, item)"
-      [attr.aria-label]="getActionAriaLabel(action, item)"
-      class="data-table__action-btn"
-    >
-      <img
-        [src]="getActionIcon(action, item)"
-        [alt]="getActionIconAlt(action, item)"
-      />
-    </app-button>
-    }
-  }
-</td>
-}
+        <!-- ✅ Actions column with loading states -->
+        @if (actions().length > 0) {
+        <td class="data-table__td data-table__td--actions">
+          @for (action of actions(); track action.label) {
+          <app-button
+            type="action"
+            [extraClass]="
+              action.color === 'power'
+                ? item['status'] === 'Active'
+                  ? 'power-active'
+                  : 'power-inactive'
+                : action.color
+            "
+            (click)="executeAction(action, item)"
+            [disabled]="isActionDisabled(action, item)"
+            [attr.aria-label]="
+              action.color === 'power'
+                ? item['status'] === 'Active'
+                  ? 'Deactivate user'
+                  : 'Activate user'
+                : action.label
+            "
+            class="data-table__action-btn"
+            [class.data-table__action-btn--loading]="
+              isActionLoading(action, item)
+            "
+          >
+            @if (isActionLoading(action, item)) {
+            <span class="data-table__action-spinner"></span>
+            } @else {
+            <img
+              [src]="
+                action.color === 'power'
+                  ? item['status'] === 'Active'
+                    ? 'icons/power-icon-red.png'
+                    : 'icons/power-icon-green.png'
+                  : action.icon
+              "
+              [alt]="
+                action.color === 'power'
+                  ? item['status'] === 'Active'
+                    ? 'Deactivate user icon'
+                    : 'Activate user icon'
+                  : action.label + ' icon'
+              "
+            />
+            }
+          </app-button>
+          }
+        </td>
+        }
       </tr>
       }
     </tbody>
@@ -150,13 +198,15 @@
   <div class="data-table__no-data">
     <img src="/images/table-empty.png" alt="No data found" />
   </div>
-  } @if (filteredData().length > 0) {
-  <app-pagination
-    [totalItems]="filteredData().length"
-    [itemsPerPage]="itemsPerPage()"
-    [currentPage]="currentPage()"
-    (currentPageChange)="setCurrentPage($event)"
-  ></app-pagination>
+  } } @if (filteredData().length > 0 && !loading()) {
+<app-pagination
+  [totalItems]="totalItems()"
+  [itemsPerPage]="itemsPerPage()"
+  [currentPage]="currentPage()"
+  (pageChange)="setCurrentPage($event)"
+></app-pagination>
+
+
 
   }
 </div>

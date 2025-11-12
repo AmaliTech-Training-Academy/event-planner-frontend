@@ -1,8 +1,17 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  effect,
+  inject,
+  signal,
+  DestroyRef,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { USER_ROLES } from '../../../../core/constants/user.constants';
-import { User, UserCardData } from '../../../../core/models/user.model';
+
 import { LayoutService } from '../../../../core/services/layout.service';
+import { UserManagementService } from '../../../../core/services/user-management.service';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import {
   DataTableComponent,
@@ -14,6 +23,8 @@ import { InviteUserModalComponent } from './components/invite-user-modal/invite-
 import { SuccessModalComponent } from './components/success-modal/success-modal.component';
 import { EditUserProfileComponent } from './components/edit-user-profile/edit-user-profile.component';
 import { ViewUserProfileComponent } from './components/view-user-profile/view-user-profile.component';
+import { UpdateUserPayload } from '../../../../core/services/backend/user-backend.service';
+import { mapUserStatus, User } from '../../../../core/models';
 
 @Component({
   selector: 'app-user-management-page',
@@ -31,248 +42,63 @@ import { ViewUserProfileComponent } from './components/view-user-profile/view-us
 })
 export class UserManagementPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
+  private readonly _userService = inject(UserManagementService);
   private readonly _router = inject(Router);
+  private readonly _destroyRef = inject(DestroyRef);
+  protected readonly totalElements = toSignal(
+    this._userService.totalElements$,
+    {
+      initialValue: 0,
+    }
+  );
 
   protected readonly isInviteModalOpen = signal<boolean>(false);
   protected readonly isSuccessModalOpen = signal<boolean>(false);
   protected readonly isEditModalOpen = signal<boolean>(false);
   protected readonly isViewModalOpen = signal<boolean>(false);
   protected readonly selectedUser = signal<User | null>(null);
+  protected readonly togglingUserId = signal<number | string | null>(null);
 
-  protected readonly userCards = signal<UserCardData[]>([
-    {
-      title: 'Total Users',
-      count: 2593,
-      percentageChange: 11.01,
-      icon: 'icons/user-icon-orange.png',
-      bgColor: '#FFF4ED',
-      iconColor: '#FF6B2C',
-    },
-    {
-      title: 'Active Organizers',
-      count: 156,
-      icon: 'icons/user-icon-green.png',
-      bgColor: '#E8F5E9',
-      iconColor: '#4CAF50',
-    },
-    {
-      title: 'Attendees',
-      count: 2387,
-      icon: 'icons/user-icon-blue.png',
-      bgColor: '#E3F2FD',
-      iconColor: '#2196F3',
-    },
-    {
-      title: 'Deactivated',
-      count: 24,
-      icon: 'icons/user-icon-red.png',
-      bgColor: '#FFEBEE',
-      iconColor: '#F44336',
-    },
-  ]);
+  protected readonly userCards = toSignal(this._userService.userCards$, {
+    initialValue: [],
+  });
+  protected readonly users = toSignal(this._userService.users$, {
+    initialValue: [],
+  });
+  protected readonly loading = toSignal(this._userService.loading$, {
+    initialValue: false,
+  });
+  protected readonly totalPages = toSignal(this._userService.totalPages$, {
+    initialValue: 1,
+  });
+  protected readonly currentPage = toSignal(this._userService.currentPage$, {
+    initialValue: 0,
+  });
 
-  private readonly _users = signal<User[]>([
-    {
-      userId: 'U001',
-      name: 'Sarah Wilson',
-      fullName: 'Sarah Wilson',
-      email: 'sarah@example.com',
-      phone: '+233501234567',
-      address: '123 Main St, Cityville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ORGANIZER,
-      status: 'Active',
-      eventsOrganized: 3,
-      eventsAttended: 10,
-      joinedDate: '2024-01-15',
-      lastActive: '2 hours ago',
-    },
-    {
-      userId: 'U002',
-      name: 'John Smith',
-      fullName: 'John Smith',
-      email: 'john@example.com',
-      phone: '+233501234567',
-      address: '456 Elm St, Townsville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 2,
-      joinedDate: '2024-02-20',
-      lastActive: '5 days ago',
-    },
-    {
-      userId: 'U003',
-      name: 'Emily Johnson',
-      fullName: 'Emily Johnson',
-      email: 'emily@example.com',
-      phone: '+233501234567',
-      address: '789 Oak St, Villageville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.CO_ORGANIZER,
-      status: 'Active',
-      eventsOrganized: 2,
-      eventsAttended: 6,
-      joinedDate: '2024-03-10',
-      lastActive: '1 hour ago',
-    },
-    {
-      userId: 'U004',
-      name: 'Michael Brown',
-      fullName: 'Michael Brown',
-      email: 'michael@example.com',
-      phone: '+233501234567',
-      address: '321 Pine St, Hamletville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.VENUE_STAFF,
-      status: 'Active',
-      eventsOrganized: 0,
-      eventsAttended: 8,
-      joinedDate: '2023-12-05',
-      lastActive: '30 minutes ago',
-    },
-    {
-      userId: 'U005',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '+233501234567',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U005',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '+233501234567',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U005',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '+233501234567',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U005',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '+233501234567',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U005',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '+233501234567',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U005',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '+233501234567',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U005',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '+233501234567',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    },
-    {
-      userId: 'U005',
-      name: 'Jessica Davis',
-      fullName: 'Jessica Davis',
-      email: 'jessica@example.com',
-      phone: '+233501234567',
-      address: '654 Maple St, Boroughville',
-      avatar: 'icons/avatar.png',
-      profileImageUrl: 'icons/avatar.png',
-      role: USER_ROLES.ATTENDEE,
-      status: 'Inactive',
-      eventsOrganized: 0,
-      eventsAttended: 1,
-      joinedDate: '2024-01-25',
-      lastActive: '2 weeks ago',
-    }
-    
-  ]);
-
-  protected readonly users = this._users.asReadonly();
-
+  private readonly _currentSearch = signal<string>('');
+  private readonly _currentFilters = signal<Map<string, string>>(new Map());
   protected readonly tableColumns: TableColumn<User>[] = [
-    { key: 'name', header: 'User', sortable: true },
-    { key: 'role', header: 'Role(s)', filterable: true },
-    { key: 'status', header: 'Status', filterable: true },
+    {
+      key: 'fullName',
+      header: 'User',
+      sortable: true,
+      getValue: (user) => user.fullName || user.name || 'N/A',
+    },
+    {
+      key: 'role',
+      header: 'Role(s)',
+      filterable: true,
+      getValue: (user) => user.role,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      filterable: true,
+      getValue: (user) =>
+        typeof user.status === 'boolean'
+          ? mapUserStatus(user.status)
+          : user.status,
+    },
     { key: 'eventsOrganized', header: 'Events Organized', sortable: true },
     { key: 'eventsAttended', header: 'Events Attended', sortable: true },
   ];
@@ -295,6 +121,7 @@ export class UserManagementPageComponent implements OnInit {
       label: 'Toggle User Status',
       color: 'power',
       handler: (user) => this._toggleUserStatus(user),
+      isLoading: (user) => this.togglingUserId() === user.userId,
     },
   ];
 
@@ -303,18 +130,18 @@ export class UserManagementPageComponent implements OnInit {
       key: 'role',
       placeholder: 'All Roles',
       options: [
-        { label: USER_ROLES.ORGANIZER, value: USER_ROLES.ORGANIZER },
-        { label: USER_ROLES.CO_ORGANIZER, value: USER_ROLES.CO_ORGANIZER },
-        { label: USER_ROLES.ATTENDEE, value: USER_ROLES.ATTENDEE },
-        { label: USER_ROLES.VENUE_STAFF, value: USER_ROLES.VENUE_STAFF },
+        { label: 'Organizer', value: USER_ROLES.ORGANIZER },
+        { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
+        { label: 'Attendee', value: USER_ROLES.ATTENDEE },
+        { label: 'Admin', value: USER_ROLES.ADMIN },
       ],
     },
     {
       key: 'status',
       placeholder: 'All Status',
       options: [
-        { label: 'Active', value: 'Active' },
-        { label: 'Inactive', value: 'Inactive' },
+        { label: 'Active', value: 'true' },
+        { label: 'Inactive', value: 'false' },
       ],
     },
   ];
@@ -333,6 +160,48 @@ export class UserManagementPageComponent implements OnInit {
 
   ngOnInit(): void {
     this._layoutService.pageTitle.set('User Management');
+    this._loadUsers();
+  }
+
+  private _loadUsers(page: number = 0): void {
+    const search = this._currentSearch();
+    const filters = this._currentFilters();
+
+    const keyword = search.trim() || undefined;
+    const role = filters.get('role');
+    const roleValue = role && role !== 'all' ? role : undefined;
+    const status = filters.get('status');
+    const statusValue =
+      status && status !== 'all' ? this._normalizeStatus(status) : undefined;
+
+    if (keyword || roleValue || statusValue !== undefined) {
+      this._userService
+        .searchUsers(keyword, roleValue, statusValue, page)
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe();
+    } else {
+      this._userService
+        .fetchAllUsers(page)
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe();
+    }
+  }
+  private _normalizeStatus(value: string): boolean {
+    return value.toLowerCase() === 'active' || value === 'true';
+  }
+  public onPageChange(page: number): void {
+    this._loadUsers(page - 1);
+  }
+  public onSearchChange(query: string): void {
+    this._currentSearch.set(query);
+    this._loadUsers(0);
+  }
+
+  public onFilterChange(event: { key: string; value: string }): void {
+    const filters = new Map(this._currentFilters());
+    filters.set(event.key, event.value);
+    this._currentFilters.set(filters);
+    this._loadUsers(0);
   }
 
   protected openInviteModal(): void {
@@ -349,10 +218,8 @@ export class UserManagementPageComponent implements OnInit {
 
   protected onInviteSuccess(): void {
     this.closeInviteModal();
-
-    setTimeout(() => {
-      this.isSuccessModalOpen.set(true);
-    }, 200);
+    this._loadUsers(this.currentPage() || 0);
+    setTimeout(() => this.isSuccessModalOpen.set(true), 200);
   }
 
   protected goToDashboard(): void {
@@ -367,10 +234,7 @@ export class UserManagementPageComponent implements OnInit {
 
   protected onEditFromView(): void {
     this.isViewModalOpen.set(false);
-
-    Promise.resolve().then(() => {
-      this.isEditModalOpen.set(true);
-    });
+    Promise.resolve().then(() => this.isEditModalOpen.set(true));
   }
 
   protected onToggleUserStatus(user: User): void {
@@ -384,68 +248,89 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   protected onSaveEdit(formData: any): void {
+    const selectedUser = this.selectedUser();
+    if (!selectedUser?.userId) return;
 
-    const selectedUserId = this.selectedUser()?.userId;
-    if (!selectedUserId) {
-      return;
-    }
+    const updatePayload: UpdateUserPayload = {
+      fullName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone || formData.phoneNumber || '',
+      address: formData.address || '',
+      status: selectedUser.status === 'Active',
+    };
 
-    this._users.update((users) =>
-      users.map((u) => {
-        if (u.userId === selectedUserId) {
-          return {
-            ...u,
-            fullName: formData.fullName,
-            name: formData.fullName,
-            email: formData.email,
-            phone: formData.phoneNumber,
-            address: formData.address,
-            profileImageUrl: formData.profileImage || u.profileImageUrl,
-            avatar: formData.profileImage || u.avatar,
-          };
-        }
-        return u;
-      })
-    );
+    if (formData.profileImage)
+      updatePayload.profilePicture = formData.profileImage;
 
-    this.closeEditModal();
+    this._userService
+      .updateUser(selectedUser.userId.toString(), updatePayload)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: () => {
+          this.closeEditModal();
+          this._loadUsers(this.currentPage() || 0);
+        },
+        error: (error) => {
+        
+          alert('Failed to update user. Please try again.');
+        },
+      });
   }
 
-  protected onRowExpanded(user: User): void {
-  }
+  protected onRowExpanded(user: User): void {}
 
   private _openInviteModal(): void {
     this.openInviteModal();
   }
 
   private _viewUser(user: User): void {
-    this.selectedUser.set(user);
-
-    Promise.resolve().then(() => {
-      this.isViewModalOpen.set(true);
-    });
+    this._userService
+      .getUser(user.userId.toString())
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.selectedUser.set(response.data);
+          this.isViewModalOpen.set(true);
+        },
+        error: (err) => {
+          this.selectedUser.set(user);
+          this.isViewModalOpen.set(true);
+        },
+      });
   }
 
   private _editUser(user: User): void {
+    if (this.isViewModalOpen()) this.closeViewModal();
 
-    if (this.isViewModalOpen()) {
-      this.closeViewModal();
-    }
-
-    this.selectedUser.set(user);
-
-    Promise.resolve().then(() => {
-      this.isEditModalOpen.set(true);
-    });
+    this._userService
+      .getUser(user.userId.toString())
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.selectedUser.set(response.data);
+          this.isEditModalOpen.set(true);
+        },
+        error: (err) => {
+          this.selectedUser.set(user);
+          this.isEditModalOpen.set(true);
+        },
+      });
   }
 
   private _toggleUserStatus(user: User): void {
-    this._users.update((users) =>
-      users.map((u) =>
-        u.userId === user.userId
-          ? { ...u, status: u.status === 'Active' ? 'Inactive' : 'Active' }
-          : u
-      )
-    );
+    this.togglingUserId.set(user.userId);
+
+    this._userService
+      .toggleUserStatusWithBackend(user.userId)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: () => {
+       
+          this.togglingUserId.set(null);
+        },
+        error: (err) => {
+          this.togglingUserId.set(null);
+        },
+      });
   }
 }

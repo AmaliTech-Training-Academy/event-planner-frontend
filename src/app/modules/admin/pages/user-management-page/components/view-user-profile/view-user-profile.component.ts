@@ -16,7 +16,13 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 @Component({
   selector: 'app-view-user-profile',
   standalone: true,
-  imports: [ModalHeaderComponent, ButtonComponent, CommonModule,  EditUserProfileComponent, NgOptimizedImage],
+  imports: [
+    ModalHeaderComponent,
+    ButtonComponent,
+    CommonModule,
+    EditUserProfileComponent,
+    NgOptimizedImage,
+  ],
   templateUrl: './view-user-profile.component.html',
   styleUrls: ['./view-user-profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,8 +36,25 @@ export class ViewUserProfileComponent {
   public readonly userData = input<User>();
   public readonly isEditMode = signal<boolean>(false);
 
+  protected readonly isActive = computed(() => {
+    const status = this.userData()?.status;
+
+    if (typeof status === 'boolean') {
+      return status;
+    }
+    if (typeof status === 'string') {
+      return status.toLowerCase() === 'active';
+    }
+
+    return false;
+  });
+
   protected readonly statusIcon = computed(() =>
-    this.isActive() ? 'icons/camera.png' : 'icons/camera.png'
+    this.isActive() ? 'icons/power-red.png' : 'icons/power-green.png'
+  );
+
+  protected readonly statusButtonText = computed(() =>
+    this.isActive() ? 'Deactivate User' : 'Activate User'
   );
 
   protected readonly profileImage = computed(() => {
@@ -42,14 +65,6 @@ export class ViewUserProfileComponent {
       'https://ui-avatars.com/api/?name=User&background=FF6B35&color=fff&size=128'
     );
   });
-
-  protected readonly isActive = computed(
-    () => this.userData()?.status === 'Active'
-  );
-
-  protected readonly statusButtonText = computed(() =>
-    this.isActive() ? 'Deactivate User' : 'Activate User'
-  );
 
   protected readonly phoneDisplay = computed(
     () => this.userData()?.phone || 'N/A'
@@ -72,6 +87,7 @@ export class ViewUserProfileComponent {
   public onEdit(): void {
     this.edit.emit();
   }
+
   public onCancelEdit(): void {
     this.isEditMode.set(false);
   }
