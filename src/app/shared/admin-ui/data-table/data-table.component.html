@@ -109,7 +109,7 @@
           @if (column.key === 'fullName') {
           <div class="data-table__user-cell">
             <img
-              [src]="getRandomAvatar(item)"
+            [src]="getUserAvatar(item)"
               [alt]="
                 (column.getValue ? column.getValue(item) : item[column.key]) +
                 ' avatar'

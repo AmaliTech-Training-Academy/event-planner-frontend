@@ -168,11 +168,32 @@ export class DataTableComponent<T extends Record<string, any>> {
     return value.charAt(0).toUpperCase() + value.slice(1);
   }
 
-  public getRandomAvatar(item: T): string {
-    const identifier = item['userId'] || item['email'] || item['id'] || '';
-    const avatarNumber = (String(identifier).charCodeAt(0) % 70) + 1;
+  public getUserAvatar(item: T): string {
+    let profileImageUrl = item['profileImageUrl'] || item['avatar'];
 
-    return `https://i.pravatar.cc/150?img=${avatarNumber}`;
+    if (profileImageUrl) {
+      // Fix URL encoding for spaces and special characters
+      // Only encode the filename part after the last '/'
+      const urlParts = profileImageUrl.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const encodedFileName = encodeURIComponent(fileName);
+      urlParts[urlParts.length - 1] = encodedFileName;
+      profileImageUrl = urlParts.join('/');
+
+      console.log(
+        '📸 Original URL:',
+        item['profileImageUrl'] || item['avatar']
+      );
+      console.log('📸 Encoded URL:', profileImageUrl);
+
+      return profileImageUrl;
+    }
+
+    // Fallback
+    const name = item['fullName'] || item['name'] || item['email'] || 'User';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      name
+    )}&background=FF6B35&color=fff&size=128`;
   }
   public isAllSelected(): boolean {
     const pageData = this.paginatedData();
