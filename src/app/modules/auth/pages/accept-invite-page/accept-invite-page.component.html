@@ -4,7 +4,8 @@
 
     <h3 class="welcome-text">Set New Password</h3>
     <p class="subtitle">
-      By setting a new password, you accept the invitation for your account registered with your email address,
+      By setting a new password, you accept the invitation for your account
+      registered with your email address,
       <strong>{{ inviteEmail() }}</strong>
     </p>
 
@@ -43,14 +44,17 @@
         [required]="true"
         [showValidIcon]="isFieldValid('confirmPassword')"
         [errorMessage]="
-          hasFieldError('confirmPassword') ? getFieldErrorMessage('confirmPassword') : ''
+          hasFieldError('confirmPassword')
+            ? getFieldErrorMessage('confirmPassword')
+            : ''
         "
         [iconSrc]="'icons/lock.png'"
       ></app-input>
 
       <p class="terms-text">
         By Clicking "Accept Invite" you accept the terms of the
-        <a href="#">Platform Subscription Agreement</a> and <a href="#">Terms of Use</a>
+        <a href="#">Platform Subscription Agreement</a> and
+        <a href="#">Terms of Use</a>
       </p>
 
       <app-button
