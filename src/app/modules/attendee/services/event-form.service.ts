@@ -67,6 +67,16 @@ export class EventFormService {
     return this.inPersonDetails.get(F.IMAGES);
   }
 
+  public removeVenueImage(index: number): void {
+    const control = this.venueImages;
+    const images = control?.value ?? [];
+
+    const updated = images.filter((_: any, i: number) => i !== index);
+
+    control?.setValue(updated);
+    control?.markAsDirty();
+    control?.markAsTouched();
+  }
   private createDateGroup(label?: 'start' | 'end'): FormGroup {
     return this.fb.group({
       [F.LABEL]: [label || 'startsAt'],
@@ -101,7 +111,7 @@ export class EventFormService {
   }
 
 
-  public addVenueSection(name:string,capacity:number,price:number,description:string,color:string,image:File){
+  public addVenueSection(name: string, capacity: number, price: number, description: string, color: string, image: File) {
     const newGroup = this.fb.group({
       [F.VENUE_SECTION_NAME]: [name, Validators.required],
       [F.VENUE_SECTION_CAPACITY]: [capacity, Validators.required],
@@ -149,9 +159,9 @@ export class EventFormService {
         const includedControl = this.form.get(F.PERCS);
 
         if (type === PRICE_TYPE.FREE) {
-          priceControl?.setValue(0,{emitEvent: false});
+          priceControl?.setValue(0, { emitEvent: false });
           priceControl?.disable({ emitEvent: false });
-          includedControl?.setValue('',{emitEvent: false});
+          includedControl?.setValue('', { emitEvent: false });
           includedControl?.disable({ emitEvent: false });
         } else {
           priceControl?.enable({ emitEvent: false });
@@ -159,13 +169,13 @@ export class EventFormService {
         }
       });
 
-      const currentPriceType = this.form.get(F.PRICE_TYPE)?.value;
+    const currentPriceType = this.form.get(F.PRICE_TYPE)?.value;
 
-      if(!currentPriceType) {
-        this.form.get(F.PRICE_TYPE)?.setValue(PRICE_TYPE.FREE);
-      }else{
-        this.form.get(F.PRICE_TYPE)?.setValue(currentPriceType);
-      }
+    if (!currentPriceType) {
+      this.form.get(F.PRICE_TYPE)?.setValue(PRICE_TYPE.FREE);
+    } else {
+      this.form.get(F.PRICE_TYPE)?.setValue(currentPriceType);
+    }
 
   }
 
@@ -179,7 +189,10 @@ export class EventFormService {
   }
 
   public resetForm(): void {
-    this.form.reset();
+    this.form.reset({
+      [F.EVENT_TYPE]: EVENT_TYPE.SINGLE_DAY,
+      [F.MEETING_TYPE]: MEETING_TYPE.IN_PERSON
+    })
   }
 
   public destroy() {

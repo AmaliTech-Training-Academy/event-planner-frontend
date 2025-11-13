@@ -4,11 +4,11 @@
             srcset="">
         <div class="action-container">
             <p>You have manage access to this event.</p>
-            <app-button type="secondary">Manage</app-button>
+            <app-button (onClick)="manageEvent()" type="secondary">Manage</app-button>
         </div>
         <div class="author">
             <p>Hosted By</p>
-            <p>William Perrol (Senior UIUX Designer)</p>
+            <p>{{currentUser?.fullName}}</p>
         </div>
     </div>
     <div class="right">
@@ -18,7 +18,7 @@
             <div class="info">
                 <div class="organizer">
                     <p>Organizer:</p>
-                    <p>William Perrol (Senior UIUX Designer)</p>
+                    <p>{{currentUser?.fullName}}</p>
                 </div>
                 <ul>
                     <li>
@@ -26,21 +26,21 @@
                             <img src="icons/calender-icon.png" alt="calander icon" srcset="">
                             <p>Date:</p>
                         </div>
-                        <p>3rd May, 2025</p>
+                        <p>{{createdEvent?.startTime| date:'d MMMM, y'}}</p>
                     </li>
                     <li>
                         <div class="label">
                             <img src="icons/clock.svg" alt="clock icon" srcset="">
                             <p>Time:</p>
                         </div>
-                        <p>09:00am GMT</p>
+                        <p>{{createdEvent?.startTime | date:'hh:mm a'}}</p>
                     </li>
                     <li>
                         <div class="label">
                             <img src="icons/pin.svg" alt="location pin icon" srcset="">
                             <p>Location:</p>
                         </div>
-                        <p>Virtual (Zoom meeting)</p>
+                        <p>{{createdEvent?.location}}</p>
                     </li>
                 </ul>
             </div>
@@ -50,12 +50,7 @@
         </div>
         <div class="description">
             <h4>Event Description</h4>
-            <p>Ready to take your UI/UX design journey to the next level? Our mentorship program connects you with
-                experienced professionals in the field for personalized guidance and support. Whether you're looking to
-                refine your design process, build a strong portfolio, tackle real-world challenges, or navigate your
-                career path, our mentors are here to help you grow. Get practical advice, constructive feedback, and
-                invaluable insights to accelerate your learning and achieve your design goals. Don't just learn –
-                thrive!</p>
+            <p>{{createdEvent?.description}}</p>
         </div>
     </div>
 </div>

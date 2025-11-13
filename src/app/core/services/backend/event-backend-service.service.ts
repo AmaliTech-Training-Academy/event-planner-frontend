@@ -38,7 +38,7 @@ export class EventBackendServiceService {
   }
   public getEvents(params:URLSearchParams): Observable<GetEventsResponse> {
     const queryParam_ = `?${params.toString()}`;
-    return this.http.get<GetEventsResponse>(`${EVENTS_API_ENDPOINTS.GET_EVENTS}${queryParam_}`);
+    return this.cacheHttp.get<GetEventsResponse>(`${EVENTS_API_ENDPOINTS.GET_EVENTS}${queryParam_}`);
   }
 
 }

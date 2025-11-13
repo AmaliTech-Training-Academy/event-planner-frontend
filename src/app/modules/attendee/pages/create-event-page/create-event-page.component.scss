@@ -3,17 +3,20 @@
 @use "theme" as *;
 @use "media_query" as *;
 
-// Shared utility mixins to reduce repetition
 @mixin flex-col($gap: 0) {
   display: flex;
   flex-direction: column;
-  @if $gap != 0 { gap: $gap; }
+  @if $gap != 0 {
+    gap: $gap;
+  }
 }
 
 @mixin flex-row($gap: 0) {
   display: flex;
   flex-direction: row;
-  @if $gap != 0 { gap: $gap; }
+  @if $gap != 0 {
+    gap: $gap;
+  }
 }
 
 @mixin bordered-box {
@@ -48,6 +51,17 @@
   @include sm {
     max-width: none;
   }
+  app-upload-event-flyer {
+    display: none;
+
+    // @include sm{
+    //   display: block
+    // }
+
+    // @include md{
+    //   display: block
+    // }
+  }
 
   .title-container {
     @include flex-col(3rem);
@@ -58,7 +72,9 @@
       border: none;
       color: $paragraph-text;
 
-      &::placeholder { color: $paragraph-text; }
+      &::placeholder {
+        color: $paragraph-text;
+      }
     }
   }
 
@@ -67,8 +83,12 @@
     @include bordered-box;
     padding: 1.688rem $spacing-5;
 
-    @include md { padding: 2rem 0.5rem; }
-    @include sm { padding: 2.125rem 1.25rem; }
+    @include md {
+      padding: 2rem 0.5rem;
+    }
+    @include sm {
+      padding: 2.125rem 1.25rem;
+    }
 
     .day-container {
       @include flex-row($spacing-4);
@@ -104,7 +124,9 @@
   border-radius: $radius-4;
   padding: 84px $spacing-5;
 
-  @include md { padding: 6.625rem 0.5rem; }
+  @include md {
+    padding: 6.625rem 0.5rem;
+  }
 
   .meeting-contianer {
     @include flex-row($spacing-4);
@@ -138,7 +160,7 @@
       outline: none;
       color: $paragraph-text;
       padding: 8px;
-      &.error{
+      &.error {
         border-color: red;
       }
     }
@@ -163,9 +185,40 @@
         .preview {
           width: 203px;
           height: 112px;
+          display: flex;
           border-radius: $radius-4;
-          object-fit: cover;
-          background-size: cover;
+          position: relative;
+
+          img {
+            border-radius: $radius-4;
+            flex: 1;
+            object-fit: cover;
+            background-size: cover;
+          }
+
+          button {
+            transition: all 0.3ms ease-in-out;
+            border: none;
+            position: absolute;
+            width: fit-content;
+            height: fit-content;
+            border-radius: 100%;
+            padding: 0.2rem;
+            opacity: 0.5;
+            top: 0;
+            right: 0;
+            background-color: white;
+            border: 1px solid rgb(204, 204, 204);
+            
+            img {
+              height: 1.5rem;
+              width: 1.5rem;
+            }
+
+            &:hover {
+              opacity: 1;
+            }
+          }
         }
 
         app-button {
@@ -233,7 +286,21 @@
   width: 100%;
   overflow: hidden;
 
-  @include sm { max-width: none; }
+  @include sm {
+    max-width: none;
+  }
+
+  // app-upload-event-flyer{
+  //   display: black;
+
+  //   @include sm{
+  //     display: none;
+  //   }
+
+  //   @include md{
+  //     display: none;
+  //   }
+  // }
 
   .event-options-container {
     @include flex-col(16px);

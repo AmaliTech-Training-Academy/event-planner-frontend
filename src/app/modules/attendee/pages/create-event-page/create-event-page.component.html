@@ -1,5 +1,7 @@
 <form [formGroup]="form" method="post" class="wrapper">
     <div class="left-panel">
+        <app-upload-event-flyer (selectedFlyer)="onFlyerImageSelected($event)"
+            [flyerPreview]="flyerPreview"></app-upload-event-flyer>
         <div class="title-container">
             <section>
                 <input type="text" [formControlName]="EVENT_FORM_FIELDS.TITLE" placeholder="Add Event Title"
@@ -67,7 +69,12 @@
                         <p>Upload up to 5 images of venue</p>
                         <div class="preview-container">
                             @for (image of inPersonDetails.get(EVENT_FORM_FIELDS.IMAGES)?.value; track $index) {
-                            <img [src]="getImageSrc(image)" alt="" class="preview" />
+                            <div class="preview">
+                                <img [src]="getImageSrc(image)" alt="" />
+                                <button (click)="removeImage($index)">
+                                    <img src="icons/close_red.svg" alt="" />
+                                </button>
+                            </div>
                             }
                             <input #venueFileInput type="file" accept="image/*" (change)="onVenueImageSelected($event)"
                                 multiple hidden />
@@ -121,7 +128,7 @@
             <app-event-options-container [form]="form" [checked]="checked" (openCapacityModal)="toggleCapacityModal()"
                 (openPriceModal)="togglePriceModal()"
                 (requireApprovalChange)="onToggle()"></app-event-options-container>
-            <app-button buttonType="button" type="primary" [fullWidth]="true" (onClick)="createEvent()">
+            <app-button [disabled]="loading" buttonType="button" type="primary" [fullWidth]="true" (onClick)="createEvent()">
                 Create Event
             </app-button>
         </div>

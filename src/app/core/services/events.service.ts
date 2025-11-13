@@ -47,8 +47,9 @@ export class EventsServiceService {
       take(1),
       tap((response) => {
         this.router.navigate([APP_ROUTES.CREATE_EVENT_SUCCESS], {
-          state: { eventResponse: response }
+          state: { eventResponse: response}
         });
+
       }),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))

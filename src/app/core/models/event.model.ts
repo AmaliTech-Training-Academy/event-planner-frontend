@@ -58,7 +58,7 @@ export interface EventResponse {
   title: string;
   description: string;
   startTime: Date;
-  meetingLocation: string;
+  location: string;
   flyerUrl: string;
   timeZoneOffSet: string;
 }

@@ -10,7 +10,7 @@ export class CacheHttpService {
     
   constructor(private http: HttpClient) {}
 
-  get<T>(url: string, expiryMs: number = 300000): Observable<T> {
+  get<T>(url: string, expiryMs: number = 180000): Observable<T> {
     const cacheKey = `cache::${url}`;
     const cached = localStorage.getItem(cacheKey);
 

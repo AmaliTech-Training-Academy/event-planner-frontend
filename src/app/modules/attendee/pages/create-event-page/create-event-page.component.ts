@@ -21,6 +21,7 @@ import { SetPriceModalComponent } from "./components/set-price-modal/set-price-m
 import { UploadEventFlyerComponent } from "./components/upload-event-flyer/upload-event-flyer.component";
 import { NotificationService } from '../../../../core/services/notification.service';
 import { EventType, MeetingType } from '../../../../core/models/event.model';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -30,21 +31,22 @@ import { EventType, MeetingType } from '../../../../core/models/event.model';
   styleUrl: './create-event-page.component.scss'
 })
 export class CreateEventPageComponent implements OnInit, OnDestroy {
+
   protected form: FormGroup;
   protected checked: boolean = false;
   protected flyerPreview: string | null = null;
   protected showPriceModal: boolean = false;
   protected showCapacityModal: boolean = false;
   protected connectZoomModal: boolean = false;
-
   protected readonly EVENT_FORM_FIELDS = FIELDS;
   protected readonly MEETING_TYPES = MEETING_TYPE;
   protected readonly EVENT_TYPES = EVENT_TYPE;
   protected readonly APP_ROUTE = APP_ROUTES;
   protected readonly getError = getControlError;
-
   protected backendEventTypes: EventType[] = []
   protected backendMeetingTypes: MeetingType[] = []
+  protected loading: boolean = false;
+  private subscription: Subscription = new Subscription();
 
   constructor(private readonly eventFormService: EventFormService, private readonly eventService: EventsServiceService, private readonly notificationService: NotificationService) {
     this.form = this.eventFormService.getForm();
@@ -65,17 +67,22 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
 
   }
 
-
   ngOnInit(): void {
     this.eventFormService.registerValueChangeHandlers();
+
     if (this.eventFormService.flyer?.value) {
       this.flyerPreview = this.eventFormService.getImageSrc(this.eventFormService.flyer.value);
     }
+    this.subscription = this.eventService.loading$.subscribe({
+      next: (value) => {
+        this.loading = value;
+      },
+    })
   }
-
 
   ngOnDestroy(): void {
     this.eventFormService.destroy();
+    this.subscription.unsubscribe()
   }
 
   protected onVenueImageSelected(event: Event) {
@@ -95,8 +102,6 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
 
   }
 
-
-
   protected onFlyerImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
@@ -107,8 +112,6 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     this.eventFormService.controlValueChanged(this.eventFormService.flyer);
     this.flyerPreview = URL.createObjectURL(file);
   }
-
-
 
   protected get eventDates(): FormArray<FormGroup> {
     return this.eventFormService.eventDates;
@@ -130,9 +133,12 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     return group.get(controlName) as FormControl;
   }
 
-
   protected getImageSrc(image: any): string {
     return this.eventFormService.getImageSrc(image);
+  }
+
+  protected removeImage(index: number) {
+    this.eventFormService.removeVenueImage(index)
   }
 
   protected togglePriceModal() {
@@ -187,9 +193,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const formData = this.parseObjectToFormdataV2()
-
-
+    const formData = this.parseObjectToFormdata()
 
 
     this.eventService.createEvent(formData).subscribe({
@@ -200,113 +204,6 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  private parseObjectToFormdata(): FormData {
-    const data = this.form.getRawValue();
-    const formData = new FormData();
-
-    const eventInfo = {
-      [FIELDS.EVENT_TYPE]: this.backendEventTypes.find((v) => v.name == data[FIELDS.EVENT_TYPE])?.id || 0,
-      [FIELDS.TITLE]: data[FIELDS.TITLE],
-      [FIELDS.PRICE_TYPE]: data[FIELDS.PRICE_TYPE],
-      [FIELDS.MEETING_TYPE]: this.backendMeetingTypes.find((v) => v.name == data[FIELDS.MEETING_TYPE])?.id || 0,
-      eventOptionsRequest: {
-        [FIELDS.PRICE]: data[FIELDS.PRICE] ?? 0,
-        [FIELDS.REQUIRE_APPROVAL]: !!data[FIELDS.REQUIRE_APPROVAL],
-        [FIELDS.CAPACITY]: data[FIELDS.CAPACITY] ?? 0,
-        [FIELDS.PERCS]: data[FIELDS.PERCS] ?? '',
-      },
-    };
-
-    // --- Flyer ---
-    if (data[FIELDS.FLYER] instanceof File) {
-      const flyerFile = data[FIELDS.FLYER] as File;
-      // formData.append(FIELDS.FLYER, flyerFile);
-      formData.append('flyerMeta', new Blob([JSON.stringify({
-        name: flyerFile.name,
-        size: flyerFile.size,
-        type: flyerFile.type
-      })], { type: 'application/json' }));
-    }
-
-    // --- Dates ---
-    const dates = data[FIELDS.DATES] ?? [];
-
-    if (dates.length === 1) {
-      const d = dates[0];
-      Object.assign(eventInfo, {
-        [FIELDS.DATE]: d[FIELDS.DATE],
-        [FIELDS.TIME]: d[FIELDS.TIME],
-        [FIELDS.TIME_ZONE]: d[FIELDS.TIME_ZONE],
-      });
-    } else if (dates.length === 2) {
-      for (const date of dates) {
-        const label = date[FIELDS.LABEL]?.toLowerCase();
-        if (!label) continue;
-
-        Object.assign(eventInfo, {
-          [`event_${label}_time_date`]: date[FIELDS.DATE],
-          [`event_${label}_time`]: date[FIELDS.TIME],
-          [`event_${label}_time_zone_id`]: date[FIELDS.TIME_ZONE],
-        });
-      }
-    }
-
-    // --- Meeting Type: In-Person ---
-    if (data[FIELDS.MEETING_TYPE] === MEETING_TYPE.IN_PERSON && data[FIELDS.IN_PERSON_DETAILS]) {
-      const inPerson = data[FIELDS.IN_PERSON_DETAILS];
-
-      Object.assign(eventInfo, {
-        [FIELDS.LOCATION]: inPerson[FIELDS.LOCATION],
-        [FIELDS.DESCRIPTION]: inPerson[FIELDS.DESCRIPTION],
-      });
-
-      if (Array.isArray(inPerson[FIELDS.IMAGES])) {
-        const imagesMeta: { name: string; size: number; type: string }[] = [];
-
-        (inPerson[FIELDS.IMAGES] as File[]).forEach((file: File) => {
-          // formData.append(`${FIELDS.IMAGES}[]`, file);
-          imagesMeta.push({ name: file.name, size: file.size, type: file.type });
-        });
-
-        formData.append('inPersonImagesMeta', new Blob([JSON.stringify(imagesMeta)], { type: 'application/json' }));
-      }
-    }
-
-    // --- Meeting Type: Virtual ---
-    if (data[FIELDS.MEETING_TYPE] === MEETING_TYPE.VIRTUAL && data[FIELDS.VIRTUAL_DETAILS]) {
-      const virtual = data[FIELDS.VIRTUAL_DETAILS];
-      if (virtual[FIELDS.MEETING_LINK]) {
-        Object.assign(eventInfo, {
-          [FIELDS.MEETING_LINK]: virtual[FIELDS.MEETING_LINK],
-        });
-      }
-    }
-
-    // --- Venue Sections ---
-    const sections = data[FIELDS.VENUE_SECTIONS] ?? [];
-    if (Array.isArray(sections)) {
-      sections.forEach((sec: any, i: number) => {
-        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_NAME}]`, sec[FIELDS.VENUE_SECTION_NAME]);
-        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_CAPACITY}]`, String(sec[FIELDS.VENUE_SECTION_CAPACITY]));
-        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_PRICE}]`, String(sec[FIELDS.VENUE_SECTION_PRICE]));
-        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_COLOR}]`, sec[FIELDS.VENUE_SECTION_COLOR]);
-        formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_DESCRIPTION}]`, sec[FIELDS.VENUE_SECTION_DESCRIPTION]);
-
-        const img = sec[FIELDS.VENUE_SECTION_IMAGE];
-        if (img instanceof File) {
-          formData.append(`${FIELDS.VENUE_SECTIONS}[${i}][${FIELDS.VENUE_SECTION_IMAGE}]`, img);
-        }
-      });
-    }
-
-    // --- Final Append ---
-    // formData.append('event', JSON.stringify(eventInfo));
-    formData.append('event', new Blob([JSON.stringify(eventInfo)], { type: 'application/json' }));
-
-    return formData;
-  }
-
-
   private formatDateToDDMMYYYY(date: Date): string {
     if (!(date instanceof Date) || isNaN(date.getTime())) return '';
     const day = String(date.getDate()).padStart(2, '0');
@@ -316,15 +213,13 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   }
 
 
-  private parseObjectToFormdataV2(): FormData {
+  private parseObjectToFormdata(): FormData {
     const data = this.form.getRawValue();
     const formData = new FormData();
 
-    console.log(data)
-
     const eventInfo: any = {
       title: data[FIELDS.TITLE],
-      description: data[FIELDS.DESCRIPTION] || `[10:40 AM] 2025-11-12T10:30:55.713Z ERROR 1 --- [event-service] [nio-8082-exec-4] c.e.c.e.handlers.GlobalExceptionHandler : Unexpected error occurred: Unexpected token (VALUE_STRING) within Array, expected VALUE_NUMBER_INT`,
+      description: data[FIELDS.DESCRIPTION],
       event_type_id: this.backendEventTypes.find(v => v.name === data[FIELDS.EVENT_TYPE])?.id || 0,
       event_meeting_type_id: this.backendMeetingTypes.find(v => v.name === data[FIELDS.MEETING_TYPE])?.id || 0,
       event_date: this.formatDateToDDMMYYYY(data[FIELDS.DATES]?.[0]?.[FIELDS.DATE]),
@@ -340,7 +235,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
       event_end_time_zone_id: data[FIELDS.DATES]?.[1]?.[FIELDS.TIME_ZONE] || '',
       eventOptionsRequest: {
         ticketPrice: data[FIELDS.PRICE] ?? 0,
-        requiresApproval: !!data[FIELDS.REQUIRE_APPROVAL],
+        requiresApproval: data[FIELDS.REQUIRE_APPROVAL],
         capacity: data[FIELDS.CAPACITY] ?? 0,
       },
     };
@@ -355,14 +250,9 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
       });
 
       if (Array.isArray(inPerson[FIELDS.IMAGES])) {
-        const imagesMeta: { name: string; size: number; type: string }[] = [];
-
         (inPerson[FIELDS.IMAGES] as File[]).forEach((file: File) => {
-          // formData.append(`${FIELDS.IMAGES}[]`, file);
-          imagesMeta.push({ name: file.name, size: file.size, type: file.type });
+          formData.append(`${FIELDS.IMAGES}[]`, file);
         });
-
-        formData.append('inPersonImagesMeta', new Blob([JSON.stringify(imagesMeta)], { type: 'application/json' }));
       }
     }
 
@@ -382,25 +272,10 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
       formData.append('image', data[FIELDS.FLYER]);
     }
 
-    if (Array.isArray(data[FIELDS.IMAGES])) {
-      (data[FIELDS.IMAGES] as File[]).forEach(file => {
-        formData.append('eventImages[]', file);
-      });
-    }
-
-    // formData.append('event', new Blob([JSON.stringify(eventInfo)], { type: 'application/json' }));
     formData.append('event', JSON.stringify(eventInfo));
-
-
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
-
-    console.log(eventInfo)
 
 
     return formData;
   }
-
 
 }
