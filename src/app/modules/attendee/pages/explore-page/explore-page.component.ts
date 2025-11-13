@@ -10,6 +10,7 @@ import { LocationDropdownComponent } from '../../../../shared/components/locatio
 import { FilterDropdownComponent } from '../../../../shared/components/filter-dropdown/filter-dropdown.component';
 import { SearchInputComponent } from '../../../../shared/components/search-input/search-input.component';
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
+import { PaginationComponent } from '../../../../shared/admin-ui/pagination/pagination.component';
 
 import {
   EventCard,
@@ -42,6 +43,7 @@ import {
     FilterDropdownComponent,
     SearchInputComponent,
     DatePickerComponent,
+    PaginationComponent,
   ],
   templateUrl: './explore-page.component.html',
   styleUrl: './explore-page.component.scss',
@@ -49,44 +51,10 @@ import {
 export class ExplorePageComponent implements OnInit {
 
   private allEvents = signal<EventCard[]>([]);
-  private freeEventsPage = signal(1);
-  private paidEventsPage = signal(1);
-  private upcomingEventsPage = signal(1);
-  private pastEventsPage = signal(1);
-  private readonly EVENTS_PER_PAGE = 6;
-
-
-  public upcomingEvents = computed(() => {
-    if (this.activeToggle() !== 'upcoming') return [];
-    const now = new Date();
-    const filtered = this.getAllFilteredEvents().filter((event) => event.date >= now);
-    return filtered.slice(0, this.upcomingEventsPage() * this.EVENTS_PER_PAGE);
-  });
-
-  public pastEvents = computed(() => {
-    if (this.activeToggle() !== 'past') return [];
-    const now = new Date();
-    const filtered = this.getAllFilteredEvents().filter((event) => event.date < now);
-    return filtered.slice(0, this.pastEventsPage() * this.EVENTS_PER_PAGE);
-  });
-
-  public freeEvents = computed(() => {
-    if (this.activeToggle() !== 'all') return [];
-    const filtered = this.getAllFilteredEvents().filter((event) => !event.isPaid);
-    return filtered.slice(0, this.freeEventsPage() * this.EVENTS_PER_PAGE);
-  });
-
-  public paidEvents = computed(() => {
-    if (this.activeToggle() !== 'all') return [];
-    const filtered = this.getAllFilteredEvents().filter((event) => event.isPaid);
-    return filtered.slice(0, this.paidEventsPage() * this.EVENTS_PER_PAGE);
-  });
-
-
-  public showingAllFree = computed(() => !this.hasMoreFreeEvents());
-  public showingAllPaid = computed(() => !this.hasMorePaidEvents());
-  public showingAllUpcoming = computed(() => !this.hasMoreUpcomingEvents());
-  public showingAllPast = computed(() => !this.hasMorePastEvents());
+  
+  public currentPage = signal(1);
+  public EVENTS_PER_PAGE = 12;
+  
   public searchQuery = signal('');
   public selectedLocation = signal('Location');
   public selectedEventType = signal('All Events');
@@ -99,6 +67,43 @@ export class ExplorePageComponent implements OnInit {
   public eventTypeOptions = signal<string[]>([]);
   public recentSearches = signal<SearchLocation[]>([]);
   public popularLocations = signal<PopularLocation[]>([]);
+
+  public activeEventList = computed(() => {
+    const allFiltered = this.getAllFilteredEvents();
+    const now = new Date();
+
+    switch (this.activeToggle()) {
+      case 'upcoming':
+        return allFiltered.filter((event) => event.date >= now);
+      case 'past':
+        return allFiltered.filter((event) => event.date < now);
+      case 'all':
+      default:
+        const paid = allFiltered.filter((event) => event.isPaid);
+        const free = allFiltered.filter((event) => !event.isPaid);
+        return [...paid, ...free];
+    }
+  });
+
+  public totalEvents = computed(() => this.activeEventList().length);
+
+  public paginatedEvents = computed(() => {
+    const list = this.activeEventList();
+    const page = this.currentPage();
+    const start = (page - 1) * this.EVENTS_PER_PAGE;
+    const end = start + this.EVENTS_PER_PAGE;
+    return list.slice(start, end);
+  });
+  
+  public activeListTitle = computed(() => {
+    switch (this.activeToggle()) {
+      case 'upcoming': return 'Upcoming Events';
+      case 'past': return 'Past Events';
+      case 'all':
+      default:
+        return 'All Events';
+    }
+  });
 
   constructor(private router: Router) {
     this.router.events.pipe(
@@ -139,7 +144,6 @@ export class ExplorePageComponent implements OnInit {
     this.showDatePicker.set(false);
   }
 
-
   protected onTabChange(selectedTabKey: string): void {
     this.activeToggle.set(selectedTabKey);
     this.resetPagination();
@@ -148,17 +152,6 @@ export class ExplorePageComponent implements OnInit {
   protected onSearchChange(query: string): void {
     this.searchQuery.set(query);
     this.resetPagination();
-  }
-
-
-  protected toggleLocationDropdown(): void {
-    this.showLocationDropdown.update((v) => !v);
-    this.showEventTypeDropdown.set(false);
-    this.showDatePicker.set(false);
-  }
-
-  protected closeLocationDropdown(): void {
-    this.showLocationDropdown.set(false);
   }
 
   protected onLocationSelected(location: SearchLocation): void {
@@ -173,28 +166,10 @@ export class ExplorePageComponent implements OnInit {
     this.resetPagination();
   }
 
-
-  protected toggleEventTypeDropdown(): void {
-    this.showEventTypeDropdown.update((v) => !v);
-    this.showLocationDropdown.set(false);
-    this.showDatePicker.set(false);
-  }
-
-  protected closeEventTypeDropdown(): void {
-    this.showEventTypeDropdown.set(false);
-  }
-
   protected onEventTypeSelected(type: string): void {
     this.selectedEventType.set(type);
     this.showEventTypeDropdown.set(false);
     this.resetPagination();
-  }
-
-
-  protected toggleDatePicker(): void {
-    this.showDatePicker.update((v) => !v);
-    this.showLocationDropdown.set(false);
-    this.showEventTypeDropdown.set(false);
   }
 
   protected onDateSelected(date: Date): void {
@@ -202,41 +177,6 @@ export class ExplorePageComponent implements OnInit {
     this.showDatePicker.set(false);
     this.resetPagination();
   }
-
-  private resetPagination(): void {
-    this.freeEventsPage.set(1);
-    this.paidEventsPage.set(1);
-    this.upcomingEventsPage.set(1);
-    this.pastEventsPage.set(1);
-  }
-
-
-  protected hasMoreFreeEvents(): boolean {
-    if (this.activeToggle() !== 'all') return false;
-    const allFree = this.getAllFilteredEvents().filter(e => !e.isPaid);
-    return this.freeEvents().length < allFree.length;
-  }
-
-  protected hasMorePaidEvents(): boolean {
-    if (this.activeToggle() !== 'all') return false;
-    const allPaid = this.getAllFilteredEvents().filter(e => e.isPaid);
-    return this.paidEvents().length < allPaid.length;
-  }
-
-  protected hasMoreUpcomingEvents(): boolean {
-    if (this.activeToggle() !== 'upcoming') return false;
-    const now = new Date();
-    const allUpcoming = this.getAllFilteredEvents().filter(e => e.date >= now);
-    return this.upcomingEvents().length < allUpcoming.length;
-  }
-
-  protected hasMorePastEvents(): boolean {
-    if (this.activeToggle() !== 'past') return false;
-    const now = new Date();
-    const allPast = this.getAllFilteredEvents().filter(e => e.date < now);
-    return this.pastEvents().length < allPast.length;
-  }
-
 
   private getAllFilteredEvents(): EventCard[] {
     let events = this.allEvents();
@@ -266,38 +206,38 @@ export class ExplorePageComponent implements OnInit {
 
     return events;
   }
-
-
-  protected onLoadMoreUpcoming(): void {
-    this.upcomingEventsPage.update(page => page + 1);
+  
+  public onPageChange(page: number): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  protected onLoadMorePast(): void {
-    this.pastEventsPage.update(page => page + 1);
+  private resetPagination(): void {
+    this.currentPage.set(1);
   }
 
-  protected onLoadMoreFree(): void {
-    this.freeEventsPage.update(page => page + 1);
+  protected toggleLocationDropdown(): void {
+    this.showLocationDropdown.update((v) => !v);
+    this.showEventTypeDropdown.set(false);
+    this.showDatePicker.set(false);
   }
 
-  protected onLoadMorePaid(): void {
-    this.paidEventsPage.update(page => page + 1);
+  protected closeLocationDropdown(): void {
+    this.showLocationDropdown.set(false);
   }
 
-
-  protected onShowLessUpcoming(): void {
-    this.upcomingEventsPage.set(1);
+  protected toggleEventTypeDropdown(): void {
+    this.showEventTypeDropdown.update((v) => !v);
+    this.showLocationDropdown.set(false);
+    this.showDatePicker.set(false);
   }
 
-  protected onShowLessPast(): void {
-    this.pastEventsPage.set(1);
+  protected closeEventTypeDropdown(): void {
+    this.showEventTypeDropdown.set(false);
   }
 
-  protected onShowLessFree(): void {
-    this.freeEventsPage.set(1);
-  }
-
-  protected onShowLessPaid(): void {
-    this.paidEventsPage.set(1);
+  protected toggleDatePicker(): void {
+    this.showDatePicker.update((v) => !v);
+    this.showLocationDropdown.set(false);
+    this.showEventTypeDropdown.set(false);
   }
 }

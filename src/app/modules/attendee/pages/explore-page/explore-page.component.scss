@@ -265,25 +265,8 @@ app-tab-toggle ::ng-deep .tab-button {
 }
 
 
-.load-more-container {
-  padding: 2.5rem 0 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-.load-more-btn ::ng-deep button {
-  min-width: 380px;
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
-}
 
-@media (max-width: 767px) {
-  .load-more-btn ::ng-deep button {
-    min-width: auto;
-    width: 100%;
-  }
-}
 
 
 .filter-content {
