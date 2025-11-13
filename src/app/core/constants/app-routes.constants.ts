@@ -1,23 +1,22 @@
 export const APP_ROUTES = {
-
-    LOGIN : "/auth/login",
-    SIGNUP: "/auth/signup",
-    FORGOT_PASSWORD: "/auth/forgot-password",
-    LANDING_PAGE : "/",
+  LOGIN: "/auth/login",
+  SIGNUP: "/auth/signup",
+  FORGOT_PASSWORD: "/auth/forgot-password",
+  LANDING_PAGE: "/",
   EXPLORE: "/app/explore",
-    PROFILE:"/app/profile",
-    ABOUT:"/app/about",
-    EVENT_DETAILS:(id:string)=>`/app/event/${id}`,
-    VERIFY_EMAIL:'/auth/verify-email',
-    ADMIN_LOGIN:'/auth/admin',
-    VENUE_SECTION:'/app/define-venue-sections',
-    MANAGE_EVENT_ROLES:'/app/manage-event-roles',
-    RESET_PASSWORD:'/auth/reset-password',
+  PROFILE: "/app/profile",
+  ABOUT: "/app/about",
+  EVENT_DETAILS: (id: string) => `/app/event/${id}`,
+  VERIFY_EMAIL: '/auth/verify-email',
+  ADMIN_LOGIN: '/auth/admin',
+  VENUE_SECTION: '/app/define-venue-sections',
+  MANAGE_EVENT_ROLES: '/app/manage-event-roles',
+  RESET_PASSWORD: '/auth/reset-password',
   CREATE_EVENT: '/app/create-event',
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   MY_EVENTS: '/app/my-events',
-  PAYMENT_SETTINGS:"/app/payment-settings",
+  PAYMENT_SETTINGS: "/app/payment-settings",
   ADMIN_DASHBOARD: '/admin',
-  
+  MY_EVENT: (id: string) => `/app/my-event/${id}`
 };
 
