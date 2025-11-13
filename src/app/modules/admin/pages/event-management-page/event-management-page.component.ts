@@ -5,9 +5,11 @@ import {
   computed,
   ChangeDetectionStrategy,
   OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, debounceTime } from 'rxjs';
 import { LayoutService } from '../../../../core/services/layout.service';
 import { EventManagementService } from '../../../../core/services/event-management.service';
 import {
@@ -61,7 +63,7 @@ interface EventTableData {
   styleUrl: './event-management-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EventManagementPageComponent implements OnInit {
+export class EventManagementPageComponent implements OnInit, OnDestroy {
   private readonly _layoutService = inject(LayoutService);
   private readonly _router = inject(Router);
   private readonly _eventManagementService = inject(EventManagementService);
@@ -77,6 +79,9 @@ export class EventManagementPageComponent implements OnInit {
   private readonly _pageSize = signal<number>(10);
   private readonly _selectedStatus = signal<string>('all');
   private readonly _searchQuery = signal<string>('');
+
+  // ✅ NEW: Debounce subject for search
+  private readonly _searchSubject = new Subject<string>();
 
   // Public computed observables
   public readonly eventStatistics = computed<EventStatistic[]>(() => {
@@ -141,12 +146,10 @@ export class EventManagementPageComponent implements OnInit {
     }));
   });
 
-  // ✅ FIXED: Server-side data - NO local filtering
   public readonly eventTableData = computed<EventTableData[]>(() => {
     const data = this._dashboardData();
     if (!data) return [];
 
-    // Return the server data directly - server already filtered it
     return data.eventManagement.content.map((event: EventManagement) => ({
       id: event.id,
       name: event.title,
@@ -223,6 +226,18 @@ export class EventManagementPageComponent implements OnInit {
   };
 
   constructor() {
+    // ✅ NEW: Subscribe to debounced search
+    this._searchSubject
+      .pipe(
+        debounceTime(600), // Wait 600ms after user stops typing
+        takeUntilDestroyed()
+      )
+      .subscribe((query) => {
+        this._searchQuery.set(query);
+        this._currentPage.set(0); // Reset to first page
+        this._loadDashboardData(); // Reload with search query
+      });
+
     this._eventManagementService.loading$
       .pipe(takeUntilDestroyed())
       .subscribe((loading) => {
@@ -239,6 +254,11 @@ export class EventManagementPageComponent implements OnInit {
   public ngOnInit(): void {
     this._layoutService.pageTitle.set('Event Management');
     this._loadDashboardData();
+  }
+
+  public ngOnDestroy(): void {
+    // Clean up the search subject
+    this._searchSubject.complete();
   }
 
   public refreshData(): void {
@@ -261,13 +281,11 @@ export class EventManagementPageComponent implements OnInit {
     this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS, event.id]);
   }
 
-  // ✅ FIXED: Handle pagination changes - make server request
   public onPageChange(page: number): void {
     this._currentPage.set(page);
-    this._loadDashboardData(); // Reload with new page
+    this._loadDashboardData();
   }
 
-  // ✅ FIXED: Handle filter changes - make server request
   public onFilterChange(filters: Record<string, string>): void {
     if (filters['status']) {
       this._selectedStatus.set(filters['status']);
@@ -275,22 +293,19 @@ export class EventManagementPageComponent implements OnInit {
 
     if (filters['export']) {
       this._handleExport(filters['export']);
-      return; // Don't reload data for export
+      return;
     }
 
-    // Reset to first page when filters change
     this._currentPage.set(0);
-    this._loadDashboardData(); // Reload with new filters
+    this._loadDashboardData();
   }
 
-  // ✅ FIXED: Handle search - make server request
+  // ✅ UPDATED: Use debounce subject instead of direct load
   public onSearch(query: string): void {
-    this._searchQuery.set(query);
-    this._currentPage.set(0); // Reset to first page
-    this._loadDashboardData(); // Reload with search query
+    // Push to subject - debouncing will handle the rest
+    this._searchSubject.next(query);
   }
 
-  // ✅ FIXED: Load full dashboard with current filters
   private _loadDashboardData(): void {
     this._error.set(null);
 
@@ -309,8 +324,6 @@ export class EventManagementPageComponent implements OnInit {
         },
       });
   }
-
-  // ✅ REMOVED: _loadDashboardEvents - not needed, use _loadDashboardData instead
 
   private _onViewEvent(event: EventTableData): void {
     this._router.navigate(['/admin/events', event.id]);
