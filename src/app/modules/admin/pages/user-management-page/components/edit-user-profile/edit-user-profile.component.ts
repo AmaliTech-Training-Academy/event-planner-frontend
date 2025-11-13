@@ -51,8 +51,9 @@ interface CountryOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditUserProfileComponent {
-  @Output() public readonly close = new EventEmitter<void>();
-  @Output() public readonly save = new EventEmitter<User>();
+  @Output() public readonly close: EventEmitter<void> =
+    new EventEmitter<void>();
+  @Output() public readonly save: EventEmitter<User> = new EventEmitter<User>();
   public readonly userData = input<User>();
 
   @ViewChild('fileInput') private _fileInput!: ElementRef<HTMLInputElement>;
@@ -63,10 +64,10 @@ export class EditUserProfileComponent {
   protected readonly uploadingImage = signal<boolean>(false);
   protected readonly error = signal<string | null>(null);
 
-  protected readonly statusIcon = 'icons/camera.png';
+  protected readonly statusIcon: string = 'icons/camera.png';
 
   private readonly _defaultCountryCode: CountryCode = 'GH';
-  private readonly _maxImageSize = 5 * 1024 * 1024;
+  private readonly _maxImageSize: number = 5 * 1024 * 1024;
   private _selectedImageFile: File | null = null;
   private _originalImageUrl: string | null = null;
 
@@ -103,7 +104,7 @@ export class EditUserProfileComponent {
 
   constructor(
     private readonly _fb: FormBuilder,
-    private readonly userManagementService: UserManagementService
+    private readonly _userManagementService: UserManagementService
   ) {
     this.profileForm = this._fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
@@ -138,8 +139,6 @@ export class EditUserProfileComponent {
       return;
     }
 
-    console.log('📋 User data for form:', user);
-
     if (user.phone) {
       try {
         const parsed = parsePhoneNumber(user.phone);
@@ -152,12 +151,11 @@ export class EditUserProfileComponent {
             address: user.address || '',
           };
 
-          console.log('✅ Form data with parsed phone:', formData);
           this.profileForm.patchValue(formData, { emitEvent: false });
           return;
         }
       } catch (error) {
-        console.error('❌ Phone parsing error:', error);
+        console.error('Phone parsing error:', error);
       }
     }
 
@@ -169,7 +167,6 @@ export class EditUserProfileComponent {
       address: user.address || '',
     };
 
-    console.log('✅ Form data (fallback):', formData);
     this.profileForm.patchValue(formData, { emitEvent: false });
   }
 
@@ -191,13 +188,11 @@ export class EditUserProfileComponent {
 
     if (!this._validateImageFile(file)) return;
 
-    // ✅ Store the file for FormData upload
     this._selectedImageFile = file;
     this.error.set(null);
 
-    // Preview the image
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = (e: ProgressEvent<FileReader>): void => {
       if (e.target?.result) {
         this.profileImage.set(e.target.result as string);
       }
@@ -277,7 +272,7 @@ export class EditUserProfileComponent {
 
     const formData = this._buildFormData();
 
-    this.userManagementService
+    this._userManagementService
       .updateUserWithFormData(String(user.userId), formData)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe({
@@ -288,7 +283,6 @@ export class EditUserProfileComponent {
           this.close.emit();
         },
         error: (err) => {
-          // Check if backend indicates duplicate email
           if (
             err?.error?.message?.toLowerCase().includes('email already exists')
           ) {
@@ -323,7 +317,6 @@ export class EditUserProfileComponent {
     const user = this.userData();
     if (!user) throw new Error('No user data available');
 
-    // ✅ Build the userUpdateRequest object
     const userUpdateRequest = {
       fullName: this.profileForm.value.fullName,
       email: this.profileForm.value.email,
@@ -332,21 +325,13 @@ export class EditUserProfileComponent {
       status: user.status === 'Active',
     };
 
-    // ✅ Create FormData
     const formData = new FormData();
 
-    // Add userUpdateRequest as JSON string
     formData.append('userUpdateRequest', JSON.stringify(userUpdateRequest));
 
-    // Add profile picture file if exists
     if (this._selectedImageFile) {
       formData.append('profilePicture', this._selectedImageFile);
     }
-
-    console.log('📤 Sending FormData:', {
-      userUpdateRequest,
-      hasProfilePicture: !!this._selectedImageFile,
-    });
 
     return formData;
   }
