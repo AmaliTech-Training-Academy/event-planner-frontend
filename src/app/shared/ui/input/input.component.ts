@@ -34,7 +34,7 @@ import { FormErrorComponent } from '../form-error/form-error.component';
 })
 export class InputComponent implements ControlValueAccessor {
   // Inputs - reactive values from parent
-  public readonly type = input<'text' | 'email' | 'password' | 'number'>(
+  public readonly type = input<'text' | 'email' | 'password' | 'number' | 'tel'>(
     'text'
   );
   public readonly placeholder = input<string>('');

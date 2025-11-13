@@ -20,4 +20,5 @@ export const APP_ROUTES = {
   ADMIN_EVENTS: '/admin/events',
   ADMIN_EVENT_DETAILS: '/admin/events/:id',
   ADMIN_ORGANIZERS: '/admin/organizers',
+  MY_EVENT: (id: string) => `/app/my-event/${id}`
 };
