@@ -1,0 +1,155 @@
+@use 'colors' as *;
+@use 'typography' as *;
+@use 'variables' as *;
+@use 'media_query' as *;
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  width: 90%;
+  max-width: 700px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 0%;
+  right: 0%;
+  z-index: 1001;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &__content {
+    padding: $spacing-6;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  &__actions {
+    background-color: transparent;
+    display: flex;
+    gap: $spacing-3;
+    justify-content: flex-start;
+    padding: $spacing-5 $spacing-6;
+    border-top: 1px solid $general-stroke-light;
+    flex-shrink: 0;
+  }
+}
+
+.edit-invite-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-5;
+
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+
+    .section-title {
+      @include body-2;
+      color: $header-dark;
+      font-weight: 600;
+      margin: 0 0 $spacing-3 0;
+      padding-bottom: $spacing-3;
+      border-bottom: 1px solid $general-stroke-light;
+    }
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2;
+
+    label {
+      @include body-3;
+      color: $gray-700;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    app-input {
+      width: 100%;
+    }
+
+   
+  }
+}
+
+
+
+@include md {
+  .modal {
+    width: 95%;
+
+    &__actions {
+      flex-direction: column;
+      padding: $spacing-4 $spacing-5;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  .edit-invite-form {
+    gap: $spacing-4;
+
+    .form-section {
+      gap: $spacing-3;
+    }
+  }
+
+  .modal.edit-invite-modal {
+    .modal__actions {
+      app-button {
+        width: 100%;
+
+        ::ng-deep button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@include sm {
+  .modal {
+    width: 100%;
+    max-height: 95vh;
+
+    &__actions {
+      padding: $spacing-3 $spacing-4;
+    }
+  }
+
+  .edit-invite-form {
+    gap: $spacing-3;
+
+    .form-row {
+      ::ng-deep input {
+        padding: 10px $spacing-3;
+        font-size: 0.9375rem;
+      }
+    }
+
+    .form-section {
+      gap: $spacing-3;
+
+      .section-title {
+        padding-bottom: $spacing-2;
+      }
+    }
+  }
+}

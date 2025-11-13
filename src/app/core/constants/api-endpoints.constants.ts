@@ -4,6 +4,7 @@ const API_VERSION = 'v1';
 const BASE = `${environment.API_URL}/${API_VERSION}`;
 export const API_ENDPOINTS = {
   AUTH_LOGOUT: `${BASE}/auth/logout`,
+  ADMIN_LOGOUT: `${BASE}/auth/admin-logout`,
   AUTH_LOGIN: `${BASE}/auth/login`,
   AUTH_REGISTER: `${BASE}/auth/register`,
   AUTH_VERIFY_OTP: `${BASE}/auth/verify-otp`,
@@ -16,6 +17,7 @@ export const API_ENDPOINTS = {
   INVITE_USER: `${BASE}/event-invitations`,
   GET_ALL_INVITATIONS: `${BASE}/event-invitations`,
   AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
+
   AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
   AUTH_ME: `${BASE}/auth/me`,
@@ -24,7 +26,14 @@ export const API_ENDPOINTS = {
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
   SEARCH_USERS: `${BASE}/users/search`,
-} as const;
+
+    EVENT_MANAGEMENT: `${BASE}/events/event-management`,
+  EVENT_DETAILS: (eventId: number) => `${BASE}/events/${eventId}`,
+  GET_ALL_EVENTS: `${BASE}/events`,
+  CREATE_EVENT: `${BASE}/events`,
+  UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+  DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+}
 
 export const EVENTS_API_ENDPOINTS = {
   GET_EVENTS: `${BASE}/events/explore`,
@@ -35,4 +44,9 @@ export const EVENTS_API_ENDPOINTS = {
   CREATE_EVENT_TYPE: `${BASE}/event_types`,
   GET_TIME_ZONES: `${BASE}/timezones`,
   GET_MEETING_TYPES: `${BASE}/event_meeting_types`,
+  EVENT_MANAGEMENT: `${BASE}/events/event-management`,
+  EVENT_DETAILS: (eventId: number) => `${BASE}/events/${eventId}`,
+  GET_ALL_EVENTS: `${BASE}/events`,
+  UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+  DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
 } as const;
