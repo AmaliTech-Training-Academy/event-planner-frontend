@@ -80,10 +80,8 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   private readonly _selectedStatus = signal<string>('all');
   private readonly _searchQuery = signal<string>('');
 
-  // ✅ NEW: Debounce subject for search
   private readonly _searchSubject = new Subject<string>();
 
-  // Public computed observables
   public readonly eventStatistics = computed<EventStatistic[]>(() => {
     const data = this._dashboardData();
     if (!data) return [];
@@ -97,17 +95,17 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Active Events',
-        count: stats.activeEvents,
+        count: stats.activeEvents, 
         color: '#656565',
       },
       {
         label: 'Completed Events',
-        count: stats.completedEvents,
+        count: stats.completedEvents, 
         color: '#292929',
       },
       {
         label: 'Cancelled Events',
-        count: stats.canceledEvents,
+        count: stats.canceledEvents, 
         color: '#FF5A00',
       },
       {
@@ -191,7 +189,7 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     {
       icon: 'icons/eye-open.svg',
       label: 'View',
-      extraClass: 'plain-action',
+      extraClass: 'view-action-btn',
       handler: (event: EventTableData) => this._onViewEvent(event),
     },
   ];

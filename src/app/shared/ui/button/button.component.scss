@@ -215,4 +215,12 @@ button.app-button.filter-reset {
   transition: all 0.2s ease;
 }
 
+button.app-button.view-action-btn {
+  display: flex;
+  align-items: center;
+  gap: .7em;
+  border: none;
+  padding: 0;
+  cursor: pointer;  
+}
 
