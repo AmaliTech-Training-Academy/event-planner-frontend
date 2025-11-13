@@ -94,10 +94,10 @@ export interface EventCard {
 }
 
 
-
 export interface TabToggle {
   key: string;
   label: string;
+  value: boolean|null;
 }
 
 export interface SearchLocation {
@@ -110,3 +110,34 @@ export interface PopularLocation {
   meta: string;
 }
 
+export interface GetEventProps {
+  sortBy?: string[];
+  pageNumber?: number;
+  pageSize?: number;
+  location?: string;
+  hasTitle?: string;
+  date?: string;
+  paid?: boolean;
+  priceFilter?: string;
+  past?: boolean;
+}
+
+
+export interface GetEventsResponse {
+  pageNumber: number;
+  pageSize: number;
+  events: EventSummary[];
+}
+
+export interface EventSummary {
+  id: number;
+  title: string;
+  description: string;
+  startTime: string | null;
+  location: string | null;
+  flyerUrl: string;
+  ticketPrice: number;
+  attendees?:number;
+}
+
+export interface EventTypeFilter { label: string, value: string }

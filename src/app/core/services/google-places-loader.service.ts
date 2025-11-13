@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 
-
-// Declare google to avoid TypeScript errors if you're not using @types/googlemaps
-// declare var google: any;
-
 @Injectable({
   providedIn: 'root'
 })

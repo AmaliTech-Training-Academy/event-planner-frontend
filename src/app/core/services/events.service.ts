@@ -4,6 +4,7 @@ import { EventBackendServiceService } from './backend/event-backend-service.serv
 import { ErrorHandlerService } from './error-handler.service';
 import { Router } from '@angular/router';
 import { APP_ROUTES } from '../constants/app-routes.constants';
+import { GetEventProps } from '../models/event.model';
 
 @Injectable({
   providedIn: 'root'
@@ -54,13 +55,33 @@ export class EventsServiceService {
     )
   }
 
-  public getEvents(location?: string, event_type?: string, date?: Date, time?: string , page?:number , limit?:number) {
+
+  public getEvents({
+    sortBy,
+    pageNumber,
+    pageSize,
+    location,
+    hasTitle,
+    date,
+    paid,
+    priceFilter,
+    past
+  }: GetEventProps) {
     this.setLoading(true)
-    return this.eventBackendService.getEvents().pipe(
+    const params = new URLSearchParams();
+
+    if (sortBy?.length) params.append('sortBy', sortBy.join(','));
+    if (pageNumber) params.append('pageNumber', pageNumber.toString());
+    if (pageSize) params.append('pageSize', pageSize.toString());
+    if (location) params.append('location', location);
+    if (hasTitle) params.append('hasTitle', hasTitle);
+    if (date) params.append('date', date);
+    if (paid !== undefined) params.append('paid', paid.toString());
+    if (priceFilter) params.append('priceFilter', priceFilter);
+    if (past !== undefined) params.append('past', past.toString());
+
+    return this.eventBackendService.getEvents(params).pipe(
       take(1),
-      tap((response) => {
-        console.log(response)
-      }),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     )

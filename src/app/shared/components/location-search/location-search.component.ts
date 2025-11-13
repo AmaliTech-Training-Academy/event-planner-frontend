@@ -20,22 +20,23 @@ declare const google: any;
     },
   ],
 })
-export class LocationSearchComponent implements  ControlValueAccessor, AfterViewInit {
+export class LocationSearchComponent implements ControlValueAccessor, AfterViewInit {
   public readonly placeholder = input<string>('Search for a location');
   public readonly label = input<string>('Location');
   public readonly iconSrc = input<string>('icons/pin.svg');
-  public readonly error = input<boolean|undefined>(false);
+  public readonly error = input<boolean | undefined>(false);
+  public readonly focus = output<void>();
 
   public readonly placeSelected = output<any>();
 
   private readonly _value = signal<string>('');
-  private onChange: (value: string) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: string) => void = () => { };
+  private onTouched: () => void = () => { };
   protected disabled = true;
-  
+
   @ViewChild('inputRef', { static: true }) inputRef!: ElementRef<HTMLInputElement>;
 
-  constructor(private readonly placesLoader: GooglePlacesLoaderService) {}
+  constructor(private readonly placesLoader: GooglePlacesLoaderService) { }
 
   public async ngAfterViewInit(): Promise<void> {
     await this.placesLoader.load();
@@ -78,6 +79,10 @@ export class LocationSearchComponent implements  ControlValueAccessor, AfterView
 
   public onBlur(): void {
     this.onTouched();
+  }
+
+  public onFocus(): void {
+    this.focus.emit();
   }
 
   public handleAddressChange(place: any) {

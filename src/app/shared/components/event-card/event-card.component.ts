@@ -2,7 +2,7 @@ import { Component, input, output, ChangeDetectionStrategy, inject } from '@angu
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { EventCard } from '../../../core/models/event.model';
+import { EventCard, EventSummary } from '../../../core/models/event.model';
 import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
 
 @Component({
@@ -14,16 +14,16 @@ import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventCardComponent {
-  public event = input.required<EventCard>();
+  public event = input.required<EventSummary>();
   public variant = input<'explore' | 'manage'>('explore');
-  public manageEvent = output<EventCard>();
+  public manageEvent = output<EventSummary>();
 
   protected readonly routes = APP_ROUTES;
   private readonly router = inject(Router);
 
   protected navigateToDetails(): void {
    
-    const route = this.routes.EVENT_DETAILS(this.event().id);
+    const route = this.routes.EVENT_DETAILS(this.event().id.toString());
     this.router.navigate([route]);
   }
 

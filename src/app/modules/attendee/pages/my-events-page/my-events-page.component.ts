@@ -2,7 +2,7 @@ import { Component, OnInit, signal, ChangeDetectionStrategy, inject } from '@ang
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
-import { EventCard } from '../../../../core/models/event.model';
+import { EventCard, EventSummary } from '../../../../core/models/event.model';
 import { MOCK_MY_EVENTS_CARDS } from '../../../../core/data/mock-data'; 
 import { Router } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
@@ -16,7 +16,7 @@ import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MyEventsPageComponent implements OnInit {
-  public myEvents = signal<EventCard[]>([]);
+  public myEvents = signal<EventSummary[]>([]);
   private readonly router = inject(Router);
   protected readonly routes = APP_ROUTES;
 
@@ -24,7 +24,7 @@ export class MyEventsPageComponent implements OnInit {
     this.myEvents.set(MOCK_MY_EVENTS_CARDS); 
   }
 
-  protected handleManageEvent(event: EventCard): void {
+  protected handleManageEvent(event: EventSummary): void {
   this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
   }
 }

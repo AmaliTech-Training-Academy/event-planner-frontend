@@ -1,242 +1,82 @@
 <section class="explore-page-content">
   <div class="container">
-  <div class="filter-bar">
-   
-    <div class="search-wrapper">
-      <app-search-input
-        [placeholder]="'Search events...'"
-        [(ngModel)]="searchQuery"
-        (ngModelChange)="onSearchChange($event)"
-      ></app-search-input>
+    <div class="filter-bar">
+
+      <div class="search-wrapper">
+        <app-search-input [placeholder]="'Search events...'" [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchChange($event)"></app-search-input>
+      </div>
+
+      <div class="secondary-filters-group">
+
+        <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
+          <div class="filter-button-wrapper">
+            <app-location-search (focus)="onFocusHandler()" [(ngModel)]="locationTerm"
+              label="" />
+          </div>
+
+          @if (showLocationDropdown()) {
+          <app-location-dropdown
+            (close)="closeLocationDropdown()" (locationSelected)="onLocationSelected($event)"
+            (useCurrentLocation)="onUseCurrentLocation()"></app-location-dropdown>
+          }
+        </div>
+
+
+        <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
+          <div class="filter-button-wrapper">
+            <app-button type="secondary" [extraClass]="'filter-button'" (onClick)="toggleEventTypeDropdown()">
+              <div class="filter-content">
+                <span [class.is-placeholder]="selectedEventType().label === 'All Events'">
+                  {{ selectedEventType().label }}
+                </span>
+                <img src="icons/Vector.png" alt="" class="filter-icon" />
+              </div>
+            </app-button>
+          </div>
+
+          @if (showEventTypeDropdown()) {
+          <app-filter-dropdown [options]="eventTypeOptions()" [selectedOption]="selectedEventType()"
+            (close)="closeEventTypeDropdown()" (optionSelected)="onEventTypeSelected($event)"></app-filter-dropdown>
+          }
+        </div>
+
+
+        <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
+          <div class="filter-button-wrapper">
+            <app-button type="secondary" [extraClass]="'filter-button'" (onClick)="toggleDatePicker()">
+              <div class="filter-content">
+                <span [class.is-placeholder]="!selectedDate()">
+                  @if (selectedDate(); as date) {
+                  {{ date | date : 'MMM d, y' }}
+                  } @else {
+                  Date
+                  }
+                </span>
+                <img src="icons/Mixed.png" alt="" class="filter-icon" />
+              </div>
+            </app-button>
+          </div>
+
+          @if (showDatePicker()) {
+          <div class="date-picker-dropdown">
+            <app-date-picker (dateSelected)="onDateSelected($event)"></app-date-picker>
+          </div>
+          }
+        </div>
+      </div>
     </div>
 
-    <div class="secondary-filters-group">
-     
-      <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
-        <div class="filter-button-wrapper">
-          <app-button
-            type="secondary"
-            [extraClass]="'filter-button'"
-            (onClick)="toggleLocationDropdown()"
-          >
-            <div class="filter-content">
-              <span [class.is-placeholder]="selectedLocation() === 'Location'">
-                {{ selectedLocation() }}
-              </span>
-              <img
-                src="icons/room.png"
-                alt=""
-                class="filter-icon"
-              />
-            </div>
-          </app-button>
-        </div>
+    <app-tab-toggle [toggles]="eventToggles()" [activeToggle]="activeToggle()"
+      (tabChange)="onTabChange($event)"></app-tab-toggle>
 
-        @if (showLocationDropdown()) {
-        <app-location-dropdown
-          [recentSearches]="recentSearches()"
-          [popularLocations]="popularLocations()"
-          (close)="closeLocationDropdown()"
-          (locationSelected)="onLocationSelected($event)"
-          (useCurrentLocation)="onUseCurrentLocation()"
-        ></app-location-dropdown>
-        }
-      </div>
-
-     
-      <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
-        <div class="filter-button-wrapper">
-          <app-button
-            type="secondary"
-            [extraClass]="'filter-button'"
-            (onClick)="toggleEventTypeDropdown()"
-          >
-            <div class="filter-content">
-              <span [class.is-placeholder]="selectedEventType() === 'All Events'">
-                {{ selectedEventType() }}
-              </span>
-              <img
-                src="icons/Vector.png"
-                alt=""
-                class="filter-icon"
-              />
-            </div>
-          </app-button>
-        </div>
-
-        @if (showEventTypeDropdown()) {
-        <app-filter-dropdown
-          [options]="eventTypeOptions()"
-          [selectedOption]="selectedEventType()"
-          (close)="closeEventTypeDropdown()"
-          (optionSelected)="onEventTypeSelected($event)"
-        ></app-filter-dropdown>
-        }
-      </div>
-
-   
-      <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
-        <div class="filter-button-wrapper">
-          <app-button
-            type="secondary"
-            [extraClass]="'filter-button'"
-            (onClick)="toggleDatePicker()"
-          >
-            <div class="filter-content">
-              <span [class.is-placeholder]="!selectedDate()">
-                @if (selectedDate(); as date) {
-                {{ date | date : 'MMM d, y' }}
-                } @else {
-                Date
-                }
-              </span>
-              <img
-                src="icons/Mixed.png"
-                alt=""
-                class="filter-icon"
-              />
-            </div>
-          </app-button>
-        </div>
-
-        @if (showDatePicker()) {
-        <div class="date-picker-dropdown">
-          <app-date-picker
-            (dateSelected)="onDateSelected($event)"
-          ></app-date-picker>
-        </div>
-        }
-      </div>
-    </div>
-  </div>
-
-  <app-tab-toggle
-    [toggles]="eventToggles()"
-    [activeToggle]="activeToggle()"
-    (tabChange)="onTabChange($event)"
-  ></app-tab-toggle>
-
- 
-  @if (activeToggle() === 'all') {
- 
-    @if (paidEvents().length > 0) {
     <section class="event-section">
-      <h2>Paid Events</h2>
       <div class="event-grid">
-        @for (event of paidEvents(); track event.id) {
+        @for (event of allEvents()?.events || []; track $index) {
         <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
         }
       </div>
-      <div class="load-more-container">
-        @if (hasMorePaidEvents()) {
-          <app-button
-            class="load-more-btn"
-            type="primary"
-            (onClick)="onLoadMorePaid()">
-            Load More Events
-          </app-button>
-        } @else if (paidEvents().length > 6) {
-          <app-button
-            class="load-more-btn"
-            type="primary"
-            (onClick)="onShowLessPaid()">
-            Show Less
-          </app-button>
-        }
-      </div>
     </section>
-    }
 
-   
-    @if (freeEvents().length > 0) {
-    <section class="event-section">
-      <h2>Free Events</h2>
-      <div class="event-grid">
-        @for (event of freeEvents(); track event.id) {
-        <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
-        }
-      </div>
-      <div class="load-more-container">
-        @if (hasMoreFreeEvents()) {
-          <app-button
-            class="load-more-btn"
-            type="primary"
-            (onClick)="onLoadMoreFree()">
-            Load More Events
-          </app-button>
-        } @else if (freeEvents().length > 6) {
-          <app-button
-            class="load-more-btn"
-            type="primary"
-            (onClick)="onShowLessFree()">
-            Show Less
-          </app-button>
-        }
-      </div>
-    </section>
-    }
-  }
-
- 
-  @else if (activeToggle() === 'upcoming') {
-    <section class="event-section">
-      <h2>Upcoming Events</h2>
-      <div class="event-grid">
-        @for (event of upcomingEvents(); track event.id) {
-        <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
-        }
-      </div>
-      @if (upcomingEvents().length > 0) {
-      <div class="load-more-container">
-        @if (hasMoreUpcomingEvents()) {
-          <app-button
-            class="load-more-btn"
-            type="primary"
-            (onClick)="onLoadMoreUpcoming()">
-            Load More Events
-          </app-button>
-        } @else if (upcomingEvents().length > 6) {
-          <app-button
-            class="load-more-btn"
-            type="secondary"
-            (onClick)="onShowLessUpcoming()">
-            Show Less
-          </app-button>
-        }
-      </div>
-      }
-    </section>
-  }
-
-  
-  @else if (activeToggle() === 'past') {
-    <section class="event-section">
-      <h2>Past Events</h2>
-      <div class="event-grid">
-        @for (event of pastEvents(); track event.id) {
-        <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
-        }
-      </div>
-      @if (pastEvents().length > 0) {
-      <div class="load-more-container">
-        @if (hasMorePastEvents()) {
-          <app-button
-            class="load-more-btn"
-            type="primary"
-            (onClick)="onLoadMorePast()">
-            Load More Events
-          </app-button>
-        } @else if (pastEvents().length > 6) {
-          <app-button
-            class="load-more-btn"
-            type="secondary"
-            (onClick)="onShowLessPast()">
-            Show Less
-          </app-button>
-        }
-      </div>
-      }
-    </section>
-  }
   </div>
 </section>

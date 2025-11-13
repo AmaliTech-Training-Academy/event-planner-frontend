@@ -15,11 +15,15 @@ import { TabToggle } from '../../../core/models/event.model';
 })
 export class TabToggleComponent {
   public toggles = input.required<TabToggle[]>();
-  public activeToggle = input.required<string>();
-  public tabChange = output<string>();
-  protected onTabClick(tabKey: string): void {
-    if (tabKey !== this.activeToggle()) {
-      this.tabChange.emit(tabKey);
+  public activeToggle = input.required<boolean|null>();
+  public tabChange = output<boolean|null>();
+
+  protected onTabClick(value: boolean|null): void {
+    if (value !== this.activeToggle()) {
+      this.tabChange.emit(value);
+    }
+    else{
+       this.tabChange.emit(null);
     }
   }
 }

@@ -1,13 +1,13 @@
 <article class="event-card">
   <img
-    [src]="event().imageUrl"
+    [src]="event().flyerUrl"
     [alt]="event().title"
     class="event-card__image"
   />
 
   <div class="event-card__content">
    
-    @if (event().isPaid) {
+    @if (event().ticketPrice) {
     <span class="event-card__badge badge--paid">Paid</span>
     } @else {
     <span class="event-card__badge badge--free">Free</span>
@@ -16,7 +16,7 @@
     <div class="event-card__info">
       <span class="event-card__icon-text">
         <img src="icons/Mixed.png" alt="Calendar" class="info-icon" />
-        {{ event().date | date : 'MMM d, y' }}
+        {{ event().startTime| date : 'MMM d, y' }}
       </span>
 
       <h3 class="event-card__title">{{ event().title }}</h3>
@@ -26,10 +26,10 @@
         {{ event().location }}
       </span>
 
-      @if (event().attendees) {
+      @if (event()) {
       <span class="event-card__icon-text">
         <img src="icons/users-icon.png" alt="Attendees" class="info-icon" />
-        {{ event().attendees }} attendees
+        {{200 }} attendees
       </span>
       }
     </div>

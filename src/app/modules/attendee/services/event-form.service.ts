@@ -55,6 +55,9 @@ export class EventFormService {
   public get inPersonDetails() {
     return this.form.get(F.IN_PERSON_DETAILS) as FormGroup;
   }
+  public get vertualDetails() {
+    return this.form.get(F.VIRTUAL_DETAILS) as FormGroup;
+  }
 
   public get requireApproval() {
     return this.form.get(F.REQUIRE_APPROVAL);
@@ -75,6 +78,7 @@ export class EventFormService {
 
   private createVirtualDetailGroup(): FormGroup {
     return this.fb.group({
+      [F.DESCRIPTION]: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
       [F.MEETING_LINK]: [
         '',
         [
