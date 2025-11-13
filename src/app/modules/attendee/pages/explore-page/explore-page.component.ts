@@ -54,10 +54,7 @@ import { StoredRecentLocation } from '../../../../core/models/recent-location.mo
 export class ExplorePageComponent implements OnInit {
 
   protected allEvents = signal<GetEventsResponse | null>(null);
-  private freeEventsPage = signal(1);
-  private paidEventsPage = signal(1);
-  private upcomingEventsPage = signal(1);
-  private pastEventsPage = signal(1);
+  protected currentPage = signal<number>(1);
   private readonly EVENTS_PER_PAGE = 12;
 
 
@@ -77,7 +74,6 @@ export class ExplorePageComponent implements OnInit {
   public popularLocations = signal<PopularLocation[]>([]);
 
   constructor(private readonly router: Router, private readonly eventService: EventsServiceService) {
-  
 
     effect(() => {
       const isPaid = this.selectedEventType().value;
@@ -85,8 +81,9 @@ export class ExplorePageComponent implements OnInit {
       const date = this.selectedDate();
       const searchTerm = this.searchQuery();
       const locationTerm = this.locationTerm();
+      const currentPage = this.currentPage();
 
-      this.searchEvents(isPaid, past, date, searchTerm, locationTerm);
+      this.searchEvents(isPaid, past, date, searchTerm, locationTerm, currentPage);
     });
 
     effect(() => {
@@ -108,7 +105,7 @@ export class ExplorePageComponent implements OnInit {
   }
 
   @HostListener('document:click', ['$event'])
-  public onDocumentClick(event: MouseEvent): void {
+  protected onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     const clickedInsideDropdown = target.closest('.filter-dropdown-wrapper');
 
@@ -133,7 +130,7 @@ export class ExplorePageComponent implements OnInit {
     this.popularLocations.set(MOCK_POPULAR_LOCATIONS);
   }
 
-  private searchEvents(isPaid: string, past: boolean | null, date: Date | null, searchTerm: string, locationTerm: string) {
+  private searchEvents(isPaid: string, past: boolean | null, date: Date | null, searchTerm: string, locationTerm: string, currentPage: number) {
     let props: GetEventProps = {};
 
     if (isPaid !== '') {
@@ -154,6 +151,10 @@ export class ExplorePageComponent implements OnInit {
 
     if (locationTerm !== '') {
       props.location = locationTerm;
+    }
+
+    if (currentPage) {
+      props.pageNumber = currentPage;
     }
 
     this.eventService.getEvents({ ...props, pageSize: this.EVENTS_PER_PAGE }).subscribe({
@@ -186,20 +187,12 @@ export class ExplorePageComponent implements OnInit {
 
   protected onTabChange(selectedTabKey: boolean | null): void {
     this.activeToggle.set(selectedTabKey);
-    this.resetPagination();
   }
 
   protected onSearchChange(query: string): void {
     this.searchQuery.set(query);
-    this.resetPagination();
   }
 
-
-  protected toggleLocationDropdown(): void {
-    this.showLocationDropdown.update((v) => !v);
-    this.showEventTypeDropdown.set(false);
-    this.showDatePicker.set(false);
-  }
 
   protected closeLocationDropdown(): void {
     this.showLocationDropdown.set(false);
@@ -209,15 +202,8 @@ export class ExplorePageComponent implements OnInit {
   }
 
   protected onLocationSelected(location: StoredRecentLocation): void {
-    this.locationTerm.update(()=>location.address);
+    this.locationTerm.update(() => location.address);
     this.showLocationDropdown.set(false);
-    this.resetPagination();
-  }
-
-  protected async onUseCurrentLocation(): Promise<void> {
-    this.selectedLocation.set('Current Location');
-    this.showLocationDropdown.set(false);
-    this.resetPagination();
   }
 
 
@@ -234,9 +220,8 @@ export class ExplorePageComponent implements OnInit {
   protected onEventTypeSelected(type: EventTypeFilter): void {
     this.selectedEventType.set(type);
     this.showEventTypeDropdown.set(false);
-    this.resetPagination();
-  }
 
+  }
 
   protected toggleDatePicker(): void {
     this.showDatePicker.update((v) => !v);
@@ -247,53 +232,7 @@ export class ExplorePageComponent implements OnInit {
   protected onDateSelected(date: Date): void {
     this.selectedDate.set(date);
     this.showDatePicker.set(false);
-    this.resetPagination();
-  }
-
-  private resetPagination(): void {
-    this.freeEventsPage.set(1);
-    this.paidEventsPage.set(1);
-    this.upcomingEventsPage.set(1);
-    this.pastEventsPage.set(1);
   }
 
 
-  private getAllFilteredEvents() {
-    let events = this.allEvents();
-
-  }
-
-
-  protected onLoadMoreUpcoming(): void {
-    this.upcomingEventsPage.update(page => page + 1);
-  }
-
-  protected onLoadMorePast(): void {
-    this.pastEventsPage.update(page => page + 1);
-  }
-
-  protected onLoadMoreFree(): void {
-    this.freeEventsPage.update(page => page + 1);
-  }
-
-  protected onLoadMorePaid(): void {
-    this.paidEventsPage.update(page => page + 1);
-  }
-
-
-  protected onShowLessUpcoming(): void {
-    this.upcomingEventsPage.set(1);
-  }
-
-  protected onShowLessPast(): void {
-    this.pastEventsPage.set(1);
-  }
-
-  protected onShowLessFree(): void {
-    this.freeEventsPage.set(1);
-  }
-
-  protected onShowLessPaid(): void {
-    this.paidEventsPage.set(1);
-  }
 }
