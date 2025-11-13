@@ -14,5 +14,7 @@ export const APP_ROUTES = {
   CREATE_EVENT: '/app/create-event',
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   ADMIN_DASHBOARD: '/admin',
+  EVENT_PAYMENT_SUCCESS: '/app/event-payment-success',
+
 };
 

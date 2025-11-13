@@ -1,0 +1,54 @@
+<div class="success-page-content">
+  <div class="success-card">
+    <header class="success-header">
+      <div class="success-icon">
+        <img src="icons/succes-check.png" alt="Success Checkmark" />
+      </div>
+      <h1 class="success-title">Payment Successful!</h1>
+      <p class="success-subtitle">
+        Thank you for your purchase. A confirmation email has been sent to your
+        email address.
+      </p>
+    </header>
+
+    
+    @if (orderDetails(); as details) {
+    <section class="order-details-container">
+      <h2 class="details-title">Order Details</h2>
+      <ul class="details-list">
+        <li>
+          <span>Event</span>
+          <strong>{{ details.event }}</strong>
+        </li>
+        <li>
+          <span>Date</span>
+          <strong>{{ details.date }}</strong>
+        </li>
+        <li>
+          <span>Time</span>
+          <strong>{{ details.time }}</strong>
+        </li>
+        <li>
+          <span>Location</span>
+          <strong>{{ details.location }}</strong>
+        </li>
+        <li>
+          <span>Organizer</span>
+          <strong>{{ details.organizer }}</strong>
+        </li>
+      </ul>
+    </section>
+    }
+
+    <div class="button-container">
+    <footer class="button-group">
+      <app-button type="secondary" (click)="onBackToHome()">
+        Back To Home
+      </app-button>
+      <app-button type="primary" (click)="onDownloadReceipt()">
+        Download Receipt
+      </app-button>
+    </footer>
+    </div>
+  </div>
+</div>
