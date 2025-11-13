@@ -27,13 +27,13 @@ export const ADMIN_ROUTES: Routes = [
     // canActivate: [AdminGuard],
   },
   {
-    path: 'events/:id', // ✅ This matches the navigation in _onViewEvent
+    path: 'events/:id',
     loadComponent: () =>
       import(
-        '../admin/pages/event-management-page/components/event-details/event-details.component'
+        '../admin/pages/event-management-page/components/event-details-page/event-details.component-page'
       ).then((m) => m.EventDetailsPageComponent),
-    // canActivate: [AdminGuard],
   },
+
   {
     path: 'saved-invites',
     loadComponent: () =>

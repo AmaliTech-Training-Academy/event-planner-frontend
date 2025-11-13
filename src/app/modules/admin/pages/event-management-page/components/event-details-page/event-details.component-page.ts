@@ -7,11 +7,10 @@ import { LayoutService } from '../../../../../../core/services/layout.service';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 import { APP_ROUTES } from '../../../../../../core/constants/app-routes.constants';
 import { EventBackendService } from '../../../../../../core/services/backend/event-backend.service';
-import { EventDetailResponse } from '../../../../../../core/models/event.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
+import { EventManagement } from '../../../../../../core/models/event.model';
 
-// ✅ Component-specific EventDetails with all display properties
 export interface EventDetails {
   id: number;
   name: string;
@@ -40,8 +39,8 @@ type TabType = 'overview' | 'guests' | 'registration';
   selector: 'app-event-details-page',
   standalone: true,
   imports: [CommonModule, NgOptimizedImage, ButtonComponent],
-  templateUrl: './event-details.component.html',
-  styleUrls: ['./event-details.component.scss'],
+  templateUrl: './event-details.component-page.html',
+  styleUrls: ['./event-details.component-page.scss'],
 })
 export class EventDetailsPageComponent implements OnInit {
   private readonly _destroyRef = inject(DestroyRef);
@@ -52,7 +51,6 @@ export class EventDetailsPageComponent implements OnInit {
   private readonly _eventBackendService = inject(EventBackendService);
   protected readonly APP_ROUTES = APP_ROUTES;
 
-  // Reactive signals
   protected readonly eventDetails = signal<EventDetails | null>(null);
   protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
@@ -104,10 +102,48 @@ export class EventDetailsPageComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
-    this._eventBackendService.getEventDetails(eventId).subscribe({
+    // Fetch all events and find the specific one by ID
+    this._eventBackendService.getDashboardData(0, 1000).subscribe({
       next: (response) => {
-        // ✅ Map EventDetailResponse to component EventDetails
-        const event = this._mapResponseToEventDetails(response.data);
+        const dashboard = response.data;
+
+        if (!dashboard?.eventManagement?.content?.length) {
+          this.error.set('No events found in dashboard data.');
+          this.isLoading.set(false);
+          return;
+        }
+
+        // Find the event with matching ID
+        const apiEvent = dashboard.eventManagement.content.find(
+          (e: EventManagement) => e.id === eventId
+        );
+
+        if (!apiEvent) {
+          this.error.set(`Event with ID ${eventId} not found.`);
+          this.isLoading.set(false);
+          return;
+        }
+
+        // Map EventManagement to EventDetails
+        const event: EventDetails = {
+          id: apiEvent.id,
+          name: apiEvent.title,
+          organizer: apiEvent.organizer || 'Unknown Organizer',
+          date: apiEvent.startTime
+            ? new Date(apiEvent.startTime).toISOString().split('T')[0]
+            : 'N/A',
+          attendees: apiEvent.attendeeCount || 0,
+          status: this._mapStatusToTableStatus(apiEvent.status),
+          time: apiEvent.startTime
+            ? new Date(apiEvent.startTime).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZoneName: 'short',
+              })
+            : '09:00am GMT',
+          location: 'Virtual (Zoom meeting)', // Default location since not in API
+          description: 'Event description coming soon.', // Default description
+        };
 
         const host: EventHost = {
           name: event.organizer,
@@ -129,28 +165,7 @@ export class EventDetailsPageComponent implements OnInit {
     });
   }
 
-  // ✅ Map EventDetailResponse to component EventDetails
-  private _mapResponseToEventDetails(
-    apiEvent: EventDetailResponse
-  ): EventDetails {
-    return {
-      id: apiEvent.id,
-      name: apiEvent.title,
-      organizer: apiEvent.organizer,
-      date: new Date(apiEvent.startTime).toISOString().split('T')[0],
-      attendees: apiEvent.attendeeCount,
-      status: this._mapBackendStatus(apiEvent.status),
-      time: new Date(apiEvent.startTime).toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZoneName: 'short',
-      }),
-      location: apiEvent.location || 'Virtual (Zoom meeting)',
-      description: apiEvent.description || 'Event description coming soon.',
-    };
-  }
-
-  private _mapBackendStatus(
+  private _mapStatusToTableStatus(
     status: string
   ): 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled' {
     const statusMap: Record<
@@ -173,7 +188,6 @@ export class EventDetailsPageComponent implements OnInit {
     this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS]);
   }
 
-  // ✅ FIXED: Add null check before accessing event properties
   protected onEdit(): void {
     const event = this.eventDetails();
     if (!event) {
@@ -182,7 +196,6 @@ export class EventDetailsPageComponent implements OnInit {
     }
 
     if (event.id) {
-      // Navigate to edit page (adjust route as needed)
       this._router.navigate([
         this.APP_ROUTES.ADMIN_EVENT_DETAILS,
         event.id,
@@ -197,7 +210,6 @@ export class EventDetailsPageComponent implements OnInit {
       console.warn('Cannot send invites: Event details not loaded');
       return;
     }
-    // TODO: Implement send invites functionality
     console.log('Send invites for event:', event.id);
   }
 
@@ -211,7 +223,6 @@ export class EventDetailsPageComponent implements OnInit {
       console.warn('Cannot schedule feedback: Event details not loaded');
       return;
     }
-    // TODO: Implement schedule feedback functionality
     console.log('Schedule feedback for event:', event.id);
   }
 

@@ -278,3 +278,18 @@ export function getEventStatusClass(status: EventStatus): string {
   };
   return statusClasses[status] || 'status-default';
 }
+export function mapEventManagementToEventDetails(
+  event: EventManagement
+): EventDetails {
+  return {
+    id: event.id.toString(),
+    title: event.title,
+    date: event.startTime, // frontend expects a string
+    startDate: new Date(event.startTime),
+    location: 'TBD', // EventManagement doesn't have location
+    heroImageUrl: '',
+    isPaid: false,
+    description: '',
+    attendeesCount: event.attendeeCount.toString(),
+  };
+}
