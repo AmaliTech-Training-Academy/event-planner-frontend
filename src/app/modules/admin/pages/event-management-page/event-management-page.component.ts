@@ -30,7 +30,10 @@ import {
   DataTableComponent,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import { DashboardData } from '../../../../core/models/event.model';
+import {
+  DashboardData,
+  EventManagement,
+} from '../../../../core/models/event.model';
 
 interface EventTableData {
   id: number;
@@ -68,36 +71,42 @@ export class EventManagementPageComponent implements OnInit {
   private readonly _isLoading = signal<boolean>(false);
   private readonly _error = signal<string | null>(null);
 
+  // Pagination and filter state
+  private readonly _currentPage = signal<number>(0);
+  private readonly _pageSize = signal<number>(10);
+  private readonly _selectedStatus = signal<string>('all');
+  private readonly _searchQuery = signal<string>('');
+
   // This computed signal uses backend data
   public readonly eventStatistics = computed<EventStatistic[]>(() => {
     const data = this._dashboardData();
     if (!data) return [];
 
-    const stats = data.eventStats; // ← From API!
+    const stats = data.eventStats;
     return [
       {
         label: 'Total Events',
-        count: stats.totalEvents, // ← Will be 10
+        count: stats.totalEvents,
         color: '#3DC0F3',
       },
       {
         label: 'Active Events',
-        count: stats.activeEvents, // ← Will be 1
+        count: stats.activeEvents,
         color: '#656565',
       },
       {
         label: 'Completed Events',
-        count: stats.completedEvents, // ← Will be 2
+        count: stats.completedEvents,
         color: '#292929',
       },
       {
         label: 'Cancelled Events',
-        count: stats.canceledEvents, // ← Will be 0
+        count: stats.canceledEvents,
         color: '#FF5A00',
       },
       {
         label: 'Draft Events',
-        count: stats.draftEvents, // ← Will be 7
+        count: stats.draftEvents,
         color: '#0787C2',
       },
     ];
@@ -135,7 +144,28 @@ export class EventManagementPageComponent implements OnInit {
     const data = this._dashboardData();
     if (!data) return [];
 
-    return data.eventManagement.map((event) => ({
+    let events = data.eventManagement.content;
+
+    // Apply status filter
+    const status = this._selectedStatus();
+    if (status !== 'all') {
+      events = events.filter(
+        (event: EventManagement) =>
+          this._mapStatusToTableStatus(event.status) === status
+      );
+    }
+
+    // Apply search filter
+    const searchQuery = this._searchQuery().toLowerCase();
+    if (searchQuery) {
+      events = events.filter(
+        (event: EventManagement) =>
+          event.title.toLowerCase().includes(searchQuery) ||
+          event.organizer.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    return events.map((event: EventManagement) => ({
       id: event.id,
       name: event.title,
       organizer: event.organizer,
@@ -147,8 +177,18 @@ export class EventManagementPageComponent implements OnInit {
         minute: '2-digit',
         timeZoneName: 'short',
       }),
-      location: 'N/A', // Not provided in API
+      location: 'N/A',
     }));
+  });
+
+  public readonly totalPages = computed(() => {
+    const data = this._dashboardData();
+    return data?.eventManagement.totalPages ?? 0;
+  });
+
+  public readonly totalElements = computed(() => {
+    const data = this._dashboardData();
+    return data?.eventManagement.totalElements ?? 0;
   });
 
   public readonly isLoading = computed(() => this._isLoading());
@@ -247,6 +287,33 @@ export class EventManagementPageComponent implements OnInit {
     this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS, event.id]);
   }
 
+  // Handle pagination changes
+  public onPageChange(page: number): void {
+    this._currentPage.set(page);
+    this._loadDashboardEvents();
+  }
+
+  // Handle filter changes
+  public onFilterChange(filters: Record<string, string>): void {
+    if (filters['status']) {
+      this._selectedStatus.set(filters['status']);
+    }
+
+    if (filters['export']) {
+      this._handleExport(filters['export']);
+    }
+
+    // Reset to first page when filters change
+    this._currentPage.set(0);
+  }
+
+  // Handle search
+  public onSearch(query: string): void {
+    this._searchQuery.set(query);
+    // Reset to first page when searching
+    this._currentPage.set(0);
+  }
+
   private _loadDashboardData(): void {
     this._error.set(null);
     this._eventManagementService.loadDashboardData().subscribe({
@@ -257,14 +324,83 @@ export class EventManagementPageComponent implements OnInit {
     });
   }
 
-  private _onViewEvent(event: EventTableData): void {
-    this._router.navigate([this.APP_ROUTES.ADMIN_EVENT_DETAILS, event.id], {
-      state: { eventData: event },
+  private _loadDashboardEvents(): void {
+    this._error.set(null);
+    const page = this._currentPage();
+    const size = this._pageSize();
+
+    this._eventManagementService.loadDashboardEvents(page, size).subscribe({
+      error: (err) => {
+        this._error.set('Failed to load events');
+        console.error('Events error:', err);
+      },
     });
+  }
+
+  private _onViewEvent(event: EventTableData): void {
+    // Navigate to event details page using the event ID
+    this._router.navigate(['/admin/events', event.id]);
   }
 
   private _onCreateEvent(): void {
     this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
+  }
+
+  private _handleExport(format: string): void {
+    if (!format) return;
+
+    const data = this.eventTableData();
+
+    switch (format) {
+      case 'csv':
+        this._exportAsCSV(data);
+        break;
+      case 'json':
+        this._exportAsJSON(data);
+        break;
+      case 'pdf':
+        this._exportAsPDF(data);
+        break;
+    }
+  }
+
+  private _exportAsCSV(data: EventTableData[]): void {
+    const headers = ['Event Name', 'Organizer', 'Date', 'Attendees', 'Status'];
+    const csvContent = [
+      headers.join(','),
+      ...data.map((event) =>
+        [
+          event.name,
+          event.organizer,
+          event.date,
+          event.attendees,
+          event.status,
+        ].join(',')
+      ),
+    ].join('\n');
+
+    this._downloadFile(csvContent, 'events.csv', 'text/csv');
+  }
+
+  private _exportAsJSON(data: EventTableData[]): void {
+    const jsonContent = JSON.stringify(data, null, 2);
+    this._downloadFile(jsonContent, 'events.json', 'application/json');
+  }
+
+  private _exportAsPDF(data: EventTableData[]): void {
+    // Placeholder for PDF export - you might want to use a library like jsPDF
+    console.log('PDF export not implemented yet', data);
+    alert('PDF export feature coming soon!');
+  }
+
+  private _downloadFile(content: string, filename: string, type: string): void {
+    const blob = new Blob([content], { type });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 
   private _mapStatusToTableStatus(

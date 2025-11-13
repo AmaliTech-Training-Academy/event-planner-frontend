@@ -1,81 +1,5 @@
-
-
-export interface EventDetails {
-  id: string;
-  title: string;
-  date: string;
-  startDate: Date;
-  location: string;
-  heroImageUrl: string;
-  isPaid: boolean;
-  description: string;
-  attendeesCount: string;
-}
-
-export interface VenueImage {
-  url: string;
-  alt: string;
-  description?: string;
-}
-
-export interface VenueSection {
-  id: string;
-  name: string;
-  price: number;
-  imageUrl: string;
-  availability: string;
-  availabilityType: 'full' | 'available';
-}
-
-export interface TicketInfo {
-  title: string;
-  price: number;
-  currency?: string;
-  features: string[];
-  buttonText: string;
-}
-
-
-
-export interface RegistrationInfo {
-  eventName: string;
-  ticketName: string;
-  ticketPrice: number;
-}
-
-
-
-export interface EventCard {
-  id: string;
-  title: string;
-  date: Date;
-  location: string;
-  imageUrl: string;
-  isPaid: boolean;
-  attendees: number;
-}
-
-
-
-export interface TabToggle {
-  key: string;
-  label: string;
-}
-
-export interface SearchLocation {
-  name: string;
-  id: string;
-}
-
-export interface PopularLocation {
-  name: string;
-  meta: string;
-}
-
-// event.model.ts
-
 // ============================================
-// EXISTING MODELS (from your codebase)
+// EXISTING FRONTEND MODELS (UI-focused)
 // ============================================
 
 export interface EventDetails {
@@ -145,7 +69,7 @@ export interface PopularLocation {
 }
 
 // ============================================
-// API RESPONSE MODELS (for backend integration)
+// API RESPONSE MODELS (Backend DTOs)
 // ============================================
 
 export interface EventStats {
@@ -185,7 +109,7 @@ export interface DashboardData {
   eventStats: EventStats;
   topOrganizers: TopOrganizer[];
   upcomingEvents: UpcomingEvent[];
-  eventManagement: EventManagement[];
+  eventManagement: PaginatedResponse<EventManagement>; // ✅ Fixed: Now paginated
 }
 
 export interface EventDetailResponse {
@@ -225,6 +149,10 @@ export interface Event {
   price?: number;
 }
 
+// ============================================
+// GENERIC API RESPONSE WRAPPERS
+// ============================================
+
 export interface ApiResponse<T> {
   description: string | null;
   data: T;
@@ -232,10 +160,31 @@ export interface ApiResponse<T> {
 
 export interface PaginatedResponse<T> {
   content: T[];
+  pageable: Pageable;
   totalElements: number;
   totalPages: number;
+  last: boolean;
   size: number;
   number: number;
+  sort: Sort;
+  numberOfElements: number;
+  first: boolean;
+  empty: boolean;
+}
+
+export interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  sort: Sort;
+  offset: number;
+  paged: boolean;
+  unpaged: boolean;
+}
+
+export interface Sort {
+  unsorted: boolean;
+  sorted: boolean;
+  empty: boolean;
 }
 
 // ============================================
@@ -286,9 +235,46 @@ export function mapEventManagementToEventCard(
     id: event.id.toString(),
     title: event.title,
     date: new Date(event.startTime),
-    location: 'N/A', // EventManagement doesn't include location
+    location: 'TBD', // EventManagement doesn't include location
     imageUrl: '',
     isPaid: false,
     attendees: event.attendeeCount,
   };
+}
+
+/**
+ * Format date for display
+ */
+export function formatEventDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+/**
+ * Format time for display
+ */
+export function formatEventTime(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+/**
+ * Get status badge color class
+ */
+export function getEventStatusClass(status: EventStatus): string {
+  const statusClasses: Record<EventStatus, string> = {
+    ACTIVE: 'status-active',
+    DRAFT: 'status-draft',
+    COMPLETED: 'status-completed',
+    CANCELED: 'status-canceled',
+  };
+  return statusClasses[status] || 'status-default';
 }
