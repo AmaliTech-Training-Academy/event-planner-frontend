@@ -1,7 +1,7 @@
-
 @use 'typography' as *;
 @use 'colors' as *;
 @use 'variables' as *;
+
 .admin-sidebar {
   width: 17.5rem;
   height: 100vh;
@@ -12,7 +12,86 @@
   position: fixed;
   left: 0;
   top: 0;
-  
+  transition: width 0.3s ease;
+  z-index: 100;
+
+  // Collapsed state
+  &--collapsed {
+    width: 5rem;
+
+    .admin-sidebar__title {
+      justify-content: center;
+      
+      span:last-child {
+        display: none;
+      }
+    }
+
+    .admin-sidebar__link {
+      justify-content: center;
+      padding: $spacing-3 $spacing-2;
+
+      &::before {
+        left: 0;
+        right: auto;
+      }
+    }
+
+    .admin-sidebar__toggle-icon {
+      transform: rotate(0deg);
+    }
+
+    .admin-sidebar__section-title {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    // When collapsed, adjust the adjacent main content
+    ~ .admin-layout__main {
+      margin-left: 5rem;
+    }
+  }
+
+  &__toggle {
+    position: absolute;
+    top: 1.5rem;
+    right: -0.45rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: $gray-50;
+    border: $stroke-0 solid $gray-200;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s ease;
+    color: $gray-600;
+    padding: 0;
+
+
+    &:hover {
+      background: $gray-100;
+      border-color: $gray-300;
+      color: $orange-600;
+      transform: scale(1.15);
+      box-shadow: 0 2px 8px rgba($orange-600, 0.15);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $orange-600;
+      outline-offset: 2px;
+    }
+  }
+
+  &__toggle-icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
   &__header {
     padding: $spacing-6 $spacing-4;
@@ -20,18 +99,34 @@
 
   &__title {
     @include h-5;
-        color:$gray-950;
-   
+    color: $gray-950;
     margin: 0;
-    span{
-         color: $orange-600;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.3s ease;
+
+    span:first-child {
+      color: $orange-600;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+
+    span:last-child {
+      display: inline-block;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    &:hover span:first-child {
+      transform: scale(1.05);
     }
   }
 
   &__nav {
     flex: 1;
     overflow-y: auto;
-    padding: $spacing-6 .5rem;
+    overflow-x: hidden;
+    padding: $spacing-6 0.5rem;
 
     &::-webkit-scrollbar {
       width: 0.25rem;
@@ -44,7 +139,7 @@
     &::-webkit-scrollbar-thumb {
       background: $gray-300;
       border-radius: $radius-full;
-      
+      transition: background 0.2s ease;
 
       &:hover {
         background: $gray-400;
@@ -66,6 +161,10 @@
     padding: 0 $spacing-4;
     margin: 0 0 $spacing-3 0;
     text-transform: capitalize;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s ease, color 0.2s ease;
   }
 
   &__list {
@@ -85,9 +184,11 @@
     padding: $spacing-3 $spacing-4;
     text-decoration: none;
     color: $gray-700;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     @include body-2;
+    white-space: nowrap;
+    overflow: hidden;
 
     &::before {
       content: '';
@@ -97,31 +198,69 @@
       bottom: 0;
       width: 0.25rem;
       background-color: transparent;
-      transition: background-color 0.4s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    // Ripple effect background
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 0.5rem;
+      background: radial-gradient(circle at center, rgba($orange-600, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
     &:hover {
-      
       color: $orange-700;
-      border-radius: .5rem;
+      border-radius: 0.5rem;
+      background: rgba($orange-600, 0.05);
+      transform: translateX(4px);
+
+      &::after {
+        opacity: 1;
+        transform: scale(1);
+      }
 
       .admin-sidebar__icon {
-        filter: brightness(0) saturate(100%) invert(45%) sepia(89%) saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
-        transform: rotate(360deg);
+        filter: brightness(0) saturate(100%) invert(45%) sepia(89%)
+          saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
+        transform: scale(1.15);
       }
+
+      .admin-sidebar__label {
+        transform: translateX(2px);
+      }
+    }
+
+    &:active {
+      transform: translateX(2px) scale(0.98);
     }
 
     &--active {
       background-color: $gray-100;
-      color: $gray-600;
+      color: $orange-700;
       font-weight: 600;
-      border-radius: .5rem 0 0rem .5rem;
+      border-radius: 0.5rem 0 0 0.5rem;
 
       &::before {
         background-color: $orange-600;
       }
 
-    
+      .admin-sidebar__icon {
+        filter: brightness(0) saturate(100%) invert(45%) sepia(89%)
+          saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
+      }
+
+      &:hover {
+        transform: translateX(2px);
+        
+        .admin-sidebar__icon {
+          transform: scale(1.1);
+        }
+      }
     }
   }
 
@@ -130,21 +269,95 @@
     height: 1.25rem;
     display: block;
     flex-shrink: 0;
-    transition: filter 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     object-fit: contain;
-    transition: .4s ease;
-    &:hover{
-      filter: brightness(0) saturate(100%) invert(45%) sepia(89%) saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
-    }
+    position: relative;
+    z-index: 1;
   }
 
   &__label {
     flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
   }
 
   &__footer {
     padding: $spacing-4;
     border-top: $stroke-0 solid $gray-200;
     margin-top: auto;
+  }
+
+  &__empty {
+    @include body-3;
+    color: $gray-400;
+    padding: $spacing-3 $spacing-4;
+    margin: 0;
+    text-align: center;
+  }
+}
+
+// Logout button styling
+.admin-sidebar__link--logout {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: #dc2626;
+  margin-top: 0.5rem;
+
+  &:hover {
+    color: #b91c1c;
+    background: rgba(220, 38, 38, 0.05);
+    transform: translateX(4px);
+
+    &::after {
+      background: radial-gradient(circle at center, rgba(220, 38, 38, 0.1) 0%, transparent 70%);
+    }
+
+    .admin-sidebar__icon {
+      filter: brightness(0) saturate(100%) invert(27%) sepia(93%)
+        saturate(4367%) hue-rotate(348deg) brightness(95%) contrast(90%);
+      transform: rotate(180deg);
+    }
+  }
+
+  .admin-sidebar__icon {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(93%)
+      saturate(4367%) hue-rotate(348deg) brightness(95%) contrast(90%);
+  }
+}
+
+// Adjust main content when sidebar is expanded (default)
+.admin-layout__main {
+  margin-left: 17.5rem;
+  transition: margin-left 0.3s ease;
+}
+
+// Keyframe animations
+// (Removed iconBounce and iconShake - no longer needed)
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    
+    &--collapsed {
+      transform: translateX(0);
+      width: 5rem;
+    }
+  }
+
+  .admin-layout__main {
+    margin-left: 0;
+  }
+
+  .admin-sidebar--collapsed ~ .admin-layout__main {
+    margin-left: 5rem;
   }
 }

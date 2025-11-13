@@ -1,12 +1,18 @@
-<div class="alert" [ngClass]="notification?.type">
+@if(notification) {
+<div class="alert" [ngClass]="[notification.type, isClosing ? 'closing' : '']">
+    <div class="content">
+        <p>{{notification.message}}</p>
+    </div>
     <app-button type="plain" (onClick)="close()">
-        @if(notification?.type === 'success'){
-        <img src="icons/close_green.svg" alt="Success" srcset="">
-        } @else if(notification?.type === 'error') {
-        <img src="icons/close_red.svg" alt="Error" srcset="">
+        @if(notification.type === 'success'){
+        <img src="icons/close_green.svg" alt="Close" srcset="">
+        } @else if(notification.type === 'error') {
+        <img src="icons/close_red.svg" alt="Close" srcset="">
+        } @else if(notification.type === 'warning') {
+        <img src="icons/close_warning.svg" alt="Close" srcset="">
+        } @else if(notification.type === 'info') {
+        <img src="icons/close_info.svg" alt="Close" srcset="">
         }
     </app-button>
-    <div class="content">
-        <p>{{notification?.message}}</p>
-    </div>
 </div>
+}

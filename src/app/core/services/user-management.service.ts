@@ -137,6 +137,37 @@ export class UserManagementService {
       finalize(() => this._setLoading(false))
     );
   }
+  public refreshUserStats(): void {
+    this.userBackend
+      .getAllUsers(0, 1)
+      .pipe(
+        tap((response) => {
+          const data = response.data;
+          if (data) this._updateUserCards(data);
+        }),
+        catchError((err) => {
+          this.errorHandler.handle(err);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  public get totalElements(): number {
+    return this._totalElements$.getValue(); // safe, BehaviorSubject
+  }
+
+  private _userStats: {
+    totalUsers: number;
+    totalOrganizers: number;
+    totalAttendees: number;
+    totalDeactivatedUsers: number;
+  } = {
+    totalUsers: 0,
+    totalOrganizers: 0,
+    totalAttendees: 0,
+    totalDeactivatedUsers: 0,
+  };
 
   public searchUsers(
     keyword?: string,
@@ -425,7 +456,133 @@ export class UserManagementService {
     this._userCards$.next(cards);
   }
 
-  private _setLoading(isLoading: boolean): void {
+  public getUser(userId: string) {
+    this.setLoading(true);
+    return this.userBackend.getUserById(userId).pipe(
+      map((response) => ({
+        ...response,
+        data: normalizeUserStatus(response.data),
+      })),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
+  public createUser(user: Partial<User>) {
+    this.setLoading(true);
+    return this.userBackend.createUser(user).pipe(
+      map((response) => ({
+        ...response,
+        data: normalizeUserStatus(response.data),
+      })),
+      tap((response) =>
+        this._users$.next([...this._users$.getValue(), response.data])
+      ),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
+  public updateUser(userId: string, payload: UpdateUserPayload) {
+    this.setLoading(true);
+
+    return this.userBackend.updateUser(userId, payload).pipe(
+      map((response) => ({
+        ...response,
+        data: normalizeUserStatus(response.data),
+      })),
+      tap((response) => {
+        const users = this._users$
+          .getValue()
+          .map((u) =>
+            String(u.userId) === String(userId) ? response.data : u
+          );
+        this._users$.next(users);
+
+        this.invalidateCache();
+      }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
+  public toggleUserStatusWithBackend(userId: number | string) {
+    this.setLoading(true);
+
+    return this.userBackend.toggleUserActivation(userId).pipe(
+      tap(() => {
+        const users = this._users$.getValue();
+        const updatedUsers = users.map((u) => {
+          if (u.userId === userId) {
+            const newStatus: User['status'] =
+              u.status === 'Active' ? 'Inactive' : 'Active';
+            return { ...u, status: newStatus };
+          }
+          return u;
+        });
+        this._users$.next(updatedUsers);
+
+        this.invalidateCache();
+        this.refreshUserStats();
+      }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
+  public inviteUsers(payload: InviteUserPayload) {
+    this.setLoading(true);
+    return this.userBackend.inviteUsers(payload).pipe(
+      tap((response) => {
+        if (response.data.invitationsSent > 0) {
+          this.invalidateCache();
+        }
+      }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+  public fetchInvitations(page?: number, size?: number) {
+    this.setLoading(true);
+    return this.userBackend.fetchInvitations(page, size).pipe(
+      map((response: FetchInvitationsResponse) => {
+        return response.data?.content ?? [];
+      }),
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return of([]);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
+  public fetchInvitationsWithPagination(page: number = 0, size: number = 10) {
+    this.setLoading(true);
+    return this.userBackend.fetchInvitations(page, size).pipe(
+      catchError((err) => {
+        this.errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
+  protected setLoading(isLoading: boolean): void {
     this._loading$.next(isLoading);
   }
 }

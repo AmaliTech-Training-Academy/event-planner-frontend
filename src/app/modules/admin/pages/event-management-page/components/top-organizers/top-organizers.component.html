@@ -1,0 +1,101 @@
+<div class="top-organizers">
+  <div class="top-organizers__header">
+    <h3 class="top-organizers__title">{{ title() }}</h3>
+    @if (showViewAll()) {
+    <app-button
+      type="plain"
+      [extraClass]="'top-organizers__view-all'"
+      (onClick)="onViewAll()"
+      [showLabel]="false"
+      ariaLabel="View all organizers"
+    >
+      <img
+        ngSrc="icons/user-group.png"
+        alt=""
+        width="20"
+        height="20"
+        aria-hidden="true"
+      />
+    </app-button>
+    }
+  </div>
+
+  @if (hasOrganizers()) {
+  <div class="top-organizers__list">
+    @for (organizer of organizers(); track trackByOrganizer($index, organizer))
+    {
+    <div
+      class="top-organizers__item"
+      (click)="onOrganizerClick(organizer)"
+      role="button"
+      tabindex="0"
+      [attr.aria-label]="'View details for ' + organizer.name"
+      (keydown.enter)="onOrganizerClick(organizer)"
+      (keydown.space)="onOrganizerClick(organizer)"
+    >
+      <div class="top-organizers__avatar">
+        @if (organizer.avatar) {
+        <img
+          [src]="organizer.avatar"
+          [alt]="organizer.name + ' avatar'"
+          loading="lazy"
+        />
+        } @else {
+        <span aria-hidden="true" class="initial-name">{{
+          getInitial(organizer.name)
+        }}</span>
+        }
+      </div>
+
+      <div class="top-organizers__info">
+        <h4 class="top-organizers__name">{{ organizer.name }}</h4>
+        <p class="top-organizers__email">{{ organizer.email }}</p>
+      </div>
+
+      <div class="top-organizers__stats">
+        <span class="top-organizers__event-count">
+          {{ organizer.eventCount }} Events
+        </span>
+
+        @if (hasTrendData(organizer)) {
+        <img
+          [ngSrc]="getGrowthIcon(organizer.growthPercentage)"
+          alt="Trend indicator"
+          width="160"
+          height="40"
+          class="top-organizers__sparkline"
+          aria-hidden="true"
+        />
+        }
+
+        <span
+          class="top-organizers__growth"
+          [class.top-organizers__growth--positive]="
+            isPositiveGrowth(organizer.growthPercentage)
+          "
+          [class.top-organizers__growth--negative]="
+            isNegativeGrowth(organizer.growthPercentage)
+          "
+          [attr.aria-label]="
+            formatGrowth(organizer.growthPercentage) + ' growth'
+          "
+        >
+          {{ formatGrowth(organizer.growthPercentage) }}
+        </span>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <div class="top-organizers__empty">
+    <!-- <img
+      ngSrc="icons/empty-folder.png"
+      alt=""
+      width="48"
+      height="48"
+      aria-hidden="true"
+    /> -->
+    <p>No organizers found</p>
+  </div>
+  }
+</div>

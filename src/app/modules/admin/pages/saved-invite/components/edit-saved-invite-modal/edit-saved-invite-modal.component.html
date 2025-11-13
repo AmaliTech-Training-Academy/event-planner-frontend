@@ -1,0 +1,85 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal edit-invite-modal">
+    <app-modal-header 
+      (close)="onCancel()" 
+      title="Edit Invitation"
+    ></app-modal-header>
+
+    <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" class="modal__content">
+      <div class="edit-invite-form">
+        <div class="form-section">
+          <h4 class="section-title">Invitation Details</h4>
+          
+          <div class="form-row">
+            <label for="invitationTitle">Invitation Title</label>
+            <app-input
+              id="invitationTitle"
+              formControlName="invitationTitle"
+              placeholder="Enter invitation title"
+              [errorMessage]="getErrorMessage('invitationTitle')"
+            ></app-input>
+          </div>
+
+          <div class="form-row">
+            <label for="eventId">Event ID</label>
+            <app-input
+              id="eventId"
+              formControlName="eventId"
+              placeholder="Enter event ID"
+              [errorMessage]="getErrorMessage('eventId')"
+            ></app-input>
+          </div>
+
+          <div class="form-row">
+            <label for="event">Event</label>
+            <app-input
+              id="event"
+              formControlName="event"
+              placeholder="Enter event name"
+              [errorMessage]="getErrorMessage('event')"
+            ></app-input>
+          </div>
+
+          <div class="form-row">
+            <label for="createdBy">Created By</label>
+            <app-input
+              id="createdBy"
+              formControlName="createdBy"
+              placeholder="Enter creator name"
+              [errorMessage]="getErrorMessage('createdBy')"
+            ></app-input>
+          </div>
+
+          <div class="form-row">
+            <label for="recipients">Recipients</label>
+            <app-input
+              id="recipients"
+              type="number"
+              formControlName="recipients"
+              placeholder="Enter number of recipients"
+              [errorMessage]="getErrorMessage('recipients')"
+            ></app-input>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="modal__actions">
+      <app-button 
+        type="secondary" 
+        label="Cancel" 
+        (onClick)="onCancel()"
+      >
+        Cancel
+    </app-button>
+
+      <app-button 
+        type="primary" 
+        label="Save Changes" 
+        [disabled]="inviteForm.invalid" 
+        (onClick)="onSubmit()"
+      >
+        Save Invite</app-button>
+    </div>
+  </div>
+</div>
