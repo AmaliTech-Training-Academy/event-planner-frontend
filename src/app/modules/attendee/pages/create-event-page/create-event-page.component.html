@@ -46,7 +46,8 @@
             <div class="in-person-details" [formGroupName]="EVENT_FORM_FIELDS.IN_PERSON_DETAILS">
                 <div class="field">
                     <app-location-search [error]="inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION)?.invalid && 
-                                        inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION)?.touched" label="Add event location" placeholder="Type location here"
+                                        inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION)?.touched"
+                        label="Add event location" placeholder="Type location here"
                         [formControlName]="EVENT_FORM_FIELDS.LOCATION"></app-location-search>
                     <app-form-error
                         [message]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION))"></app-form-error>
@@ -86,6 +87,16 @@
             }
             @if (meetingType?.value === MEETING_TYPES.VIRTUAL) {
             <div class="virtual-details" [formGroupName]="EVENT_FORM_FIELDS.VIRTUAL_DETAILS">
+                <div class="field">
+                    <label for="description">Add event description</label>
+                    <textarea [ngClass]="{
+                        'error': virtualDetails.get(EVENT_FORM_FIELDS.DESCRIPTION)?.invalid && 
+                                        virtualDetails.get(EVENT_FORM_FIELDS.DESCRIPTION)?.touched
+                      }" name="description" [formControlName]="EVENT_FORM_FIELDS.DESCRIPTION" id="description"
+                        placeholder="Type description here"></textarea>
+                    <app-form-error
+                        [message]="getError(virtualDetails.get(EVENT_FORM_FIELDS.DESCRIPTION))"></app-form-error>
+                </div>
                 <p>Choose Virtual Option</p>
                 <app-button (click)="toggleConnectZoomModal()" type="plain">
                     <div class="button-content">

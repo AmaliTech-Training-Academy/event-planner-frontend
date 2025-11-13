@@ -54,6 +54,30 @@ export class EventsServiceService {
     )
   }
 
+  public getEvents(location?: string, event_type?: string, date?: Date, time?: string , page?:number , limit?:number) {
+    this.setLoading(true)
+    return this.eventBackendService.getEvents().pipe(
+      take(1),
+      tap((response) => {
+        console.log(response)
+      }),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
+  public getEvent(id: string) {
+    this.setLoading(true)
+    this.eventBackendService.getEvent(id).pipe(
+      take(1),
+      tap((response) => {
+        console.log(response)
+      }),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
   private setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);
   }
