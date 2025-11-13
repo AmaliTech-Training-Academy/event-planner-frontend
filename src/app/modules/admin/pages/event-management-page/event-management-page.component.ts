@@ -33,6 +33,7 @@ import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import {
   DashboardData,
   EventManagement,
+  EventStatus,
 } from '../../../../core/models/event.model';
 
 interface EventTableData {
@@ -77,7 +78,7 @@ export class EventManagementPageComponent implements OnInit {
   private readonly _selectedStatus = signal<string>('all');
   private readonly _searchQuery = signal<string>('');
 
-  // This computed signal uses backend data
+  // Public computed observables
   public readonly eventStatistics = computed<EventStatistic[]>(() => {
     const data = this._dashboardData();
     if (!data) return [];
@@ -140,32 +141,13 @@ export class EventManagementPageComponent implements OnInit {
     }));
   });
 
+  // ✅ FIXED: Server-side data - NO local filtering
   public readonly eventTableData = computed<EventTableData[]>(() => {
     const data = this._dashboardData();
     if (!data) return [];
 
-    let events = data.eventManagement.content;
-
-    // Apply status filter
-    const status = this._selectedStatus();
-    if (status !== 'all') {
-      events = events.filter(
-        (event: EventManagement) =>
-          this._mapStatusToTableStatus(event.status) === status
-      );
-    }
-
-    // Apply search filter
-    const searchQuery = this._searchQuery().toLowerCase();
-    if (searchQuery) {
-      events = events.filter(
-        (event: EventManagement) =>
-          event.title.toLowerCase().includes(searchQuery) ||
-          event.organizer.toLowerCase().includes(searchQuery)
-      );
-    }
-
-    return events.map((event: EventManagement) => ({
+    // Return the server data directly - server already filtered it
+    return data.eventManagement.content.map((event: EventManagement) => ({
       id: event.id,
       name: event.title,
       organizer: event.organizer,
@@ -202,13 +184,6 @@ export class EventManagementPageComponent implements OnInit {
     { key: 'status', header: 'Status', filterable: true },
   ];
 
-  public readonly exportOptions: ReadonlyArray<FilterOption> = [
-    { label: 'Export As', value: 'export' },
-    { label: 'CSV', value: 'csv' },
-    { label: 'JSON', value: 'json' },
-    { label: 'PDF', value: 'pdf' },
-  ];
-
   public readonly eventTableActions: TableAction<EventTableData>[] = [
     {
       icon: 'icons/eye-open.svg',
@@ -224,11 +199,10 @@ export class EventManagementPageComponent implements OnInit {
       placeholder: 'All Status',
       options: [
         { label: 'All Status', value: 'all' },
-        { label: 'Active', value: 'Active' },
-        { label: 'Pending', value: 'Pending' },
-        { label: 'Completed', value: 'Completed' },
-        { label: 'Draft', value: 'Draft' },
-        { label: 'Cancelled', value: 'Cancelled' },
+        { label: 'Active', value: 'ACTIVE' },
+        { label: 'Draft', value: 'DRAFT' },
+        { label: 'Completed', value: 'COMPLETED' },
+        { label: 'Cancelled', value: 'CANCELED' },
       ],
     },
     {
@@ -287,13 +261,13 @@ export class EventManagementPageComponent implements OnInit {
     this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS, event.id]);
   }
 
-  // Handle pagination changes
+  // ✅ FIXED: Handle pagination changes - make server request
   public onPageChange(page: number): void {
     this._currentPage.set(page);
-    this._loadDashboardEvents();
+    this._loadDashboardData(); // Reload with new page
   }
 
-  // Handle filter changes
+  // ✅ FIXED: Handle filter changes - make server request
   public onFilterChange(filters: Record<string, string>): void {
     if (filters['status']) {
       this._selectedStatus.set(filters['status']);
@@ -301,44 +275,44 @@ export class EventManagementPageComponent implements OnInit {
 
     if (filters['export']) {
       this._handleExport(filters['export']);
+      return; // Don't reload data for export
     }
 
     // Reset to first page when filters change
     this._currentPage.set(0);
+    this._loadDashboardData(); // Reload with new filters
   }
 
-  // Handle search
+  // ✅ FIXED: Handle search - make server request
   public onSearch(query: string): void {
     this._searchQuery.set(query);
-    // Reset to first page when searching
-    this._currentPage.set(0);
+    this._currentPage.set(0); // Reset to first page
+    this._loadDashboardData(); // Reload with search query
   }
 
+  // ✅ FIXED: Load full dashboard with current filters
   private _loadDashboardData(): void {
     this._error.set(null);
-    this._eventManagementService.loadDashboardData().subscribe({
-      error: (err) => {
-        this._error.set('Failed to load dashboard data');
-        console.error('Dashboard error:', err);
-      },
-    });
-  }
 
-  private _loadDashboardEvents(): void {
-    this._error.set(null);
     const page = this._currentPage();
     const size = this._pageSize();
+    const status =
+      this._selectedStatus() !== 'all' ? this._selectedStatus() : undefined;
+    const search = this._searchQuery().trim() || undefined;
 
-    this._eventManagementService.loadDashboardEvents(page, size).subscribe({
-      error: (err) => {
-        this._error.set('Failed to load events');
-        console.error('Events error:', err);
-      },
-    });
+    this._eventManagementService
+      .loadDashboardData(page, size, status, search)
+      .subscribe({
+        error: (err) => {
+          this._error.set('Failed to load dashboard data');
+          console.error('Dashboard error:', err);
+        },
+      });
   }
 
+  // ✅ REMOVED: _loadDashboardEvents - not needed, use _loadDashboardData instead
+
   private _onViewEvent(event: EventTableData): void {
-    // Navigate to event details page using the event ID
     this._router.navigate(['/admin/events', event.id]);
   }
 
@@ -370,8 +344,8 @@ export class EventManagementPageComponent implements OnInit {
       headers.join(','),
       ...data.map((event) =>
         [
-          event.name,
-          event.organizer,
+          `"${event.name}"`,
+          `"${event.organizer}"`,
           event.date,
           event.attendees,
           event.status,
@@ -388,7 +362,6 @@ export class EventManagementPageComponent implements OnInit {
   }
 
   private _exportAsPDF(data: EventTableData[]): void {
-    // Placeholder for PDF export - you might want to use a library like jsPDF
     console.log('PDF export not implemented yet', data);
     alert('PDF export feature coming soon!');
   }
@@ -404,10 +377,10 @@ export class EventManagementPageComponent implements OnInit {
   }
 
   private _mapStatusToTableStatus(
-    status: string
+    status: EventStatus
   ): 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled' {
     const statusMap: Record<
-      string,
+      EventStatus,
       'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled'
     > = {
       ACTIVE: 'Active',

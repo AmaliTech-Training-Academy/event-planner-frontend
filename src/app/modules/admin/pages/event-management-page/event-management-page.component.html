@@ -19,20 +19,35 @@
   <!-- Events Table Section -->
   <section class="event-management-page__table">
     <app-data-table
-      title="Events"
+      tableTitle="Events"
       searchPlaceholder="Search events or organizers..."
       [data]="eventTableData()"
       [columns]="eventTableColumns"
       [actions]="eventTableActions"
       [filters]="eventTableFilters"
+      [loading]="isLoading()"
       [searchable]="true"
       [expandable]="false"
       [showAvatar]="false"
       [showCheckboxes]="true"
       [showExport]="true"
       [showActionLabels]="true"
+      [showFilters]="true"
       [primaryAction]="eventTablePrimaryAction"
+      [serverSidePagination]="true"
       [itemsPerPage]="10"
+      [totalItems]="totalElements()"
+      (searchChange)="onSearch($event)"
+      (filterChange)="onFilterChange($event)"
+      (pageChange)="onPageChange($event)"
     />
   </section>
+
+  <!-- Error Display -->
+  @if (error()) {
+    <div class="event-management-page__error">
+      {{ error() }}
+      <button (click)="refreshData()">Retry</button>
+    </div>
+  }
 </div>
