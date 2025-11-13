@@ -33,15 +33,21 @@ export class MyEventsPageComponent implements OnInit {
   private readonly router = inject(Router);
   protected readonly routes = APP_ROUTES;
 
-  public myEvents = signal<EventCard[]>([]);
-  public statCards = signal<UserCardData[]>([]);
-  public chartSeries = signal<LineSeriesConfig[]>([]);
+  protected myEvents = signal<EventCard[]>([]);
+  protected statCards = signal<UserCardData[]>([]);
+  protected chartSeries = signal<LineSeriesConfig[]>([]);
+  
   public ngOnInit(): void {
     
+    // TODO: Replace with API call to fetch user's events
     this.myEvents.set(MOCK_MY_EVENTS_CARDS);
+    
+    // TODO: Replace with API call to fetch user's stats
     this.statCards.set(MOCK_STAT_CARDS);
+    
+    // TODO: Replace with API call to fetch user's chart data
     this.chartSeries.set(MOCK_CHART_SERIES);
-    }
+  }
 
   protected onManageEvent(event: EventCard): void {
     

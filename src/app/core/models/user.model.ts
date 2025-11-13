@@ -29,5 +29,4 @@ export interface UserCardData {
 
 
 
-
-export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
+export type UserRole = keyof typeof USER_ROLES;
