@@ -277,4 +277,29 @@ export class AuthService {
   public getOtp(): string {
     return this._otp;
   }
+  public acceptInvitation(
+    fullName: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+    invitationToken: string
+  ) {
+    this.setLoading(true);
+    return this.authBackend
+      .acceptInvitation({
+        fullName,
+        email,
+        password,
+        confirmPassword,
+        invitationToken,
+      })
+      .pipe(
+        take(1),
+        tap(() => {
+          this.router.navigate([APP_ROUTES.LOGIN]);
+        }),
+        catchError((err) => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
+  }
 }

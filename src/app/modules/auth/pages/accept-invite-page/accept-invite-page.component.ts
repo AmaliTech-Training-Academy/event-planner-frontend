@@ -59,14 +59,23 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
   constructor() {
+    console.log('🚀 AcceptInvitePageComponent constructor called');
     this.form = this.createForm();
   }
 
   ngOnInit(): void {
+    console.log('✅ AcceptInvitePageComponent ngOnInit called');
+    console.log('🌍 Window location:', window.location.href);
+    console.log('🗺️ Router URL:', this.router.url);
+    console.log('📍 Route snapshot:', this.route.snapshot.url);
+
     this.subscription.add(
       this.route.queryParams.subscribe((params) => {
+        console.log('🔑 Query params received:', params);
         this.inviteToken.set(params['token'] || '');
         this.inviteEmail.set(params['email'] || '');
+        console.log('✉️ Email:', this.inviteEmail());
+        console.log('🎟️ Token:', this.inviteToken());
       })
     );
 
@@ -90,18 +99,47 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
     this.isSubmitting.set(true);
 
     const fullName = this.form.value?.fullName ?? '';
+    const email = this.inviteEmail();
     const password = this.form.value?.password ?? '';
-    const token = this.inviteToken();
+    const confirmPassword = this.form.value?.confirmPassword ?? '';
+    const invitationToken = this.inviteToken();
 
-    // Simulate API call with timeout (remove this and uncomment real API call when ready)
-    setTimeout(() => {
-      this.isSubmitting.set(false);
-      this.notificationService.success(
-        'Invite accepted successfully! You can now log in.'
-      );
-      this.router.navigate([APP_ROUTES.LOGIN]);
-    }, 2000);
-    // Uncomment and implement real API call when backend is ready
+    console.log('📤 Submitting invitation acceptance:', {
+      fullName,
+      email,
+      invitationToken,
+      hasPassword: !!password,
+      hasConfirmPassword: !!confirmPassword,
+    });
+
+    this.subscription.add(
+      this.authService
+        .acceptInvitation(
+          fullName,
+          email,
+          password,
+          confirmPassword,
+          invitationToken
+        )
+        .subscribe({
+          next: () => {
+            console.log('✅ Invitation accepted successfully');
+            this.isSubmitting.set(false);
+            this.notificationService.success(
+              'Invitation accepted successfully! You can now log in.'
+            );
+            this.router.navigate([APP_ROUTES.LOGIN]);
+          },
+          error: (error) => {
+            console.error('❌ Invitation acceptance failed:', error);
+            this.isSubmitting.set(false);
+            this.notificationService.error(
+              error?.error?.message ||
+                'Failed to accept invitation. Please try again.'
+            );
+          },
+        })
+    );
   }
 
   protected hasFieldError(fieldName: keyof AcceptInviteForm): boolean {

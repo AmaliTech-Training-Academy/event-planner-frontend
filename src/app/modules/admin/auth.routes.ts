@@ -45,7 +45,7 @@ export const AUTH_ROUTES: Routes = [
       ),
   },
   {
-    path: 'invitation/accept', 
+    path: 'invitation/accept', // Changed from 'accept-invite' to match your URL
     loadComponent: () =>
       import(
         '../auth/pages/accept-invite-page/accept-invite-page.component'
