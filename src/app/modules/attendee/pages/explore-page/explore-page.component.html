@@ -77,6 +77,6 @@
         }
       </div>
     </section>
-
+    <app-pagination [totalItems]="allEvents()?.pageSize||1"  [(currentPage)]="currentPage"></app-pagination>
   </div>
 </section>

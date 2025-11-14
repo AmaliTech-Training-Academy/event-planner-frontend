@@ -28,6 +28,7 @@ import {
 import { EventsServiceService } from '../../../../core/services/events.service';
 import { LocationSearchComponent } from "../../../../shared/components/location-search/location-search.component";
 import { StoredRecentLocation } from '../../../../core/models/recent-location.model';
+import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagination.component";
 
 @Component({
   selector: 'app-explore-page',
@@ -46,8 +47,9 @@ import { StoredRecentLocation } from '../../../../core/models/recent-location.mo
     DatePickerComponent,
     LocationSearchComponent,
     CommonModule,
-    FormsModule
-  ],
+    FormsModule,
+    PaginationComponent
+],
   templateUrl: './explore-page.component.html',
   styleUrl: './explore-page.component.scss',
 })
