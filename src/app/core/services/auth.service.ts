@@ -20,7 +20,7 @@ import { OtpBodyData } from '../models/auth-response.model';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private _loggedIn$ = new BehaviorSubject<boolean>(false);
-  private _userInfo$ = new BehaviorSubject<OtpBodyData | null>(null); // Change User to OtpBodyData
+  private _userInfo$ = new BehaviorSubject<OtpBodyData | null>(null);
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
   private _email: string = '';

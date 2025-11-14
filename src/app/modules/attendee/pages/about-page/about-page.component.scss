@@ -51,7 +51,6 @@
         display: flex;
         flex-direction: row;
         gap: 2rem;
-        max-width: 75.188rem;
         margin: auto;
         width: 100%;
 
@@ -172,12 +171,11 @@
     .our-story {
         display: flex;
         flex-direction: column;
-        max-width: 75.188rem;
         margin: auto;
         width: 100%;
         gap: 2rem;
         margin-top: 40px;
-        padding: 0 32px;
+        // padding: 0 32px;
 
         @include sm {
             padding: 0 2rem;
@@ -201,7 +199,6 @@
         display: flex;
         flex-direction: column;
         gap: 1.563rem;
-        max-width: 75.188rem;
         margin: auto;
         width: 100%;
 
@@ -221,7 +218,6 @@
     }
 
     .our-team {
-        max-width: 75.188rem;
         margin: auto;
         width: 100%;
         padding: 2.5rem 0;
@@ -249,7 +245,7 @@
        
 
         .title-container {
-          padding: 32px 0;;
+          padding: 32px 0;
             h4 {
                 text-align: center;
                 @include h-5;
