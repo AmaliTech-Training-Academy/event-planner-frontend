@@ -16,7 +16,7 @@ export const API_ENDPOINTS = {
   UPDATE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   DELETE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   CREATE_USER: `${BASE}/users`,
-  INVITE_USER: `${BASE}/event-invitations`,
+  INVITE_USER: `${BASE}/user-invitations/invite-user`,
   GET_ALL_INVITATIONS: `${BASE}/event-invitations`,
   AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
 
@@ -29,7 +29,6 @@ export const API_ENDPOINTS = {
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
   SEARCH_USERS: `${BASE}/users/search`,
-  ACCEPT_INVITE: (token: string): string => `${BASE}/invites/accept/${token}`,
 
   EVENT_MANAGEMENT: `${BASE}/events/event-management`,
   EVENT_DETAILS: (eventId: number) => `${BASE}/events/${eventId}`,
@@ -37,4 +36,5 @@ export const API_ENDPOINTS = {
   CREATE_EVENT: `${BASE}/events`,
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+  ACCEPT_INVITE: `${BASE}/user-invitations/accept-invites`,
 } as const;

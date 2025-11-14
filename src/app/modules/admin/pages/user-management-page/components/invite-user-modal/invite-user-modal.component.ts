@@ -129,7 +129,6 @@ export class InviteUserModalComponent implements OnInit {
       return;
     }
 
-    // ✅ Convert event from string to number for backend
     const payload: InviteUserPayload = {
       invitationTitle: this.inviteForm.value.title,
       invitees: this.users.value.map((user: any) => ({

@@ -1,14 +1,12 @@
 /** Invite user payload */
 export interface InviteUserPayload {
-  invitationTitle: string;
   invitees: Array<{
-    inviteeName: string;
-    inviteeEmail: string;
+    fullName: string;
+    email: string;
     role: string;
   }>;
-  event: number;
-  status: 'PENDING' | 'SENT' | 'ACCEPTED' | 'REJECTED' | 'SAVE';
   message: string;
+  status: 'SEND' | 'SAVE';
 }
 
 /** Invite user response */
@@ -22,13 +20,13 @@ export interface InviteUserResponse {
 /** Individual invitation item */
 export interface Invitation {
   invitationId: string;
-  invitationTitle: string;
-  event: string;
+  invitationTitle?: string;
+  event?: string;
   status: 'PENDING' | 'SENT' | 'ACCEPTED' | 'REJECTED' | 'SAVE';
   message?: string;
   invitees: Array<{
-    inviteeName: string;
-    inviteeEmail: string;
+    fullName: string;
+    email: string;
     role: string;
   }>;
   createdAt?: string;

@@ -15,7 +15,7 @@ import { AuthBackendService } from './backend/auth-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
 import { AUTH_STORAGE } from '../constants/storage.constants';
 import { AuthStorage } from '../models/auth.model';
-import { AuthResponseBody, OtpBodyData } from '../models/auth-response.model';
+import { OtpBodyData } from '../models/auth-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -142,20 +142,20 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
-public adminLogout() {
-  this.setLoading(true);
-  return this.authBackend.logout().pipe(
-    take(1),
-    tap(() => {
-      this._loggedIn$.next(false);
-      this._userInfo$.next(null);
-      this.clearAuthStorage();
-      this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
-    }),
-    catchError((err) => this.errorHandlerService.handle(err)),
-    finalize(() => this.setLoading(false))
-  );
-}
+  public adminLogout() {
+    this.setLoading(true);
+    return this.authBackend.logout().pipe(
+      take(1),
+      tap(() => {
+        this._loggedIn$.next(false);
+        this._userInfo$.next(null);
+        this.clearAuthStorage();
+        this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+      }),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
 
   public checkAuthUser(userId: string) {
     this.setLoading(true);
@@ -276,8 +276,5 @@ public adminLogout() {
 
   public getOtp(): string {
     return this._otp;
-  }
-  public acceptInvite(token: string, fullName: string, password: string) {
-   
   }
 }
