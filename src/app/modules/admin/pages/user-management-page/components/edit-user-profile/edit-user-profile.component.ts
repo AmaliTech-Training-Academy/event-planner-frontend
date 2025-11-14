@@ -154,9 +154,7 @@ export class EditUserProfileComponent {
           this.profileForm.patchValue(formData, { emitEvent: false });
           return;
         }
-      } catch (error) {
-        console.error('Phone parsing error:', error);
-      }
+      } catch (error) {}
     }
 
     const formData = {
