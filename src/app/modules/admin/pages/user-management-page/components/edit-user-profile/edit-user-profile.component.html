@@ -24,43 +24,31 @@
       </div>
       }
 
-      <div class="profile-section">
-        <div class="profile-avatar">
-          <img
-            [ngSrc]="profileImage()"
-            width="128"
-            height="128"
-            class="profile-picture"
-            alt="Profile picture"
-            priority
-          />
-
-          <app-button
-            type="plain"
-            [extraClass]="'status-button'"
-            size="small"
-            class="status-button"
-            (click)="triggerFileInput()"
-            [disabled]="uploadingImage()"
-          >
-            <span class="button-content"> </span>
-          </app-button>
-
-          <input
-            #fileInput
-            type="file"
-            accept="image/*"
-            (change)="onImageSelect($event)"
-            style="display: none"
-          />
-        </div>
-
-        <div class="profile-info">
-          <h3>Edit Profile</h3>
-          <p>Update your personal information</p>
-        </div>
+     <div class="profile-section">
+      <div class="profile-avatar">
+        <img
+          [ngSrc]="profileImage()"
+          alt="Profile picture"
+          width="128"
+          height="128"
+          priority
+        />
+        <app-button
+          type="plain"
+          [extraClass]="'status-button'"
+          size="small"
+          class="status-button"
+        >
+          <span class="button-content">
+           
+          </span>
+        </app-button>
       </div>
-
+      <div class="profile-info">
+        <h3>Edit Profile</h3>
+        <p class="user-role">Update Your personal information</p>
+      </div>
+    </div>
       <div class="form-section">
         <h4 class="section-title">Basic Information</h4>
 

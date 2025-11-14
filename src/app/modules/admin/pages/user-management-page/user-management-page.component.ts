@@ -25,7 +25,6 @@ import { EditUserProfileComponent } from './components/edit-user-profile/edit-us
 import { ViewUserProfileComponent } from './components/view-user-profile/view-user-profile.component';
 import { UpdateUserPayload } from '../../../../core/services/backend/user-backend.service';
 import { mapUserStatus, User } from '../../../../core/models';
-import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
 @Component({
   selector: 'app-user-management-page',
@@ -46,8 +45,6 @@ export class UserManagementPageComponent implements OnInit {
   private readonly _userService = inject(UserManagementService);
   private readonly _router = inject(Router);
   private readonly _destroyRef = inject(DestroyRef);
-    protected readonly APP_ROUTES = APP_ROUTES;
-  
   protected readonly totalElements = toSignal(
     this._userService.totalElements$,
     {
@@ -110,18 +107,24 @@ export class UserManagementPageComponent implements OnInit {
     {
       icon: 'icons/view-icon.png',
       label: 'View User Details',
+      title: 'View user profile and details',
       color: 'view',
       handler: (user) => this._viewUser(user),
     },
     {
       icon: 'icons/edit-icon.png',
       label: 'Edit User',
+      title: (user) => `Edit ${user.fullName || user.name || 'user'}`, // Dynamic title
       color: 'edit',
       handler: (user) => this._editUser(user),
     },
     {
       icon: 'icons/power-red.png',
       label: 'Toggle User Status',
+      title: (user) =>
+        user.status === 'Active'
+          ? `Deactivate ${user.fullName || user.name || 'user'}`
+          : `Activate ${user.fullName || user.name || 'user'}`, // Dynamic title
       color: 'power',
       handler: (user) => this._toggleUserStatus(user),
       isLoading: (user) => this.togglingUserId() === user.userId,
@@ -163,8 +166,6 @@ export class UserManagementPageComponent implements OnInit {
 
   ngOnInit(): void {
     this._layoutService.pageTitle.set('User Management');
-    this._layoutService.logoSrc.set('icons/users-icon.png');
-    this._layoutService.logoAlt.set('User Management Icon');
     this._loadUsers();
   }
 
@@ -229,7 +230,7 @@ export class UserManagementPageComponent implements OnInit {
 
   protected goToDashboard(): void {
     this.closeSuccessModal();
-    this._router.navigate([this.APP_ROUTES.ADMIN_DASHBOARD]);
+    this._router.navigate(['/dashboard']);
   }
 
   protected closeViewModal(): void {
@@ -276,7 +277,6 @@ export class UserManagementPageComponent implements OnInit {
           this._loadUsers(this.currentPage() || 0);
         },
         error: (error) => {
-        
           alert('Failed to update user. Please try again.');
         },
       });
@@ -330,7 +330,6 @@ export class UserManagementPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
-       
           this.togglingUserId.set(null);
         },
         error: (err) => {

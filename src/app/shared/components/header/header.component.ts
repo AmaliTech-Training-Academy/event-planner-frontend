@@ -28,11 +28,11 @@ interface NavLink {
   selector: 'app-header',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterLink, 
+    CommonModule,
+    RouterLink,
     RouterLinkActive,
     ButtonComponent,
-    NgOptimizedImage
+    NgOptimizedImage,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
@@ -54,7 +54,7 @@ export class HeaderComponent implements OnInit {
   protected readonly isMenuOpen = signal<boolean>(false);
   protected readonly isUserMenuOpen = signal<boolean>(false);
   protected readonly isLoggedIn = signal<boolean>(false);
-  
+
   private readonly _currentUser = signal<OtpBodyData | null>(null);
 
   protected readonly userInitials = computed<string>(() => {
@@ -65,7 +65,14 @@ export class HeaderComponent implements OnInit {
     if (names.length === 1) {
       return names[0].charAt(0).toUpperCase();
     }
-    return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+    return (
+      names[0].charAt(0) + names[names.length - 1].charAt(0)
+    ).toUpperCase();
+  });
+
+  protected readonly userProfilePicture = computed<string | null>(() => {
+    const user = this._currentUser();
+    return user?.profilePicture || null;
   });
 
   protected readonly userName = computed<string>(() => {
@@ -79,13 +86,14 @@ export class HeaderComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    const clickedInside: boolean = this._elementRef.nativeElement.contains(target);
+    const clickedInside: boolean =
+      this._elementRef.nativeElement.contains(target);
 
     if (!clickedInside) {
       if (this.isMenuOpen()) {
         this.closeMenu();
       }
-      
+
       const userDropdown = target.closest('.header__user-dropdown');
       if (!userDropdown && this.isUserMenuOpen()) {
         this.closeUserMenu();
@@ -96,6 +104,26 @@ export class HeaderComponent implements OnInit {
   @HostListener('window:resize')
   protected onWindowResize(): void {
     if (window.innerWidth > 1024 && this.isMenuOpen()) {
+      this.closeMenu();
+    }
+  }
+
+  @HostListener('window:scroll')
+  protected onWindowScroll(): void {
+    if (this.isUserMenuOpen()) {
+      this.closeUserMenu();
+    }
+    if (this.isMenuOpen()) {
+      this.closeMenu();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscapeKey(): void {
+    if (this.isUserMenuOpen()) {
+      this.closeUserMenu();
+    }
+    if (this.isMenuOpen()) {
       this.closeMenu();
     }
   }
@@ -121,6 +149,10 @@ export class HeaderComponent implements OnInit {
 
   public getUserName(): string {
     return this.userName();
+  }
+
+  public getUserProfilePicture(): string | null {
+    return this.userProfilePicture();
   }
 
   public toggleMenu(): void {
@@ -155,7 +187,7 @@ export class HeaderComponent implements OnInit {
         },
         error: () => {
           this._closeAllMenus();
-        }
+        },
       });
   }
 
