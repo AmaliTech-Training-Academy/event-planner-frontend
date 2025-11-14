@@ -30,6 +30,7 @@ export interface TableColumn<T> {
 export interface TableAction<T> {
   readonly icon: string;
   readonly label: string;
+  readonly title?: string | ((item: T) => string);
   readonly color?: string;
   readonly extraClass?: string;
   readonly handler: (item: T) => void;
@@ -78,7 +79,7 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
   public readonly filters = input<ReadonlyArray<TableFilter>>([]);
   public readonly searchable = input<boolean>(true);
-  public readonly searchKey = input<string>(''); 
+  public readonly searchKey = input<string>('');
 
   public readonly expandable = input<boolean>(false);
   public readonly showCheckboxes = input<boolean>(false); // Add this
@@ -197,6 +198,19 @@ export class DataTableComponent<T extends Record<string, any>> {
     );
   }
 
+  public getActionTitle(action: TableAction<T>, item: T): string {
+    if ('title' in action && action.title) {
+      return typeof action.title === 'function'
+        ? action.title(item)
+        : action.title;
+    }
+
+    if (action.color === 'power') {
+      return item['status'] === 'Active' ? 'Deactivate' : 'Activate';
+    }
+
+    return action.label;
+  }
   protected toggleSelectAll(): void {
     const pageData: ReadonlyArray<T> = this.paginatedData();
     const selected: Set<T> = new Set(this._selectedItems());

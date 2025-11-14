@@ -14,10 +14,21 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   transition: all 0.2s ease;
   background: transparent;
   height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  img[icon] {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    display: block;
   }
 
   &.app-button--plain {
@@ -61,6 +72,30 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
     &:disabled {
       cursor: not-allowed;
       opacity: 0.5;
+    }
+  }
+
+  &.app-button--success {
+    background-color: #2a9d8f;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background-color: #21867a;
+    }
+  }
+
+  &.app-button--danger {
+    // background-color: transparent;
+    // color: #D70000;
+    border: 1px solid #e5e7eb;
+
+    &:hover:not(:disabled) {
+      background-color: #FEF2F2;
+      border-color: #D70000;
+    }
+
+    &:active:not(:disabled) {
+      background-color: #FEE2E2;
     }
   }
 
@@ -214,5 +249,24 @@ button.app-button.filter-reset {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+button.app-button.logout-button {
+  border:1.5px solid  #dc2626 !important;
+  width: 100%;
+  padding: $spacing-3 $spacing-6 !important;
+  border-radius: $radius-3;
+  font-family: $font-lato;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ color:#dc2626 !important ;
+}
 
 
+button.app-button.tab-button{
+
+}

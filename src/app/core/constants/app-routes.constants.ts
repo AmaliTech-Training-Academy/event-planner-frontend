@@ -17,6 +17,7 @@ export const APP_ROUTES = {
   MY_EVENTS: '/app/my-events',
   PAYMENT_SETTINGS: '/app/payment-settings',
   ADMIN_DASHBOARD: '/admin',
+  PROFILE_PAGE: '/app/profile',
   ADMIN_EVENTS: '/admin/events',
   ADMIN_EVENT_DETAILS: '/admin/events/:id',
   ADMIN_ORGANIZERS: '/admin/organizers',
