@@ -41,4 +41,11 @@ export const ADMIN_ROUTES: Routes = [
         (m) => m.SavedInviteComponent
       ),
   },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./pages/admin-settings/admin-settings.component').then(
+        (m) => m.AdminSettingsComponent
+      ),
+  },
 ];

@@ -1,0 +1,433 @@
+@use 'colors' as *;
+@use 'typography' as *;
+@use 'variables' as *;
+@use 'media_query' as *;
+
+.admin-settings {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  padding: $spacing-6 0;
+}
+
+// ===== Tab Navigation =====
+.tabs {
+  display: flex;
+  gap: $spacing-4;
+  border-bottom: 1px solid $gray-200;
+
+  @include md {
+    gap: $spacing-2;
+  }
+}
+
+.tab {
+  @include body-2;
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: $spacing-4 $spacing-6;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: $gray-200;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+
+  &__icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition: all 0.2s ease;
+  }
+
+  &:hover {
+    color: $text-primary;
+    background: $gray-50;
+
+    .tab__icon {
+      opacity: 0.8;
+    }
+  }
+
+  &--active {
+    color: $orange-500;
+    border-bottom-color: $orange-500;
+    background: $gray-50;
+
+    .tab__icon {
+      filter: none;
+      opacity: 1;
+    }
+  }
+
+  @include md {
+    padding: $spacing-3 $spacing-4;
+    font-size: 0.875rem;
+
+    span {
+      display: none;
+    }
+
+    &__icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+// ===== Tab Content =====
+.tab-content {
+  padding: $spacing-6 0;
+}
+
+// ===== Settings Section =====
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  background: white;
+  border: 1px solid $gray-200;
+  border-radius: $radius-4;
+  padding: $spacing-6 $spacing-8;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: $spacing-4;
+    border-bottom: 1px solid $gray-200;
+  }
+
+  &__title {
+    h2 {
+      @include h-4;
+      color: $header-dark;
+      margin-bottom: $spacing-2;
+    }
+
+    p {
+      @include body-2;
+      color: $gray-500;
+    }
+  }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    opacity: 0.4;
+  }
+
+  @include md {
+    padding: $spacing-5 $spacing-6;
+  }
+
+  @include sm {
+    padding: $spacing-4 $spacing-5;
+  }
+}
+
+// ===== Form Fields =====
+form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-5;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+
+  label {
+    @include body-2;
+    color: $header-dark;
+    font-weight: 500;
+  }
+
+  textarea {
+    @include body-2;
+    width: 100%;
+    padding: $spacing-3 $spacing-4;
+    border: 1px solid $gray-300;
+    border-radius: $radius-3;
+    background: white;
+    color: $text-primary;
+    resize: vertical;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: $gray-400;
+    }
+
+    &:focus {
+      border-color: $orange-500;
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
+    }
+  }
+}
+
+// ===== Toggle Switch =====
+.toggle-field {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-4 0;
+
+  &__label {
+    @include body-2;
+    color: $text-primary;
+    font-weight: 500;
+  }
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  flex-shrink: 0;
+
+  &__input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .toggle__slider {
+      background-color: $orange-500;
+
+      &::before {
+        transform: translateX(24px);
+      }
+    }
+
+    &:focus + .toggle__slider {
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
+    }
+  }
+
+  &__slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $gray-300;
+    transition: 0.3s;
+    border-radius: 24px;
+
+    &::before {
+      position: absolute;
+      content: '';
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// ===== Notification List =====
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.notification-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-5;
+  background: $gray-50;
+  border: 1px solid $gray-200;
+  border-radius: $radius-3;
+  gap: $spacing-4;
+
+  &__content {
+    flex: 1;
+
+    h3 {
+      @include body-1;
+      color: $header-dark;
+      font-weight: 600;
+      margin-bottom: $spacing-1;
+    }
+
+    p {
+      @include body-2;
+      color: $gray-500;
+    }
+  }
+
+  @include sm {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .toggle {
+      align-self: flex-end;
+    }
+  }
+}
+
+// ===== Team List =====
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.team-member {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-5;
+  background: white;
+  border: 1px solid $gray-200;
+  border-radius: $radius-3;
+  gap: $spacing-4;
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+    flex: 1;
+  }
+
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  &__details {
+    h3 {
+      @include body-1;
+      color: $header-dark;
+      font-weight: 600;
+      margin-bottom: $spacing-1;
+    }
+
+    p {
+      @include body-2;
+      color: $gray-500;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+  }
+
+  @include sm {
+    flex-direction: column;
+    align-items: flex-start;
+
+    &__actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+// ===== Role Badges =====
+.badge {
+  @include body-2;
+  padding: $spacing-1 $spacing-3;
+  border-radius: $radius-2;
+  font-weight: 600;
+  font-size: 0.75rem;
+  white-space: nowrap;
+
+  &--super-admin {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  &--admin {
+    background: $gray-200;
+    color: $gray-700;
+  }
+
+  &--manager {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+}
+
+// ===== Action Buttons =====
+.btn-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid $gray-300;
+  border-radius: $radius-2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+
+  &:hover {
+    background: $gray-50;
+    border-color: $gray-400;
+  }
+}
+
+.btn-edit {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+  padding: $spacing-2 $spacing-3;
+  background: transparent;
+  border: 1px solid $gray-300;
+  border-radius: $radius-2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  @include body-2;
+  color: $text-primary;
+  font-weight: 500;
+
+  img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+  }
+
+  &:hover {
+    background: $gray-50;
+    border-color: $gray-400;
+  }
+}
+
+// ===== Add Member Button =====
+::ng-deep .btn-add-member {
+  display: flex;
+  align-items: center;
+  gap: $spacing-2;
+
+  img {
+    width: 16px;
+    height: 16px;
+  }
+}
