@@ -10,6 +10,10 @@
   position: relative;
   @media(max-width:1280px) {
     width: 240px;
+
+  }
+  @media (max-width:557px) {
+width: 100%;    
   }
 
   &__dropdown {
@@ -40,6 +44,49 @@
 
   &__selected {
     flex: 1;
+    font-size: 0.875rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; // Increased spacing between reset and dropdown icon
+    margin-left: 0.5rem; // Add spacing from the selected text
+  }
+
+  &__reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background-color: $orange-100;
+    border: 1px solid $orange-300;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    img {
+      width: 10px;
+      height: 10px;
+      object-fit: contain;
+      filter: brightness(0) saturate(100%) invert(45%) sepia(89%) saturate(1691%) hue-rotate(1deg) brightness(97%) contrast(101%); // Orange color filter
+    }
+
+    &:hover {
+      background-color: $orange-200;
+      border-color: $orange-400;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      background-color: $orange-300;
+      transform: scale(0.95);
+    }
   }
 
   &__icon {
@@ -56,13 +103,13 @@
 
   &__menu {
     position: absolute;
-    top: calc(100% + 4px);
+    top: calc(100% + 8px); // Increased spacing between dropdown and menu
     left: 0;
     width: 100%;
     background: white;
     border: 1px solid $gray-200;
     border-radius: $radius-3;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     list-style: none;
     padding: 0;
     margin: 0;
@@ -92,6 +139,7 @@
     }
   }
 }
+
 /* === Size Variants === */
 .filter-select--sm {
   width: 180px;
@@ -99,7 +147,17 @@
   .filter-select__dropdown {
     height: 36px;
     padding: $spacing-2 $spacing-4;
-    font-size: 0.8125rem; // ~13px
+    font-size: 0.8125rem; 
+  }
+
+  .filter-select__reset {
+    width: 18px;
+    height: 18px;
+    
+    img {
+      width: 9px;
+      height: 9px;
+    }
   }
 
   .filter-select__menu li {
@@ -109,14 +167,18 @@
 }
 
 .filter-select--md {
-  max-width: 150px;
+  max-width: 120px;
   min-width: 100px;
-  
+  @media (max-width:557px) {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
 
   .filter-select__dropdown {
     height: 48px;
     padding: $spacing-3 $spacing-5;
-    font-size: 0.875rem; 
+    font-size: 0.675rem; 
   }
 
   .filter-select__menu li {
@@ -126,16 +188,46 @@
 }
 
 .filter-select--lg {
-width: 100%;
+  width: 100%;
 
   .filter-select__dropdown {
     height: 56px;
     padding: $spacing-4 $spacing-6;
-    font-size: 1rem; // ~16px
+    font-size: 1rem; 
+  }
+
+  .filter-select__reset {
+    width: 24px;
+    height: 24px;
+    
+    img {
+      width: 12px;
+      height: 12px;
+    }
   }
 
   .filter-select__menu li {
     padding: $spacing-3 $spacing-5;
     font-size: 1rem;
+  }
+}
+
+/* Add disabled state styling */
+.filter-select {
+  &--disabled {
+    .filter-select__dropdown {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+      background-color: $gray-100;
+    }
+
+    .filter-select__selected {
+      color: $gray-400;
+    }
+
+    .filter-select__icon {
+      opacity: 0.4;
+    }
   }
 }

@@ -45,7 +45,7 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
       opacity: 0.5;
     }
   }
-  
+
   &.app-button--primary {
     background-color: $orange-700;
     color: $gray-50;
@@ -85,8 +85,8 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
   }
 
   &.app-button--danger {
-    background-color: transparent;
-    color: #D70000;
+    // background-color: transparent;
+    // color: #D70000;
     border: 1px solid #e5e7eb;
 
     &:hover:not(:disabled) {
@@ -114,6 +114,17 @@ button.app-button:not(.edit, .delete, .view, .power-active, .power-inactive) {
       background: $gray-900;
       border-color: $gray-900;
     }
+  }
+
+  &.filter-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    text-align: left;
   }
 }
 
@@ -161,7 +172,8 @@ button.app-button.edit {
 }
 
 button.app-button.delete {
-  background-color: $red-50;
+  background-color: transparent;
+  border:none;
 
   &:hover:not(:disabled) {
     border-color: $red-400;
@@ -200,38 +212,61 @@ button.app-button.power-inactive {
 }
 
 button.app-button.back-button {
-  display: flex;
-  align-items: center;
-  gap: $spacing-1;
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+  
+}
+button.app-button--success {
+  background-color: #2a9d8f !important;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background-color: #21667a;
+  }
 }
 
-button.status-button,
-.app-button.status-button {
-  position: absolute;
-  bottom: -4px;
-  right: -4px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid #ddd;
+button.app-button--danger {
+  color: #fff;
+  background-color: #dc2626 !important;
+
+  &:hover:not(:disabled) {
+  }
+}
+
+button.app-button.filter-reset {
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 30%;
+  background-color: transparent !important;
+  padding: 0;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+button.app-button.logout-button {
+  border:1.5px solid  #dc2626 !important;
+  width: 100%;
+  padding: $spacing-3 $spacing-6 !important;
+  border-radius: $radius-3;
+  font-family: $font-lato;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent !important;
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.2s ease;
-  
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-  }
-  
-  img.status-icon {
-    width: 16px;
-    height: 16px;
-    background: transparent !important;
-    object-fit: contain;
-  }
+ color:#dc2626 !important ;
 }
 
-.app-button.delete-button {}
+
+button.app-button.tab-button{
+
+}

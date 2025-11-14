@@ -1,7 +1,7 @@
 export interface AppEvent {
   id: string; 
   imageUrl: string;
-  date: string; 
+  date: Date; 
   title: string;
   location: string;
   attendees: number;

@@ -86,7 +86,8 @@
 
     <footer class="profile-footer">
       <app-button
-        type="danger"
+        type="plain"
+        [extraClass]="'logout-button'"
         (click)="onLogout()"
       >
         <img

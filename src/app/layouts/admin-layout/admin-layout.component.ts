@@ -10,7 +10,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AdminSidebarComponent } from '../../shared/admin-ui/admin-sidebar/admin-sidebar.component';
 import { AdminTopNavComponent } from '../../shared/admin-ui/admin-top-nav/admin-top-nav.component';
 import { LayoutService } from '../../core/services/layout.service';
-import { AdminLoginPageComponent } from "../../modules/auth/pages/admin-login-page/admin-login-page.component";
 
 @Component({
   selector: 'app-admin-layout',

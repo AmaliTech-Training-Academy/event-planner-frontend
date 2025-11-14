@@ -2,6 +2,5 @@ export const USER_ROLES = {
     ORGANIZER: 'ORGANISER',
     CO_ORGANIZER: 'CO_ORGANIZER',
     ATTENDEE: 'ATTENDEE',
-    VENUE_STAFF: 'VENUE_STAFF',
     ADMIN: 'ADMIN'
 } as const;

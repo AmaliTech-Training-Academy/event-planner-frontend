@@ -1,0 +1,38 @@
+<!-- event-management-page.component.html -->
+<div class="event-management-page">
+  <app-event-statistics [statistics]="eventStatistics()" />
+
+  <div class="event-management-page__grid">
+    <app-top-organizers
+      [organizers]="topOrganizers()"
+      (viewAllClicked)="onViewAllOrganizers()"
+      (organizerClicked)="onOrganizerClick($event)"
+    />
+
+    <app-upcoming-events
+      [events]="upcomingEvents()"
+      (viewAllClicked)="onViewAllEvents()"
+      (eventClicked)="onEventClick($event)"
+    />
+  </div>
+
+  <!-- Events Table Section -->
+  <section class="event-management-page__table">
+    <app-data-table
+      title="Events"
+      searchPlaceholder="Search events or organizers..."
+      [data]="eventTableData()"
+      [columns]="eventTableColumns"
+      [actions]="eventTableActions"
+      [filters]="eventTableFilters"
+      [searchable]="true"
+      [expandable]="false"
+      [showAvatar]="false"
+      [showCheckboxes]="true"
+      [showExport]="true"
+      [showActionLabels]="true"
+      [primaryAction]="eventTablePrimaryAction"
+      [itemsPerPage]="10"
+    />
+  </section>
+</div>

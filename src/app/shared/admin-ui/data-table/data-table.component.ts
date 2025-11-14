@@ -1,3 +1,4 @@
+// data-table.component.ts
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -6,6 +7,8 @@ import {
   signal,
   input,
   output,
+  inject,
+  ElementRef,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonComponent } from '../../ui/button/button.component';
@@ -13,22 +16,28 @@ import { CheckboxComponent } from '../../ui/checkbox/checkbox.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { FilterSelectComponent } from '../filter-select/filter-select.component';
 import { InputComponent } from '../../ui/input/input.component';
+import { UserManagementService } from '../../../core/services/user-management.service';
+import { debounceTime, Subject, take } from 'rxjs';
 
 export interface TableColumn<T> {
   readonly key: Extract<keyof T, string>;
   readonly header: string;
   readonly sortable?: boolean;
   readonly filterable?: boolean;
+  readonly getValue?: (item: T) => string | number | boolean | null;
 }
 
 export interface TableAction<T> {
   readonly icon: string;
   readonly label: string;
+  readonly title?: string | ((item: T) => string);
   readonly color?: string;
+  readonly extraClass?: string;
   readonly handler: (item: T) => void;
   readonly visible?: (item: T) => boolean;
   readonly disabled?: boolean | ((item: T) => boolean);
   readonly type?: 'primary' | 'secondary' | 'social' | 'action';
+  readonly isLoading?: (item: T) => boolean;
 }
 
 export interface FilterOption {
@@ -60,90 +69,161 @@ export interface TableFilter {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataTableComponent<T extends Record<string, any>> {
+  public readonly tableTitle = input<string>('User List');
+  public readonly searchPlaceholder = input<string>();
+  public readonly searchBoxClass = input<string>();
+  public readonly searchSize = input<'md' | 'lg'>('md');
+  public readonly showFilters = input<boolean>(true);
   public readonly data = input.required<ReadonlyArray<T>>();
   public readonly columns = input.required<ReadonlyArray<TableColumn<T>>>();
   public readonly actions = input<ReadonlyArray<TableAction<T>>>([]);
   public readonly filters = input<ReadonlyArray<TableFilter>>([]);
   public readonly searchable = input<boolean>(true);
+  public readonly searchKey = input<string>('');
+
   public readonly expandable = input<boolean>(false);
+  public readonly showCheckboxes = input<boolean>(false); // Add this
+  public readonly showActionLabels = input<boolean>(false); // Add this
+
+  public readonly showExport = input<boolean>(false); // Add this
+  public readonly showAvatar = input<boolean>(true);
+  public readonly searchChange = output<string>();
+  public readonly filterChange = output<{ key: string; value: string }>();
+  public readonly loading = input<boolean>(false);
   public readonly primaryAction = input<{
-    label: string;
-    handler: () => void;
+    readonly label: string;
+    readonly handler: () => void;
   }>();
   public readonly itemsPerPage = input<number>(10);
+  public readonly serverSidePagination = input<boolean>(false);
+  public readonly totalItems = input<number>(0);
 
   public readonly rowExpanded = output<T>();
+  public readonly pageChange = output<number>();
+
+  protected readonly userService = inject(UserManagementService, {
+    optional: true,
+  });
 
   private readonly _activeFilters = signal<Map<string, string>>(new Map());
+  private readonly _localSearchQuery = signal<string>('');
   private readonly _expandedRows = signal<Set<number>>(new Set());
   private readonly _selectedItems = signal<Set<T>>(new Set());
   private readonly _searchQuery = signal<string>('');
   private readonly _currentPage = signal<number>(1);
-  public readonly currentPage = computed(() => this._currentPage());
 
+  public readonly currentPage = computed(() => this._currentPage());
   public readonly searchQuery = computed(() => this._searchQuery());
 
   public readonly filteredData = computed(() => {
-    let result = this.data();
-    const query = this._searchQuery().trim().toLowerCase();
+    const localQuery = this._localSearchQuery().toLowerCase().trim();
+    const items = this.data();
 
-    if (query) {
-      result = result.filter((item) => this._matchesSearch(item, query));
+    if (!localQuery || !this.serverSidePagination()) {
+      return items;
     }
 
-    const filters = this._activeFilters();
-    filters.forEach((value, key) => {
-      if (value !== 'all') {
-        result = result.filter(
-          (item) => String(item[key]).toLowerCase() === value.toLowerCase()
-        );
-      }
-    });
+    return items.filter((item) => {
+      const searchableFields = [
+        item['fullName'],
+        item['name'],
+        item['email'],
+        item['role'],
+      ]
+        .filter(Boolean)
+        .map((field) => String(field))
+        .join(' ')
+        .toLowerCase();
 
-    return result;
+      return searchableFields.includes(localQuery);
+    });
   });
+
+  private _searchSubject = new Subject<string>();
+  constructor() {
+    this._searchSubject
+      .pipe(
+        debounceTime(600) // Wait 600ms after user stops typing
+      )
+      .subscribe((query) => {
+        this._searchQuery.set(query);
+        this._currentPage.set(1);
+
+        if (this.serverSidePagination()) {
+          this.searchChange.emit(query);
+        } else {
+          this._performBackendSearch(0);
+        }
+      });
+  }
+
   public setCurrentPage(page: number): void {
     this._currentPage.set(page);
+
+    if (this.serverSidePagination()) {
+      this.pageChange.emit(page);
+    } else {
+      this._performBackendSearch(page - 1);
+    }
   }
-  public readonly paginatedData = computed(() => {
-    const filtered = this.filteredData();
-    const page = this._currentPage();
-    const perPage = this.itemsPerPage();
-    const start = (page - 1) * perPage;
-    return filtered.slice(start, start + perPage);
-  });
+
+  public readonly paginatedData = computed(() => this.filteredData());
 
   public isSelected(item: T): boolean {
     return this._selectedItems().has(item);
   }
 
-  public toggleSelect(item: T): void {
-    const selected = new Set(this._selectedItems());
+  protected toggleSelect(item: T): void {
+    const selected: Set<T> = new Set(this._selectedItems());
     selected.has(item) ? selected.delete(item) : selected.add(item);
     this._selectedItems.set(selected);
   }
+  public capitalizeFirstLetter(value: string | undefined | null): string {
+    if (!value) return '';
+    value = value.toString().toLowerCase();
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  }
 
+  public getRandomAvatar(item: T): string {
+    const identifier = item['userId'] || item['email'] || item['id'] || '';
+    const avatarNumber = (String(identifier).charCodeAt(0) % 70) + 1;
+
+    return `https://i.pravatar.cc/150?img=${avatarNumber}`;
+  }
   public isAllSelected(): boolean {
     const pageData = this.paginatedData();
     return (
       pageData.length > 0 &&
-      pageData.every((item) => this._selectedItems().has(item))
+      pageData.every((item: T) => this._selectedItems().has(item))
     );
   }
 
-  public toggleSelectAll(): void {
-    const pageData = this.paginatedData();
-    const selected = new Set(this._selectedItems());
+  public getActionTitle(action: TableAction<T>, item: T): string {
+    if ('title' in action && action.title) {
+      return typeof action.title === 'function'
+        ? action.title(item)
+        : action.title;
+    }
+
+    if (action.color === 'power') {
+      return item['status'] === 'Active' ? 'Deactivate' : 'Activate';
+    }
+
+    return action.label;
+  }
+  protected toggleSelectAll(): void {
+    const pageData: ReadonlyArray<T> = this.paginatedData();
+    const selected: Set<T> = new Set(this._selectedItems());
 
     if (this.isAllSelected()) {
-      pageData.forEach((item) => selected.delete(item));
+      pageData.forEach((item: T) => selected.delete(item));
     } else {
-      pageData.forEach((item) => selected.add(item));
+      pageData.forEach((item: T) => selected.add(item));
     }
     this._selectedItems.set(selected);
   }
 
-  public executeAction(action: TableAction<T>, item: T): void {
+  protected executeAction(action: TableAction<T>, item: T): void {
     action.handler(item);
   }
 
@@ -153,58 +233,237 @@ export class DataTableComponent<T extends Record<string, any>> {
   }
 
   public updateSearch(query: string): void {
-    this._searchQuery.set(query);
-    this._currentPage.set(1);
-  }
+    this._localSearchQuery.set(query);
 
+    this._searchSubject.next(query);
+  }
   public updateFilter(filterKey: string, value: string): void {
+    // Handle export separately
+    if (filterKey === 'export' && value) {
+      this._handleExport(value);
+      return; // Don't add to filters
+    }
+
     const filters = new Map(this._activeFilters());
     filters.set(filterKey, value);
     this._activeFilters.set(filters);
     this._currentPage.set(1);
+
+    if (this.serverSidePagination()) {
+      this.filterChange.emit({ key: filterKey, value });
+    } else {
+      this._performBackendSearch(0);
+    }
+  }
+  private _handleExport(format: string): void {
+    const data = this.filteredData();
+    const columns = this.columns();
+
+    switch (format) {
+      case 'csv':
+        this._exportAsCSV(data, columns);
+        break;
+      case 'json':
+        this._exportAsJSON(data, columns);
+        break;
+      case 'pdf':
+        this._exportAsPDF(data, columns);
+        break;
+    }
+  }
+  private _exportAsCSV(
+    data: readonly T[],
+    columns: readonly TableColumn<T>[]
+  ): void {
+    const headers = columns.map((col) => col.header).join(',');
+    const rows = data.map((item) =>
+      columns
+        .map((col) => {
+          const value = col.getValue ? col.getValue(item) : item[col.key];
+          // Escape commas and quotes
+          return `"${String(value).replace(/"/g, '""')}"`;
+        })
+        .join(',')
+    );
+
+    const csv = [headers, ...rows].join('\n');
+    this._downloadFile(csv, 'text/csv', 'csv');
   }
 
-  public toggleRow(index: number): void {
+  private _exportAsJSON(
+    data: readonly T[],
+    columns: readonly TableColumn<T>[]
+  ): void {
+    const exportData = data.map((item) => {
+      const row: Record<string, any> = {};
+      columns.forEach((col) => {
+        row[col.header] = col.getValue ? col.getValue(item) : item[col.key];
+      });
+      return row;
+    });
+
+    const json = JSON.stringify(exportData, null, 2);
+    this._downloadFile(json, 'application/json', 'json');
+  }
+
+  private _exportAsPDF(
+    data: readonly T[],
+    columns: readonly TableColumn<T>[]
+  ): void {
+    // For PDF, you'd typically use a library like jsPDF
+    // For now, we'll create a simple HTML representation
+    alert('PDF export requires additional library. Exporting as HTML instead.');
+
+    let html =
+      '<html><head><style>table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:8px;text-align:left;}th{background-color:#4CAF50;color:white;}</style></head><body>';
+    html += '<table><thead><tr>';
+
+    columns.forEach((col) => {
+      html += `<th>${col.header}</th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    data.forEach((item) => {
+      html += '<tr>';
+      columns.forEach((col) => {
+        const value = col.getValue ? col.getValue(item) : item[col.key];
+        html += `<td>${value}</td>`;
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></body></html>';
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${this.tableTitle()}-${
+      new Date().toISOString().split('T')[0]
+    }.html`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  private _downloadFile(
+    content: string,
+    mimeType: string,
+    extension: string
+  ): void {
+    const blob = new Blob([content], { type: mimeType });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${this.tableTitle()}-${
+      new Date().toISOString().split('T')[0]
+    }.${extension}`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+  private _totalFilteredItems = signal<number>(0);
+  public readonly totalFilteredItems = computed(() => {
+    if (this.serverSidePagination()) {
+      return this.totalItems();
+    }
+    return this._totalFilteredItems();
+  });
+
+  private _performBackendSearch(page: number): void {
+    const userService = this.userService;
+    if (!userService) return;
+
+    const keyword = this._searchQuery().trim() || undefined;
+    const filters = this._activeFilters();
+    const role =
+      filters.get('role') !== 'all' ? filters.get('role') : undefined;
+    const statusValue = filters.get('status');
+    const status =
+      statusValue && statusValue !== 'all'
+        ? this._normalizeStatusToBoolean(statusValue)
+        : undefined;
+
+    userService
+      .searchUsers(keyword, role, status, page)
+      .pipe(take(1))
+      .subscribe({
+        next: (users) => {
+          const total = userService.totalElements ?? users.length;
+          this._totalFilteredItems.set(total);
+        },
+        error: (err) => {
+          this._totalFilteredItems.set(0);
+        },
+      });
+  }
+
+  private _normalizeStatusToBoolean(status: string): boolean {
+    const normalized = status.toLowerCase();
+    return normalized === 'active' || normalized === 'true';
+  }
+
+  public toggleRow(index: number, item: T): void {
     const expanded = new Set(this._expandedRows());
     expanded.has(index) ? expanded.delete(index) : expanded.add(index);
     this._expandedRows.set(expanded);
+    this.rowExpanded.emit(item);
   }
 
-  public isRowExpanded(index: number): boolean {
+  protected isRowExpanded(index: number): boolean {
     return this._expandedRows().has(index);
   }
 
-  public isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
+  protected isRoleOrStatus(key: keyof T | string | number | symbol): boolean {
     return ['role', 'status'].includes(String(key));
   }
 
-  public getBadgeClass(value: unknown): string {
-    return `data-table__badge data-table__badge--${String(
-      value
-    ).toLowerCase()}`;
-  }
+  public getBadgeClass(value: string | boolean): string {
+    let normalized = '';
 
-  public isActionVisible(action: TableAction<T>, item: T): boolean {
+    if (typeof value === 'boolean') {
+      normalized = value ? 'active' : 'inactive';
+    } else if (typeof value === 'string') {
+      normalized = value.toLowerCase();
+    }
+
+    const roleMap: Record<string, string> = {
+      organiser: 'organizer',
+      organizer: 'organizer',
+      attendee: 'attendee',
+      active: 'active',
+      inactive: 'inactive',
+    };
+
+    const badgeClass = roleMap[normalized] || normalized;
+    return `data-table__badge data-table__badge--${badgeClass}`;
+  }
+  public isUserActive(item: T): boolean {
+    const status = item['status'];
+    if (typeof status === 'boolean') return status;
+    if (typeof status === 'string') return status.toLowerCase() === 'active';
+    return false;
+  }
+  protected isActionVisible(action: TableAction<T>, item: T): boolean {
     return action.visible ? action.visible(item) : true;
   }
 
   public isActionDisabled(action: TableAction<T>, item: T): boolean {
-    return typeof action.disabled === 'function'
-      ? action.disabled(item)
-      : !!action.disabled;
+    const disabled =
+      typeof action.disabled === 'function'
+        ? action.disabled(item)
+        : !!action.disabled;
+    const isLoading = action.isLoading ? action.isLoading(item) : false;
+    return disabled || isLoading;
   }
 
-  public getFilterValue(filterKey: string): string {
+  public isActionLoading(action: TableAction<T>, item: T): boolean {
+    return action.isLoading ? action.isLoading(item) : false;
+  }
+
+  protected getFilterValue(filterKey: string): string {
     return this._activeFilters().get(filterKey) ?? 'all';
   }
 
-  public trackByIndex(index: number): number {
+  protected trackByIndex(index: number): number {
     return index;
-  }
-
-  private _matchesSearch(item: T, query: string): boolean {
-    return Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(query)
-    );
   }
 }
