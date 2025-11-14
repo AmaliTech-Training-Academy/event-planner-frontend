@@ -1,20 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {
-  ApiResponse,
-  DashboardData,
-  Event,
-  EventDetailResponse,
-  PaginatedResponse,
-  EventManagement,
-} from '../../models/event.model';
 import { API_ENDPOINTS } from '../../constants/api-endpoints.constants';
+import { ApiResponse, DashboardData, EventDetailResponse } from '../../models/event.model';
+
 @Injectable({ providedIn: 'root' })
 export class EventBackendService {
   constructor(private readonly _http: HttpClient) {}
 
-  /** Fetches full dashboard + paginated event management data */
   public getDashboardData(
     page = 0,
     size = 10,
@@ -33,7 +26,7 @@ export class EventBackendService {
       }
     );
   }
-  /** Fetches detailed information for a specific event by ID */
+
   public getEventDetails(
     eventId: number
   ): Observable<ApiResponse<EventDetailResponse>> {

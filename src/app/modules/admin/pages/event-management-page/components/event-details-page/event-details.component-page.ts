@@ -1,4 +1,3 @@
-// event-details-page.component.ts
 import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
@@ -9,7 +8,7 @@ import { APP_ROUTES } from '../../../../../../core/constants/app-routes.constant
 import { EventBackendService } from '../../../../../../core/services/backend/event-backend.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
-import { EventManagement } from '../../../../../../core/models/event.model';
+import { EventManagement } from '../../../../../../core/models/events';
 
 export interface EventDetails {
   id: number;
@@ -49,7 +48,7 @@ export class EventDetailsPageComponent implements OnInit {
   private readonly _location = inject(Location);
   private readonly _layoutService = inject(LayoutService);
   private readonly _eventBackendService = inject(EventBackendService);
-  protected readonly APP_ROUTES = APP_ROUTES;
+  protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
 
   protected readonly eventDetails = signal<EventDetails | null>(null);
   protected readonly hosts = signal<EventHost[]>([]);
@@ -102,7 +101,6 @@ export class EventDetailsPageComponent implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
-    // Fetch all events and find the specific one by ID
     this._eventBackendService.getDashboardData(0, 1000).subscribe({
       next: (response) => {
         const dashboard = response.data;
@@ -113,7 +111,6 @@ export class EventDetailsPageComponent implements OnInit {
           return;
         }
 
-        // Find the event with matching ID
         const apiEvent = dashboard.eventManagement.content.find(
           (e: EventManagement) => e.id === eventId
         );
@@ -124,7 +121,6 @@ export class EventDetailsPageComponent implements OnInit {
           return;
         }
 
-        // Map EventManagement to EventDetails
         const event: EventDetails = {
           id: apiEvent.id,
           name: apiEvent.title,
@@ -141,8 +137,8 @@ export class EventDetailsPageComponent implements OnInit {
                 timeZoneName: 'short',
               })
             : '09:00am GMT',
-          location: 'Virtual (Zoom meeting)', // Default location since not in API
-          description: 'Event description coming soon.', // Default description
+          location: 'Virtual (Zoom meeting)',
+          description: 'Event description coming soon.',
         };
 
         const host: EventHost = {
@@ -158,7 +154,6 @@ export class EventDetailsPageComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (err) => {
-        console.error('Failed to load event details:', err);
         this.error.set('Failed to load event details');
         this.isLoading.set(false);
       },
@@ -191,7 +186,6 @@ export class EventDetailsPageComponent implements OnInit {
   protected onEdit(): void {
     const event = this.eventDetails();
     if (!event) {
-      console.warn('Cannot edit: Event details not loaded yet');
       return;
     }
 
@@ -207,10 +201,8 @@ export class EventDetailsPageComponent implements OnInit {
   protected onSendInvites(): void {
     const event = this.eventDetails();
     if (!event) {
-      console.warn('Cannot send invites: Event details not loaded');
       return;
     }
-    console.log('Send invites for event:', event.id);
   }
 
   protected onViewAllGuests(): void {
@@ -220,10 +212,8 @@ export class EventDetailsPageComponent implements OnInit {
   protected onScheduleFeedback(): void {
     const event = this.eventDetails();
     if (!event) {
-      console.warn('Cannot schedule feedback: Event details not loaded');
       return;
     }
-    console.log('Schedule feedback for event:', event.id);
   }
 
   protected getStatusClass(status: string): string {

@@ -36,7 +36,7 @@ import {
   DashboardData,
   EventManagement,
   EventStatus,
-} from '../../../../core/models/event.model';
+} from '../../../../core/models/events';
 
 interface EventTableData {
   id: number;
@@ -67,14 +67,12 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   private readonly _layoutService = inject(LayoutService);
   private readonly _router = inject(Router);
   private readonly _eventManagementService = inject(EventManagementService);
-  protected readonly APP_ROUTES = APP_ROUTES;
+  protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
 
-  // Backend data signal
   private readonly _dashboardData = signal<DashboardData | null>(null);
   private readonly _isLoading = signal<boolean>(false);
   private readonly _error = signal<string | null>(null);
 
-  // Pagination and filter state
   private readonly _currentPage = signal<number>(0);
   private readonly _pageSize = signal<number>(10);
   private readonly _selectedStatus = signal<string>('all');
@@ -95,17 +93,17 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
       },
       {
         label: 'Active Events',
-        count: stats.activeEvents, 
+        count: stats.activeEvents,
         color: '#656565',
       },
       {
         label: 'Completed Events',
-        count: stats.completedEvents, 
+        count: stats.completedEvents,
         color: '#292929',
       },
       {
         label: 'Cancelled Events',
-        count: stats.canceledEvents, 
+        count: stats.canceledEvents,
         color: '#FF5A00',
       },
       {
@@ -224,16 +222,12 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   };
 
   constructor() {
-    // ✅ NEW: Subscribe to debounced search
     this._searchSubject
-      .pipe(
-        debounceTime(600), // Wait 600ms after user stops typing
-        takeUntilDestroyed()
-      )
+      .pipe(debounceTime(600), takeUntilDestroyed())
       .subscribe((query) => {
         this._searchQuery.set(query);
-        this._currentPage.set(0); // Reset to first page
-        this._loadDashboardData(); // Reload with search query
+        this._currentPage.set(0);
+        this._loadDashboardData();
       });
 
     this._eventManagementService.loading$
@@ -255,7 +249,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    // Clean up the search subject
     this._searchSubject.complete();
   }
 
@@ -298,9 +291,7 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     this._loadDashboardData();
   }
 
-  // ✅ UPDATED: Use debounce subject instead of direct load
   public onSearch(query: string): void {
-    // Push to subject - debouncing will handle the rest
     this._searchSubject.next(query);
   }
 
@@ -318,7 +309,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
       .subscribe({
         error: (err) => {
           this._error.set('Failed to load dashboard data');
-          console.error('Dashboard error:', err);
         },
       });
   }
@@ -373,7 +363,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   }
 
   private _exportAsPDF(data: EventTableData[]): void {
-    console.log('PDF export not implemented yet', data);
     alert('PDF export feature coming soon!');
   }
 

@@ -11,18 +11,15 @@ import {
   throwError,
 } from 'rxjs';
 import { ErrorHandlerService } from './error-handler.service';
+
+import { EventBackendService } from './backend/event-backend.service';
 import {
   DashboardData,
-  Event,
-  EventDetailResponse,
-  EventStats,
-  PaginatedResponse,
+  EventDetails,
   EventManagement,
-  EventStatus,
   mapEventDetailResponseToEventDetails,
-  EventDetails as CoreEventDetails, // ✅ Use the core model, not the component
-} from '../models/event.model';
-import { EventBackendService } from './backend/event-backend.service';
+} from '../models/events';
+import { PaginatedResponse } from '../models/shared';
 
 @Injectable({ providedIn: 'root' })
 export class EventManagementService {
@@ -32,15 +29,14 @@ export class EventManagementService {
   );
   private readonly _paginatedEvents =
     new BehaviorSubject<PaginatedResponse<EventManagement> | null>(null);
+  private readonly _selectedEvent = new BehaviorSubject<EventDetails | null>(
+    null
+  );
 
-  // ✅ Add selected event BehaviorSubject
-  private readonly _selectedEvent =
-    new BehaviorSubject<CoreEventDetails | null>(null);
   public readonly selectedEvent$ = this._selectedEvent.asObservable();
-
-  readonly loading$ = this._loading.asObservable();
-  readonly dashboardData$ = this._dashboardData.asObservable();
-  readonly paginatedEvents$ = this._paginatedEvents.asObservable();
+  public readonly loading$ = this._loading.asObservable();
+  public readonly dashboardData$ = this._dashboardData.asObservable();
+  public readonly paginatedEvents$ = this._paginatedEvents.asObservable();
 
   constructor(
     private readonly _backend: EventBackendService,
@@ -68,7 +64,7 @@ export class EventManagementService {
     );
   }
 
-  public loadEventDetails(eventId: number): Observable<CoreEventDetails> {
+  public loadEventDetails(eventId: number): Observable<EventDetails> {
     this._loading.next(true);
     return this._backend.getEventDetails(eventId).pipe(
       map((res) => mapEventDetailResponseToEventDetails(res.data)),
