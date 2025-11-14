@@ -107,18 +107,24 @@ export class UserManagementPageComponent implements OnInit {
     {
       icon: 'icons/view-icon.png',
       label: 'View User Details',
+      title: 'View user profile and details',
       color: 'view',
       handler: (user) => this._viewUser(user),
     },
     {
       icon: 'icons/edit-icon.png',
       label: 'Edit User',
+      title: (user) => `Edit ${user.fullName || user.name || 'user'}`, // Dynamic title
       color: 'edit',
       handler: (user) => this._editUser(user),
     },
     {
       icon: 'icons/power-red.png',
       label: 'Toggle User Status',
+      title: (user) =>
+        user.status === 'Active'
+          ? `Deactivate ${user.fullName || user.name || 'user'}`
+          : `Activate ${user.fullName || user.name || 'user'}`, // Dynamic title
       color: 'power',
       handler: (user) => this._toggleUserStatus(user),
       isLoading: (user) => this.togglingUserId() === user.userId,
@@ -271,7 +277,6 @@ export class UserManagementPageComponent implements OnInit {
           this._loadUsers(this.currentPage() || 0);
         },
         error: (error) => {
-        
           alert('Failed to update user. Please try again.');
         },
       });
@@ -325,7 +330,6 @@ export class UserManagementPageComponent implements OnInit {
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: () => {
-       
           this.togglingUserId.set(null);
         },
         error: (err) => {

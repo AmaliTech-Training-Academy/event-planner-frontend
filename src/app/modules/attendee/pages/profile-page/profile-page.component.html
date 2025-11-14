@@ -1,1 +1,104 @@
-<p>profile-page works!</p>
+<main class="profile-page-content">
+  
+  <div class="profile-card">
+    <h1 class="page-title">Profile Information</h1>
+
+    <header class="profile-header">
+      <div class="avatar">
+        <img
+  [ngSrc]="avatarUrl()"
+  [alt]="fullName() + ' avatar'"
+  width="64"
+  height="64"
+  priority
+/>
+      </div>
+      <div class="header-text">
+        <h1>Edit Profile</h1>
+        <p>Update your personal information</p>
+      </div>
+    </header>
+
+    <section class="info-section">
+      <div class="section-header">
+        <h2>Basic Information</h2>
+      </div>
+      <div class="form-grid">
+        <app-input
+          label="Full Name"
+          placeholder="Enter your full name"
+          [(ngModel)]="fullName"
+          name="fullName"
+          [disabled]="isBasicInfoDisabled()"
+        ></app-input>
+        <app-input
+          label="Email Address"
+          type="email"
+          placeholder="Enter your email"
+          [(ngModel)]="email"
+          name="email"
+          [disabled]="true"
+        ></app-input>
+      </div>
+
+      <div class="edit-button-container">
+        <app-button
+          type="secondary"
+          [extraClass]="'edit-button'"
+          (click)="onEditBasicInfo()"
+        >
+          {{ basicInfoButtonText() }}
+        </app-button>
+      </div>
+    </section>
+
+    <section class="info-section">
+      <div class="section-header">
+        <h2>Contact Information</h2>
+      </div>
+      <div class="form-grid">
+        <app-input
+          label="Phone Number"
+          placeholder="Enter your phone number"
+          [(ngModel)]="phone"
+          name="phone"
+          [disabled]="isContactInfoDisabled()"
+        ></app-input>
+        <app-input
+          label="Address"
+          placeholder="Enter your address"
+          [(ngModel)]="address"
+          name="address"
+          [disabled]="isContactInfoDisabled()"
+        ></app-input>
+      </div>
+
+      <div class="edit-button-container">
+        <app-button
+          type="secondary"
+          [extraClass]="'edit-button'"
+          (click)="onEditContactInfo()"
+        >
+          {{ contactInfoButtonText() }}
+        </app-button>
+      </div>
+    </section>
+
+    <footer class="profile-footer">
+      <app-button
+        type="plain"
+        [extraClass]="'logout-button'"
+        (click)="onLogout()"
+      >
+        <img
+  [ngSrc]="'icons/logout.png'"
+  alt="Logout icon"
+  width="18"
+  height="18"
+  priority
+/>
+        Logout
+      </app-button>
+    </footer>
+  </div>
+</main>

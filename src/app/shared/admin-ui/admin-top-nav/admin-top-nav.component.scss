@@ -1,7 +1,6 @@
 @use 'typography' as *;
 @use 'colors' as *;
 @use 'variables' as *;
-
 .admin-top-nav {
   display: flex;
   justify-content: space-between;
@@ -12,9 +11,14 @@
   border-bottom: $stroke-0 solid $gray-200;
   position: fixed;
   top: 0;
-  left: 17.5rem; 
+  left: 17.5rem;
   right: 0;
   z-index: 1000;
+  transition: left 0.3s ease; // ✅ smooth transition when sidebar toggles
+
+  &--collapsed {
+    left: 5rem; // ✅ same as collapsed sidebar width
+  }
 
   &__left {
     display: flex;
@@ -23,8 +27,8 @@
   }
 
   &__logo {
-    height: 2rem;
-    width: auto;
+    height: 28px;
+    width: 28px;
     object-fit: contain;
   }
 
@@ -46,7 +50,7 @@
     border: none;
     cursor: pointer;
     padding: 0.5rem;
-    
+
     img {
       width: 1.5rem;
       height: 1.5rem;
