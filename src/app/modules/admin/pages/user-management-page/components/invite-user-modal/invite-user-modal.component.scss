@@ -132,14 +132,16 @@
 
   .user-row {
     display: grid;
-    grid-template-columns: 1.2fr 1.8fr 1.2fr 50px;
+    grid-template-columns: 1.2fr 1.8fr 1.9fr 50px;
     gap: $spacing-3;
     align-items: start;
 
     .user-field {
-      display: flex;
-      flex-direction: column;
-    }
+  display: flex;
+  flex-direction: column;
+
+
+}
 
     .btn-delete {
       width: 40px;
@@ -172,7 +174,6 @@
     }
   }
 
-  // Add User button styling
   ::ng-deep .btn-add-user {
     display: flex;
     align-items: center;

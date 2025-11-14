@@ -44,9 +44,8 @@ export const AUTH_ROUTES: Routes = [
         (m) => m.ResetPasswordComponent
       ),
   },
-  // ADD THIS:
   {
-    path: 'accept-invite',
+    path: 'invitation/accept', 
     loadComponent: () =>
       import(
         '../auth/pages/accept-invite-page/accept-invite-page.component'

@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -13,8 +13,7 @@ import { ButtonComponent } from '../../../../../../shared/ui/button/button.compo
 import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/modal-header.component';
 import { USER_ROLES } from '../../../../../../core/constants/user.constants';
 import { UserManagementService } from '../../../../../../core/services/user-management.service';
-import { Invitation, InviteUserPayload } from '../../../../../../core/models';
-
+import { InviteUserPayload } from '../../../../../../core/models';
 
 @Component({
   selector: 'app-invite-user-modal',
@@ -30,7 +29,7 @@ import { Invitation, InviteUserPayload } from '../../../../../../core/models';
   templateUrl: './invite-user-modal.component.html',
   styleUrls: ['./invite-user-modal.component.scss'],
 })
-export class InviteUserModalComponent implements OnInit {
+export class InviteUserModalComponent {
   @Output() public readonly close = new EventEmitter<void>();
   @Output() public readonly success = new EventEmitter<void>();
 
@@ -38,65 +37,18 @@ export class InviteUserModalComponent implements OnInit {
   private readonly userManagementService = inject(UserManagementService);
 
   public readonly inviteForm: FormGroup = this._fb.group({
-    title: this._fb.control('', [Validators.required]),
     users: this._fb.array([this._createUserFormGroup()]),
-    event: this._fb.control('', [Validators.required]), // Stored as string in form
     message: this._fb.control(''),
   });
 
   public readonly roles = [
-    { label: 'Organizer', value: USER_ROLES.ORGANIZER },
-    { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
     { label: 'Attendee', value: USER_ROLES.ATTENDEE },
+    { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
     { label: 'Admin', value: USER_ROLES.ADMIN },
   ];
 
-  // ✅ Events with STRING values for the dropdown
-  public events: { label: string; value: string }[] = [];
-
-  public invitations: Invitation[] = [];
   public isSubmitting = false;
-
-  ngOnInit(): void {
-    this.loadInvitations();
-    this.loadEvents();
-  }
-
-  private loadInvitations(): void {
-    this.userManagementService.fetchInvitations().subscribe({
-      next: (invitations) => {
-        this.invitations = invitations;
-        console.log('📥 Fetched Invitations:', invitations);
-      },
-      error: (err) => {
-        console.error('❌ Failed to load invitations:', err);
-        this.invitations = [];
-      },
-    });
-  }
-
-  private loadEvents(): void {
-    // TODO: Replace with your actual event service
-    // this.eventService.getAllEvents().subscribe({
-    //   next: (response) => {
-    //     this.events = response.data.map(event => ({
-    //       label: event.eventName,
-    //       value: event.eventId.toString() // Convert to string for dropdown
-    //     }));
-    //   },
-    //   error: (err) => {
-    //     console.error('❌ Failed to load events:', err);
-    //     this.events = [];
-    //   }
-    // });
-
-    // Temporary placeholder with STRING values for dropdown
-    this.events = [
-      { label: 'Tech Conference 2025', value: '12' },
-      { label: 'Annual Meetup', value: '13' },
-      { label: 'Workshop Series', value: '14' },
-    ];
-  }
+  public isSaving = false;
 
   private _createUserFormGroup(): FormGroup {
     return this._fb.group({
@@ -120,55 +72,77 @@ export class InviteUserModalComponent implements OnInit {
     }
   }
 
+  /**
+   * Send invitation - status: 'SEND'
+   */
   public onSubmit(): void {
     this.inviteForm.markAllAsTouched();
 
     if (this.inviteForm.invalid) {
-      console.warn('⚠️ Invalid invite form:', this.inviteForm.value);
-      alert('Please fill in all required fields');
       return;
     }
 
     const payload: InviteUserPayload = {
-      invitationTitle: this.inviteForm.value.title,
       invitees: this.users.value.map((user: any) => ({
-        inviteeName: user.name,
-        inviteeEmail: user.email,
+        fullName: user.name,
+        email: user.email,
         role: user.role,
       })),
-      event: parseInt(this.inviteForm.value.event, 10), // Convert string to number
-      status: 'SAVE',
       message: this.inviteForm.value.message || '',
+      status: 'SEND',
     };
-
-    console.log('📤 Sending invitation payload:', payload);
 
     this.isSubmitting = true;
 
     this.userManagementService.inviteUsers(payload).subscribe({
-      next: (response) => {
-        console.log('✅ Invitation Response:', response);
-        alert(`✅ Invitations sent successfully!`);
+      next: () => {
         this.success.emit();
         this.close.emit();
+      },
+      error: () => {
         this.isSubmitting = false;
       },
-      error: (err) => {
-        console.error('❌ Invitation Error:', err);
-        const errorMessage =
-          err?.error?.description ||
-          err?.error?.message ||
-          err?.message ||
-          'Failed to send invitations. Please try again.';
-        alert(errorMessage);
+      complete: () => {
         this.isSubmitting = false;
       },
     });
   }
 
+  /**
+   * Save as draft - status: 'SAVE'
+   */
   public onSaveProgress(): void {
-    console.log('💾 Saving progress:', this.inviteForm.value);
-    // TODO: Implement save as draft functionality
+    this.inviteForm.markAllAsTouched();
+
+    if (this.inviteForm.invalid) {
+      return;
+    }
+
+    const payload: InviteUserPayload = {
+      invitees: this.users.value.map((user: any) => ({
+        fullName: user.name,
+        email: user.email,
+        role: user.role,
+      })),
+      message: this.inviteForm.value.message || '',
+      status: 'SAVE',
+    };
+
+    this.isSaving = true;
+
+    this.userManagementService.inviteUsers(payload).subscribe({
+      next: () => {
+        // Optionally show success message for draft saved
+        this.success.emit();
+        this.close.emit();
+      },
+      error: () => {
+        this.isSaving = false;
+      },
+      complete: () => {
+        this.isSaving = false;
+      },
+    });
   }
 
   public onCancel(): void {
