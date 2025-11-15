@@ -1,35 +1,38 @@
 <div class="admin-settings">
   <!-- Tab Navigation -->
   <div class="tabs">
-    <button
-      class="tab"
+    <app-button
+      type="plain"
+      extraClass="tab"
       [class.tab--active]="activeTab() === 'general'"
-      (click)="switchTab('general')"
-      type="button"
+      (onClick)="switchTab('general')"
+      buttonType="button"
     >
-      <img src="icons/settings-icon.png" alt="General" class="tab__icon" />
+      <img src="icons/settings.png" alt="General" class="tab__icon" />
       <span>General</span>
-    </button>
+    </app-button>
 
-    <button
-      class="tab"
+    <app-button
+      type="plain"
+      extraClass="tab"
       [class.tab--active]="activeTab() === 'notifications'"
-      (click)="switchTab('notifications')"
-      type="button"
+      (onClick)="switchTab('notifications')"
+      buttonType="button"
     >
       <img src="icons/bell-icon.png" alt="Notifications" class="tab__icon" />
       <span>Notifications</span>
-    </button>
+    </app-button>
 
-    <button
-      class="tab"
+    <app-button
+      type="plain"
+      extraClass="tab"
       [class.tab--active]="activeTab() === 'team'"
-      (click)="switchTab('team')"
-      type="button"
+      (onClick)="switchTab('team')"
+      buttonType="button"
     >
-      <img src="icons/team-icon.png" alt="Team" class="tab__icon" />
+      <img src="icons/notify.png" alt="Team" class="tab__icon" />
       <span>Team</span>
-    </button>
+    </app-button>
   </div>
 
   <!-- Tab Content -->
@@ -43,7 +46,7 @@
           <p>Manage security settings and access control</p>
         </div>
         <img
-          src="icons/security-icon.png"
+          src="icons/user-group.png"
           alt="Security"
           class="settings-section__icon"
         />
@@ -68,7 +71,7 @@
           <label for="platformUrl">Platform URL</label>
           <app-input
             id="platformUrl"
-            type="text"
+            type="url"
             formControlName="platformUrl"
             placeholder="https://eventhub.com"
             [errorMessage]="
@@ -121,7 +124,7 @@
           buttonType="submit"
           [disabled]="isSubmitting()"
         >
-          {{ isSubmitting() ? 'Saving...' : 'Save Changes' }}
+          {{ isSubmitting() ? "Saving..." : "Save Changes" }}
         </app-button>
       </form>
     </div>
@@ -136,7 +139,7 @@
           <p>Manage how notifications are received</p>
         </div>
         <img
-          src="icons/security-icon.png"
+          src="icons/bell.png"
           alt="Notifications"
           class="settings-section__icon"
         />
@@ -206,23 +209,24 @@
               {{ member.role }}
             </span>
 
-            <button
-              type="button"
-              class="btn-more"
-              aria-label="More options"
+            <app-button
+              type="plain"
+              extraClass="btn-more"
+              buttonType="button"
+              (onClick)="openMemberMenu(member)"
             >
-              <img src="icons/more-vertical.png" alt="More" />
-            </button>
+              <img src="icons/more-vertical.png" alt="More options" />
+            </app-button>
 
-            <button
-              type="button"
-              class="btn-edit"
-              (click)="editTeamMember(member)"
-              aria-label="Edit member"
+            <app-button
+              type="plain"
+              extraClass="btn-edit"
+              buttonType="button"
+              (onClick)="editTeamMember(member)"
             >
               <img src="icons/edit-icon.png" alt="Edit" />
               <span>Edit</span>
-            </button>
+            </app-button>
           </div>
         </div>
         }

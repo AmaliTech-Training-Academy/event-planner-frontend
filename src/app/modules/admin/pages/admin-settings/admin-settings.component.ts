@@ -1,4 +1,11 @@
-import { Component, signal, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  signal,
+  OnInit,
+  inject,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -13,26 +20,26 @@ import { InputComponent } from '../../../../shared/ui/input/input.component';
 
 // Interfaces
 interface SecuritySettings {
-  platformName: string;
-  platformUrl: string;
-  contactEmail: string;
-  platformDescription: string;
-  maintenanceMode: boolean;
+  readonly platformName: string;
+  readonly platformUrl: string;
+  readonly contactEmail: string;
+  readonly platformDescription: string;
+  readonly maintenanceMode: boolean;
 }
 
 interface NotificationSetting {
-  id: string;
-  title: string;
-  description: string;
-  enabled: boolean;
+  readonly id: string;
+  readonly title: string;
+  readonly description: string;
+  readonly enabled: boolean;
 }
 
 interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: 'Super Admin' | 'Admin' | 'Manager';
+  readonly id: string;
+  readonly name: string;
+  readonly email: string;
+  readonly avatar: string;
+  readonly role: 'Super Admin' | 'Admin' | 'Manager';
 }
 
 type TabType = 'general' | 'notifications' | 'team';
@@ -53,19 +60,20 @@ interface SecurityForm {
   styleUrl: './admin-settings.component.scss',
 })
 export class AdminSettingsComponent implements OnInit {
-  private readonly fb = inject(FormBuilder);
-  private readonly layoutService = inject(LayoutService);
+  // ===== Injected Services (private with _) =====
+  private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _layoutService: LayoutService = inject(LayoutService);
 
-  // Active tab state
-  protected readonly activeTab = signal<TabType>('general');
-
-  // Security Settings Form
-  protected readonly securityForm: FormGroup<SecurityForm>;
-  protected readonly hasAttemptedSubmit = signal(false);
-  protected readonly isSubmitting = signal(false);
-
-  // Notification Settings
-  protected readonly notifications = signal<NotificationSetting[]>([
+  // ===== Private Writable Signals =====
+  private readonly _activeTab: WritableSignal<TabType> =
+    signal<TabType>('general');
+  private readonly _hasAttemptedSubmit: WritableSignal<boolean> =
+    signal<boolean>(false);
+  private readonly _isSubmitting: WritableSignal<boolean> =
+    signal<boolean>(false);
+  private readonly _notifications: WritableSignal<
+    ReadonlyArray<NotificationSetting>
+  > = signal<ReadonlyArray<NotificationSetting>>([
     {
       id: '1',
       title: 'New Event Creation',
@@ -85,75 +93,71 @@ export class AdminSettingsComponent implements OnInit {
       enabled: false,
     },
   ]);
+  private readonly _teamMembers: WritableSignal<ReadonlyArray<TeamMember>> =
+    signal<ReadonlyArray<TeamMember>>([
+      {
+        id: '1',
+        name: 'Sarah Wilson',
+        email: 'sarah@example.com',
+        avatar: 'icons/user-avatar.png',
+        role: 'Super Admin',
+      },
+      {
+        id: '2',
+        name: 'Sarah Wilson',
+        email: 'sarah@example.com',
+        avatar: 'icons/user-avatar.png',
+        role: 'Admin',
+      },
+    ]);
 
-  // Team Members
-  protected readonly teamMembers = signal<TeamMember[]>([
-    {
-      id: '1',
-      name: 'Sarah Wilson',
-      email: 'sarah@example.com',
-      avatar: 'icons/user-avatar.png',
-      role: 'Super Admin',
-    },
-    {
-      id: '2',
-      name: 'Sarah Wilson',
-      email: 'sarah@example.com',
-      avatar: 'icons/user-avatar.png',
-      role: 'Admin',
-    },
-  ]);
+  // ===== Public Readonly Signals (for template) =====
+  public readonly activeTab: Signal<TabType> = this._activeTab.asReadonly();
+  public readonly hasAttemptedSubmit: Signal<boolean> =
+    this._hasAttemptedSubmit.asReadonly();
+  public readonly isSubmitting: Signal<boolean> =
+    this._isSubmitting.asReadonly();
+  public readonly notifications: Signal<ReadonlyArray<NotificationSetting>> =
+    this._notifications.asReadonly();
+  public readonly teamMembers: Signal<ReadonlyArray<TeamMember>> =
+    this._teamMembers.asReadonly();
+
+  // ===== Public Form =====
+  public readonly securityForm: FormGroup<SecurityForm>;
 
   constructor() {
-    this.securityForm = this.createSecurityForm();
+    this.securityForm = this._createSecurityForm();
   }
 
-  ngOnInit(): void {
-    this.layoutService.pageTitle.set('Admin Settings');
-    this.layoutService.logoSrc.set('icons/settings-icon.png');
-    this.layoutService.logoAlt.set('Admin Settings Icon');
+  public ngOnInit(): void {
+    this._layoutService.pageTitle.set('Admin Settings');
+    this._layoutService.logoSrc.set('icons/settings.png');
+    this._layoutService.logoAlt.set('Admin Settings Icon');
 
-    // Load initial data
-    this.loadSecuritySettings();
+    this._loadSecuritySettings();
   }
 
-  // Tab Navigation
-  protected switchTab(tab: TabType): void {
-    this.activeTab.set(tab);
+  // ===== Public Methods (for template) =====
+
+  /**
+   * Switch between tabs
+   */
+  public switchTab(tab: TabType): void {
+    this._activeTab.set(tab);
   }
 
-  // Security Settings Methods
-  private createSecurityForm(): FormGroup<SecurityForm> {
-    return this.fb.group({
-      platformName: this.fb.control('Event Hub', [Validators.required]),
-      platformUrl: this.fb.control('https://eventhub.com', [
-        Validators.required,
-        Validators.pattern(/^https?:\/\/.+/),
-      ]),
-      contactEmail: this.fb.control('support@eventhub.com', [
-        Validators.required,
-        Validators.email,
-      ]),
-      platformDescription: this.fb.control(
-        'EventHub is a comprehensive event management platform for organizers and attendees.',
-        [Validators.required]
-      ),
-      maintenanceMode: this.fb.control(false, { nonNullable: true }),
-    });
-  }
-
-  private loadSecuritySettings(): void {
-    // TODO: Load from backend service
-    // For now, form already has default values
-  }
-
-  protected saveSecuritySettings(): void {
-    this.hasAttemptedSubmit.set(true);
+  /**
+   * Save security settings form
+   */
+  public saveSecuritySettings(): void {
+    this._hasAttemptedSubmit.set(true);
     this.securityForm.markAllAsTouched();
 
-    if (this.securityForm.invalid || this.isSubmitting()) return;
+    if (this.securityForm.invalid || this._isSubmitting()) {
+      return;
+    }
 
-    this.isSubmitting.set(true);
+    this._isSubmitting.set(true);
 
     const settings: SecuritySettings = {
       platformName: this.securityForm.value.platformName ?? '',
@@ -167,79 +171,117 @@ export class AdminSettingsComponent implements OnInit {
 
     // TODO: Call backend service
     setTimeout(() => {
-      this.isSubmitting.set(false);
-      this.hasAttemptedSubmit.set(false);
+      this._isSubmitting.set(false);
+      this._hasAttemptedSubmit.set(false);
       console.log('Settings saved successfully!');
     }, 1000);
   }
 
-  protected hasFieldError(fieldName: keyof SecurityForm): boolean {
-    const field = this.securityForm.get(fieldName);
-    return !!(field?.invalid && (field?.touched || this.hasAttemptedSubmit()));
+  /**
+   * Check if a form field has an error
+   */
+  public hasFieldError(fieldName: keyof SecurityForm): boolean {
+    const field: FormControl | null = this.securityForm.get(
+      fieldName
+    ) as FormControl | null;
+    return !!(field?.invalid && (field?.touched || this._hasAttemptedSubmit()));
   }
 
-  protected getFieldErrorMessage(fieldName: keyof SecurityForm): string {
-    const field = this.securityForm.get(fieldName);
-    if (!field?.errors) return '';
+  /**
+   * Get error message for a form field
+   */
+  public getFieldErrorMessage(fieldName: keyof SecurityForm): string {
+    const field: FormControl | null = this.securityForm.get(
+      fieldName
+    ) as FormControl | null;
+
+    if (!field?.errors) {
+      return '';
+    }
 
     const errors = field.errors;
-    switch (true) {
-      case !!errors['required']:
-        return `${this.formatFieldName(fieldName)} is required`;
-      case !!errors['email']:
-        return 'Please enter a valid email address';
-      case !!errors['pattern']:
-        return 'Please enter a valid URL (starting with http:// or https://)';
-      default:
-        return 'Invalid input';
+
+    if (errors['required']) {
+      return `${this._formatFieldName(fieldName)} is required`;
     }
+
+    if (errors['email']) {
+      return 'Please enter a valid email address';
+    }
+
+    if (errors['pattern']) {
+      return 'Please enter a valid URL (starting with http:// or https://)';
+    }
+
+    return 'Invalid input';
   }
 
-  private formatFieldName(fieldName: string): string {
-    return fieldName
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, (str) => str.toUpperCase())
-      .trim();
-  }
-
-  // Notification Settings Methods
-  protected toggleNotification(id: string): void {
-    const current = this.notifications();
-    const updated = current.map((n) =>
-      n.id === id ? { ...n, enabled: !n.enabled } : n
+  /**
+   * Toggle notification setting
+   */
+  public toggleNotification(id: string): void {
+    const current: ReadonlyArray<NotificationSetting> = this._notifications();
+    const updated: ReadonlyArray<NotificationSetting> = current.map(
+      (n: NotificationSetting) =>
+        n.id === id ? { ...n, enabled: !n.enabled } : n
     );
-    this.notifications.set(updated);
+    this._notifications.set(updated);
   }
 
-  protected saveNotificationSettings(): void {
-    console.log('Saving notification settings:', this.notifications());
+  /**
+   * Save notification settings
+   */
+  public saveNotificationSettings(): void {
+    console.log('Saving notification settings:', this._notifications());
     // TODO: Call backend service
   }
 
-  // Team Management Methods
-  protected addTeamMember(): void {
+  /**
+   * Open modal to add team member
+   */
+  public addTeamMember(): void {
     console.log('Opening add team member modal');
     // TODO: Open modal to add team member
   }
 
-  protected editTeamMember(member: TeamMember): void {
+  /**
+   * Open menu for team member actions
+   */
+  public openMemberMenu(member: TeamMember): void {
+    console.log('Opening menu for team member:', member);
+    // TODO: Open dropdown menu with more options
+  }
+
+  /**
+   * Open modal to edit team member
+   */
+  public editTeamMember(member: TeamMember): void {
     console.log('Editing team member:', member);
     // TODO: Open modal to edit team member
   }
 
-  protected deleteTeamMember(memberId: string): void {
-    const confirmed = confirm(
+  /**
+   * Delete team member with confirmation
+   */
+  public deleteTeamMember(memberId: string): void {
+    const confirmed: boolean = confirm(
       'Are you sure you want to remove this team member?'
     );
+
     if (confirmed) {
-      const current = this.teamMembers();
-      const updated = current.filter((m) => m.id !== memberId);
-      this.teamMembers.set(updated);
+      const current: ReadonlyArray<TeamMember> = this._teamMembers();
+      const updated: ReadonlyArray<TeamMember> = current.filter(
+        (m: TeamMember) => m.id !== memberId
+      );
+      this._teamMembers.set(updated);
       console.log('Team member removed');
     }
   }
 
-  protected getRoleBadgeClass(role: TeamMember['role']): string {
+  /**
+   * Get CSS class for role badge
+   */
+  public getRoleBadgeClass(role: TeamMember['role']): string {
     switch (role) {
       case 'Super Admin':
         return 'badge--super-admin';
@@ -250,5 +292,47 @@ export class AdminSettingsComponent implements OnInit {
       default:
         return 'badge--admin';
     }
+  }
+
+  // ===== Private Methods =====
+
+  /**
+   * Create security settings form
+   */
+  private _createSecurityForm(): FormGroup<SecurityForm> {
+    return this._fb.group({
+      platformName: this._fb.control('Event Hub', [Validators.required]),
+      platformUrl: this._fb.control('https://eventhub.com', [
+        Validators.required,
+        Validators.pattern(/^https?:\/\/.+/),
+      ]),
+      contactEmail: this._fb.control('support@eventhub.com', [
+        Validators.required,
+        Validators.email,
+      ]),
+      platformDescription: this._fb.control(
+        'EventHub is a comprehensive event management platform for organizers and attendees.',
+        [Validators.required]
+      ),
+      maintenanceMode: this._fb.control(false, { nonNullable: true }),
+    });
+  }
+
+  /**
+   * Load security settings from backend
+   */
+  private _loadSecuritySettings(): void {
+    // TODO: Load from backend service
+    // For now, form already has default values
+  }
+
+  /**
+   * Format field name for error messages
+   */
+  private _formatFieldName(fieldName: string): string {
+    return fieldName
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (str: string) => str.toUpperCase())
+      .trim();
   }
 }
