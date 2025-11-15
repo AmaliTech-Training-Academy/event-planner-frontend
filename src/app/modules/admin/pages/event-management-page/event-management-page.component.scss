@@ -1,8 +1,7 @@
+
 @use 'typography' as *;
 @use 'colors' as *;
 @use 'variables' as *;
-@use 'mixins' as *;
-
 .event-management-page {
   display: flex;
   flex-direction: column;
@@ -15,7 +14,7 @@
   }
 }
 
-@include respond-to('lg') {
+@media (max-width: 1024px) {
   .event-management-page {
     &__grid {
       grid-template-columns: 1fr;
@@ -23,7 +22,7 @@
   }
 }
 
-@include respond-to('sm') {
+@media (max-width: 640px) {
   .event-management-page {
     padding: $spacing-4;
     gap: $spacing-4;
@@ -33,7 +32,6 @@
     }
   }
 }
-
 @keyframes skeleton-loading {
   0% {
     background-position: -200% 0;
@@ -212,7 +210,7 @@
   }
 }
 
-@include respond-to('md') {
+@media (max-width: 768px) {
   .event-management-page__statistics-skeleton {
     grid-template-columns: 1fr;
   }
