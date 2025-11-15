@@ -75,7 +75,7 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
 
   private readonly _currentPage = signal<number>(0);
   private readonly _pageSize = signal<number>(10);
-  private readonly _selectedStatus = signal<string>('all');
+  private readonly _selectedStatus = signal<EventStatus | 'all'>('all');
   private readonly _searchQuery = signal<string>('');
 
   private readonly _searchSubject = new Subject<string>();
