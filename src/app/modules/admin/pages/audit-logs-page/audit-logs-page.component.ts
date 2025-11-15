@@ -1,11 +1,14 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   DataTableComponent,
   TableColumn,
   TableFilter,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
-import { AUDIT_LOG_STATUS_FILTERS, AuditLog } from '../../../../core/models/users/audit-logs.model';
+import {
+  AUDIT_LOG_STATUS_FILTERS,
+  AuditLog,
+} from '../../../../core/models/users/audit-logs.model';
 
 @Component({
   selector: 'app-audit-logs',
@@ -15,7 +18,8 @@ import { AUDIT_LOG_STATUS_FILTERS, AuditLog } from '../../../../core/models/user
   styleUrls: ['./audit-logs-page.component.scss'],
 })
 export class AuditLogsComponent implements OnInit {
-  // Private signals for internal state management
+  private readonly _layoutService = inject(LayoutService);
+
   private readonly _auditLogs = signal<ReadonlyArray<AuditLog>>([
     {
       user: 'Sarah Wilson',
@@ -109,34 +113,19 @@ export class AuditLogsComponent implements OnInit {
     },
   ]);
 
-  // Simulate loading state (set to false to see actual data)
   private readonly _isLoading = signal<boolean>(false);
 
-  // Protected readonly for template access
-  protected readonly auditLogs = this._auditLogs.asReadonly();
-  protected readonly isLoading = this._isLoading.asReadonly();
+  public readonly auditLogs = computed(() => this._auditLogs());
+  public readonly isLoading = computed(() => this._isLoading());
 
-  // Protected readonly configuration - accessible in template
-  protected readonly columns: ReadonlyArray<TableColumn<AuditLog>> = [
-    {
-      key: 'fullName',
-      header: 'User',
-    },
-    {
-      key: 'timestamp',
-      header: 'Timestamp',
-    },
-    {
-      key: 'ipAddress',
-      header: 'IP Address',
-    },
-    {
-      key: 'status',
-      header: 'Status',
-    },
+  public readonly columns: ReadonlyArray<TableColumn<AuditLog>> = [
+    { key: 'fullName', header: 'User' },
+    { key: 'timestamp', header: 'Timestamp' },
+    { key: 'ipAddress', header: 'IP Address' },
+    { key: 'status', header: 'Status' },
   ];
 
-  protected readonly filters: ReadonlyArray<TableFilter> = [
+  public readonly filters: ReadonlyArray<TableFilter> = [
     {
       key: 'status',
       placeholder: 'Status',
@@ -144,11 +133,9 @@ export class AuditLogsComponent implements OnInit {
     },
   ];
 
-  constructor(private readonly _layoutService: LayoutService) {}
-
   public ngOnInit(): void {
     this._layoutService.pageTitle.set('Audit Logs');
     this._layoutService.logoSrc.set('icons/audit.png');
-    this._layoutService.logoAlt.set('Audit Logs Icon');
+    this._layoutService.logoAlt.set('icons/audit.png');
   }
 }
