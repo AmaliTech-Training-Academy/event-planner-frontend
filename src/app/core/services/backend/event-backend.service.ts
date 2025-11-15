@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_ENDPOINTS } from '../../constants/api-endpoints.constants';
-import { ApiResponse, DashboardData, EventDetailResponse } from '../../models/event.model';
+import { DashboardData } from '../../models/events';
+import { ApiResponse } from '../../models/shared/api-response.model';
+import { EventDetailResponse } from '../../models/events/event-details-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class EventBackendService {

@@ -1,9 +1,9 @@
 import { EventStatus } from './event-status.model';
-import { EventDetailResponse } from './event-detail-response.model';
 import { Event } from './event.model';
 import { EventManagement } from './event-management.model';
 import { EventDetails } from './event-details.model';
 import { EventCard } from './event-card.model';
+import { EventDetailResponse } from './event-details-response.model';
 
 export function mapEventDetailResponseToEventDetails(
   response: EventDetailResponse

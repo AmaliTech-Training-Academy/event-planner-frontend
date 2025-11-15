@@ -279,7 +279,8 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
 
   public onFilterChange(filters: Record<string, string>): void {
     if (filters['status']) {
-      this._selectedStatus.set(filters['status']);
+      const status = filters['status'] as EventStatus | 'all';
+      this._selectedStatus.set(status);
     }
 
     if (filters['export']) {
