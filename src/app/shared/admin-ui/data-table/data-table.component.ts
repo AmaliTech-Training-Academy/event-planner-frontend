@@ -26,6 +26,11 @@ export interface TableColumn<T> {
   readonly filterable?: boolean;
   readonly getValue?: (item: T) => string | number | boolean | null;
 }
+export interface EmptyState {
+  readonly imageSrc: string;
+  readonly imageAlt: string;
+  readonly message: string;
+}
 
 export interface TableAction<T> {
   readonly icon: string;
@@ -112,6 +117,33 @@ export class DataTableComponent<T extends Record<string, any>> {
   private readonly _searchQuery = signal<string>('');
   private readonly _currentPage = signal<number>(1);
 
+  public readonly effectiveSearchPlaceholder = computed(() => {
+    const customPlaceholder = this.searchPlaceholder();
+    const title = this.tableTitle();
+
+    if (customPlaceholder) {
+      return customPlaceholder;
+    }
+
+    if (title.toLowerCase().includes('user')) {
+      return 'Search users...';
+    } else if (title.toLowerCase().includes('event')) {
+      return 'Search events...';
+    } else if (title.toLowerCase().includes('invitation')) {
+      return 'Search invitations...';
+    } else if (title.toLowerCase().includes('audit')) {
+      return 'Search audit logs...';
+    }
+
+    if (title.toLowerCase().includes('role')) {
+      return 'Search roles...';
+    }
+    if (title.toLowerCase().includes('saved')) {  
+      return 'Search saved invitations...';
+    } 
+
+    return `Search ${title.toLowerCase()}...`;
+  });
   public readonly currentPage = computed(() => this._currentPage());
   public readonly searchQuery = computed(() => this._searchQuery());
 
@@ -172,6 +204,11 @@ export class DataTableComponent<T extends Record<string, any>> {
   public isSelected(item: T): boolean {
     return this._selectedItems().has(item);
   }
+  public readonly emptyState = input<EmptyState>({
+    imageSrc: '/images/table-empty.png',
+    imageAlt: 'No data found',
+    message: 'No data available',
+  });
 
   protected toggleSelect(item: T): void {
     const selected: Set<T> = new Set(this._selectedItems());
