@@ -115,11 +115,10 @@
     }
   }
 
-  // ✅ NEW: Valid state styling (green border)
   &.is-valid {
     .input-wrapper {
-      border-color: #22c55e; // Green color
-      background-color: rgba(34, 197, 94, 0.05); // Subtle green background
+      border-color: #22c55e;
+      background-color: rgba(34, 197, 94, 0.05);
 
       &:focus-within {
         border-color: #22c55e;
@@ -150,7 +149,6 @@
       box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
     }
 
-    // Override focus color when valid
     &.is-valid .input-wrapper {
       border-color: #22c55e;
       box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
@@ -158,7 +156,6 @@
   }
 }
 
-// Form footer for Remember me and Forgot password
 .form-footer {
   display: flex;
   align-items: center;

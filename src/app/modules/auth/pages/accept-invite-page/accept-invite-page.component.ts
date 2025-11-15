@@ -93,7 +93,6 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
     const password = this.form.value?.password ?? '';
     const token = this.inviteToken();
 
-    // Simulate API call with timeout (remove this and uncomment real API call when ready)
     setTimeout(() => {
       this.isSubmitting.set(false);
       this.notificationService.success(
@@ -101,7 +100,6 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
       );
       this.router.navigate([APP_ROUTES.LOGIN]);
     }, 2000);
-    // Uncomment and implement real API call when backend is ready
   }
 
   protected hasFieldError(fieldName: keyof AcceptInviteForm): boolean {
