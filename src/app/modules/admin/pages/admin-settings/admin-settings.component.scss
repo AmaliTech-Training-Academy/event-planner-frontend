@@ -133,73 +133,73 @@
       transform: translateX(calc(200% + #{$spacing-1} * 2));
     }
   }
-}
 
-// Override app-button styles for tabs
-::ng-deep .tabs .tab {
-  @include body-2;
-  display: flex !important;
-  align-items: center;
-  gap: $spacing-2;
-  padding: $spacing-3 $spacing-5 !important;
-  background: transparent !important;
-  border: none !important;
-  border-radius: $radius-3 !important;
-  color: $gray-300 !important;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  font-weight: 500;
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  box-shadow: none !important;
-  min-height: auto !important;
-  height: auto !important;
-  width: auto !important;
-  
-
-  .tab__icon {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    filter: grayscale(100%);
-    opacity: 0.6;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  &:hover:not(.tab--active) {
-    color: $text-primary !important;
+  // Tab button styles using extraClass
+  .tab {
+    @include body-2;
+    display: flex !important;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-3 $spacing-5 !important;
     background: transparent !important;
-    transform: none !important;
+    border: none !important;
+    border-radius: $radius-3 !important;
+    color: $gray-300 !important;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    box-shadow: none !important;
+    min-height: auto !important;
+    height: auto !important;
+    width: auto !important;
     
-    .tab__icon {
-      opacity: 0.8;
-      transform: scale(1.1);
-    }
-  }
-
-  &.tab--active {
-    color: $orange-500 !important;
-    background: $gray-100 !important;
 
     .tab__icon {
-      filter: none;
-      opacity: 1;
-      animation: pulse 2s ease-in-out infinite;
-    }
-  }
-
-  @include md {
-    padding: $spacing-2 $spacing-3 !important;
-    font-size: 0.875rem;
-
-    span {
-      display: none;
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      filter: grayscale(100%);
+      opacity: 0.6;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .tab__icon {
-      width: 24px;
-      height: 24px;
+    &:hover:not(.tab--active) {
+      color: $text-primary !important;
+      background: transparent !important;
+      transform: none !important;
+      
+      .tab__icon {
+        opacity: 0.8;
+        transform: scale(1.1);
+      }
+    }
+
+    &.tab--active {
+      color: $orange-500 !important;
+      background: $gray-100 !important;
+
+      .tab__icon {
+        filter: none;
+        opacity: 1;
+        animation: pulse 2s ease-in-out infinite;
+      }
+    }
+
+    @include md {
+      padding: $spacing-2 $spacing-3 !important;
+      font-size: 0.875rem;
+
+      span {
+        display: none;
+      }
+
+      .tab__icon {
+        width: 24px;
+        height: 24px;
+      }
     }
   }
 }
@@ -494,9 +494,9 @@ form {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $spacing-5;
-  background: white;
-  border: 1px solid $gray-200;
+  padding: $spacing-4 $spacing-5;
+  background: $gray-50;
+  border: none;
   border-radius: $radius-3;
   gap: $spacing-4;
   animation: slideUp 0.5s ease-out both;
@@ -509,31 +509,28 @@ form {
   }
 
   &:hover {
-    border-color: $orange-200;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-    background: linear-gradient(135deg, #fff 0%, #fff8f5 100%);
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
   }
 
   &__info {
     display: flex;
     align-items: center;
-    gap: $spacing-4;
+    gap: $spacing-3;
     flex: 1;
   }
 
   &__avatar {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   &:hover &__avatar {
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 4px 16px rgba($orange-500, 0.3);
+    transform: scale(1.05);
   }
 
   &__details {
@@ -541,13 +538,15 @@ form {
       @include body-1;
       color: $header-dark;
       font-weight: 600;
-      margin-bottom: $spacing-1;
+      margin-bottom: 2px;
+      font-size: 0.9375rem;
       transition: color 0.2s ease;
     }
 
     p {
       @include body-2;
-      color: $gray-300;
+      color: $gray-400;
+      font-size: 0.8125rem;
     }
   }
 
@@ -558,7 +557,7 @@ form {
   &__actions {
     display: flex;
     align-items: center;
-    gap: $spacing-3;
+    gap: $spacing-2;
   }
 
   @include sm {
@@ -575,68 +574,31 @@ form {
 // ===== Role Badges =====
 .badge {
   @include body-2;
-  padding: $spacing-1 $spacing-3;
-  border-radius: $radius-2;
+  padding: 4px 12px;
+  border-radius: 12px;
   font-weight: 600;
   font-size: 0.75rem;
   white-space: nowrap;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.4),
-      transparent
-    );
-    transition: left 0.5s;
-  }
-
-  &:hover::before {
-    left: 100%;
-  }
 
   &--super-admin {
-    background: linear-gradient(135deg, #dcfce7, #bbf7d0);
-    color: #16a34a;
-    
-    &:hover {
-      background: linear-gradient(135deg, #bbf7d0, #86efac);
-      transform: scale(1.05);
-    }
+    background: #16a34a;
+    color: white;
   }
 
   &--admin {
-    background: linear-gradient(135deg, $gray-200, $gray-300);
-    color: $gray-700;
-    
-    &:hover {
-      background: linear-gradient(135deg, $gray-300, $gray-400);
-      transform: scale(1.05);
-    }
+    background: #374151;
+    color: white;
   }
 
   &--manager {
-    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-    color: #2563eb;
-    
-    &:hover {
-      background: linear-gradient(135deg, #bfdbfe, #93c5fd);
-      transform: scale(1.05);
-    }
+    background: #2563eb;
+    color: white;
   }
 }
 
-// ===== Action Buttons - Override app-button =====
-::ng-deep .btn-more {
+// ===== Action Buttons - Using extraClass =====
+.btn-more {
   display: flex !important;
   align-items: center;
   justify-content: center;
@@ -646,48 +608,26 @@ form {
   min-height: 32px !important;
   padding: 0 !important;
   background: transparent !important;
-  border: 1px solid $gray-300 !important;
-  border-radius: $radius-2 !important;
+  border: none !important;
+  border-radius: 50% !important;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  position: relative;
-  overflow: hidden;
+  transition: all 0.2s ease !important;
   box-shadow: none !important;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba($orange-500, 0.1);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s, height 0.3s;
-  }
-
   img {
-    width: 16px !important;
-    height: 16px !important;
+    width: 20px !important;
+    height: 20px !important;
     object-fit: contain;
-    position: relative;
-    z-index: 1;
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
   }
 
   &:hover {
-    background: $gray-50 !important;
-    border-color: $orange-400 !important;
-    transform: scale(1.1) !important;
-
-    &::before {
-      width: 100%;
-      height: 100%;
-    }
+    background: $gray-200 !important;
+    transform: none !important;
 
     img {
-      transform: rotate(90deg);
+      opacity: 0.8;
     }
   }
 
@@ -696,67 +636,45 @@ form {
   }
 }
 
-::ng-deep .btn-edit {
+.btn-edit {
   display: flex !important;
   align-items: center;
   gap: $spacing-2;
-  padding: $spacing-2 $spacing-3 !important;
+  padding: 6px 12px !important;
   background: transparent !important;
   border: 1px solid $gray-300 !important;
   border-radius: $radius-2 !important;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.2s ease !important;
   @include body-2;
   color: $text-primary !important;
   font-weight: 500;
-  position: relative;
-  overflow: hidden;
+  font-size: 0.875rem;
   box-shadow: none !important;
   min-height: auto !important;
   height: auto !important;
   width: auto !important;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba($orange-500, 0.1), transparent);
-    transition: left 0.5s;
-  }
-
   img {
     width: 16px !important;
     height: 16px !important;
     object-fit: contain;
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition: transform 0.2s ease;
   }
 
   &:hover {
     background: $gray-50 !important;
-    border-color: $orange-400 !important;
-    color: $orange-500 !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-
-    &::before {
-      left: 100%;
-    }
-
-    img {
-      transform: scale(1.2) rotate(15deg);
-    }
+    border-color: $gray-400 !important;
+    transform: none !important;
   }
 
   &:active {
-    transform: translateY(0) !important;
+    transform: scale(0.98) !important;
   }
 }
 
 // ===== Add Member Button =====
-::ng-deep .btn-add-member {
+.btn-add-member {
   display: flex;
   align-items: center;
   gap: $spacing-2;
@@ -774,7 +692,7 @@ form {
 }
 
 // ===== Save Button Animation =====
-::ng-deep .settings-section app-button[type="primary"] {
+.settings-section app-button[type="primary"] {
   animation: slideUp 0.5s ease-out 0.6s both;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -789,7 +707,7 @@ form {
 }
 
 // ===== Loading State =====
-::ng-deep app-button[disabled] {
+app-button[disabled] {
   position: relative;
   overflow: hidden;
 

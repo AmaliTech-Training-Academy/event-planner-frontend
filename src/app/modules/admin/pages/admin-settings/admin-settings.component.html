@@ -1,5 +1,4 @@
 <div class="admin-settings">
-  <!-- Tab Navigation -->
   <div class="tabs">
     <app-button
       type="plain"
@@ -35,9 +34,7 @@
     </app-button>
   </div>
 
-  <!-- Tab Content -->
   <div class="tab-content">
-    <!-- General Tab - Security Settings -->
     @if (activeTab() === 'general') {
     <div class="settings-section">
       <div class="settings-section__header">
@@ -128,10 +125,7 @@
         </app-button>
       </form>
     </div>
-    }
-
-    <!-- Notifications Tab -->
-    @if (activeTab() === 'notifications') {
+    } @if (activeTab() === 'notifications') {
     <div class="settings-section">
       <div class="settings-section__header">
         <div class="settings-section__title">
@@ -169,11 +163,8 @@
         Save Notification Settings
       </app-button>
     </div>
-    }
-
-    <!-- Team Tab -->
-    @if (activeTab() === 'team') {
-    <div class="settings-section">
+    } @if (activeTab() === 'team') {
+    <div class="settings-section settings-section--team">
       <div class="settings-section__header">
         <div class="settings-section__title">
           <h2>Team Management</h2>
@@ -209,14 +200,16 @@
               {{ member.role }}
             </span>
 
-            <app-button
-              type="plain"
-              extraClass="btn-more"
-              buttonType="button"
-              (onClick)="openMemberMenu(member)"
-            >
-              <img src="icons/more-vertical.png" alt="More options" />
-            </app-button>
+            <div class="toggle-field">
+              <label class="toggle">
+                <input
+                  type="checkbox"
+                  formControlName="maintenanceMode"
+                  class="toggle__input"
+                />
+                <span class="toggle__slider"></span>
+              </label>
+            </div>
 
             <app-button
               type="plain"
