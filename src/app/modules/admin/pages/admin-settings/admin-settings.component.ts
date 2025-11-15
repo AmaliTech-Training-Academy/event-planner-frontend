@@ -14,43 +14,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { LayoutService } from '../../../../core/services/layout.service';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { InputComponent } from '../../../../shared/ui/input/input.component';
+import { LayoutService } from '@core/services/layout.service';
+import { ButtonComponent } from '@shared/ui/button/button.component';
+import { InputComponent } from '@shared/ui/input/input.component';
+import { NotificationSetting, SecurityForm, SecuritySettings, TabType, TeamMember } from '@app/modules/attendee/models/admin-settings.types';
+import { DEFAULT_NOTIFICATIONS, DEFAULT_SECURITY_SETTINGS, DEFAULT_TEAM_MEMBERS, ROLE_BADGE_CLASSES } from '@app/core/constants/admin-settings.constants';
 
-// Interfaces
-interface SecuritySettings {
-  readonly platformName: string;
-  readonly platformUrl: string;
-  readonly contactEmail: string;
-  readonly platformDescription: string;
-  readonly maintenanceMode: boolean;
-}
-
-interface NotificationSetting {
-  readonly id: string;
-  readonly title: string;
-  readonly description: string;
-  readonly enabled: boolean;
-}
-
-interface TeamMember {
-  readonly id: string;
-  readonly name: string;
-  readonly email: string;
-  readonly avatar: string;
-  readonly role: 'Super Admin' | 'Admin' | 'Manager';
-}
-
-type TabType = 'general' | 'notifications' | 'team';
-
-interface SecurityForm {
-  platformName: FormControl<string | null>;
-  platformUrl: FormControl<string | null>;
-  contactEmail: FormControl<string | null>;
-  platformDescription: FormControl<string | null>;
-  maintenanceMode: FormControl<boolean>;
-}
 
 @Component({
   selector: 'app-admin-settings',
@@ -60,7 +29,7 @@ interface SecurityForm {
   styleUrl: './admin-settings.component.scss',
 })
 export class AdminSettingsComponent implements OnInit {
-  // ===== Injected Services (private with _) =====
+  // ===== Injected Services =====
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _layoutService: LayoutService = inject(LayoutService);
 
@@ -73,45 +42,11 @@ export class AdminSettingsComponent implements OnInit {
     signal<boolean>(false);
   private readonly _notifications: WritableSignal<
     ReadonlyArray<NotificationSetting>
-  > = signal<ReadonlyArray<NotificationSetting>>([
-    {
-      id: '1',
-      title: 'New Event Creation',
-      description: 'Get notified when a new event is created',
-      enabled: false,
-    },
-    {
-      id: '2',
-      title: 'Payment Failures',
-      description: 'Get notified when a payment fails',
-      enabled: false,
-    },
-    {
-      id: '3',
-      title: 'Platform Errors',
-      description: 'Get notified about critical platform errors',
-      enabled: false,
-    },
-  ]);
+  > = signal<ReadonlyArray<NotificationSetting>>(DEFAULT_NOTIFICATIONS);
   private readonly _teamMembers: WritableSignal<ReadonlyArray<TeamMember>> =
-    signal<ReadonlyArray<TeamMember>>([
-      {
-        id: '1',
-        name: 'Sarah Wilson',
-        email: 'sarah@example.com',
-        avatar: 'icons/user-avatar.png',
-        role: 'Super Admin',
-      },
-      {
-        id: '2',
-        name: 'Sarah Wilson',
-        email: 'sarah@example.com',
-        avatar: 'icons/user-avatar.png',
-        role: 'Admin',
-      },
-    ]);
+    signal<ReadonlyArray<TeamMember>>(DEFAULT_TEAM_MEMBERS);
 
-  // ===== Public Readonly Signals (for template) =====
+  // ===== Public Readonly Signals =====
   public readonly activeTab: Signal<TabType> = this._activeTab.asReadonly();
   public readonly hasAttemptedSubmit: Signal<boolean> =
     this._hasAttemptedSubmit.asReadonly();
@@ -137,7 +72,7 @@ export class AdminSettingsComponent implements OnInit {
     this._loadSecuritySettings();
   }
 
-  // ===== Public Methods (for template) =====
+  // ===== Public Methods =====
 
   /**
    * Switch between tabs
@@ -282,16 +217,7 @@ export class AdminSettingsComponent implements OnInit {
    * Get CSS class for role badge
    */
   public getRoleBadgeClass(role: TeamMember['role']): string {
-    switch (role) {
-      case 'Super Admin':
-        return 'badge--super-admin';
-      case 'Admin':
-        return 'badge--admin';
-      case 'Manager':
-        return 'badge--manager';
-      default:
-        return 'badge--admin';
-    }
+    return ROLE_BADGE_CLASSES[role];
   }
 
   // ===== Private Methods =====
@@ -301,26 +227,29 @@ export class AdminSettingsComponent implements OnInit {
    */
   private _createSecurityForm(): FormGroup<SecurityForm> {
     return this._fb.group({
-      platformName: this._fb.control('Event Hub', [Validators.required]),
-      platformUrl: this._fb.control('https://eventhub.com', [
+      platformName: this._fb.control(DEFAULT_SECURITY_SETTINGS.platformName, [
+        Validators.required,
+      ]),
+      platformUrl: this._fb.control(DEFAULT_SECURITY_SETTINGS.platformUrl, [
         Validators.required,
         Validators.pattern(/^https?:\/\/.+/),
       ]),
-      contactEmail: this._fb.control('support@eventhub.com', [
+      contactEmail: this._fb.control(DEFAULT_SECURITY_SETTINGS.contactEmail, [
         Validators.required,
         Validators.email,
       ]),
       platformDescription: this._fb.control(
-        'EventHub is a comprehensive event management platform for organizers and attendees.',
+        DEFAULT_SECURITY_SETTINGS.platformDescription,
         [Validators.required]
       ),
-      maintenanceMode: this._fb.control(false, { nonNullable: true }),
-    });
+      maintenanceMode: this._fb.control(
+        DEFAULT_SECURITY_SETTINGS.maintenanceMode,
+        { nonNullable: true }
+      ),
+    }) as unknown as FormGroup<SecurityForm>;
   }
 
-  /**
-   * Load security settings from backend
-   */
+
   private _loadSecuritySettings(): void {
     // TODO: Load from backend service
     // For now, form already has default values
