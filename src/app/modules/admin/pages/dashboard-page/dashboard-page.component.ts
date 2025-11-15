@@ -113,6 +113,8 @@ export class DashboardPageComponent implements OnInit {
 
   ngOnInit(): void {
     this._layoutService.pageTitle.set('Dashboard Overview');
+    this._layoutService.logoSrc.set('icons/editor-icon.png');
+    this._layoutService.logoAlt.set('Dashboard Icon');
 
     // Subscribe to live user card updates
     this._userService.userCards$.subscribe((cards) => {

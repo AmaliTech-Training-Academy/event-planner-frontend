@@ -1,0 +1,32 @@
+
+<div class="saved-invite-page">
+  <app-data-table
+    tableTitle="Saved Invitations"
+    searchPlaceholder="Search invitations by title or event..."
+    [data]="invites()"
+    [columns]="columns"
+    [actions]="actions"
+    [searchable]="true"
+    [showAvatar]="false"
+    [showCheckboxes]="false"
+    [showActionLabels]="false"
+    [itemsPerPage]="10"
+    [serverSidePagination]="false"
+    [totalItems]="invites().length"
+  />
+
+  @if (isEditModalOpen() && selectedInvite()) {
+  <app-edit-saved-invite
+    [inviteData]="selectedInvite()"
+    (close)="closeEditModal()"
+    (save)="onSaveEdit($event)"
+  />
+  } 
+  
+  @if (isPreviewModalOpen() && selectedInvite()) {
+  <app-view-saved-invite
+    [inviteData]="selectedInvite()"
+    (close)="closePreviewModal()"
+  />
+  }
+</div>

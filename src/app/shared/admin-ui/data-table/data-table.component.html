@@ -5,16 +5,17 @@
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-        <app-input
-          class="md"
-          placeholder="Search users..."
-          [value]="searchQuery()"
-          (valueChange)="updateSearch($event)"
-          iconSrc="icons/search-icon.png"
-          [disabled]="loading()"
-        />
+     <app-input
+  [class]="searchBoxClass() || 'md'"
+  [placeholder]="effectiveSearchPlaceholder()"
+  [value]="searchQuery()"
+  (valueChange)="updateSearch($event)"
+  iconSrc="icons/search-icon.png"
+  [disabled]="loading()"
+/>
       </div>
-      } @for (filter of filters(); track filter.key) {
+      }
+      @for (filter of filters(); track filter.key) {
       <app-filter-select
         [placeholder]="filter.placeholder"
         [options]="filter.options"
@@ -102,7 +103,7 @@
           @if (column.key === 'fullName') {
           <div class="data-table__user-cell">
             <img
-              [src]="getRandomAvatar(item)"
+            [src]="getUserAvatar(item)"
               [alt]="
                 (column.getValue ? column.getValue(item) : item[column.key]) +
                 ' avatar'
@@ -136,18 +137,14 @@
                 ? item['status'] === 'Active'
                   ? 'power-active'
                   : 'power-inactive'
-                : action.color
+                : action.extraClass || action.color || ''
             "
             (click)="executeAction(action, item)"
             [disabled]="isActionDisabled(action, item)"
-            [attr.aria-label]="
-              action.color === 'power'
-                ? item['status'] === 'Active'
-                  ? 'Deactivate user'
-                  : 'Activate user'
-                : action.label
-            "
+            [attr.aria-label]="action.label"
+            [attr.title]="action.label"
             class="data-table__action-btn"
+            [class.data-table__action-btn--with-label]="showActionLabels()"
             [class.data-table__action-btn--loading]="
               isActionLoading(action, item)
             "
@@ -163,15 +160,14 @@
                     : 'icons/power-icon-green.png'
                   : action.icon
               "
-              [alt]="
-                action.color === 'power'
-                  ? item['status'] === 'Active'
-                    ? 'Deactivate user icon'
-                    : 'Activate user icon'
-                  : action.label + ' icon'
-              "
+              [alt]="action.label"
+              class="data-table__action-icon"
             />
-            }
+
+            <!-- Label (conditionally shown) -->
+            @if (showActionLabels()) {
+            <span class="data-table__action-label">{{ action.label }}</span>
+            } }
           </app-button>
           }
         </td>
