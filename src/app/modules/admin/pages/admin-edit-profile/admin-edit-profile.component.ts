@@ -89,13 +89,10 @@ export class EditProfileComponent implements OnInit {
       emailAddress: this.profileForm.value.emailAddress ?? '',
     };
 
-    console.log('Saving profile:', updatedProfile);
-
     setTimeout(() => {
       this._profileData.set(updatedProfile);
       this._isSubmitting.set(false);
       this._hasAttemptedSubmit.set(false);
-      console.log('Profile saved successfully!');
     }, 1000);
   }
 

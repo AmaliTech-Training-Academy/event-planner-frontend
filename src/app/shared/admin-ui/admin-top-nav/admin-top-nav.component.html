@@ -1,4 +1,8 @@
-<header class="admin-top-nav" role="banner"  [class.admin-top-nav--collapsed]="isCollapsed">
+<header
+  class="admin-top-nav"
+  role="banner"
+  [class.admin-top-nav--collapsed]="isCollapsed"
+>
   <div class="admin-top-nav__left">
     <img
       ngSrc="{{ logoSrc }}"
@@ -30,14 +34,98 @@
       }
     </app-button>
 
-    <div class="admin-top-nav__user" [attr.aria-label]="userName">
-      <img
-        ngSrc="{{ avatarSrc }}"
-        width="32"
-        height="32"
-        [alt]="userName"
-        class="admin-top-nav__avatar"
-      />
+    <div class="admin-top-nav__user-wrapper">
+      <app-button
+        type="plain"
+        [buttonType]="'button'"
+        [extraClass]="'admin-top-nav__user'"
+        [attr.aria-label]="userName"
+        (onClick)="toggleDropdown()"
+      >
+        <img
+          ngSrc="{{ avatarSrc }}"
+          width="32"
+          height="32"
+          [alt]="userName"
+          class="admin-top-nav__avatar"
+        />
+        <img
+          ngSrc="icons/drop-down.png"
+          width="16"
+          height="16"
+          alt="Menu"
+          class="admin-top-nav__chevron"
+          [class.admin-top-nav__chevron--open]="isDropdownOpen()"
+        />
+      </app-button>
+
+      @if (isDropdownOpen()) {
+      <div class="admin-top-nav__dropdown">
+        <div class="admin-top-nav__dropdown-header">
+          <img
+            ngSrc="{{ avatarSrc }}"
+            width="40"
+            height="40"
+            [alt]="userName"
+            class="admin-top-nav__dropdown-avatar"
+          />
+          <div class="admin-top-nav__dropdown-info">
+            <p class="admin-top-nav__dropdown-name">{{ userName }}</p>
+            <p class="admin-top-nav__dropdown-role">Administrator</p>
+          </div>
+        </div>
+
+        <div class="admin-top-nav__dropdown-divider"></div>
+
+        <a
+          routerLink="/admin/profile"
+          class="admin-top-nav__dropdown-item"
+          (click)="closeDropdown()"
+        >
+          <img
+            ngSrc="icons/user-icon.png"
+            width="20"
+            height="20"
+            alt="Profile"
+          />
+          <span>Edit Profile</span>
+        </a>
+
+        <a
+          routerLink="/admin/settings"
+          class="admin-top-nav__dropdown-item"
+          (click)="closeDropdown()"
+        >
+          <img
+            ngSrc="icons/settings-icon.png"
+            width="20"
+            height="20"
+            alt="Settings"
+          />
+          <span>Settings</span>
+        </a>
+
+        <div class="admin-top-nav__dropdown-divider"></div>
+
+        <button
+          type="button"
+          class="admin-top-nav__dropdown-item admin-top-nav__dropdown-item--danger"
+          (click)="logout()"
+        >
+          <img
+            ngSrc="icons/logout.png"
+            width="20"
+            height="20"
+            alt="Logout"
+          />
+          <span>Logout</span>
+        </button>
+      </div>
+      }
     </div>
   </div>
 </header>
+
+@if (isDropdownOpen()) {
+<div class="admin-top-nav__overlay" (click)="closeDropdown()"></div>
+}
