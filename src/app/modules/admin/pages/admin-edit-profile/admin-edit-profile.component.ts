@@ -14,9 +14,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { LayoutService } from '@core/services/layout.service';
-import { ButtonComponent } from '@shared/ui/button/button.component';
-import { InputComponent } from '@shared/ui/input/input.component';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { InputComponent } from '../../../../shared/ui/input/input.component';
+import { LayoutService } from '../../../../core/services/layout.service';
+
 
 interface ProfileData {
   fullName: string;
@@ -33,8 +34,8 @@ interface ProfileForm {
   selector: 'app-edit-profile',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ButtonComponent, InputComponent],
-  templateUrl: './edit-profile.component.html',
-  styleUrl: './edit-profile.component.scss',
+  templateUrl: './admin-edit-profile.component.html',
+  styleUrls: ['./admin-edit-profile.component.scss'],
 })
 export class EditProfileComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);
@@ -67,7 +68,7 @@ export class EditProfileComponent implements OnInit {
 
   public ngOnInit(): void {
     this._layoutService.pageTitle.set('Audit Logs');
-    this._layoutService.logoSrc.set('icons/audit-logs.png');
+    this._layoutService.logoSrc.set('icons/audit.png');
     this._layoutService.logoAlt.set('Audit Logs Icon');
 
     this._loadProfileData();

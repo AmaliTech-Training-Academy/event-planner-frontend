@@ -19,9 +19,9 @@ import { OtpBodyData } from '../models/auth-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private _loggedIn$ = new BehaviorSubject<boolean>(false);
-  private _userInfo$ = new BehaviorSubject<OtpBodyData | null>(null);
-  private _loadingStateSubject = new BehaviorSubject<boolean>(false);
+  private readonly _loggedIn$ = new BehaviorSubject<boolean>(false);
+  private readonly _userInfo$ = new BehaviorSubject<OtpBodyData | null>(null);
+  private readonly _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
   private _email: string = '';
   private _otp: string = '';
@@ -49,6 +49,7 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public adminLogin(email: string, password: string) {
     this.setLoading(true);
     return this.authBackend.adminLogin(email, password).pipe(
@@ -76,7 +77,6 @@ export class AuthService {
           this.router.navigate([APP_ROUTES.LOGIN]);
         }),
         catchError((err) => this.errorHandlerService.handle(err)),
-
         finalize(() => this.setLoading(false))
       );
   }
@@ -98,13 +98,12 @@ export class AuthService {
         const userData = response?.data;
         if (userData) {
           this._loggedIn$.next(true);
-          this._userInfo$.next(userData); // userData is now OtpBodyData with number id
+          this._userInfo$.next(userData);
           this._email = '';
           this._otp = '';
 
-          // Convert id to string when saving to storage
           this.saveAuthToStorage(
-            userData.id.toString(), // Convert number to string here
+            userData.id.toString(),
             userData.fullName,
             userData.profilePicture,
             userData.email,
@@ -142,20 +141,21 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
-public adminLogout() {
-  this.setLoading(true);
-  return this.authBackend.logout().pipe(
-    take(1),
-    tap(() => {
-      this._loggedIn$.next(false);
-      this._userInfo$.next(null);
-      this.clearAuthStorage();
-      this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
-    }),
-    catchError((err) => this.errorHandlerService.handle(err)),
-    finalize(() => this.setLoading(false))
-  );
-}
+
+  public adminLogout() {
+    this.setLoading(true);
+    return this.authBackend.logout().pipe(
+      take(1),
+      tap(() => {
+        this._loggedIn$.next(false);
+        this._userInfo$.next(null);
+        this.clearAuthStorage();
+        this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+      }),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
 
   public checkAuthUser(userId: string) {
     this.setLoading(true);
@@ -164,7 +164,6 @@ public adminLogout() {
       tap((response) => {
         const user = response?.data;
         if (user) {
-          // Map User to OtpBodyData
           const userData: OtpBodyData = {
             id: user.userId,
             email: user.email,
@@ -173,13 +172,13 @@ public adminLogout() {
             role: user.role,
           };
           this._userInfo$.next(userData);
-          console.log(response);
         }
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );
   }
+
   public resetPassword(otp: string, email: string, password: string) {
     this.setLoading(true);
     return this.authBackend.resetPassword(otp, email, password).pipe(
@@ -210,6 +209,66 @@ public adminLogout() {
     );
   }
 
+  public updateProfile(fullName: string, email: string) {
+    const currentUser = this.currentUser();
+    if (!currentUser) {
+      return of(null);
+    }
+
+    this.setLoading(true);
+    return this.authBackend
+      .updateProfile(currentUser.id.toString(), { fullName, email })
+      .pipe(
+        take(1),
+        tap((response) => {
+          const userData = response?.data;
+          if (userData) {
+            this._userInfo$.next(userData);
+            this.saveAuthToStorage(
+              userData.id.toString(),
+              userData.fullName,
+              userData.profilePicture,
+              userData.email,
+              userData.role
+            );
+          }
+        }),
+        catchError((err) => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
+  }
+
+  public uploadAvatar(file: File) {
+    const currentUser = this.currentUser();
+    if (!currentUser) {
+      return of(null);
+    }
+
+    this.setLoading(true);
+    return this.authBackend.uploadAvatar(currentUser.id.toString(), file).pipe(
+      take(1),
+      tap((response) => {
+        const newAvatarUrl = response?.data?.profilePicture;
+        if (newAvatarUrl && currentUser) {
+          const updatedUser: OtpBodyData = {
+            ...currentUser,
+            profilePicture: newAvatarUrl,
+          };
+          this._userInfo$.next(updatedUser);
+          this.saveAuthToStorage(
+            updatedUser.id.toString(),
+            updatedUser.fullName,
+            updatedUser.profilePicture,
+            updatedUser.email,
+            updatedUser.role
+          );
+        }
+      }),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
   private onload() {
     const stored = localStorage.getItem(AUTH_STORAGE.AUTH);
 
@@ -217,10 +276,9 @@ public adminLogout() {
       const data = JSON.parse(stored) as AuthStorage;
       this._loggedIn$.next(data[AUTH_STORAGE.AUTHENTICATED]);
 
-      // Restore user info from storage
       if (data[AUTH_STORAGE.AUTHENTICATED]) {
         const userData: OtpBodyData = {
-          id: parseInt(data[AUTH_STORAGE.USER_ID], 10), // Convert string to number
+          id: parseInt(data[AUTH_STORAGE.USER_ID], 10),
           email: data[AUTH_STORAGE.EMAIL],
           fullName: data[AUTH_STORAGE.FULL_NAME],
           profilePicture: data[AUTH_STORAGE.PROFILE_PICTURE],
@@ -262,6 +320,7 @@ public adminLogout() {
   public currentUser$(): Observable<OtpBodyData | null> {
     return this._userInfo$.asObservable();
   }
+
   public currentUser(): OtpBodyData | null {
     return this._userInfo$.getValue();
   }

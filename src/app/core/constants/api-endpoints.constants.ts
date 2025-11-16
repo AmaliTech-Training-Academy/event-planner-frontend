@@ -23,6 +23,12 @@ export const API_ENDPOINTS = {
   AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
   AUTH_ME: `${BASE}/auth/me`,
+  UPDATE_PROFILE: (userId: string): string => `${BASE}/users/${userId}`,
+  UPLOAD_AVATAR: (userId: string): string =>
+    `${BASE}/users/${userId}/avatar`, 
+
+
+
   DEACTIVATE_USER: (userId: string | number) =>
     `${BASE}/users/${userId}/deactivate`,
 
@@ -36,4 +42,5 @@ export const API_ENDPOINTS = {
   CREATE_EVENT: `${BASE}/events`,
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+
 } as const;

@@ -51,7 +51,7 @@
 
       <div class="form-actions">
         <app-button
-          type="plain"
+          type="secondary"
           buttonType="button"
           (onClick)="cancelEdit()"
           [extraClass]="'btn-cancel'"
@@ -63,7 +63,7 @@
           buttonType="submit"
           [disabled]="isSubmitting()"
         >
-          {{ isSubmitting() ? "Saving..." : "Edit" }}
+          {{ isSubmitting() ? "Saving..." : "Edit Profile" }}
         </app-button>
       </div>
     </form>

@@ -21,4 +21,8 @@ export const APP_ROUTES = {
   ADMIN_EVENTS: '/admin/events',
   ADMIN_EVENT_DETAILS: '/admin/events/:id',
   ADMIN_ORGANIZERS: '/admin/organizers',
+  ADMIN_PROFILE: '/admin/profile',
+  ADMIN_SETTINGS: '/admin/settings',
+  ADMIN_LOGOUT: '/admin/logout',
+  ADMIN_EDIT_PROFILE: '/admin/profile',
 };

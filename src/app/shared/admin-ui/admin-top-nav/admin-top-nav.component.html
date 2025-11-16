@@ -18,7 +18,7 @@
     <app-button
       [buttonType]="'button'"
       type="social"
-      [extraClass]="'admin-top-nav__notifications'"
+      [extraClass]="'admin-notifications'"
       aria-label="Notifications"
     >
       <img
@@ -78,7 +78,7 @@
         <div class="admin-top-nav__dropdown-divider"></div>
 
         <a
-          routerLink="/admin/profile"
+          [routerLink]="APP_ROUTES.ADMIN_EDIT_PROFILE"
           class="admin-top-nav__dropdown-item"
           (click)="closeDropdown()"
         >
@@ -92,7 +92,7 @@
         </a>
 
         <a
-          routerLink="/admin/settings"
+          [routerLink]="APP_ROUTES.ADMIN_SETTINGS"
           class="admin-top-nav__dropdown-item"
           (click)="closeDropdown()"
         >
@@ -107,10 +107,11 @@
 
         <div class="admin-top-nav__dropdown-divider"></div>
 
-        <button
-          type="button"
+        <a 
+          type="social"
           class="admin-top-nav__dropdown-item admin-top-nav__dropdown-item--danger"
-          (click)="logout()"
+          (click)="logout($event)"
+          [routerLink]="APP_ROUTES.ADMIN_LOGOUT"
         >
           <img
             ngSrc="icons/logout.png"
@@ -119,7 +120,7 @@
             alt="Logout"
           />
           <span>Logout</span>
-        </button>
+        </a>
       </div>
       }
     </div>

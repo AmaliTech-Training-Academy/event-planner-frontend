@@ -42,7 +42,7 @@
   &__right {
     display: flex;
     align-items: center;
-    gap: $spacing-4;
+    gap: $spacing-1;
   }
 
   &__notifications {
@@ -109,6 +109,7 @@
     width: 1rem;
     height: 1rem;
     transition: transform 0.2s ease;
+    object-fit:contain;
 
     &--open {
       transform: rotate(180deg);

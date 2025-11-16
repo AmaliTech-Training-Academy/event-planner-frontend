@@ -49,5 +49,13 @@ export const ADMIN_ROUTES: Routes = [
         (m) => m.TransactionsPageComponent
       ),
     // canActivate: [AdminGuard],
+  },
+  {
+    path: 'profile',
+    loadComponent: () =>
+      import('./pages/admin-edit-profile/admin-edit-profile.component').then(
+        (m) => m.EditProfileComponent
+      ),
+
   }
 ];
