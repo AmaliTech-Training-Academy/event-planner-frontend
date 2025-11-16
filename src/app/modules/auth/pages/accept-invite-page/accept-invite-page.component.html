@@ -2,14 +2,26 @@
   <div class="accept-invite-card">
     <h2 class="app-name">Event <span>Hub</span></h2>
 
-    <h3 class="welcome-text">Set New Password</h3>
+    <h3 class="welcome-text">Accept Your Invitation</h3>
     <p class="subtitle">
-      By setting a new password, you accept the invitation for your account
-      registered with your email address,
-      <strong>{{ inviteEmail() }}</strong>
+      Please enter your details below to complete your account setup and accept
+      the invitation.
     </p>
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()">
+      <app-input
+        formControlName="email"
+        label="Email Address"
+        type="email"
+        placeholder="john.doe@example.com"
+        [required]="true"
+        [showValidIcon]="isFieldValid('email')"
+        [errorMessage]="
+          hasFieldError('email') ? getFieldErrorMessage('email') : ''
+        "
+        [iconSrc]="'icons/mail-icon.png'"
+      ></app-input>
+
       <app-input
         formControlName="fullName"
         label="Full Name"
