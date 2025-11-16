@@ -227,3 +227,12 @@
     transform: translateY(0);
   }
 }
+@media (max-width: 768px) {
+  .admin-top-nav {
+    left: 0 !important; // Always full width on mobile
+    
+    &--collapsed {
+      left: 0 !important;
+    }
+  }
+}

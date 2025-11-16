@@ -26,7 +26,7 @@ import { LogoutConfirmationModalComponent } from '../../components/logout-confir
     RouterLink,
     ButtonComponent,
     LogoutConfirmationModalComponent,
-],
+  ],
   templateUrl: './admin-top-nav.component.html',
   styleUrls: ['./admin-top-nav.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,11 +43,15 @@ export class AdminTopNavComponent implements OnChanges {
   @Input() public logoAlt = 'Logo';
   @Input() public isCollapsed = false;
 
+  // Add a signal to track collapsed state
+  protected readonly _isCollapsed: WritableSignal<boolean> =
+    signal<boolean>(false);
+
   private readonly _notifications: WritableSignal<number> = signal<number>(0);
   private readonly _isDropdownOpen: WritableSignal<boolean> =
     signal<boolean>(false);
   private readonly _showLogoutModal: WritableSignal<boolean> =
-    signal<boolean>(false); // Add this
+    signal<boolean>(false);
 
   public readonly hasNotifications: Signal<boolean> = computed(
     () => this._notifications() > 0
@@ -55,11 +59,17 @@ export class AdminTopNavComponent implements OnChanges {
   public readonly isDropdownOpen: Signal<boolean> =
     this._isDropdownOpen.asReadonly();
   public readonly showLogoutModal: Signal<boolean> =
-    this._showLogoutModal.asReadonly(); // Add this
+    this._showLogoutModal.asReadonly();
+  public readonly isNavCollapsed: Signal<boolean> =
+    this._isCollapsed.asReadonly();
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes['notificationsCount']) {
       this._notifications.set(this.notificationsCount);
+    }
+    // Add this to track collapsed state changes
+    if (changes['isCollapsed']) {
+      this._isCollapsed.set(this.isCollapsed);
     }
   }
 
@@ -74,7 +84,6 @@ export class AdminTopNavComponent implements OnChanges {
   public logout(e: Event): void {
     e.preventDefault();
     this.closeDropdown();
-    // Show modal instead of logging out directly
     this._showLogoutModal.set(true);
   }
 
