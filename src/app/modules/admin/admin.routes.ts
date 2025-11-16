@@ -20,6 +20,7 @@ export const ADMIN_ROUTES: Routes = [
   },
   {
     path: 'events',
+
     loadComponent: () =>
       import(
         '../admin/pages/event-management-page/event-management-page.component'
@@ -47,5 +48,13 @@ export const ADMIN_ROUTES: Routes = [
       import('./pages/admin-settings/admin-settings.component').then(
         (m) => m.AdminSettingsComponent
       ),
+  },
+  {
+    path: 'transactions',
+    loadComponent: () =>
+      import('./pages/transactions-page/transactions-page.component').then(
+        (m) => m.TransactionsPageComponent
+      ),
+    // canActivate: [AdminGuard],
   },
 ];

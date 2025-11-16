@@ -221,10 +221,10 @@
   @include body-3;
   display: inline-flex;
   align-items: center;
-  padding: 4px $spacing-3; // Reduced horizontal padding
+  padding: 4px $spacing-3; 
   border-radius: $radius-full;
   font-weight: 500;
-  font-size: 12px; // Reduced from 13px
+  font-size: 12px; 
   white-space: nowrap;
 
   &--organizer {
@@ -313,7 +313,6 @@
 .invite-btn {
 }
 
-/* ===== Loading States ===== */
 .data-table__loading {
   padding: $spacing-4;
 }
@@ -386,7 +385,6 @@
   }
 }
 
-/* ===== Action Button Loading ===== */
 .data-table__action-btn {
   position: relative;
 
@@ -413,7 +411,6 @@
   animation: spin 0.8s linear infinite;
 }
 
-/* ===== Animations ===== */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
