@@ -100,12 +100,9 @@ export class AdminSettingsComponent implements OnInit {
       maintenanceMode: this.securityForm.value.maintenanceMode ?? false,
     };
 
-    console.log('Saving security settings:', settings);
-
     setTimeout(() => {
       this._isSubmitting.set(false);
       this._hasAttemptedSubmit.set(false);
-      console.log('Settings saved successfully!');
     }, 1000);
   }
 
