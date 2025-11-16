@@ -3,7 +3,6 @@
 @use 'variables' as *;
 @use 'media_query' as *;
 
-// ===== Animations =====
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -61,7 +60,6 @@
   animation: fadeIn 0.4s ease-out;
 }
 
-// ===== Tab Navigation =====
 .tabs {
   display: flex;
   align-items: center;
@@ -74,25 +72,24 @@
   animation: slideUp 0.5s ease-out;
   justify-content: space-around;
   text-align: center;
+  z-index: 1;
 
-  // Sliding indicator background
   &::before {
     content: '';
     position: absolute;
     top: $spacing-2;
     left: $spacing-2;
     height: calc(100% - #{$spacing-2} * 2);
-    background: $gray-100;
+    background: $gray-200;
     display: flex !important;
     align-items: center;
     justify-content: center !important;
     border-radius: $radius-3;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 0;
+    z-index: 1;
   }
 
-  // Calculate width and position based on active tab
   &:has(.tab--active:nth-child(1))::before {
     width: calc(33.333% - #{$spacing-2} - #{$spacing-2} / 3);
     transform: translateX(0);
@@ -134,22 +131,21 @@
     }
   }
 
-  // Tab button styles using extraClass
   .tab {
     @include body-2;
     display: flex !important;
     align-items: center;
     gap: $spacing-2;
-    padding: $spacing-3 $spacing-5 !important;
+    padding: $spacing-3 $spacing-6 !important;
     background: transparent !important;
     border: none !important;
     border-radius: $radius-3 !important;
-    color: $gray-300 !important;
+    color: $gray-400 !important;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     font-weight: 500;
     position: relative;
-    z-index: 1;
+    z-index: 2;
     flex: 1;
     box-shadow: none !important;
     min-height: auto !important;
@@ -178,13 +174,12 @@
     }
 
     &.tab--active {
-      color: $orange-500 !important;
-      background: $gray-100 !important;
+      color: $gray-400 !important;
+      background: white !important;
 
       .tab__icon {
         filter: none;
         opacity: 1;
-        animation: pulse 2s ease-in-out infinite;
       }
     }
 
@@ -204,14 +199,12 @@
   }
 }
 
-// ===== Tab Content =====
 .tab-content {
   padding: $spacing-6 0;
   position: relative;
   min-height: 400px;
 }
 
-// ===== Settings Section =====
 .settings-section {
   display: flex;
   flex-direction: column;
@@ -223,6 +216,8 @@
   animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.3s ease;
+  position: relative;
+  z-index: 1;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -247,7 +242,7 @@
 
     p {
       @include body-2;
-      color: $gray-300;
+      color: $gray-400;
       animation: slideUp 0.6s ease-out 0.3s both;
     }
   }
@@ -275,7 +270,52 @@
   }
 }
 
-// ===== Form Fields =====
+.team-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  background: white;
+  border: 1px solid $gray-200;
+  border-radius: $radius-4;
+  padding: $spacing-8;
+  animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: $spacing-6;
+    border-bottom: 1px solid $gray-200;
+  }
+
+  &__title {
+    h2 {
+      @include h-4;
+      color: $header-dark;
+      margin-bottom: $spacing-2;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    p {
+      @include body-2;
+      color: $gray-400;
+      font-size: 0.875rem;
+    }
+  }
+
+  @include md {
+    padding: $spacing-5 $spacing-6;
+  }
+
+  @include sm {
+    padding: $spacing-4 $spacing-5;
+  }
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -335,7 +375,6 @@ form {
   }
 }
 
-// ===== Toggle Switch =====
 .toggle-field {
   display: flex;
   align-items: center;
@@ -361,6 +400,7 @@ form {
   width: 48px;
   height: 24px;
   flex-shrink: 0;
+  z-index: 1;
 
   &__input {
     opacity: 0;
@@ -368,11 +408,11 @@ form {
     height: 0;
 
     &:checked + .toggle__slider {
-      background: linear-gradient(135deg, $orange-500, #ff8c42);
+      background: $gray-400;
 
       &::before {
         transform: translateX(24px);
-        box-shadow: 0 2px 8px rgba($orange-500, 0.4);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       }
     }
 
@@ -395,6 +435,7 @@ form {
     background-color: $gray-300;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border-radius: 24px;
+    z-index: 1;
 
     &:hover {
       background-color: $gray-400;
@@ -411,6 +452,7 @@ form {
       transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       border-radius: 50%;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      z-index: 2;
     }
 
     &:active::before {
@@ -419,7 +461,6 @@ form {
   }
 }
 
-// ===== Notification List =====
 .notification-list {
   display: flex;
   flex-direction: column;
@@ -464,7 +505,7 @@ form {
 
     p {
       @include body-2;
-      color: $gray-300;
+      color: $gray-400;
       transition: color 0.2s ease;
     }
   }
@@ -483,7 +524,6 @@ form {
   }
 }
 
-// ===== Team List =====
 .team-list {
   display: flex;
   flex-direction: column;
@@ -494,9 +534,9 @@ form {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: $spacing-4 $spacing-5;
-  background: $gray-50;
-  border: none;
+  padding: $spacing-5;
+  background: white;
+  border: 1px solid $gray-200;
   border-radius: $radius-3;
   gap: $spacing-4;
   animation: slideUp 0.5s ease-out both;
@@ -508,12 +548,6 @@ form {
     }
   }
 
-  &:hover {
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-    transform: translateY(-1px);
-  }
-
   &__info {
     display: flex;
     align-items: center;
@@ -522,15 +556,11 @@ form {
   }
 
   &__avatar {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     object-fit: cover;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  &:hover &__avatar {
-    transform: scale(1.05);
   }
 
   &__details {
@@ -538,26 +568,22 @@ form {
       @include body-1;
       color: $header-dark;
       font-weight: 600;
-      margin-bottom: 2px;
-      font-size: 0.9375rem;
+      margin-bottom: 4px;
+      font-size: 1rem;
       transition: color 0.2s ease;
     }
 
     p {
       @include body-2;
       color: $gray-400;
-      font-size: 0.8125rem;
+      font-size: 0.875rem;
     }
-  }
-
-  &:hover &__details h3 {
-    color: $orange-500;
   }
 
   &__actions {
     display: flex;
     align-items: center;
-    gap: $spacing-2;
+    gap: $spacing-4;
   }
 
   @include sm {
@@ -571,7 +597,6 @@ form {
   }
 }
 
-// ===== Role Badges =====
 .badge {
   @include body-2;
   padding: 4px 12px;
@@ -597,7 +622,6 @@ form {
   }
 }
 
-// ===== Action Buttons - Using extraClass =====
 .btn-more {
   display: flex !important;
   align-items: center;
@@ -673,25 +697,77 @@ form {
   }
 }
 
-// ===== Add Member Button =====
-.btn-add-member {
+.btn-add-team-member {
+  display: flex !important;
+  align-items: center;
+  gap: $spacing-2;
+  padding: $spacing-2 $spacing-4 !important;
+  background: white !important;
+  border: 1px solid $gray-300 !important;
+  border-radius: $radius-2 !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  @include body-2;
+  color: $text-primary !important;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  box-shadow: none !important;
+  min-height: auto !important;
+  height: auto !important;
+  width: auto !important;
+  position: relative;
+  z-index: 2;
+
+  span:first-child {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  &:hover {
+    background: $gray-50 !important;
+    border-color: $gray-400 !important;
+    transform: none !important;
+  }
+
+  &:active {
+    transform: scale(0.98) !important;
+  }
+}
+
+.btn-edit-team {
   display: flex;
   align-items: center;
   gap: $spacing-2;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid $gray-300;
+  border-radius: $radius-2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  @include body-2;
+  color: $text-primary;
+  font-weight: 500;
+  font-size: 0.875rem;
+  position: relative;
+  z-index: 2;
 
   img {
     width: 16px;
     height: 16px;
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    object-fit: contain;
+    transition: transform 0.2s ease;
   }
 
-  &:hover img {
-    transform: rotate(180deg) scale(1.2);
+  &:hover {
+    background: $gray-50;
+    border-color: $gray-400;
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 }
 
-// ===== Save Button Animation =====
 .settings-section app-button[type="primary"] {
   animation: slideUp 0.5s ease-out 0.6s both;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -706,7 +782,6 @@ form {
   }
 }
 
-// ===== Loading State =====
 app-button[disabled] {
   position: relative;
   overflow: hidden;

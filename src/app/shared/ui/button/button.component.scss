@@ -267,6 +267,9 @@ button.app-button.logout-button {
 }
 
 
-button.app-button.tab-button{
+button.app-button.tab{
+  padding: .5rem !important;
+  position: relative;
+  z-index: 25;
 
 }

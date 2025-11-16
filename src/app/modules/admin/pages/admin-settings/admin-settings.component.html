@@ -2,7 +2,7 @@
   <div class="tabs">
     <app-button
       type="plain"
-      extraClass="tab"
+      [extraClass]="'tab'"
       [class.tab--active]="activeTab() === 'general'"
       (onClick)="switchTab('general')"
       buttonType="button"
@@ -13,7 +13,7 @@
 
     <app-button
       type="plain"
-      extraClass="tab"
+      [extraClass]="'tab'"
       [class.tab--active]="activeTab() === 'notifications'"
       (onClick)="switchTab('notifications')"
       buttonType="button"
@@ -24,7 +24,7 @@
 
     <app-button
       type="plain"
-      extraClass="tab"
+      [extraClass]="'tab'"
       [class.tab--active]="activeTab() === 'team'"
       (onClick)="switchTab('team')"
       buttonType="button"
@@ -116,13 +116,15 @@
           <span class="toggle-field__label">Enable Maintenance Mode</span>
         </div>
 
-        <app-button
-          type="primary"
-          buttonType="submit"
-          [disabled]="isSubmitting()"
-        >
-          {{ isSubmitting() ? "Saving..." : "Save Changes" }}
-        </app-button>
+        <div class="btn-box">
+          <app-button
+            type="primary"
+            buttonType="submit"
+            [disabled]="isSubmitting()"
+          >
+            {{ isSubmitting() ? "Saving..." : "Save Changes" }}
+          </app-button>
+        </div>
       </form>
     </div>
     } @if (activeTab() === 'notifications') {
@@ -159,23 +161,25 @@
         }
       </div>
 
-      <app-button type="primary" (onClick)="saveNotificationSettings()">
-        Save Notification Settings
-      </app-button>
+      <div class="btn-box">
+        <app-button type="primary" (onClick)="saveNotificationSettings()">
+          Save Notification Settings
+        </app-button>
+      </div>
     </div>
     } @if (activeTab() === 'team') {
-    <div class="settings-section settings-section--team">
-      <div class="settings-section__header">
-        <div class="settings-section__title">
+    <div class="team-section">
+      <div class="team-section__header">
+        <div class="team-section__title">
           <h2>Team Management</h2>
           <p>Manage Admin team members and permissions</p>
         </div>
         <app-button
-          type="secondary"
+          type="plain"
           (onClick)="addTeamMember()"
-          extraClass="btn-add-member"
+          extraClass="btn-add-team-member"
         >
-          <img src="icons/add-icon.png" alt="Add" />
+          <span>+</span>
           <span>Add Team Member</span>
         </app-button>
       </div>
@@ -200,25 +204,27 @@
               {{ member.role }}
             </span>
 
-            <div class="toggle-field">
-              <label class="toggle">
-                <input
-                  type="checkbox"
-                  formControlName="maintenanceMode"
-                  class="toggle__input"
-                />
-                <span class="toggle__slider"></span>
-              </label>
-            </div>
+            <label class="toggle">
+              <input
+                type="checkbox"
+                [checked]="member.active"
+                (change)="toggleMemberStatus(member.id)"
+                class="toggle__input"
+              />
+              <span class="toggle__slider"></span>
+            </label>
 
             <app-button
               type="plain"
-              extraClass="btn-edit"
-              buttonType="button"
+              extraClass="btn-edit-member"
               (onClick)="editTeamMember(member)"
             >
-              <img src="icons/edit-icon.png" alt="Edit" />
-              <span>Edit</span>
+              <img
+                src="icons/edit-icon.png"
+                alt="Edit"
+                class="btn-edit-member__icon"
+              />
+              <span class="btn-edit-member__label">Edit</span>
             </app-button>
           </div>
         </div>

@@ -1,49 +1,35 @@
 import { FormControl } from '@angular/forms';
 
-/**
- * Security settings configuration
- */
-export interface SecuritySettings {
-  readonly platformName: string;
-  readonly platformUrl: string;
-  readonly contactEmail: string;
-  readonly platformDescription: string;
-  readonly maintenanceMode: boolean;
-}
-
-/**
- * Notification setting item
- */
-export interface NotificationSetting {
-  readonly id: string;
-  readonly title: string;
-  readonly description: string;
-  readonly enabled: boolean;
-}
-
-/**
- * Team member with role
- */
-export interface TeamMember {
-  readonly id: string;
-  readonly name: string;
-  readonly email: string;
-  readonly avatar: string;
-  readonly role: 'Super Admin' | 'Admin' | 'Manager';
-}
-
-/**
- * Available tab types
- */
 export type TabType = 'general' | 'notifications' | 'team';
 
-/**
- * Security form structure
- */
+export interface SecuritySettings {
+  platformName: string;
+  platformUrl: string;
+  contactEmail: string;
+  platformDescription: string;
+  maintenanceMode: boolean;
+}
+
 export interface SecurityForm {
-  platformName: FormControl<string | null>;
-  platformUrl: FormControl<string | null>;
-  contactEmail: FormControl<string | null>;
-  platformDescription: FormControl<string | null>;
+  platformName: FormControl<string>;
+  platformUrl: FormControl<string>;
+  contactEmail: FormControl<string>;
+  platformDescription: FormControl<string>;
   maintenanceMode: FormControl<boolean>;
+}
+
+export interface NotificationSetting {
+  id: string;
+  title: string;
+  description: string;
+  enabled: boolean;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  role: 'Super Admin' | 'Admin' | 'Manager';
+  active: boolean;
 }

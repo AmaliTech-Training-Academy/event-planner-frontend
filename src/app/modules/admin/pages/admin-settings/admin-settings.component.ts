@@ -17,9 +17,19 @@ import {
 import { LayoutService } from '@core/services/layout.service';
 import { ButtonComponent } from '@shared/ui/button/button.component';
 import { InputComponent } from '@shared/ui/input/input.component';
-import { NotificationSetting, SecurityForm, SecuritySettings, TabType, TeamMember } from '@app/modules/attendee/models/admin-settings.types';
-import { DEFAULT_NOTIFICATIONS, DEFAULT_SECURITY_SETTINGS, DEFAULT_TEAM_MEMBERS, ROLE_BADGE_CLASSES } from '@app/core/constants/admin-settings.constants';
-
+import {
+  NotificationSetting,
+  SecurityForm,
+  SecuritySettings,
+  TabType,
+  TeamMember,
+} from '@app/modules/attendee/models/admin-settings.types';
+import {
+  DEFAULT_NOTIFICATIONS,
+  DEFAULT_SECURITY_SETTINGS,
+  DEFAULT_TEAM_MEMBERS,
+  ROLE_BADGE_CLASSES,
+} from '@app/core/constants/admin-settings.constants';
 
 @Component({
   selector: 'app-admin-settings',
@@ -29,11 +39,9 @@ import { DEFAULT_NOTIFICATIONS, DEFAULT_SECURITY_SETTINGS, DEFAULT_TEAM_MEMBERS,
   styleUrl: './admin-settings.component.scss',
 })
 export class AdminSettingsComponent implements OnInit {
-  // ===== Injected Services =====
   private readonly _fb: FormBuilder = inject(FormBuilder);
   private readonly _layoutService: LayoutService = inject(LayoutService);
 
-  // ===== Private Writable Signals =====
   private readonly _activeTab: WritableSignal<TabType> =
     signal<TabType>('general');
   private readonly _hasAttemptedSubmit: WritableSignal<boolean> =
@@ -46,7 +54,6 @@ export class AdminSettingsComponent implements OnInit {
   private readonly _teamMembers: WritableSignal<ReadonlyArray<TeamMember>> =
     signal<ReadonlyArray<TeamMember>>(DEFAULT_TEAM_MEMBERS);
 
-  // ===== Public Readonly Signals =====
   public readonly activeTab: Signal<TabType> = this._activeTab.asReadonly();
   public readonly hasAttemptedSubmit: Signal<boolean> =
     this._hasAttemptedSubmit.asReadonly();
@@ -57,7 +64,6 @@ export class AdminSettingsComponent implements OnInit {
   public readonly teamMembers: Signal<ReadonlyArray<TeamMember>> =
     this._teamMembers.asReadonly();
 
-  // ===== Public Form =====
   public readonly securityForm: FormGroup<SecurityForm>;
 
   constructor() {
@@ -72,18 +78,10 @@ export class AdminSettingsComponent implements OnInit {
     this._loadSecuritySettings();
   }
 
-  // ===== Public Methods =====
-
-  /**
-   * Switch between tabs
-   */
   public switchTab(tab: TabType): void {
     this._activeTab.set(tab);
   }
 
-  /**
-   * Save security settings form
-   */
   public saveSecuritySettings(): void {
     this._hasAttemptedSubmit.set(true);
     this.securityForm.markAllAsTouched();
@@ -104,7 +102,6 @@ export class AdminSettingsComponent implements OnInit {
 
     console.log('Saving security settings:', settings);
 
-    // TODO: Call backend service
     setTimeout(() => {
       this._isSubmitting.set(false);
       this._hasAttemptedSubmit.set(false);
@@ -112,9 +109,6 @@ export class AdminSettingsComponent implements OnInit {
     }, 1000);
   }
 
-  /**
-   * Check if a form field has an error
-   */
   public hasFieldError(fieldName: keyof SecurityForm): boolean {
     const field: FormControl | null = this.securityForm.get(
       fieldName
@@ -122,9 +116,6 @@ export class AdminSettingsComponent implements OnInit {
     return !!(field?.invalid && (field?.touched || this._hasAttemptedSubmit()));
   }
 
-  /**
-   * Get error message for a form field
-   */
   public getFieldErrorMessage(fieldName: keyof SecurityForm): string {
     const field: FormControl | null = this.securityForm.get(
       fieldName
@@ -151,9 +142,6 @@ export class AdminSettingsComponent implements OnInit {
     return 'Invalid input';
   }
 
-  /**
-   * Toggle notification setting
-   */
   public toggleNotification(id: string): void {
     const current: ReadonlyArray<NotificationSetting> = this._notifications();
     const updated: ReadonlyArray<NotificationSetting> = current.map(
@@ -163,41 +151,27 @@ export class AdminSettingsComponent implements OnInit {
     this._notifications.set(updated);
   }
 
-  /**
-   * Save notification settings
-   */
   public saveNotificationSettings(): void {
     console.log('Saving notification settings:', this._notifications());
-    // TODO: Call backend service
   }
 
-  /**
-   * Open modal to add team member
-   */
   public addTeamMember(): void {
     console.log('Opening add team member modal');
-    // TODO: Open modal to add team member
   }
 
-  /**
-   * Open menu for team member actions
-   */
-  public openMemberMenu(member: TeamMember): void {
-    console.log('Opening menu for team member:', member);
-    // TODO: Open dropdown menu with more options
+  public toggleMemberStatus(memberId: string): void {
+    const current: ReadonlyArray<TeamMember> = this._teamMembers();
+    const updated: ReadonlyArray<TeamMember> = current.map((m: TeamMember) =>
+      m.id === memberId ? { ...m, active: !m.active } : m
+    );
+    this._teamMembers.set(updated);
+    console.log('Team member status toggled');
   }
 
-  /**
-   * Open modal to edit team member
-   */
   public editTeamMember(member: TeamMember): void {
     console.log('Editing team member:', member);
-    // TODO: Open modal to edit team member
   }
 
-  /**
-   * Delete team member with confirmation
-   */
   public deleteTeamMember(memberId: string): void {
     const confirmed: boolean = confirm(
       'Are you sure you want to remove this team member?'
@@ -213,18 +187,10 @@ export class AdminSettingsComponent implements OnInit {
     }
   }
 
-  /**
-   * Get CSS class for role badge
-   */
   public getRoleBadgeClass(role: TeamMember['role']): string {
     return ROLE_BADGE_CLASSES[role];
   }
 
-  // ===== Private Methods =====
-
-  /**
-   * Create security settings form
-   */
   private _createSecurityForm(): FormGroup<SecurityForm> {
     return this._fb.group({
       platformName: this._fb.control(DEFAULT_SECURITY_SETTINGS.platformName, [
@@ -249,15 +215,10 @@ export class AdminSettingsComponent implements OnInit {
     }) as unknown as FormGroup<SecurityForm>;
   }
 
-
   private _loadSecuritySettings(): void {
     // TODO: Load from backend service
-    // For now, form already has default values
   }
 
-  /**
-   * Format field name for error messages
-   */
   private _formatFieldName(fieldName: string): string {
     return fieldName
       .replace(/([A-Z])/g, ' $1')
