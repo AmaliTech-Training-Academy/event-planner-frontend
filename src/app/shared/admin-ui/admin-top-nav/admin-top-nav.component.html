@@ -130,3 +130,8 @@
 @if (isDropdownOpen()) {
 <div class="admin-top-nav__overlay" (click)="closeDropdown()"></div>
 }
+<app-logout-confirmation-modal
+  [isOpen]="showLogoutModal()"
+  (confirm)="onLogoutConfirm()"
+  (cancel)="onLogoutCancel()"
+/>

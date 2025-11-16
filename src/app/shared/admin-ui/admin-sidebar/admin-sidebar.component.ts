@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { LayoutService } from '../../../core/services/layout.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { LogoutConfirmationModalComponent } from "../../components/logout-confirmation-modal/logout-confirmation-modal.component";
 
 export interface MenuItem {
   readonly label: string;
@@ -26,7 +27,7 @@ export interface MenuSection {
 @Component({
   selector: 'app-admin-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgOptimizedImage],
+  imports: [CommonModule, RouterModule, NgOptimizedImage, LogoutConfirmationModalComponent],
   templateUrl: './admin-sidebar.component.html',
   styleUrls: ['./admin-sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +35,7 @@ export interface MenuSection {
 export class AdminSidebarComponent {
   private readonly layoutService = inject(LayoutService);
   private readonly authService = inject(AuthService);
+  protected showLogoutModal = signal(false);
 
   protected readonly isCollapsed = this.layoutService.sidebarCollapsed;
 
@@ -107,9 +109,18 @@ export class AdminSidebarComponent {
   }
 
   protected handleLogout(): void {
+    // Show modal instead of logging out directly
+    this.showLogoutModal.set(true);
+  }
+
+  protected onLogoutConfirm(): void {
+    this.showLogoutModal.set(false);
     this.authService.adminLogout().subscribe();
   }
 
+  protected onLogoutCancel(): void {
+    this.showLogoutModal.set(false);
+  }
   protected handleItemClick(item: MenuItem, event: Event): void {
     if (item.isLogout) {
       event.preventDefault();

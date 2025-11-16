@@ -12,14 +12,21 @@ import {
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ButtonComponent } from "../../ui/button/button.component";
+import { ButtonComponent } from '../../ui/button/button.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
+import { LogoutConfirmationModalComponent } from '../../components/logout-confirmation-modal/logout-confirmation-modal.component';
 
 @Component({
   selector: 'app-admin-top-nav',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage, RouterLink, ButtonComponent],
+  imports: [
+    CommonModule,
+    NgOptimizedImage,
+    RouterLink,
+    ButtonComponent,
+    LogoutConfirmationModalComponent,
+],
   templateUrl: './admin-top-nav.component.html',
   styleUrls: ['./admin-top-nav.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,10 +44,18 @@ export class AdminTopNavComponent implements OnChanges {
   @Input() public isCollapsed = false;
 
   private readonly _notifications: WritableSignal<number> = signal<number>(0);
-  private readonly _isDropdownOpen: WritableSignal<boolean> = signal<boolean>(false);
+  private readonly _isDropdownOpen: WritableSignal<boolean> =
+    signal<boolean>(false);
+  private readonly _showLogoutModal: WritableSignal<boolean> =
+    signal<boolean>(false); // Add this
 
-  public readonly hasNotifications: Signal<boolean> = computed(() => this._notifications() > 0);
-  public readonly isDropdownOpen: Signal<boolean> = this._isDropdownOpen.asReadonly();
+  public readonly hasNotifications: Signal<boolean> = computed(
+    () => this._notifications() > 0
+  );
+  public readonly isDropdownOpen: Signal<boolean> =
+    this._isDropdownOpen.asReadonly();
+  public readonly showLogoutModal: Signal<boolean> =
+    this._showLogoutModal.asReadonly(); // Add this
 
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes['notificationsCount']) {
@@ -59,6 +74,16 @@ export class AdminTopNavComponent implements OnChanges {
   public logout(e: Event): void {
     e.preventDefault();
     this.closeDropdown();
+    // Show modal instead of logging out directly
+    this._showLogoutModal.set(true);
+  }
+
+  public onLogoutConfirm(): void {
+    this._showLogoutModal.set(false);
     this._authService.adminLogout().subscribe();
+  }
+
+  public onLogoutCancel(): void {
+    this._showLogoutModal.set(false);
   }
 }
