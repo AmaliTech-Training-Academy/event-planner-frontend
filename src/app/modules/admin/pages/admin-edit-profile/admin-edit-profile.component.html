@@ -1,0 +1,71 @@
+<div class="edit-profile">
+  <div class="profile-card">
+    <h2 class="profile-card__title">Profile Information</h2>
+
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <img [src]="profileData().avatar" [alt]="profileData().fullName" />
+        <button class="avatar-edit-btn" type="button" (click)="changeAvatar()">
+          <img src="icons/camera-icon.png" alt="Edit avatar" />
+        </button>
+      </div>
+      <div class="profile-header__info">
+        <h3>Edit Profile</h3>
+        <p>Update your personal information</p>
+      </div>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <div class="form-section">
+        <h3 class="form-section__title">Basic Information</h3>
+
+        <div class="form-field">
+          <label for="fullName">Full Name</label>
+          <app-input
+            id="fullName"
+            formControlName="fullName"
+            placeholder="Andrew"
+            [errorMessage]="
+              hasFieldError('fullName')
+                ? getFieldErrorMessage('fullName')
+                : ''
+            "
+          ></app-input>
+        </div>
+
+        <div class="form-field">
+          <label for="emailAddress">Email Address</label>
+          <app-input
+            id="emailAddress"
+            type="email"
+            formControlName="emailAddress"
+            placeholder="user@eventhub.com"
+            [errorMessage]="
+              hasFieldError('emailAddress')
+                ? getFieldErrorMessage('emailAddress')
+                : ''
+            "
+          ></app-input>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <app-button
+          type="plain"
+          buttonType="button"
+          (onClick)="cancelEdit()"
+          [extraClass]="'btn-cancel'"
+        >
+          Cancel
+        </app-button>
+        <app-button
+          type="primary"
+          buttonType="submit"
+          [disabled]="isSubmitting()"
+        >
+          {{ isSubmitting() ? "Saving..." : "Edit" }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+</div>
