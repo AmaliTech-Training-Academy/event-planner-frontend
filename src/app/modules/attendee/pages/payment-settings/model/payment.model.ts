@@ -15,7 +15,7 @@ export interface FormField {
   type: string;
   options?: SelectOption[];
   action?: FieldAction;
-  backned_key: string,
+  backend_key: string,
 }
 
 
@@ -23,7 +23,7 @@ export interface PaymentMethod {
   title: string;
   fields: (FormField[])[];
   active: boolean;
-  backned_key: string,
+  backend_key: string,
   type: ReturnType<() => PAYMENT_TYPES>;
 }
 

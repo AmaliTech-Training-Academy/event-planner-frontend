@@ -41,9 +41,9 @@ export class PaymentSettingsPageComponent implements OnInit {
         this.fb.group({
           label: field.label,
           type: field.type,
-          backend_key: field.backned_key,
+          backend_key: field.backend_key,
           options: [field.options],
-          [field.backned_key]: this.fb.control(''),
+          [field.backend_key]: this.fb.control(''),
         })
       );
     });
