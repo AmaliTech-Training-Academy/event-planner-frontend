@@ -22,15 +22,12 @@ export class HeroSectionComponent {
   protected readonly icons = {
     mic: 'icons/microphone-icon.svg',
     video: 'icons/video-icon.svg',
-    phone: 'icons/phone-icon.svg',
+    phone: 'icons/icon-red.svg',
     mail: 'icons/message-icon.svg',
     settings: 'icons/collaboration-icon.svg',
   };
 
-  protected onCreateEvent(): void {
-    // TODO: handle create event action
-  }
+  protected onCreateEvent(): void {}
 
-  protected onViewEvents(): void {
-  }
+  protected onViewEvents(): void {}
 }

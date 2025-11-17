@@ -16,22 +16,22 @@
       </span>
 
       @if (data.percentageChange != null) {
-        <span
-          class="user-card__change"
-          [class.user-card__change--positive]="isPositive()"
-          [class.user-card__change--negative]="isNegative()"
-        >
-          {{ isPositive() ? "+" : "" }}{{ data.percentageChange }}%
-          <img
-            [src]="
-              isPositive()
-                ? 'icons/trending-icon.png'
-                : 'assets/icons/arrow-down.svg'
-            "
-            alt="trend"
-            class="user-card__arrow"
-          />
-        </span>
+      <span
+        class="user-card__change"
+        [class.user-card__change--positive]="isPositive()"
+        [class.user-card__change--negative]="isNegative()"
+      >
+        {{ isPositive() ? "+" : "" }}{{ data.percentageChange }}%
+        <img
+          [src]="
+            isPositive()
+              ? 'icons/trending-icon.png'
+              : 'assets/icons/arrow-down.svg'
+          "
+          alt="trend"
+          class="user-card__arrow"
+        />
+      </span>
       }
     </div>
   </div>

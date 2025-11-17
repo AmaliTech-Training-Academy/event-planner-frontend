@@ -1,0 +1,107 @@
+<!-- event-management-page.component.html -->
+<div class="event-management-page">
+  <!-- Statistics Section with Loading -->
+  @if (isLoading()) {
+    <div class="event-management-page__statistics-skeleton">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+  } @else {
+    <app-event-statistics [statistics]="eventStatistics()" />
+  }
+
+  <div class="event-management-page__grid">
+    <!-- Top Organizers with Loading -->
+    @if (isLoading()) {
+      <div class="event-management-page__organizers-skeleton">
+        <div class="skeleton-header">
+          <div class="skeleton-title"></div>
+          <div class="skeleton-button"></div>
+        </div>
+        <div class="skeleton-list">
+          @for (item of [1, 2, 3, 4, 5]; track item) {
+            <div class="skeleton-organizer-row">
+              <div class="skeleton-avatar"></div>
+              <div class="skeleton-info">
+                <div class="skeleton-name"></div>
+                <div class="skeleton-email"></div>
+              </div>
+              <div class="skeleton-chart"></div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <app-top-organizers
+        [organizers]="topOrganizers()"
+        (viewAllClicked)="onViewAllOrganizers()"
+        (organizerClicked)="onOrganizerClick($event)"
+      />
+    }
+
+    <!-- Upcoming Events with Loading -->
+    @if (isLoading()) {
+      <div class="event-management-page__events-skeleton">
+        <div class="skeleton-header">
+          <div class="skeleton-title"></div>
+          <div class="skeleton-button"></div>
+        </div>
+        <div class="skeleton-list">
+          @for (item of [1, 2, 3, 4, 5]; track item) {
+            <div class="skeleton-event-row">
+              <div class="skeleton-event-info">
+                <div class="skeleton-event-title"></div>
+                <div class="skeleton-event-meta"></div>
+              </div>
+              <div class="skeleton-badge"></div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <app-upcoming-events
+        [events]="upcomingEvents()"
+        (viewAllClicked)="onViewAllEvents()"
+        (eventClicked)="onEventClick($event)"
+      />
+    }
+  </div>
+
+  <!-- Events Table Section -->
+  <section class="event-management-page__table">
+    <app-data-table
+      tableTitle="Events"
+      searchPlaceholder="Search events or organizers..."
+      [data]="eventTableData()"
+      [columns]="eventTableColumns"
+      [actions]="eventTableActions"
+      [filters]="eventTableFilters"
+      [loading]="isLoading()"
+      [searchable]="true"
+      [expandable]="false"
+      [showAvatar]="false"
+      [showCheckboxes]="true"
+      [showExport]="true"
+      [showActionLabels]="true"
+      [showFilters]="true"
+      [primaryAction]="eventTablePrimaryAction"
+      [serverSidePagination]="true"
+      [itemsPerPage]="10"
+      [totalItems]="totalElements()"
+      (searchChange)="onSearch($event)"
+      (filterChange)="onFilterChange($event)"
+      (pageChange)="onPageChange($event)"
+    />
+  </section>
+
+  <!-- Error Display -->
+  @if (error()) {
+    <div class="event-management-page__error">
+      {{ error() }}
+      <button (click)="refreshData()">Retry</button>
+    </div>
+  }
+</div>

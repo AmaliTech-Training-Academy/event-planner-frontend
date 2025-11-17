@@ -1,9 +1,9 @@
 import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../../ui/button/button.component';
+import { TabToggle } from '../../../core/models/events';
 
 
-import { TabToggle } from '../../../core/models/event.model';
 
 @Component({
   selector: 'app-tab-toggle',

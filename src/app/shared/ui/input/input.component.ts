@@ -72,14 +72,7 @@ export class InputComponent implements ControlValueAccessor {
     () => this.disabled() || this._isDisabled()
   );
 
-  constructor() {
-    effect(() => {
-      const externalValue = this.value();
-      if (externalValue !== this._internalValue()) {
-        this._internalValue.set(externalValue);
-      }
-    });
-  }
+  constructor() {}
 
   // ControlValueAccessor callbacks
   private onChange: (value: string) => void = () => {};
@@ -108,13 +101,16 @@ export class InputComponent implements ControlValueAccessor {
   public currentValue(): string {
     return this._internalValue();
   }
-
-  public onValueChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this._internalValue.set(value);
+  private _emitValue(value: string) {
     this.onChange(value);
     this.valueChange.emit(value);
   }
+  public onValueChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this._internalValue.set(value);
+    this._emitValue(value);
+  }
+  public readonly inputValue = computed(() => this._internalValue());
 
   public onFocus(): void {
     this._isFocused.set(true);

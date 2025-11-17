@@ -56,4 +56,9 @@ export class AuthBackendService {
   public checkAuthUser(userId: string) {
     return this.http.get<{ data: User }>(API_ENDPOINTS.GET_USER(userId));
   }
+  public getAuthenticatedUser() {
+    return this.http.get<AuthResponseBody<OtpBodyData>>(
+      API_ENDPOINTS.AUTH_ME // Add this constant
+    );
+  }
 }

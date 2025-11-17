@@ -12,4 +12,11 @@ export class LayoutService {
 
   public logoSrc = signal<string>('icons/users-icon.png');
   public logoAlt = signal<string>('Logo');
+
+  // Add sidebar collapsed state
+  public sidebarCollapsed = signal<boolean>(false);
+
+  public toggleSidebar(): void {
+    this.sidebarCollapsed.update((value) => !value);
+  }
 }

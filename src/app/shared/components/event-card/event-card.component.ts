@@ -2,8 +2,8 @@ import { Component, input, output, ChangeDetectionStrategy, inject } from '@angu
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { EventCard } from '../../../core/models/event.model';
 import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
+import { EventCard } from '../../../core/models/events';
 
 @Component({
   selector: 'app-event-card',

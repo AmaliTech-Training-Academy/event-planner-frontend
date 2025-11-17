@@ -7,7 +7,7 @@ import {
   SearchLocation,
   PopularLocation,
   TabToggle,
-} from '../models/event.model';
+} from '../models/events/index';
 
 import { UserCardData } from '../models/user.model';
 import { LineSeriesConfig } from '../models/chart.model';

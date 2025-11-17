@@ -25,6 +25,7 @@ export class AdminTopNavComponent implements OnChanges {
   @Input() public avatarSrc = '';
   @Input() public logoSrc = 'icons/users-icon.png';
   @Input() public logoAlt = 'Logo';
+  @Input() public isCollapsed = false;
 
   private readonly _notifications = signal<number>(0);
 
