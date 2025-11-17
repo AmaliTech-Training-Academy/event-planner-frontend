@@ -28,7 +28,7 @@
         type="password"
         placeholder="••••••••"
         [required]="true"
-        [showValidIcon]="isFieldValid('password')"
+        [showValidIcon]="false"
         [errorMessage]="
           hasFieldError('password') ? getFieldErrorMessage('password') : ''
         "
@@ -41,7 +41,7 @@
         type="password"
         placeholder="••••••••"
         [required]="true"
-        [showValidIcon]="isFieldValid('confirmPassword')"
+        [showValidIcon]="false"
         [errorMessage]="
           hasFieldError('confirmPassword')
             ? getFieldErrorMessage('confirmPassword')
