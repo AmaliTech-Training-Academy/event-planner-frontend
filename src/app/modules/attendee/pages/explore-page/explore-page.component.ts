@@ -11,12 +11,6 @@ import { FilterDropdownComponent } from '../../../../shared/components/filter-dr
 import { SearchInputComponent } from '../../../../shared/components/search-input/search-input.component';
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 
-import {
-  EventCard,
-  TabToggle,
-  SearchLocation,
-  PopularLocation,
-} from '../../../../core/models/event.model';
 
 import {
   MOCK_EVENT_CARDS,
@@ -25,6 +19,7 @@ import {
   MOCK_RECENT_SEARCHES,
   MOCK_POPULAR_LOCATIONS,
 } from '../../../../core/data/mock-data';
+import { EventCard, PopularLocation, SearchLocation, TabToggle } from '../../../../core/models/events';
 
 @Component({
   selector: 'app-explore-page',

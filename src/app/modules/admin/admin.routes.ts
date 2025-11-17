@@ -31,16 +31,17 @@ export const ADMIN_ROUTES: Routes = [
     path: 'events/:id',
     loadComponent: () =>
       import(
-        '../admin/pages/event-management-page/components/event-details/event-details.component'
+        '../admin/pages/event-management-page/components/event-details-page/event-details.component-page'
       ).then((m) => m.EventDetailsPageComponent),
-    // canActivate: [AdminGuard],
   },
+
   {
     path: 'saved-invites',
     loadComponent: () =>
       import('./pages/saved-invite/saved-invite-page.component').then(
         (m) => m.SavedInviteComponent
       ),
+    // canActivate: [AdminGuard], // Consider adding this for consistency
   },
   {
     path: 'audit-logs',

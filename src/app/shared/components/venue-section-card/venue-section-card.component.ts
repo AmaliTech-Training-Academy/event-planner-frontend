@@ -5,7 +5,7 @@ import {
   computed,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { VenueSection } from '../../../core/models/event.model';
+import { VenueSection } from '../../../core/models/events/venue.model';
 
 @Component({
   selector: 'app-venue-section-card',

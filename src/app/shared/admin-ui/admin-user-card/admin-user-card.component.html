@@ -1,3 +1,4 @@
+
 <div class="user-card">
   <div class="user-card__icon" [style.background-color]="data.bgColor">
     <img [src]="data.icon" [alt]="data.title" [style.filter]="data.iconColor" />
@@ -6,7 +7,13 @@
   <div class="user-card__content">
     <span class="user-card__title">{{ data.title }}</span>
     <div class="user-card__stats">
-      <span class="user-card__count">{{ data.count | number }}</span>
+      <span class="user-card__count">
+        @if (data.title.includes('Tickets') || data.title.includes('Revenue') || data.title.includes('Sales')) {
+          ${{ data.count | number:'1.2-2' }}
+        } @else {
+          {{ data.count | number }}
+        }
+      </span>
 
       @if (data.percentageChange != null) {
       <span
