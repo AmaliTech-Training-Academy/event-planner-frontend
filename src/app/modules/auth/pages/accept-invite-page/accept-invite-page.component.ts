@@ -20,11 +20,11 @@ import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-te
 import { NotificationService } from '../../../../core/services/notification.service';
 
 interface AcceptInviteForm {
-  email: FormControl<string | null>; // Add email field
   fullName: FormControl<string | null>;
   password: FormControl<string | null>;
   confirmPassword: FormControl<string | null>;
 }
+
 @Component({
   selector: 'app-accept-invite-page',
   standalone: true,
@@ -48,7 +48,6 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
   protected readonly form: FormGroup<AcceptInviteForm>;
   protected readonly hasAttemptedSubmit = signal(false);
   protected readonly isSubmitting = signal(false);
-  protected readonly inviteEmail = signal<string>('');
   protected readonly inviteToken = signal<string>('');
   protected readonly APP_ROUTES = APP_ROUTES;
 
@@ -59,22 +58,13 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
   constructor() {
-    console.log('🚀 AcceptInvitePageComponent constructor called');
     this.form = this.createForm();
   }
 
   ngOnInit(): void {
-    console.log('✅ AcceptInvitePageComponent ngOnInit called');
-    console.log('🌍 Window location:', window.location.href);
-    console.log('🗺️ Router URL:', this.router.url);
-    console.log('📍 Route snapshot:', this.route.snapshot.url);
-
     this.subscription.add(
       this.route.queryParams.subscribe((params) => {
-        console.log('🔑 Query params received:', params);
         this.inviteToken.set(params['token'] || '');
-        // DON'T extract email from URL for security
-        console.log('🎟️ Token:', this.inviteToken());
       })
     );
 
@@ -84,6 +74,7 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
       })
     );
   }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
@@ -97,31 +88,15 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
     this.isSubmitting.set(true);
 
     const fullName = this.form.value?.fullName ?? '';
-    const email = this.form.value?.email ?? ''; // Get from form
     const password = this.form.value?.password ?? '';
     const confirmPassword = this.form.value?.confirmPassword ?? '';
     const invitationToken = this.inviteToken();
 
-    console.log('📤 Submitting invitation acceptance:', {
-      fullName,
-      email,
-      invitationToken,
-      hasPassword: !!password,
-      hasConfirmPassword: !!confirmPassword,
-    });
-
     this.subscription.add(
       this.authService
-        .acceptInvitation(
-          fullName,
-          email,
-          password,
-          confirmPassword,
-          invitationToken
-        )
+        .acceptInvitation(fullName, password, confirmPassword, invitationToken)
         .subscribe({
           next: () => {
-            console.log('✅ Invitation accepted successfully');
             this.isSubmitting.set(false);
             this.notificationService.success(
               'Invitation accepted successfully! You can now log in.'
@@ -129,7 +104,6 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
             this.router.navigate([APP_ROUTES.LOGIN]);
           },
           error: (error) => {
-            console.error('❌ Invitation acceptance failed:', error);
             this.isSubmitting.set(false);
             this.notificationService.error(
               error?.error?.message ||
@@ -163,8 +137,6 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
         return `${this.capitalize(
           fieldName.replace(/([A-Z])/g, ' $1').trim()
         )} is required`;
-      case !!errors?.['email'] && fieldName === 'email':
-        return 'Please enter a valid email address';
       case !!errors?.['minLength'] && fieldName === 'fullName':
         return 'Full name must be at least 2 characters';
       case !!errors?.['pattern'] && fieldName === 'password':
@@ -173,6 +145,7 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
         return 'Invalid input';
     }
   }
+
   protected isFieldValid(fieldName: keyof AcceptInviteForm): boolean {
     const field = this.form?.get(fieldName);
     return !!(field?.valid && field?.touched);
@@ -181,7 +154,6 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
   private createForm(): FormGroup<AcceptInviteForm> {
     return this.fb.group(
       {
-        email: this.fb.control('', [Validators.required, Validators.email]),
         fullName: this.fb.control('', [
           Validators.required,
           Validators.minLength(2),

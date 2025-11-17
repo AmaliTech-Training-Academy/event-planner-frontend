@@ -279,7 +279,6 @@ export class AuthService {
   }
   public acceptInvitation(
     fullName: string,
-    email: string,
     password: string,
     confirmPassword: string,
     invitationToken: string
@@ -288,7 +287,6 @@ export class AuthService {
     return this.authBackend
       .acceptInvitation({
         fullName,
-        email,
         password,
         confirmPassword,
         invitationToken,

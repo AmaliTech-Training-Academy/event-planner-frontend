@@ -10,19 +10,6 @@
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()">
       <app-input
-        formControlName="email"
-        label="Email Address"
-        type="email"
-        placeholder="john.doe@example.com"
-        [required]="true"
-        [showValidIcon]="isFieldValid('email')"
-        [errorMessage]="
-          hasFieldError('email') ? getFieldErrorMessage('email') : ''
-        "
-        [iconSrc]="'icons/mail.png'"
-      ></app-input>
-
-      <app-input
         formControlName="fullName"
         label="Full Name"
         type="text"
