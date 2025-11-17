@@ -24,10 +24,10 @@ import { VenueImage } from '../../../core/models/event.model';
 })
 export class VenueImageSliderComponent implements OnChanges {
   
-  @Input() images: VenueImage[] = [];
-   @Output() imageClick = new EventEmitter<VenueImage>();
+  @Input() images: string[] = [];
+   @Output() imageClick = new EventEmitter<string>();
   
-  onImageClick(image: VenueImage): void {
+  onImageClick(image: string): void {
     this.imageClick.emit(image);
   }
 

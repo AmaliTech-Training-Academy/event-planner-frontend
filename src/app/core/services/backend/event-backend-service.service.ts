@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EVENTS_API_ENDPOINTS } from '../../constants/api-endpoints.constants';
-import { BaseType, EventResponse, EventSummary, EventType, GetEventsResponse, TimeZone } from '../../models/event.model';
+import { BaseType, EventDetail, EventResponse, EventSummary, EventType, GetEventsResponse, TimeZone } from '../../models/event.model';
 import { CacheHttpService } from '../util/CacheHttpClient';
 
 
@@ -33,8 +33,8 @@ export class EventBackendServiceService {
     return this.http.post<EventResponse>(EVENTS_API_ENDPOINTS.CREATE_EVENT, data);
   }
 
-  public getEvent(id: string): Observable<EventSummary> {
-    return this.http.get<EventSummary>(EVENTS_API_ENDPOINTS.GET_EVENT(id));
+  public getEvent(id: string): Observable<EventDetail> {
+    return this.http.get<EventDetail>(EVENTS_API_ENDPOINTS.GET_EVENT(id));
   }
   public getEvents(params:URLSearchParams): Observable<GetEventsResponse> {
     const queryParam_ = `?${params.toString()}`;

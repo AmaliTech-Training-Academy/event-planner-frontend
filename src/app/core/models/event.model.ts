@@ -52,6 +52,27 @@ export interface BaseType {
   name: string;
 }
 
+export interface EventDetail {
+  id: number;
+  title: string;
+  description: string;
+  startTime: string; 
+  flyerUrl: string;
+  capacity: number;
+  eventImagesUrl: string[];
+  ticketTypes: TicketType[];
+}
+
+export interface TicketType {
+  id: number;
+  type: string;
+  description: string;
+  price: number;
+  isActive: boolean;
+  remainingTickets: number;
+  isPaid: boolean;
+}
+
 
 export interface EventResponse {
   id: string;

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { TicketInfo } from '../../../core/models/event.model';
+import { TicketInfo, TicketType } from '../../../core/models/event.model';
 
 @Component({
   selector: 'app-ticket-card',
@@ -18,7 +18,7 @@ import { TicketInfo } from '../../../core/models/event.model';
   changeDetection: ChangeDetectionStrategy.OnPush, 
 })
 export class TicketCardComponent {
-  public ticketInfo = input.required<TicketInfo>();
+  public ticketInfo = input.required<TicketType>();
   public registerClick = output<void>();
   protected isFree = computed(() => this.ticketInfo().price === 0);
 }

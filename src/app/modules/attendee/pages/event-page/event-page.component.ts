@@ -1,28 +1,34 @@
-import { Component, OnInit, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { RouterModule } from '@angular/router';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
-import { TicketCardComponent } from '../../../../shared/components/ticket-card/ticket-card.component';
-import { HelpCardComponent } from '../../../../shared/components/help-card/help-card.component';
-import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
-import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
-import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
+import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import {
+  EventDetail,
   EventDetails,
   TicketInfo,
+  TicketType,
   VenueImage,
   VenueSection,
 } from '../../../../core/models/event.model';
+import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
+import { HelpCardComponent } from '../../../../shared/components/help-card/help-card.component';
+import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
+import { TicketCardComponent } from '../../../../shared/components/ticket-card/ticket-card.component';
+import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
+import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
 
 import {
   MOCK_EVENT_DETAILS,
+  MOCK_HELP_EMAIL,
   MOCK_TICKETS,
   MOCK_VENUE_IMAGES,
   MOCK_VENUE_SECTIONS,
-  MOCK_HELP_EMAIL,
 } from '../../../../core/data/mock-data';
+import { EventsServiceService } from '../../../../core/services/events.service';
+
+
+
+
 
 @Component({
   selector: 'app-event-page',
@@ -45,14 +51,14 @@ export class EventPageComponent implements OnInit {
   
   @ViewChild('heroSection') heroSection!: ElementRef;
 
-   eventDetails = signal<EventDetails | null>(null);
+   eventDetails = signal<EventDetail | null>(null);
    venueImages = signal<VenueImage[]>([]);
    venueSections = signal<VenueSection[]>([]);
    tickets = signal<TicketInfo[]>([]);
    helpEmail = signal<string>('');
    showDatePicker = signal(false);
    showRegistrationModal = signal(false);
-   selectedTicket = signal<TicketInfo | null>(null);
+   selectedTicket = signal<TicketType | null>(null);
 
   
    selectedHeroImage = signal<string | null>(null);
@@ -61,19 +67,25 @@ export class EventPageComponent implements OnInit {
 
   protected readonly routes = APP_ROUTES;
 
+
+  constructor (private readonly eventService:EventsServiceService, private readonly route:ActivatedRoute, private readonly router:Router){}
+
   public ngOnInit(): void {
-    this.loadEventData();
+    const id = this.route.snapshot.paramMap.get('id');
+    if(!id) {
+      this.router.navigate([APP_ROUTES.EXPLORE])
+      return
+    }
+
+    this.eventService.getEvent(id).subscribe({
+      next : (value)=>{
+        this.eventDetails.set(value);
+      }
+    })
+    // this.loadEventData();
   }
 
-  private loadEventData(): void {
-    this.eventDetails.set(MOCK_EVENT_DETAILS);
-    this.venueImages.set(MOCK_VENUE_IMAGES);
-    this.venueSections.set(MOCK_VENUE_SECTIONS);
-    this.tickets.set(MOCK_TICKETS);
-    this.helpEmail.set(MOCK_HELP_EMAIL);
-  }
-
-  protected onRegister(ticket: TicketInfo): void {
+  protected onRegister(ticket: TicketType): void {
     this.selectedTicket.set(ticket);
     this.showRegistrationModal.set(true);
   }
@@ -120,8 +132,7 @@ export class EventPageComponent implements OnInit {
     this.scrollToHero();
   }
 
- 
-  
+
   protected resetHeroImage(): void {
     this.selectedHeroImage.set(null);
     this.selectedHeroImageAlt.set(null);
