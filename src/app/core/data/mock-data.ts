@@ -9,7 +9,7 @@ import {
   TabToggle,
 } from '../models/events/index';
 
-import { UserCardData } from '../models/user.model';
+// import { UserCardData } from '../models/user.model';
 import { LineSeriesConfig } from '../models/chart.model';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
@@ -411,27 +411,27 @@ export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
 ];
 
 
-export const MOCK_STAT_CARDS: UserCardData[] = [
-  {
+// export const MOCK_STAT_CARDS: UserCardData[] = [
+//   {
    
-    title: 'Total Events Organized',
-    count: 3,
-    icon: 'icons/user-icon-orange.png',
-    bgColor: '#FFF7EC',
-    percentageChange: 11.01,
-  },
-  {
+//     title: 'Total Events Organized',
+//     count: 3,
+//     icon: 'icons/user-icon-orange.png',
+//     bgColor: '#FFF7EC',
+//     percentageChange: 11.01,
+//   },
+//   {
    
-    title: 'Attendees',
-    count: 387,
-    icon: 'icons/user-icon-blue.png',
-    bgColor: '#F0F9FF',
-  },
-  {
+//     title: 'Attendees',
+//     count: 387,
+//     icon: 'icons/user-icon-blue.png',
+//     bgColor: '#F0F9FF',
+//   },
+//   {
   
-    title: 'Total Tickets Sold',
-    count: 565,
-    icon: 'icons/user-icon-blue.png',
-    bgColor: '#F0F9FF',
-  },
-];
+//     title: 'Total Tickets Sold',
+//     count: 565,
+//     icon: 'icons/user-icon-blue.png',
+//     bgColor: '#F0F9FF',
+//   },
+// ];

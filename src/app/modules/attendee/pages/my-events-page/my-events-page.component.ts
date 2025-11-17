@@ -9,9 +9,13 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
 import { MOCK_MY_EVENTS_CARDS } from '../../../../core/data/mock-data';
-import { Router } from '@angular/router';
+import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { EventCard } from '../../../../core/models/events';
+import { LineChartComponent } from '../../../admin/pages/dashboard-page/components/line-chart/line-chart.component';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { UserCardData } from '../../../../core/models';
+import { LineSeriesConfig } from '../../../../core/models/chart.model';
 
 @Component({
   selector: 'app-my-events-page',
@@ -46,5 +50,9 @@ export class MyEventsPageComponent implements OnInit {
 
   protected handleManageEvent(event: EventCard): void {
     this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
+  }
+
+  protected onManageEvent(): void {
+   this.router.navigate([this.routes.MANAGE_EVENT]);
   }
 }
