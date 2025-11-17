@@ -23,6 +23,8 @@ export interface TableColumn<T> {
   readonly header: string;
   readonly sortable?: boolean;
   readonly filterable?: boolean;
+    cell?: (row: T) => any; // Add this line
+
   readonly getValue?: (item: T) => string | number | boolean | null;
 }
 export interface EmptyState {

@@ -1,0 +1,106 @@
+// core/services/audit-management.service.ts
+import { Injectable } from '@angular/core';
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  Observable,
+  tap,
+  throwError,
+} from 'rxjs';
+import { ErrorHandlerService } from './error-handler.service';
+import { AuditBackendService } from './backend/audit-backend.service';
+import { AuditLog, AuditLogsResponse } from '../models/audits/audit-logs.model';
+
+@Injectable({ providedIn: 'root' })
+export class AuditManagementService {
+  private readonly _loading = new BehaviorSubject(false);
+  private readonly _auditLogsData =
+    new BehaviorSubject<AuditLogsResponse | null>(null);
+  private readonly _selectedAuditLog = new BehaviorSubject<AuditLog | null>(
+    null
+  );
+
+  // Public observables
+  public readonly loading$ = this._loading.asObservable();
+  public readonly auditLogsData$ = this._auditLogsData.asObservable();
+  public readonly selectedAuditLog$ = this._selectedAuditLog.asObservable();
+
+  constructor(
+    private readonly _backend: AuditBackendService,
+    private readonly _errorHandler: ErrorHandlerService
+  ) {}
+
+  /**
+   * Load paginated audit logs with optional filters
+   */
+  public loadAuditLogs(
+    page = 0,
+    size = 10,
+    email?: string,
+    startDate?: string,
+    endDate?: string
+  ): Observable<AuditLogsResponse> {
+    this._loading.next(true);
+
+    return this._backend
+      .getAuditLogs(page, size, email, startDate, endDate)
+      .pipe(
+        tap((data) => {
+          this._auditLogsData.next(data);
+          console.log('✅ Audit logs loaded:', {
+            pageNumber: data.pageNumber,
+            pageSize: data.pageSize,
+            totalLogs: data.auditListResponse.length,
+          });
+        }),
+        catchError((err) => {
+          console.error('❌ Failed to load audit logs:', err);
+          this._errorHandler.handle(err);
+          return throwError(() => err);
+        }),
+        finalize(() => this._loading.next(false))
+      );
+  }
+
+  /**
+   * Load a specific audit log by ID
+   */
+  public loadAuditLogById(logId: string): Observable<AuditLogsResponse> {
+    this._loading.next(true);
+
+    return this._backend.getAuditLogById(logId).pipe(
+      tap((data) => {
+        if (data.auditListResponse.length > 0) {
+          this._selectedAuditLog.next(data.auditListResponse[0]);
+        }
+      }),
+      catchError((err) => {
+        console.error('❌ Failed to load audit log:', err);
+        this._errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this._loading.next(false))
+    );
+  }
+
+  /**
+   * Clear selected audit log
+   */
+  public clearSelectedAuditLog(): void {
+    this._selectedAuditLog.next(null);
+  }
+
+  /**
+   * Refresh current audit logs data
+   */
+  public refresh(): void {
+    const currentData = this._auditLogsData.getValue();
+    if (currentData) {
+      this.loadAuditLogs(
+        currentData.pageNumber,
+        currentData.pageSize
+      ).subscribe();
+    }
+  }
+}
