@@ -1,6 +1,7 @@
 export interface TabToggle {
   key: string;
   label: string;
+  value: boolean | null
 }
 
 export interface SearchLocation {

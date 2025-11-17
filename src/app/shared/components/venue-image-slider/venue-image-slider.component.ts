@@ -1,17 +1,16 @@
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   Component,
+  computed,
+  EventEmitter,
+  HostListener,
   Input,
   OnChanges,
-  SimpleChanges,
-  signal,
-  computed,
-  HostListener,
   Output,
-  EventEmitter,
+  signal,
+  SimpleChanges,
 } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { VenueImage } from '../../../core/models/events';
 
 @Component({
   selector: 'app-venue-image-slider',
