@@ -24,7 +24,9 @@
                   {{ selectedLocation() }}
                 </span>
                 <img
-                  src="icons/room.png"
+                  ngSrc="icons/room.png"
+                  width="20"
+                  height="20"
                   alt=""
                   class="filter-icon"
                 />
@@ -34,8 +36,8 @@
 
           @if (showLocationDropdown()) {
           <app-location-dropdown
-            [recentSearches]="recentSearches()"
-            [popularLocations]="popularLocations()"
+            [recentSearches]="recentSearches" 
+            [popularLocations]="popularLocations"
             (close)="closeLocationDropdown()"
             (locationSelected)="onLocationSelected($event)"
             (useCurrentLocation)="onUseCurrentLocation()"
@@ -43,7 +45,6 @@
           }
         </div>
 
-        
         <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
           <div class="filter-button-wrapper">
             <app-button
@@ -56,7 +57,9 @@
                   {{ selectedEventType() }}
                 </span>
                 <img
-                  src="icons/Vector.png"
+                  ngSrc="icons/Vector.png"
+                  width="20"
+                  height="20"
                   alt=""
                   class="filter-icon"
                 />
@@ -66,7 +69,7 @@
 
           @if (showEventTypeDropdown()) {
           <app-filter-dropdown
-            [options]="eventTypeOptions()"
+            [options]="eventTypeOptions"
             [selectedOption]="selectedEventType()"
             (close)="closeEventTypeDropdown()"
             (optionSelected)="onEventTypeSelected($event)"
@@ -74,7 +77,6 @@
           }
         </div>
 
-        
         <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
           <div class="filter-button-wrapper">
             <app-button
@@ -91,7 +93,9 @@
                   }
                 </span>
                 <img
-                  src="icons/Mixed.png"
+                  ngSrc="icons/Mixed.png"
+                  width="20"
+                  height="20"
                   alt=""
                   class="filter-icon"
                 />
@@ -111,13 +115,12 @@
     </div>
 
     <app-tab-toggle
-      [toggles]="eventToggles()"
+      [toggles]="eventToggles"
       [activeToggle]="activeToggle()"
       (tabChange)="onTabChange($event)"
     ></app-tab-toggle>
 
     <section class="event-section">
-      
       @if (activeListTitle()) {
         <h2>{{ activeListTitle() }}</h2>
       }
@@ -145,6 +148,5 @@
         </div>
       }
     </section>
-
   </div>
 </section>

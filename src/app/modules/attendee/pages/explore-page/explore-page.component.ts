@@ -50,6 +50,7 @@ import {
 })
 export class ExplorePageComponent implements OnInit {
 
+ 
   private allEvents = signal<EventCard[]>([]);
   
   public currentPage = signal(1);
@@ -63,10 +64,12 @@ export class ExplorePageComponent implements OnInit {
   public showEventTypeDropdown = signal(false);
   public showDatePicker = signal(false);
   public activeToggle = signal<string>('all');
-  public eventToggles = signal<TabToggle[]>([]);
-  public eventTypeOptions = signal<string[]>([]);
-  public recentSearches = signal<SearchLocation[]>([]);
-  public popularLocations = signal<PopularLocation[]>([]);
+
+  
+  public eventToggles: TabToggle[] = [];
+  public eventTypeOptions: string[] = [];
+  public recentSearches: SearchLocation[] = [];
+  public popularLocations: PopularLocation[] = [];
 
   public activeEventList = computed(() => {
     const allFiltered = this.getAllFilteredEvents();
@@ -132,10 +135,11 @@ export class ExplorePageComponent implements OnInit {
 
   private loadData(): void {
     this.allEvents.set(MOCK_EVENT_CARDS);
-    this.eventToggles.set(MOCK_EVENT_TOGGLES);
-    this.eventTypeOptions.set(MOCK_EVENT_TYPE_OPTIONS);
-    this.recentSearches.set(MOCK_RECENT_SEARCHES);
-    this.popularLocations.set(MOCK_POPULAR_LOCATIONS);
+    
+    this.eventToggles = MOCK_EVENT_TOGGLES;
+    this.eventTypeOptions = MOCK_EVENT_TYPE_OPTIONS;
+    this.recentSearches = MOCK_RECENT_SEARCHES;
+    this.popularLocations = MOCK_POPULAR_LOCATIONS;
   }
 
   private closeAllDropdowns(): void {
