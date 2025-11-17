@@ -4,6 +4,9 @@ import {
   output,
   computed,
   HostListener,
+  OnInit,
+  OnDestroy,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +14,10 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
 import { InputComponent } from '../../ui/input/input.component';
 import { QuantityInputComponent } from '../../ui/quantity-input/quantity-input.component';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { RegistrationInfo } from '../../../core/models/event.model';
+import { EventDetail, RegisterEventBody, RegistrationInfo, TicketType } from '../../../core/models/event.model';
+import { EventsServiceService } from '../../../core/services/events.service';
+import { Subscription } from 'rxjs';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-registration-modal',
@@ -27,16 +33,32 @@ import { RegistrationInfo } from '../../../core/models/event.model';
   templateUrl: './registration-modal.component.html',
   styleUrl: './registration-modal.component.scss',
 })
-export class RegistrationModalComponent {
-  public registrationInfo = input.required<RegistrationInfo>();
+export class RegistrationModalComponent implements OnInit, OnDestroy {
+  private subscription: Subscription = new Subscription()
+  public currentEvent = input.required<EventDetail | null>();
+  public selectedTicket = input.required<TicketType | null>();
   public cancelRegistration = output<void>();
-  public submitRegistration = output<any>();
-
-  protected fullName = '';
-  protected email = '';
+  protected loading = signal(false);
+  protected fullName: string = '';
+  protected email: string = '';
   protected ticketCount = 1;
+  protected isPaid = computed(() => (this.selectedTicket()?.price || 0) > 0);
 
-  protected isPaid = computed(() => this.registrationInfo().ticketPrice > 0);
+
+  constructor(private readonly eventService: EventsServiceService, private readonly notificationService: NotificationService) { }
+
+  ngOnInit(): void {
+    this.subscription = this.eventService.loading$.subscribe({
+      next: (value) => {
+        this.loading.set(value)
+      }
+    })
+  }
+
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe()
+  }
 
   @HostListener('document:keydown.escape', ['$event'])
   protected onEscapeKey(event: Event): void {
@@ -45,14 +67,23 @@ export class RegistrationModalComponent {
   }
 
   protected onCancel(): void {
+    if (this.loading()) return;
     this.cancelRegistration.emit();
   }
 
   protected onSubmit(): void {
-    this.submitRegistration.emit({
+    const requestData: RegisterEventBody = {
+      ticketTypeId: this.selectedTicket()?.id || 0,
+      numberOfTickets: this.ticketCount,
       fullName: this.fullName,
-      email: this.email,
-      tickets: this.isPaid() ? this.ticketCount : 1,
-    });
+      email: this.email
+    }
+    const eventId = (this.currentEvent()?.id || 0).toString()
+    this.eventService.register(eventId, requestData, this.selectedTicket()?.isPaid).subscribe({
+      next: (response) => {
+        this.notificationService.success("Event registration initiated. make payment to complete the registrartion")
+        window.location.assign(response.authorizationUrl || '');
+      }
+    })
   }
 }

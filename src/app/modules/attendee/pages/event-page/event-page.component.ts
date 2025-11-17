@@ -4,11 +4,10 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import {
   EventDetail,
-  EventDetails,
   TicketInfo,
   TicketType,
   VenueImage,
-  VenueSection,
+  VenueSection
 } from '../../../../core/models/event.model';
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { HelpCardComponent } from '../../../../shared/components/help-card/help-card.component';
@@ -17,15 +16,7 @@ import { TicketCardComponent } from '../../../../shared/components/ticket-card/t
 import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
 
-import {
-  MOCK_EVENT_DETAILS,
-  MOCK_HELP_EMAIL,
-  MOCK_TICKETS,
-  MOCK_VENUE_IMAGES,
-  MOCK_VENUE_SECTIONS,
-} from '../../../../core/data/mock-data';
 import { EventsServiceService } from '../../../../core/services/events.service';
-
 
 
 
@@ -37,7 +28,6 @@ import { EventsServiceService } from '../../../../core/services/events.service';
     CommonModule,
     RouterModule,
     NgOptimizedImage,
-    DatePickerComponent,
     TicketCardComponent,
     HelpCardComponent,
     VenueImageSliderComponent,
@@ -48,41 +38,38 @@ import { EventsServiceService } from '../../../../core/services/events.service';
   styleUrl: './event-page.component.scss',
 })
 export class EventPageComponent implements OnInit {
-  
+
   @ViewChild('heroSection') heroSection!: ElementRef;
 
-   eventDetails = signal<EventDetail | null>(null);
-   venueImages = signal<VenueImage[]>([]);
-   venueSections = signal<VenueSection[]>([]);
-   tickets = signal<TicketInfo[]>([]);
-   helpEmail = signal<string>('');
-   showDatePicker = signal(false);
-   showRegistrationModal = signal(false);
-   selectedTicket = signal<TicketType | null>(null);
+  protected eventDetails = signal<EventDetail | null>(null);
+  protected venueImages = signal<VenueImage[]>([]);
+  protected venueSections = signal<VenueSection[]>([]);
+  protected tickets = signal<TicketInfo[]>([]);
+  protected helpEmail = signal<string>('support@eventhub.com');
+  protected showRegistrationModal = signal(false);
+  protected selectedTicket = signal<TicketType | null>(null);
 
-  
-   selectedHeroImage = signal<string | null>(null);
-   selectedHeroImageAlt = signal<string | null>(null);
-   selectedHeroImageDescription = signal<string | null>(null);
+  protected selectedHeroImage = signal<string | null>(null);
+  protected selectedHeroImageAlt = signal<string | null>(null);
+  protected selectedHeroImageDescription = signal<string | null>(null);
 
   protected readonly routes = APP_ROUTES;
 
 
-  constructor (private readonly eventService:EventsServiceService, private readonly route:ActivatedRoute, private readonly router:Router){}
+  constructor(private readonly eventService: EventsServiceService, private readonly route: ActivatedRoute, private readonly router: Router) { }
 
   public ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if(!id) {
+    if (!id) {
       this.router.navigate([APP_ROUTES.EXPLORE])
       return
     }
 
     this.eventService.getEvent(id).subscribe({
-      next : (value)=>{
+      next: (value) => {
         this.eventDetails.set(value);
       }
     })
-    // this.loadEventData();
   }
 
   protected onRegister(ticket: TicketType): void {
@@ -95,40 +82,15 @@ export class EventPageComponent implements OnInit {
     this.selectedTicket.set(null);
   }
 
-  protected onSubmitRegistration(formData: any): void {
-    this.showRegistrationModal.set(false);
-    this.selectedTicket.set(null);
-  }
 
-  protected toggleDatePicker(): void {
-    this.showDatePicker.update((v) => !v);
-  }
 
-  protected onDateSelected(date: Date): void {
-    const formattedDate = date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
-
-    this.eventDetails.update((details) => {
-      if (details) {
-        return { ...details, date: formattedDate };
-      }
-      return null;
-    });
-
-    this.showDatePicker.set(false);
-  }
-
-  
   protected onVenueImageClick(imageData: VenueImage): void {
-    
+
     this.selectedHeroImage.set(imageData.url);
     this.selectedHeroImageAlt.set(imageData.alt || 'Venue image');
     this.selectedHeroImageDescription.set(imageData.description || null);
 
-   
+
     this.scrollToHero();
   }
 
@@ -139,7 +101,7 @@ export class EventPageComponent implements OnInit {
     this.selectedHeroImageDescription.set(null);
   }
 
-  
+
   private scrollToHero(): void {
     setTimeout(() => {
       this.heroSection?.nativeElement.scrollIntoView({

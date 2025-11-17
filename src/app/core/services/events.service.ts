@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, take, tap } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, map, take, tap } from 'rxjs';
 import { EventBackendServiceService } from './backend/event-backend-service.service';
 import { ErrorHandlerService } from './error-handler.service';
 import { Router } from '@angular/router';
 import { APP_ROUTES } from '../constants/app-routes.constants';
-import { GetEventProps } from '../models/event.model';
+import { GetEventProps, RegisterEventBody } from '../models/event.model';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class EventsServiceService {
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
-  constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router: Router) { }
+  constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router: Router , private readonly notificationService:NotificationService) { }
 
   public timeZones() {
     this.setLoading(true)
@@ -47,7 +48,7 @@ export class EventsServiceService {
       take(1),
       tap((response) => {
         this.router.navigate([APP_ROUTES.CREATE_EVENT_SUCCESS], {
-          state: { eventResponse: response}
+          state: { eventResponse: response }
         });
 
       }),
@@ -96,6 +97,33 @@ export class EventsServiceService {
       finalize(() => this.setLoading(false))
     )
   }
+
+
+  public register(
+    id: string,
+    data: RegisterEventBody,
+    eventData: any,
+    isFree: boolean = false
+  ) {
+    this.setLoading(true);
+
+    return this.eventBackendService.registerEvent(id, data).pipe(
+      take(1),
+      tap((response) => {
+        if (isFree) {
+          this.notificationService.success("Hurray 🎉, you've successfully registered for this event.")
+          this.router.navigate([APP_ROUTES.PAYMENT_SUCCESS], {
+            state: { eventData, eventResponse: response },
+          });
+        }
+      }),
+      map((response) => response),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
+
+
 
   private setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);

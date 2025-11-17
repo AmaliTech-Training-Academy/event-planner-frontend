@@ -56,7 +56,7 @@ export interface EventDetail {
   id: number;
   title: string;
   description: string;
-  startTime: string; 
+  startTime: string;
   flyerUrl: string;
   capacity: number;
   eventImagesUrl: string[];
@@ -118,7 +118,7 @@ export interface EventCard {
 export interface TabToggle {
   key: string;
   label: string;
-  value: boolean|null;
+  value: boolean | null;
 }
 
 export interface SearchLocation {
@@ -158,7 +158,7 @@ export interface EventSummary {
   location: string | null;
   flyerUrl: string;
   ticketPrice: number;
-  attendees?:number;
+  attendees?: number;
 }
 
 export interface EventTypeFilter { label: string, value: string }
@@ -381,4 +381,23 @@ export function mapEventManagementToEventCard(
     isPaid: false,
     attendees: event.attendeeCount,
   };
+}
+
+
+
+export interface RegisterEventBody {
+  ticketTypeId: number,
+  numberOfTickets: number,
+  fullName: string,
+  email: string
+}
+
+
+export interface RegisterEventResponse {
+  id: number;
+  eventTitle: string | null;
+  location: string | null;
+  organizer: string | null;
+  startDate: string | null;
+  authorizationUrl: string | null;
 }
