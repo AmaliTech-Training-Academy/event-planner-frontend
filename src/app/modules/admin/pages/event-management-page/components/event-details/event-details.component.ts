@@ -13,7 +13,7 @@ export interface EventDetails {
   organizer: string;
   date: string;
   attendees: number;
-  status: 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled';
+  status: 'pending' | 'completed' | 'draft' | 'active' | 'cancelled' | 'upcoming';
   time?: string;
   location?: string;
   description?: string;

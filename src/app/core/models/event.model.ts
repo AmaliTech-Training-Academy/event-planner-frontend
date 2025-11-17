@@ -223,6 +223,8 @@ export interface Event {
   imageUrl?: string;
   isPaid: boolean;
   price?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ApiResponse<T> {
@@ -291,4 +293,72 @@ export function mapEventManagementToEventCard(
     isPaid: false,
     attendees: event.attendeeCount,
   };
+}
+
+// --- Interfaces for Manage Event Page ---
+export interface StatCardData {
+  title: string;
+  value: string | number;
+  icon: string;
+}
+
+export interface EventSummary {
+  organizer: string;
+  date: string;
+  time: string;
+  location: string;
+}
+
+export interface TicketStatus {
+  name: string;
+  sold: number;
+  left: number;
+}
+
+export interface EventHostAdmin {
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface Event {
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export function mapResponseToEventDetailsAdmin(
+  response: EventDetailResponse
+): EventDetailsAdmin {
+  return {
+    id: response.id.toString(),
+    name: response.title,
+    organizer: response.organizer,
+    date: response.startTime,
+    startDate: new Date(response.startTime),
+    location: response.location,
+    heroImageUrl: response.heroImageUrl || response.imageUrl || '',
+    isPaid: response.isPaid,
+    description: response.description,
+    attendees: response.attendeeCount,
+    status: response.status === 'ACTIVE' ? 'Active' :
+            response.status === 'DRAFT' ? 'Draft' :
+            response.status === 'COMPLETED' ? 'Completed' : 'Cancelled',
+    time: new Date(response.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }),
+  };
+}
+
+export interface EventDetailsAdmin {
+  id: string;
+  name: string; 
+  organizer: string;
+  date: string;
+  startDate: Date;
+  location: string;
+  heroImageUrl: string;
+  isPaid: boolean;
+  description: string;
+  attendees: number;
+  status: 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled';
+  time?: string;
 }

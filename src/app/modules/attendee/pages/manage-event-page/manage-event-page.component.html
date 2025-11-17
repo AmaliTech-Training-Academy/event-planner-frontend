@@ -1,0 +1,442 @@
+@if (eventDetails(); as event) {
+<div class="event-details-page">
+  
+  <nav class="event-details-page__breadcrumb">
+    <button class="breadcrumb-link" (click)="onBack()">Event Overview</button>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-current">{{ event.name }}</span>
+  </nav>
+
+  
+  <div class="event-details-page__header">
+    <h1 class="event-details-page__title">{{ event.name }}</h1>
+    <app-button 
+      type="secondary"
+      (onClick)="onEdit()"
+    >
+      Edit Event
+    </app-button>
+  </div>
+
+ 
+  <div class="event-details-page__tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      class="tab-button"
+      [class.tab-button--active]="activeTab() === 'overview'"
+      [attr.aria-selected]="activeTab() === 'overview'"
+      (click)="setActiveTab('overview')"
+    >
+      Overview
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="tab-button"
+      [class.tab-button--active]="activeTab() === 'guests'"
+      [attr.aria-selected]="activeTab() === 'guests'"
+      (click)="setActiveTab('guests')"
+    >
+      Guest
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="tab-button"
+      [class.tab-button--active]="activeTab() === 'registration'"
+      [attr.aria-selected]="activeTab() === 'registration'"
+      (click)="setActiveTab('registration')"
+    >
+      Registration
+    </button>
+  </div>
+
+  
+  @if (activeTab() === 'overview') {
+  <div class="event-details-page__content">
+   
+    <div class="event-details-page__status-section">
+      <div [class]="getStatusClass(event.status)">
+        Event is {{ event.status }}
+      </div>
+    </div>
+
+  
+    <div class="manage-event-layout">
+      <div class="main-content">
+       
+        <div class="stat-cards-grid">
+          @for (card of statCards(); track card.title) {
+            <app-stat-card [data]="card" />
+          }
+        </div>
+
+      
+        <div class="cards-grid">
+        
+          <div class="simple-card">
+            <div class="simple-card__header">
+              <div class="simple-card__header-with-icon">
+               
+                <div class="simple-card__label">Event Summary</div>
+              </div>
+              <app-button
+                type="action"
+                extraClass="icon-button-small"
+                (onClick)="onEdit()"
+              >
+                <img 
+                  ngSrc="/icons/edit-icon.png" 
+                  alt="Edit" 
+                  width="16" 
+                  height="16"
+                />
+              </app-button>
+            </div>
+            <div class="event-summary-list">
+              <div class="summary-item">
+                <img 
+                  ngSrc="/icons/user-icon.png" 
+                  alt="Organizer" 
+                  class="summary-icon"
+                  width="20"
+                  height="20"
+                />
+                <span class="summary-label">Organizer:</span>
+                <span class="summary-value">{{ event.organizer }}</span>
+              </div>
+              <div class="summary-item">
+                <img 
+                  ngSrc="/icons/calender-icon.png" 
+                  alt="Date" 
+                  class="summary-icon"
+                  width="20"
+                  height="20"
+                />
+                <span class="summary-label">Date:</span>
+                <span class="summary-value">{{ formatDate(event.date) }}</span>
+              </div>
+              <div class="summary-item">
+                <img 
+                  ngSrc="/icons/clock.svg" 
+                  alt="Time" 
+                  class="summary-icon"
+                  width="20"
+                  height="20"
+                />
+                <span class="summary-label">Time:</span>
+                <span class="summary-value">{{ event.time }}</span>
+              </div>
+              <div class="summary-item">
+                <img 
+                  ngSrc="/icons/map.png" 
+                  alt="Location" 
+                  class="summary-icon"
+                  width="20"
+                  height="20"
+                />
+                <span class="summary-label">Location:</span>
+                <span class="summary-value">{{ event.location }}</span>
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="simple-card">
+            <div class="simple-card__label">Feedback</div>
+            <div class="simple-card__content simple-card__content--center">
+              <div class="simple-card__icon-large">
+                <img 
+                  ngSrc="/images/feedback.png" 
+                  alt="No feedback" 
+                  width="32" 
+                  height="32"
+                />
+              </div>
+              <div class="simple-card__text-center">
+                <div class="simple-card__value-small">No Feedback Collected Yet</div>
+                <a href="#" class="link-text">
+                  Schedule a Feedback Email
+                </a>
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="simple-card">
+            <div class="simple-card__label">Tickets</div>
+            <div class="tickets-table">
+              @for (ticket of ticketTypes(); track ticket.name) {
+              <div class="tickets-table__row">
+                <span class="tickets-table__cell-box">{{ ticket.name }}</span>
+                <span class="tickets-table__cell-box">{{ ticket.sold }} Sold</span>
+                <span class="tickets-table__cell-box">{{ ticket.total - ticket.sold }} left</span>
+              </div>
+              }
+            </div>
+          </div>
+
+          
+          <div class="simple-card">
+            <div class="simple-card__label">Guests</div>
+            <div class="simple-card__content simple-card__content--center">
+              <div class="simple-card__icon-large">
+                <img 
+                  ngSrc="/icons/users-icon.png" 
+                  alt="Guests" 
+                  width="32" 
+                  height="32"
+                />
+              </div>
+              <div class="simple-card__text-center">
+                <div class="simple-card__value-small">No Guest Added</div>
+                <a href="#" class="link-text" (click)="onViewAllGuests(); $event.preventDefault()">
+                  View all Guests
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+      <div class="hosts-section-below">
+        <h3 class="hosts-section-below__title">Hosts</h3>
+        <p class="hosts-section-below__subtitle">
+          Add co-hosts, attendees, and venue staffs
+        </p>
+
+        <div class="hosts-list">
+          @for (host of hosts(); track host.email) {
+          <div class="host-item">
+            <div class="host-item__avatar">
+              @if (host.avatar) {
+              <img 
+                [ngSrc]="host.avatar" 
+                [alt]="host.name"
+                width="40"
+                height="40"
+              />
+              } @else {
+              <div class="host-item__avatar-placeholder">
+                <img 
+                  ngSrc="/icons/user-icon.png" 
+                  alt="User" 
+                  width="20" 
+                  height="20"
+                />
+              </div>
+              }
+            </div>
+            <div class="host-item__info">
+              <p class="host-item__name">{{ host.name }}</p>
+              <div class="host-item__email-row">
+               
+                <p class="host-item__email">{{ host.email }}</p>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+
+
+  @if (activeTab() === 'guests') {
+  <div class="event-details-page__content">
+    
+    <div class="guests-section-unified">
+      <div class="guests-section__header">
+        <h2 class="guests-section__title">Guests</h2>
+        <p class="guests-section__subtitle">No Guests Added</p>
+      </div>
+
+     
+      <button class="guests-section__invite-button" (click)="onInviteGuest()">
+        <img 
+          ngSrc="/icons/mail.png" 
+          alt="Add" 
+          width="16" 
+          height="16"
+        />
+        Invite Guest
+      </button>
+
+     
+      <div class="guest-list-header-bar">
+        <h3 class="guest-list-title">Guest List</h3>
+        
+        <div class="guest-list-controls">
+         
+          <div class="search-input-wrapper">
+            <img 
+              ngSrc="/icons/search-icon.png" 
+              alt="Search" 
+              class="search-input-icon"
+              width="16" 
+              height="16"
+            />
+            <input 
+              type="text" 
+              class="search-input" 
+              placeholder="Search guest by name or email"
+            />
+          </div>
+
+         
+          <div class="dropdown-wrapper">
+            <select class="guest-dropdown">
+              <option value="all">All Guest</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="pending">Pending</option>
+            </select>
+            <img 
+              ngSrc="/icons/Vector.png" 
+              alt="Dropdown" 
+              class="dropdown-icon"
+              width="16" 
+              height="16"
+            />
+          </div>
+
+        
+          <div class="dropdown-wrapper">
+            <select class="guest-dropdown">
+              <option value="date">Date Sent</option>
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+            <img 
+              ngSrc="/icons/Vector.png" 
+              alt="Dropdown" 
+              class="dropdown-icon"
+              width="16" 
+              height="16"
+            />
+          </div>
+        </div>
+      </div>
+
+      
+      <div class="guest-list-empty">
+        <div class="guest-list-empty__icon">
+          <img 
+            ngSrc="/icons/search-big.png" 
+            alt="No results" 
+            width="120" 
+            height="120"
+          />
+        </div>
+        <p class="guest-list-empty__text">No Guest found</p>
+      </div>
+    </div>
+  </div>
+  }
+ 
+  @if (activeTab() === 'registration') {
+  <div class="event-details-page__content">
+    <div class="registration-section">
+      <div class="registration-section__header">
+        <h2 class="registration-section__title">Registration</h2>
+      </div>
+
+      
+      <div class="registration-cards-grid">
+       
+        <div class="registration-info-card">
+          <div class="registration-info-card__icon">
+            <img 
+              ngSrc="/icons/mail.png" 
+              alt="Invite Guest" 
+              width="24" 
+              height="24"
+            />
+          </div>
+          <div class="registration-info-card__content">
+            <p class="registration-info-card__label">Invite Guest</p>
+            <p class="registration-info-card__value">Open</p>
+          </div>
+        </div>
+
+       
+        <div class="registration-info-card">
+          <div class="registration-info-card__icon">
+            <img 
+              ngSrc="/icons/trend-up.svg" 
+              alt="Event Capacity" 
+              width="24" 
+              height="24"
+            />
+          </div>
+          <div class="registration-info-card__content">
+            <p class="registration-info-card__label">Event Capacity</p>
+            <p class="registration-info-card__value">Unlimited</p>
+          </div>
+        </div>
+      </div>
+
+     
+      <div class="registration-tickets">
+        <div class="registration-tickets__header">
+          <div>
+            <h3 class="registration-tickets__title">Tickets</h3>
+            <p class="registration-tickets__subtitle">Adjust or update the ticket pricing for the event</p>
+          </div>
+        </div>
+
+        <div class="ticket-price-card">
+          <div class="ticket-price-left">
+            <span class="ticket-price-label">Ticket Price:</span>
+            <span class="ticket-price-value">Free</span>
+          </div>
+          <button class="registration-tickets__edit-button" (click)="onEdit()">
+            <img 
+              ngSrc="/icons/edit-icon.png" 
+              alt="Edit" 
+              width="16" 
+              height="16"
+            />
+            Edit
+          </button>
+        </div>
+      </div>
+
+      
+      <div class="registrations-table-wrapper">
+        @if (registrations().length > 0) {
+          <app-data-table
+            [tableTitle]="'Registrations'"
+            [data]="registrations()"
+            [columns]="registrationColumns()"
+            [searchable]="true"
+            [searchPlaceholder]="'Search attendees...'"
+            [showCheckboxes]="false"
+            [showAvatar]="false"
+            [showFilters]="true"
+            [filters]="registrationFilters()"
+            [itemsPerPage]="10"
+            [loading]="false"
+            [primaryAction]="undefined"
+          />
+        } @else {
+          <div class="registration-empty-state">
+            <div class="registration-empty-state__icon">
+              <img 
+                ngSrc="/icons/search-big.png" 
+                alt="No registrations" 
+                width="120" 
+                height="120"
+              />
+            </div>
+            <p class="registration-empty-state__text">No Registration found</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+</div>  
+}

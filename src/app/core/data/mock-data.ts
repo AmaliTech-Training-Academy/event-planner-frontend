@@ -7,6 +7,11 @@ import {
   SearchLocation,
   PopularLocation,
   TabToggle,
+  EventHostAdmin,
+  StatCardData,
+  EventSummary,
+  TicketStatus,
+  EventDetailsAdmin
 } from '../models/event.model';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
@@ -365,4 +370,56 @@ export const MOCK_MY_EVENTS_CARDS: EventCard[] = [
     isPaid: true,
     attendees: 2500,
   },
+];
+
+export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin = {
+  id: 'evt123',
+  name: 'Tech Innovation Summit 2025',
+  organizer: 'Tech Events Inc.',
+  date: '2025-04-15T00:00:00Z',
+  startDate: eventStartDate,
+  location: 'Silicon Valley Convention Center',
+  heroImageUrl: 'images/event-hero.png',
+  isPaid: true,
+  description: '...',
+  attendees: 5000,
+  status: 'Active',
+  time: '09:00am GMT',
+};
+
+
+export const MOCK_MANAGE_EVENT_TABS: TabToggle[] = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'guests', label: 'Guests' },
+  { key: 'registrations', label: 'Registrations' },
+];
+
+export const MOCK_MANAGE_STATS: StatCardData[] = [
+  {
+    title: 'Attendees',
+    value: 387,
+    icon: 'icons/users.svg',
+  },
+  {
+    title: 'Total Tickets Sold',
+    value: '$565.00',
+    icon: 'icons/ticket.svg',
+  },
+];
+
+export const MOCK_EVENT_SUMMARY: EventSummary = {
+  organizer: 'William Pen (Senior UI/UX Designer)',
+  date: '3rd May, 2025',
+  time: '09:00am GMT',
+  location: 'Virtual (Zoom Meeting)',
+};
+
+export const MOCK_TICKET_STATUS: TicketStatus[] = [
+  { name: 'Regular', sold: 6, left: 21 },
+  { name: 'VIP', sold: 14, left: 12 },
+  { name: 'VVIP', sold: 19, left: 43 },
+];
+
+export const MOCK_HOSTS: EventHostAdmin[] = [
+  { name: 'William Pen', email: 'william.pen@example.com' },
 ];
