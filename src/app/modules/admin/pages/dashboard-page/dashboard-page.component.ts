@@ -4,6 +4,7 @@ import {
   OnInit,
   inject,
   signal,
+  computed,
 } from '@angular/core';
 import { LayoutService } from '../../../../core/services/layout.service';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
@@ -57,9 +58,7 @@ export class DashboardPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   private readonly _userService = inject(UserManagementService);
 
-  private readonly _staticCards: DashboardCard[] = [
-  
-  ];
+  private readonly _staticCards: DashboardCard[] = [];
 
   // Dashboard cards signal
   protected readonly dashboardCards = signal<DashboardCard[]>([]);
@@ -102,12 +101,36 @@ export class DashboardPageComponent implements OnInit {
     { website: 'YouTube', percentage: 8, color: '#FFF7ED' },
   ];
 
-  protected readonly userStatistics: UserStatistics[] = [
-    { category: 'Attendees', percentage: 52.1, color: '#FF6B35' },
-    { category: 'Organizers', percentage: 22.8, color: '#374151' },
-    { category: 'Co-organizers', percentage: 13.9, color: '#6B7280' },
-    { category: 'Other', percentage: 11.2, color: '#9CA3AF' },
-  ];
+  protected readonly userStatistics = computed<UserStatistics[]>(() => {
+    const cards = this.dashboardCards();
+    const totalUsers = cards.find((c) => c.title === 'Total Users')?.count || 0;
+
+    if (totalUsers === 0) return [];
+
+    const organizers =
+      cards.find((c) => c.title === 'Active Organizers')?.count || 0;
+    const attendees = cards.find((c) => c.title === 'Attendees')?.count || 0;
+    const deactivated =
+      cards.find((c) => c.title === 'Deactivated')?.count || 0;
+
+    return [
+      {
+        category: 'Attendees',
+        percentage: parseFloat(((attendees / totalUsers) * 100).toFixed(1)),
+        color: '#FF6B35',
+      },
+      {
+        category: 'Organizers',
+        percentage: parseFloat(((organizers / totalUsers) * 100).toFixed(1)),
+        color: '#374151',
+      },
+      {
+        category: 'Deactivated',
+        percentage: parseFloat(((deactivated / totalUsers) * 100).toFixed(1)),
+        color: '#9CA3AF',
+      },
+    ];
+  });
 
   protected readonly activeChartTab = signal<'users' | 'events'>('users');
 
@@ -129,4 +152,3 @@ export class DashboardPageComponent implements OnInit {
     this.activeChartTab.set(tab);
   }
 }
-
