@@ -60,9 +60,11 @@ export class DashboardPageComponent implements OnInit {
 
   private readonly _staticCards: DashboardCard[] = [];
 
-  // Dashboard cards signal
   protected readonly dashboardCards = signal<DashboardCard[]>([]);
 
+  // ------------------------------------------------------------------------
+  // TIME SERIES DATA (unchanged)
+  // ------------------------------------------------------------------------
   protected readonly totalUsersData: TimeSeriesDataPoint[] = [
     { month: 'Jan', value: 12000 },
     { month: 'Feb', value: 8000 },
@@ -101,33 +103,50 @@ export class DashboardPageComponent implements OnInit {
     { website: 'YouTube', percentage: 8, color: '#FFF7ED' },
   ];
 
+  // ------------------------------------------------------------------------
+  // UPDATED USER STATISTICS (Donut chart)
+  // ------------------------------------------------------------------------
   protected readonly userStatistics = computed<UserStatistics[]>(() => {
     const cards = this.dashboardCards();
-    const totalUsers = cards.find((c) => c.title === 'Total Users')?.count || 0;
-
-    if (totalUsers === 0) return [];
 
     const organizers =
       cards.find((c) => c.title === 'Active Organizers')?.count || 0;
+
+    const coOrganizers =
+      cards.find((c) => c.title === 'Active Co-organizers')?.count || 0;
+
     const attendees = cards.find((c) => c.title === 'Attendees')?.count || 0;
-    const deactivated =
-      cards.find((c) => c.title === 'Deactivated')?.count || 0;
+
+    const other = cards.find((c) => c.title === 'Other Users')?.count || 0;
+
+    // Total ACTIVE users only
+    const totalActive = organizers + coOrganizers + attendees + other;
+
+    if (totalActive === 0) return [];
+
+    const pct = (value: number) =>
+      Number(((value / totalActive) * 100).toFixed(1)); // <-- one decimal place
 
     return [
       {
         category: 'Attendees',
-        percentage: parseFloat(((attendees / totalUsers) * 100).toFixed(1)),
+        percentage: pct(attendees),
         color: '#FF6B35',
       },
       {
         category: 'Organizers',
-        percentage: parseFloat(((organizers / totalUsers) * 100).toFixed(1)),
+        percentage: pct(organizers),
         color: '#374151',
       },
       {
-        category: 'Deactivated',
-        percentage: parseFloat(((deactivated / totalUsers) * 100).toFixed(1)),
+        category: 'Co-organizers',
+        percentage: pct(coOrganizers),
         color: '#9CA3AF',
+      },
+      {
+        category: 'Other',
+        percentage: pct(other),
+        color: '#6B7280',
       },
     ];
   });
@@ -139,12 +158,11 @@ export class DashboardPageComponent implements OnInit {
     this._layoutService.logoSrc.set('icons/editor-icon.png');
     this._layoutService.logoAlt.set('Dashboard Icon');
 
-    // Subscribe to live user card updates
+    // Live card updates
     this._userService.userCards$.subscribe((cards) => {
       this.dashboardCards.set([...cards, ...this._staticCards]);
     });
 
-    // Initial fetch
     this._userService.fetchAllUsers(0, 10).subscribe();
   }
 

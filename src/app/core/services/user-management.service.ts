@@ -70,12 +70,10 @@ export class UserManagementService {
     totalUsers: number;
     totalOrganizers: number;
     totalAttendees: number;
-    totalDeactivatedUsers: number;
   } = {
     totalUsers: 0,
     totalOrganizers: 0,
     totalAttendees: 0,
-    totalDeactivatedUsers: 0,
   };
 
   constructor(
@@ -230,7 +228,7 @@ export class UserManagementService {
       tap((response) => {
         const updatedUsers = [...this._users$.getValue(), response.data];
         this._users$.next(updatedUsers);
-        
+
         // Update cards instantly based on the new user
         this._updateCardsFromUserList(updatedUsers);
         this.invalidateCache();
@@ -399,20 +397,25 @@ export class UserManagementService {
   private _updateCardsFromUserList(users: User[]): void {
     const totalUsers = users.length;
     const totalOrganizers = users.filter(
-      (u) => (u.role === 'ORGANISER' || u.role === 'CO_ORGANIZER') && u.status === 'Active'
+      (u) => u.role === 'ORGANISER' && u.status === 'Active'
     ).length;
+
+    const totalCoOrganizers = users.filter(
+      (u) => u.role === 'CO_ORGANIZER' && u.status === 'Active'
+    ).length;
+
     const totalAttendees = users.filter(
       (u) => u.role === 'ATTENDEE' && u.status === 'Active'
     ).length;
-    const totalDeactivatedUsers = users.filter(
-      (u) => u.status === 'Inactive'
+
+    const totalOther = users.filter(
+      (u) => !['ORGANISER', 'CO_ORGANIZER', 'ATTENDEE'].includes(u.role)
     ).length;
 
     this._userStats = {
       totalUsers,
       totalOrganizers,
       totalAttendees,
-      totalDeactivatedUsers,
     };
 
     this._updateUserCards();
@@ -426,7 +429,6 @@ export class UserManagementService {
         totalUsers: data.totalUsers,
         totalOrganizers: data.totalOrganizers,
         totalAttendees: data.totalAttendees,
-        totalDeactivatedUsers: data.totalDeactivatedUsers,
       };
     }
 
@@ -451,13 +453,6 @@ export class UserManagementService {
         icon: 'icons/user-icon-blue.png',
         bgColor: '#E3F2FD',
         iconColor: '#2196F3',
-      },
-      {
-        title: 'Deactivated',
-        count: stats.totalDeactivatedUsers,
-        icon: 'icons/user-icon-red.png',
-        bgColor: '#FFEBEE',
-        iconColor: '#F44336',
       },
     ];
 
