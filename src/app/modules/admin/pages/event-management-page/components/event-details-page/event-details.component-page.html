@@ -67,10 +67,10 @@
             (click)="onEdit()"
             [ariaLabel]="'Edit event'"
           >
-            <img 
-              ngSrc="/icons/edit-icon.png" 
-              alt="Edit" 
-              width="16" 
+            <img
+              ngSrc="/icons/edit-icon.png"
+              alt="Edit"
+              width="16"
               height="16"
             />
           </app-button>
@@ -78,9 +78,9 @@
 
         <div class="info-card__body">
           <div class="info-row">
-            <img 
-              ngSrc="/icons/user-icon.png" 
-              alt="Organizer" 
+            <img
+              ngSrc="/icons/user-icon.png"
+              alt="Organizer"
               class="info-icon"
               width="20"
               height="20"
@@ -92,9 +92,9 @@
           </div>
 
           <div class="info-row">
-            <img 
-              ngSrc="/icons/calender-icon.png" 
-              alt="Date" 
+            <img
+              ngSrc="/icons/calender-icon.png"
+              alt="Date"
               class="info-icon"
               width="20"
               height="20"
@@ -106,9 +106,9 @@
           </div>
 
           <div class="info-row">
-            <img 
-              ngSrc="/icons/clock.svg" 
-              alt="Time" 
+            <img
+              ngSrc="/icons/clock.svg"
+              alt="Time"
               class="info-icon"
               width="20"
               height="20"
@@ -120,9 +120,9 @@
           </div>
 
           <div class="info-row">
-            <img 
-              ngSrc="/icons/map.png" 
-              alt="Location" 
+            <img
+              ngSrc="/icons/map.png"
+              alt="Location"
               class="info-icon"
               width="20"
               height="20"
@@ -144,17 +144,16 @@
         <div class="info-card__body info-card__body--empty">
           <div class="empty-state">
             <div class="empty-state__icon">
-              <img 
-                ngSrc="/images/feedback.png" 
+              <img
+                ngSrc="/images/feedback.png"
                 alt="No feedback"
                 width="48"
                 height="48"
               />
             </div>
             <p class="empty-state__text">No Feedback Collected Yet</p>
-            <app-button 
-                       type="action"
-
+            <app-button
+              type="action"
               extraClass="link-button"
               (click)="onScheduleFeedback()"
             >
@@ -173,17 +172,16 @@
         <div class="info-card__body info-card__body--empty">
           <div class="empty-state">
             <div class="empty-state__icon">
-              <img 
-                ngSrc="/icons/mail.png" 
+              <img
+                ngSrc="/icons/mail.png"
                 alt="No invites"
                 width="48"
                 height="48"
               />
             </div>
             <p class="empty-state__text">No Invite Sent</p>
-            <app-button 
-                         type="action"
-
+            <app-button
+              type="action"
               extraClass="link-button"
               (click)="onSendInvites()"
             >
@@ -202,8 +200,8 @@
         <div class="info-card__body info-card__body--empty">
           <div class="empty-state">
             <div class="empty-state__icon">
-              <img 
-                ngSrc="/icons/users-icon.png" 
+              <img
+                ngSrc="/icons/users-icon.png"
                 alt="No guests"
                 width="48"
                 height="48"
@@ -230,8 +228,8 @@
         <div class="host-item">
           <div class="host-item__avatar">
             @if (host.avatar) {
-            <img 
-              [ngSrc]="host.avatar" 
+            <img
+              [ngSrc]="host.avatar"
               [alt]="host.name"
               width="40"
               height="40"

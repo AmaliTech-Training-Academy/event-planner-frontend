@@ -23,4 +23,5 @@ export const APP_ROUTES = {
   ADMIN_EVENT_DETAILS: '/admin/events/:id',
   ADMIN_ORGANIZERS: '/admin/organizers',
   PAYMENT_SUCCESS: '/app/payment-success',
+  MANAGE_EVENT: '/app/manage-event',
 };

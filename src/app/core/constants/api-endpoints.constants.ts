@@ -50,4 +50,5 @@ export const EVENTS_API_ENDPOINTS = {
   GET_ALL_EVENTS: `${BASE}/events`,
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+  SEARCH_EVENTS: `${BASE}/events/search`,
 } as const;

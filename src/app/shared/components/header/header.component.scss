@@ -342,7 +342,6 @@
     }
   }
 
-  // Tablet view: Show name, avatar, and hamburger
   @media (max-width: 1024px) {
     position: relative;
 
@@ -373,7 +372,6 @@
     &__mobile-actions {
       display: flex;
 
-      // Show user name on tablet (will be hidden on mobile with next media query)
       .header__user-name {
         display: block;
         @include body-2;
@@ -491,7 +489,6 @@
     }
   }
 
-  // Mobile view: Show only avatar and hamburger (hide username)
   @media (max-width: 400px) {
     &__mobile-actions {
       .header__user-name {
