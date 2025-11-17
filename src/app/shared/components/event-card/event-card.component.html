@@ -35,11 +35,11 @@
     </div>
 
    
-    @if (variant() === 'manage') {
+     @if (variant() === 'manage') {
     <app-button
       [type]="'secondary'"
       [extraClass]="'event-card__button'"
-      (onClick)="onManageClick()"
+      (click)="onManageClick()"
     >
       Manage Event
     </app-button>
@@ -47,9 +47,9 @@
     <app-button
       [type]="'secondary'"
       [extraClass]="'event-card__button'"
-      (onClick)="navigateToDetails()"
+      (click)="navigateToDetails()"
     >
-      View Details
+      View Event
     </app-button>
     }
   </div>

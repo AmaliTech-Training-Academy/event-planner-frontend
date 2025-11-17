@@ -14,19 +14,22 @@ import { EventCard } from '../../../core/models/events';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventCardComponent {
+ 
   public event = input.required<EventCard>();
-  public variant = input<'explore' | 'manage'>('explore');
+  
+  public variant = input<'explore' | 'manage' | 'view-events'>('explore');
+
+  
   public manageEvent = output<EventCard>();
 
+  
   protected readonly routes = APP_ROUTES;
   private readonly router = inject(Router);
 
+  
   protected navigateToDetails(): void {
-   
-    const route = this.routes.EVENT_DETAILS(this.event().id);
-    this.router.navigate([route]);
+    this.router.navigate([this.routes.EVENT_DETAILS, this.event().id]);
   }
-
   protected onManageClick(): void {
     this.manageEvent.emit(this.event());
   }

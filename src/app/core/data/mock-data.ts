@@ -9,6 +9,9 @@ import {
   TabToggle,
 } from '../models/events/index';
 
+// import { UserCardData } from '../models/user.model';
+import { LineSeriesConfig } from '../models/chart.model';
+
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
 
 
@@ -366,3 +369,69 @@ export const MOCK_MY_EVENTS_CARDS: EventCard[] = [
     attendees: 2500,
   },
 ];
+
+
+
+
+export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
+  {
+    name: 'This year',
+    color: '#FF6B35', 
+    showArea: true,
+    lineStyle: 'solid',
+    areaGradient: {
+      start: 'rgba(255, 107, 53, 0.2)',
+      end: 'rgba(255, 107, 53, 0.05)',
+    },
+    data: [
+      { month: 'Jan', value: 12000 },
+      { month: 'Feb', value: 15000 },
+      { month: 'Mar', value: 18000 },
+      { month: 'Apr', value: 22000 },
+      { month: 'May', value: 28000 },
+      { month: 'Jun', value: 25000 },
+      { month: 'Jul', value: 27000 },
+    ],
+  },
+  {
+    name: 'Last year',
+    color: '#6B7280',
+    showArea: false,
+    lineStyle: 'dashed',
+    data: [
+      { month: 'Jan', value: 10000 },
+      { month: 'Feb', value: 12000 },
+      { month: 'Mar', value: 14000 },
+      { month: 'Apr', value: 16000 },
+      { month: 'May', value: 20000 },
+      { month: 'Jun', value: 22000 },
+      { month: 'Jul', value: 24000 },
+    ],
+  },
+];
+
+
+// export const MOCK_STAT_CARDS: UserCardData[] = [
+//   {
+   
+//     title: 'Total Events Organized',
+//     count: 3,
+//     icon: 'icons/user-icon-orange.png',
+//     bgColor: '#FFF7EC',
+//     percentageChange: 11.01,
+//   },
+//   {
+   
+//     title: 'Attendees',
+//     count: 387,
+//     icon: 'icons/user-icon-blue.png',
+//     bgColor: '#F0F9FF',
+//   },
+//   {
+  
+//     title: 'Total Tickets Sold',
+//     count: 565,
+//     icon: 'icons/user-icon-blue.png',
+//     bgColor: '#F0F9FF',
+//   },
+// ];
