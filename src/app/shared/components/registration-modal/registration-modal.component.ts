@@ -1,4 +1,10 @@
-import { Component, input, output, computed } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  computed,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
@@ -31,6 +37,12 @@ export class RegistrationModalComponent {
   protected ticketCount = 1;
 
   protected isPaid = computed(() => this.registrationInfo().ticketPrice > 0);
+
+  @HostListener('document:keydown.escape', ['$event'])
+  protected onEscapeKey(event: Event): void {
+    event.preventDefault();
+    this.onCancel();
+  }
 
   protected onCancel(): void {
     this.cancelRegistration.emit();

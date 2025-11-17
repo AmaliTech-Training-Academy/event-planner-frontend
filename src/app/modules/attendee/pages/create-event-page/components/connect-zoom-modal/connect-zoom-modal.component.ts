@@ -18,7 +18,7 @@ export class ConnectZoomModalComponent {
   }
 
   protected toggleConnectZoomModal() {
-    this.connect.emit()
+    this.close.emit()
   }
 
 }

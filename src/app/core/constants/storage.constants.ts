@@ -6,4 +6,5 @@ export const AUTH_STORAGE = {
   PROFILE_PICTURE: 'pp',
   EMAIL: 'e',
   ROLE: 'r',
+  REFRESH_INTERVAL: 'ri'
 } as const;
