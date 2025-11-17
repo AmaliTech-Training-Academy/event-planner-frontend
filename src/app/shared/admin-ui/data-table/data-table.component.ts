@@ -1,4 +1,3 @@
-// data-table.component.ts
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -87,10 +86,10 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly searchKey = input<string>('');
 
   public readonly expandable = input<boolean>(false);
-  public readonly showCheckboxes = input<boolean>(false); // Add this
-  public readonly showActionLabels = input<boolean>(false); // Add this
+  public readonly showCheckboxes = input<boolean>(false);
+  public readonly showActionLabels = input<boolean>(false);
 
-  public readonly showExport = input<boolean>(false); // Add this
+  public readonly showExport = input<boolean>(false);
   public readonly showAvatar = input<boolean>(true);
   public readonly searchChange = output<string>();
   public readonly filterChange = output<{ key: string; value: string }>();
@@ -138,9 +137,9 @@ export class DataTableComponent<T extends Record<string, any>> {
     if (title.toLowerCase().includes('role')) {
       return 'Search roles...';
     }
-    if (title.toLowerCase().includes('saved')) {  
+    if (title.toLowerCase().includes('saved')) {
       return 'Search saved invitations...';
-    } 
+    }
 
     return `Search ${title.toLowerCase()}...`;
   });
@@ -160,27 +159,16 @@ export class DataTableComponent<T extends Record<string, any>> {
 
     if (localQuery) {
       filtered = filtered.filter((item) => {
-        const searchableFields = [
-          item['fullName'],
-          item['name'],
-          item['email'],
-          item['role'],
-          item['user'],
-          item['timestamp'],
-          item['ipAddress'],
-          item['status'],
-          item['invitationTitle'],
-          item['event'],
-          item['createdBy'],
-        ]
-          .filter(Boolean)
-          .map((field) => String(field))
+        const searchableText = Object.values(item)
+          .filter((value) => value != null && typeof value !== 'object')
+          .map((value) => String(value))
           .join(' ')
           .toLowerCase();
 
-        return searchableFields.includes(localQuery);
+        return searchableText.includes(localQuery);
       });
     }
+
     activeFilters.forEach((value, key) => {
       if (value && value !== 'all') {
         filtered = filtered.filter((item) => {
@@ -195,20 +183,16 @@ export class DataTableComponent<T extends Record<string, any>> {
 
   private _searchSubject = new Subject<string>();
   constructor() {
-    this._searchSubject
-      .pipe(
-        debounceTime(600) // Wait 600ms after user stops typing
-      )
-      .subscribe((query) => {
-        this._searchQuery.set(query);
-        this._currentPage.set(1);
+    this._searchSubject.pipe(debounceTime(600)).subscribe((query) => {
+      this._searchQuery.set(query);
+      this._currentPage.set(1);
 
-        if (this.serverSidePagination()) {
-          this.searchChange.emit(query);
-        } else {
-          this._performBackendSearch(0);
-        }
-      });
+      if (this.serverSidePagination()) {
+        this.searchChange.emit(query);
+      } else {
+        this._performBackendSearch(0);
+      }
+    });
   }
 
   public setCurrentPage(page: number): void {
@@ -259,8 +243,6 @@ export class DataTableComponent<T extends Record<string, any>> {
     let profileImageUrl = item['profileImageUrl'] || item['avatar'];
 
     if (profileImageUrl) {
-      // Fix URL encoding for spaces and special characters
-      // Only encode the filename part after the last '/'
       const urlParts = profileImageUrl.split('/');
       const fileName = urlParts[urlParts.length - 1];
       const encodedFileName = encodeURIComponent(fileName);
@@ -276,7 +258,6 @@ export class DataTableComponent<T extends Record<string, any>> {
       return profileImageUrl;
     }
 
-    // Fallback
     const name = item['fullName'] || item['name'] || item['email'] || 'User';
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(
       name
@@ -520,7 +501,7 @@ export class DataTableComponent<T extends Record<string, any>> {
       attendee: 'attendee',
       active: 'active',
       inactive: 'inactive',
-      successful: 'successful', // Add this line
+      successful: 'successful',
       failed: 'failed',
     };
 
