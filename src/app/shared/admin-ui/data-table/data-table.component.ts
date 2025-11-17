@@ -26,10 +26,16 @@ export interface TableColumn<T> {
   readonly filterable?: boolean;
   readonly getValue?: (item: T) => string | number | boolean | null;
 }
+export interface EmptyState {
+  readonly imageSrc: string;
+  readonly imageAlt: string;
+  readonly message: string;
+}
 
 export interface TableAction<T> {
   readonly icon: string;
   readonly label: string;
+  readonly title?: string | ((item: T) => string);
   readonly color?: string;
   readonly extraClass?: string;
   readonly handler: (item: T) => void;
@@ -111,6 +117,33 @@ export class DataTableComponent<T extends Record<string, any>> {
   private readonly _searchQuery = signal<string>('');
   private readonly _currentPage = signal<number>(1);
 
+  public readonly effectiveSearchPlaceholder = computed(() => {
+    const customPlaceholder = this.searchPlaceholder();
+    const title = this.tableTitle();
+
+    if (customPlaceholder) {
+      return customPlaceholder;
+    }
+
+    if (title.toLowerCase().includes('user')) {
+      return 'Search users...';
+    } else if (title.toLowerCase().includes('event')) {
+      return 'Search events...';
+    } else if (title.toLowerCase().includes('invitation')) {
+      return 'Search invitations...';
+    } else if (title.toLowerCase().includes('audit')) {
+      return 'Search audit logs...';
+    }
+
+    if (title.toLowerCase().includes('role')) {
+      return 'Search roles...';
+    }
+    if (title.toLowerCase().includes('saved')) {  
+      return 'Search saved invitations...';
+    } 
+
+    return `Search ${title.toLowerCase()}...`;
+  });
   public readonly currentPage = computed(() => this._currentPage());
   public readonly searchQuery = computed(() => this._searchQuery());
 
@@ -205,6 +238,11 @@ export class DataTableComponent<T extends Record<string, any>> {
   public isSelected(item: T): boolean {
     return this._selectedItems().has(item);
   }
+  public readonly emptyState = input<EmptyState>({
+    imageSrc: '/images/table-empty.png',
+    imageAlt: 'No data found',
+    message: 'No data available',
+  });
 
   protected toggleSelect(item: T): void {
     const selected: Set<T> = new Set(this._selectedItems());
@@ -217,18 +255,33 @@ export class DataTableComponent<T extends Record<string, any>> {
     return value.charAt(0).toUpperCase() + value.slice(1);
   }
 
-  public getRandomAvatar(item: T): string {
-  // Priority 1: Check for custom avatar property
-  if (item['avatar']) {
-    return item['avatar'] as string;
-  }
-  
-  // Priority 2: Fallback to generated avatar based on identifier
-  const identifier = item['userId'] || item['email'] || item['id'] || '';
-  const avatarNumber = (String(identifier).charCodeAt(0) % 70) + 1;
+  public getUserAvatar(item: T): string {
+    let profileImageUrl = item['profileImageUrl'] || item['avatar'];
 
-  return `https://i.pravatar.cc/150?img=${avatarNumber}`;
-}
+    if (profileImageUrl) {
+      // Fix URL encoding for spaces and special characters
+      // Only encode the filename part after the last '/'
+      const urlParts = profileImageUrl.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const encodedFileName = encodeURIComponent(fileName);
+      urlParts[urlParts.length - 1] = encodedFileName;
+      profileImageUrl = urlParts.join('/');
+
+      console.log(
+        '📸 Original URL:',
+        item['profileImageUrl'] || item['avatar']
+      );
+      console.log('📸 Encoded URL:', profileImageUrl);
+
+      return profileImageUrl;
+    }
+
+    // Fallback
+    const name = item['fullName'] || item['name'] || item['email'] || 'User';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      name
+    )}&background=FF6B35&color=fff&size=128`;
+  }
   public isAllSelected(): boolean {
     const pageData = this.paginatedData();
     return (
@@ -237,6 +290,19 @@ export class DataTableComponent<T extends Record<string, any>> {
     );
   }
 
+  public getActionTitle(action: TableAction<T>, item: T): string {
+    if ('title' in action && action.title) {
+      return typeof action.title === 'function'
+        ? action.title(item)
+        : action.title;
+    }
+
+    if (action.color === 'power') {
+      return item['status'] === 'Active' ? 'Deactivate' : 'Activate';
+    }
+
+    return action.label;
+  }
   protected toggleSelectAll(): void {
     const pageData: ReadonlyArray<T> = this.paginatedData();
     const selected: Set<T> = new Set(this._selectedItems());
