@@ -67,7 +67,6 @@ export class UserBackendService {
     );
   }
 
-
   public updateUserWithFormData(
     userId: string,
     formData: FormData
@@ -88,22 +87,6 @@ export class UserBackendService {
     return this.http.post<InviteUserResponse>(
       API_ENDPOINTS.INVITE_USER,
       payload
-    );
-  }
-
-  public fetchInvitations(
-    page: number = 0,
-    size: number = 10,
-    sort: string = 'createdAt,desc'
-  ): Observable<FetchInvitationsResponse> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString())
-      .set('sort', sort);
-
-    return this.http.get<FetchInvitationsResponse>(
-      API_ENDPOINTS.GET_ALL_INVITATIONS,
-      { params }
     );
   }
 

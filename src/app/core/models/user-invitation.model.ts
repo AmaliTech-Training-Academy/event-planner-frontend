@@ -1,4 +1,3 @@
-/** Invite user payload */
 export interface InviteUserPayload {
   invitees: Array<{
     fullName: string;
@@ -8,7 +7,6 @@ export interface InviteUserPayload {
   message: string;
   status: 'SEND' | 'SAVE';
 }
-
 /** Invite user response */
 export interface InviteUserResponse {
   data: {
