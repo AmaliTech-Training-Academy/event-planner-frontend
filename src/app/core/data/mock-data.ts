@@ -1,14 +1,10 @@
 import {
   EventDetails,
-  VenueImage,
-  VenueSection,
-  TicketInfo,
-  EventCard,
-  SearchLocation,
-  PopularLocation,
-  TabToggle,
   EventTypeFilter,
-  EventSummary,
+  TabToggle,
+  TicketInfo,
+  VenueImage,
+  VenueSection
 } from '../models/event.model';
 
 import { LineSeriesConfig } from '../models/chart.model';
@@ -91,8 +87,6 @@ export const MOCK_EVENT_TOGGLES: TabToggle[] = [
   { key: 'past', label: 'Past events', value: true },
 ];
 
-
-
 export const MOCK_EVENT_TYPE_OPTIONS: EventTypeFilter[] = [
   {
     label: 'All Events',
@@ -107,58 +101,6 @@ export const MOCK_EVENT_TYPE_OPTIONS: EventTypeFilter[] = [
     value: 'free'
   },
 ];
-
-export const MOCK_RECENT_SEARCHES: SearchLocation[] = [
-  { name: 'New York, USA', id: 'ny' },
-  { name: 'London, UK', id: 'ldn' },
-  { name: 'San Francisco, USA', id: 'sf' },
-  { name: 'Toronto, Canada', id: 'tor' },
-];
-
-export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
-  { name: 'San Francisco, USA', meta: 'California' },
-  { name: 'Toronto, Canada', meta: 'Ontario' },
-  { name: 'Sydney, Australia', meta: 'New South Wales' },
-  { name: 'London, UK', meta: 'England' },
-  { name: 'Berlin, Germany', meta: 'Europe' },
-];
-
-
-export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
-  {
-    id: 1,
-    ticketPrice: 33,
-    description: "",
-    title: 'Tech Innovation Summit 2025',
-    startTime: '',
-    location: 'Silicon Valley, CA',
-    flyerUrl: 'images/event1.jpg',
-    attendees: 5000,
-  },
-  {
-    id: 2,
-    ticketPrice: 33,
-    description: "",
-    title: 'Community Code & Coffee',
-    startTime: '',
-    location: 'Austin, TX',
-    flyerUrl: 'images/event2.jpg',
-    attendees: 150,
-  },
-  {
-    id: 3,
-    title: 'AI World Conference',
-    startTime: '',
-    location: 'New York, NY',
-    flyerUrl: 'images/event3.jpg',
-    ticketPrice: 400,
-    description: "",
-    attendees: 2500,
-  },
-];
-
-
-
 
 export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
   {
@@ -196,29 +138,3 @@ export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
     ],
   },
 ];
-
-
-// export const MOCK_STAT_CARDS: UserCardData[] = [
-//   {
-   
-//     title: 'Total Events Organized',
-//     count: 3,
-//     icon: 'icons/user-icon-orange.png',
-//     bgColor: '#FFF7EC',
-//     percentageChange: 11.01,
-//   },
-//   {
-   
-//     title: 'Attendees',
-//     count: 387,
-//     icon: 'icons/user-icon-blue.png',
-//     bgColor: '#F0F9FF',
-//   },
-//   {
-  
-//     title: 'Total Tickets Sold',
-//     count: 565,
-//     icon: 'icons/user-icon-blue.png',
-//     bgColor: '#F0F9FF',
-//   },
-// ];
