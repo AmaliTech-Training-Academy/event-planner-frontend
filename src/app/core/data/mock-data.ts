@@ -7,7 +7,7 @@ import {
   SearchLocation,
   PopularLocation,
   TabToggle,
-} from '../models/event.model';
+} from '../models/events/index';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
 

@@ -1,11 +1,17 @@
-import { Component, OnInit, signal, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
-import { EventCard } from '../../../../core/models/event.model';
-import { MOCK_MY_EVENTS_CARDS } from '../../../../core/data/mock-data'; 
+import { MOCK_MY_EVENTS_CARDS } from '../../../../core/data/mock-data';
 import { Router } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { EventCard } from '../../../../core/models/events';
 
 @Component({
   selector: 'app-my-events-page',
@@ -21,10 +27,10 @@ export class MyEventsPageComponent implements OnInit {
   protected readonly routes = APP_ROUTES;
 
   public ngOnInit(): void {
-    this.myEvents.set(MOCK_MY_EVENTS_CARDS); 
+    this.myEvents.set(MOCK_MY_EVENTS_CARDS);
   }
 
   protected handleManageEvent(event: EventCard): void {
-  this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
+    this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
   }
 }
