@@ -38,7 +38,7 @@ export const API_ENDPOINTS = {
   // ============================================
   INVITE_USER: `${BASE}/user-invitations/invite-user`,
   VERIFY_INVITATION_TOKEN: `${BASE}/user-invitations/verify`,
-  ACCEPT_INVITATION: `${BASE}/user-invitations/accept`,
+  ACCEPT_INVITATION: `${BASE}/user-invitations/accept-invitation`,
   GET_ALL_INVITATIONS: `${BASE}/user-invitations`,
 
   // ============================================
@@ -50,6 +50,4 @@ export const API_ENDPOINTS = {
   EVENT_DETAILS: (eventId: number): string => `${BASE}/events/${eventId}`,
   UPDATE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
-
-
 } as const;

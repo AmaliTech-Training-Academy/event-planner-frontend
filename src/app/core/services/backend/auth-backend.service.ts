@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { API_ENDPOINTS } from '../../constants/api-endpoints.constants';
 import { AuthResponseBody, OtpBodyData, RegisterBodyData } from '../../models/auth-response.model';
 import { User } from '../../models/user.model';
+import { AcceptInvitationPayload } from '../../models/accept-invitation.model';
 
 @Injectable({
   providedIn: 'root',
@@ -57,8 +58,12 @@ export class AuthBackendService {
     return this.http.get<{ data: User }>(API_ENDPOINTS.GET_USER(userId));
   }
   public getAuthenticatedUser() {
-    return this.http.get<AuthResponseBody<OtpBodyData>>(
-      API_ENDPOINTS.AUTH_ME // Add this constant
+    return this.http.get<AuthResponseBody<OtpBodyData>>(API_ENDPOINTS.AUTH_ME);
+  }
+  public acceptInvitation(payload: AcceptInvitationPayload) {
+    return this.http.post<AuthResponseBody<OtpBodyData>>(
+      API_ENDPOINTS.ACCEPT_INVITATION,
+      payload
     );
   }
 }
