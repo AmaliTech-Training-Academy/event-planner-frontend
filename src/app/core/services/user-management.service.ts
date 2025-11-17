@@ -337,23 +337,18 @@ export class UserManagementService {
     this._setLoading(true);
     return this._userBackend.inviteUsers(payload).pipe(
       tap((response) => {
-        if (response.data.invitationsSent > 0) {
-          this.invalidateCache();
-          // Refresh users to update cards
-          this.fetchAllUsers(this._currentPage$.getValue());
-        }
+        console.log('🎯 Invite response:', response);
+        // Remove the check that's causing the error
+        this.invalidateCache();
+        // Don't auto-refresh here, let the component handle it
       }),
       catchError((err) => {
-        this._errorHandler.handle(err);
+        console.error('🚨 Invite error:', err);
         return throwError(() => err);
       }),
       finalize(() => this._setLoading(false))
     );
   }
-
- 
-
- 
 
   private _getCacheKey(
     keyword?: string,

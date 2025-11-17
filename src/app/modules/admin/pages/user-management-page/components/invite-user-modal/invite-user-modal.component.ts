@@ -14,6 +14,7 @@ import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/m
 import { USER_ROLES } from '../../../../../../core/constants/user.constants';
 import { UserManagementService } from '../../../../../../core/services/user-management.service';
 import { InviteUserPayload } from '../../../../../../core/models';
+import { NotificationService } from '../../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-invite-user-modal',
@@ -35,6 +36,7 @@ export class InviteUserModalComponent {
 
   private readonly _fb = inject(FormBuilder);
   private readonly userManagementService = inject(UserManagementService);
+  private readonly notificationService = inject(NotificationService);
 
   public readonly inviteForm: FormGroup = this._fb.group({
     users: this._fb.array([this._createUserFormGroup()]),
@@ -72,9 +74,6 @@ export class InviteUserModalComponent {
     }
   }
 
-  /**
-   * Send invitation - status: 'SEND'
-   */
   public onSubmit(): void {
     this.inviteForm.markAllAsTouched();
 
@@ -95,22 +94,23 @@ export class InviteUserModalComponent {
     this.isSubmitting = true;
 
     this.userManagementService.inviteUsers(payload).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log('✅ Success response:', response);
+        this.isSubmitting = false;
+        this.notificationService.success('Invitations sent successfully!');
         this.success.emit();
         this.close.emit();
       },
-      error: () => {
+      error: (error) => {
+        console.error('❌ Error:', error);
         this.isSubmitting = false;
-      },
-      complete: () => {
-        this.isSubmitting = false;
+        this.notificationService.error(
+          'Failed to send invitations. Please try again.'
+        );
       },
     });
   }
 
-  /**
-   * Save as draft - status: 'SAVE'
-   */
   public onSaveProgress(): void {
     this.inviteForm.markAllAsTouched();
 
@@ -131,16 +131,19 @@ export class InviteUserModalComponent {
     this.isSaving = true;
 
     this.userManagementService.inviteUsers(payload).subscribe({
-      next: () => {
-        // Optionally show success message for draft saved
+      next: (response) => {
+        this.isSaving = false;
+        this.notificationService.success(
+          response?.message || 'Draft saved successfully!'
+        );
         this.success.emit();
         this.close.emit();
       },
-      error: () => {
+      error: (error) => {
         this.isSaving = false;
-      },
-      complete: () => {
-        this.isSaving = false;
+        this.notificationService.error(
+          error?.error?.message || 'Failed to save draft. Please try again.'
+        );
       },
     });
   }
