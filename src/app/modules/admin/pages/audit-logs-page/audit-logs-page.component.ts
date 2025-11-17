@@ -1,4 +1,4 @@
-import { Component, signal, computed, OnInit, inject } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { LayoutService } from '../../../../core/services/layout.service';
 import {
   DataTableComponent,
@@ -20,18 +20,18 @@ import {
 export class AuditLogsComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
 
-  public readonly auditLogs = signal<ReadonlyArray<AuditLog>>([]);
+  // TODO: Replace with API integration to fetch audit logs from backend
+  protected readonly auditLogs = signal<ReadonlyArray<AuditLog>>([]);
+  protected readonly isLoading = signal<boolean>(false);
 
-  public readonly isLoading = signal<boolean>(false);
-
-  public readonly columns: ReadonlyArray<TableColumn<AuditLog>> = [
+  protected readonly columns: ReadonlyArray<TableColumn<AuditLog>> = [
     { key: 'fullName', header: 'User' },
     { key: 'timestamp', header: 'Timestamp' },
     { key: 'ipAddress', header: 'IP Address' },
     { key: 'status', header: 'Status' },
   ];
 
-  public readonly filters: ReadonlyArray<TableFilter> = [
+  protected readonly filters: ReadonlyArray<TableFilter> = [
     {
       key: 'status',
       placeholder: 'Status',
@@ -50,15 +50,15 @@ export class AuditLogsComponent implements OnInit {
 
   // TODO: Implement this method when API service is ready
   // private _loadAuditLogs(): void {
-  //   this._isLoading.set(true);
+  //   this.isLoading.set(true);
   //   this._auditLogService.getAuditLogs().subscribe({
   //     next: (logs) => {
-  //       this._auditLogs.set(logs);
-  //       this._isLoading.set(false);
+  //       this.auditLogs.set(logs);
+  //       this.isLoading.set(false);
   //     },
   //     error: (error) => {
   //       console.error('Failed to load audit logs:', error);
-  //       this._isLoading.set(false);
+  //       this.isLoading.set(false);
   //     }
   //   });
   // }
