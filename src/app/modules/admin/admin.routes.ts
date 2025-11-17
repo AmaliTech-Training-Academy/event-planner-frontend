@@ -47,7 +47,8 @@ export const ADMIN_ROUTES: Routes = [
     path: 'audit-logs',
     loadComponent: () =>
       import('./pages/audit-logs-page/audit-logs-page.component').then(
-        (m) => m.AuditLogsComponent)
+        (m) => m.AuditLogsComponent
+      ),
   },
   {
     path: 'settings',
