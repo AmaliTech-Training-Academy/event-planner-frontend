@@ -275,6 +275,9 @@ button.app-button.view-action-btn {
   cursor: pointer;  
 }
 
-button.app-button.tab-button{
+button.app-button.tab{
+  padding: .5rem !important;
+  position: relative;
+  z-index: 25;
 
 }
