@@ -9,7 +9,7 @@ The Event Planner Frontend is a static Angular application hosted on AWS using a
 
 ## Architecture Diagram
 
-![Event Planner Frontend Architecture](./eventplanner-frontend-architecture.png)
+![Event Planner Frontend Architecture](./frontend-architecture.png)
 
 ## AWS Services & Justification
 

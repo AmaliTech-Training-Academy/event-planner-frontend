@@ -266,7 +266,18 @@ button.app-button.logout-button {
  color:#dc2626 !important ;
 }
 
+button.app-button.view-action-btn {
+  display: flex;
+  align-items: center;
+  gap: .7em;
+  border: none;
+  padding: 0;
+  cursor: pointer;  
+}
 
-button.app-button.tab-button{
+button.app-button.tab{
+  padding: .5rem !important;
+  position: relative;
+  z-index: 25;
 
 }

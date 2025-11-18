@@ -8,7 +8,6 @@
 
   <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
     <div class="modal__content">
-      <!-- Error Banner -->
       @if (error()) {
       <div class="error-banner">
         <span class="error-icon">⚠️</span>
@@ -24,8 +23,17 @@
       </div>
       }
 
+      <!-- Hidden File Input -->
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        style="display: none"
+        (change)="onImageSelect($event)"
+      />
+
      <div class="profile-section">
-      <div class="profile-avatar">
+      <div class="profile-avatar" (click)="triggerFileInput()" style="cursor: pointer;">
         <img
           [ngSrc]="profileImage()"
           alt="Profile picture"
@@ -38,9 +46,10 @@
           [extraClass]="'status-button'"
           size="small"
           class="status-button"
+          (click)="triggerFileInput(); $event.stopPropagation()"
         >
           <span class="button-content">
-           
+            <img [src]="statusIcon" alt="Change photo" width="16" height="16" />
           </span>
         </app-button>
       </div>

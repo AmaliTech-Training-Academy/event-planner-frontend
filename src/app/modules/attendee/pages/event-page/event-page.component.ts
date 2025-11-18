@@ -4,11 +4,10 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import {
   EventDetail,
-  EventDetails,
   TicketInfo,
   TicketType,
   VenueImage,
-  VenueSection,
+  VenueSection
 } from '../../../../core/models/event.model';
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { HelpCardComponent } from '../../../../shared/components/help-card/help-card.component';
@@ -17,13 +16,6 @@ import { TicketCardComponent } from '../../../../shared/components/ticket-card/t
 import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
 
-import {
-  MOCK_EVENT_DETAILS,
-  MOCK_HELP_EMAIL,
-  MOCK_TICKETS,
-  MOCK_VENUE_IMAGES,
-  MOCK_VENUE_SECTIONS,
-} from '../../../../core/data/mock-data';
 import { EventsServiceService } from '../../../../core/services/events.service';
 
 
@@ -82,7 +74,6 @@ export class EventPageComponent implements OnInit {
         this.eventDetails.set(value);
       }
     })
-    // this.loadEventData();
   }
 
   protected onRegister(ticket: TicketType): void {

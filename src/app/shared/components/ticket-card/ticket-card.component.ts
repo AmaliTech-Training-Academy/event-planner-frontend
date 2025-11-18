@@ -1,13 +1,13 @@
+import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   output,
-  computed,
-  ChangeDetectionStrategy, 
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { TicketType } from '../../../core/models/event.model';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { TicketInfo, TicketType } from '../../../core/models/event.model';
 
 @Component({
   selector: 'app-ticket-card',
