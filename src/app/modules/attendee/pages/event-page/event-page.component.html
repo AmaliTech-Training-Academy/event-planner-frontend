@@ -10,16 +10,15 @@
       <img [ngSrc]="eventDetails()?.flyerUrl || ''" [alt]="event.title+' cover image'" class="hero-image" fill
         priority />
 
-      @if (true) {
+      @if (eventDetails()?.isPaid) {
       <span class="hero-badge">Paid</span>
+      }
+      @else{
+          <span class="hero-badge">Free</span>
       }
 
       <div class="hero-overlay">
         <h1 class="hero-title">{{ eventDetails()?.title }}</h1>
-
-        <!-- @if (eventDetails()?.description) {
-        <p class="hero-description">{{ eventDetails()?.description }}</p>
-        } -->
 
         <div class="hero-details">
           <span class="hero-detail-item">
@@ -30,7 +29,7 @@
           </span>
           <span class="hero-detail-item">
             <img src="icons/room.png" alt="" class="hero-icon" aria-hidden="true" />
-            "LOCATION"
+            {{eventDetails()?.location}}
           </span>
         </div>
       </div>
@@ -46,7 +45,7 @@
             <p>{{ eventDetails()?.description }}</p>
             <div class="attendees-info">
               <img src="icons/Frame.png" alt="Attendees" class="attendees-icon" />
-              {{ eventDetails()?.capacity ? eventDetails()?.capacity :"Unlimited"}} Attendees
+              {{ eventDetails()?.totalAttendees }} Attendees
             </div>
           </section>
           }

@@ -15,11 +15,7 @@ import { RegistrationModalComponent } from '../../../../shared/components/regist
 import { TicketCardComponent } from '../../../../shared/components/ticket-card/ticket-card.component';
 import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
-
 import { EventsServiceService } from '../../../../core/services/events.service';
-
-
-
 
 
 @Component({

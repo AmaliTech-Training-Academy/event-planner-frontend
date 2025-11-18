@@ -56,9 +56,12 @@ export interface EventDetail {
   id: number;
   title: string;
   description: string;
+  totalAttendees:number;
+  location: string;
   startTime: string; 
   flyerUrl: string;
   capacity: number;
+  isPaid:boolean;
   eventImagesUrl: string[];
   ticketTypes: TicketType[];
 }
