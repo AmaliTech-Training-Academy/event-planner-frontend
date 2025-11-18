@@ -6,16 +6,15 @@ import {
   finalize,
   Observable,
   of,
-  tap,
   take,
+  tap,
 } from 'rxjs';
 import { APP_ROUTES } from '../constants/app-routes.constants';
-import { User } from '../models/user.model';
+import { AUTH_STORAGE } from '../constants/storage.constants';
+import { OtpBodyData } from '../models/auth-response.model';
+import { AuthStorage } from '../models/auth.model';
 import { AuthBackendService } from './backend/auth-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
-import { AUTH_STORAGE } from '../constants/storage.constants';
-import { AuthStorage } from '../models/auth.model';
-import { OtpBodyData } from '../models/auth-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -123,7 +122,7 @@ export class AuthService {
     this.setLoading(true);
     return this.authBackend.resendOtp(email).pipe(
       take(1),
-      tap(() => {}),
+      tap(() => { }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );
@@ -143,20 +142,20 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
-public adminLogout() {
-  this.setLoading(true);
-  return this.authBackend.logout().pipe(
-    take(1),
-    tap(() => {
-      this._loggedIn$.next(false);
-      this._userInfo$.next(null);
-      this.clearAuthStorage();
-      this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
-    }),
-    catchError((err) => this.errorHandlerService.handle(err)),
-    finalize(() => this.setLoading(false))
-  );
-}
+  public adminLogout() {
+    this.setLoading(true);
+    return this.authBackend.logout().pipe(
+      take(1),
+      tap(() => {
+        this._loggedIn$.next(false);
+        this._userInfo$.next(null);
+        this.clearAuthStorage();
+        this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+      }),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
 
   public checkAuthUser(userId: string) {
     this.setLoading(true);
@@ -221,13 +220,15 @@ public adminLogout() {
       // Restore user info from storage
       if (data[AUTH_STORAGE.AUTHENTICATED]) {
         const userData: OtpBodyData = {
-          id: parseInt(data[AUTH_STORAGE.USER_ID], 10), // Convert string to number
+          id: parseInt(data[AUTH_STORAGE.USER_ID], 10),
           email: data[AUTH_STORAGE.EMAIL],
           fullName: data[AUTH_STORAGE.FULL_NAME],
           profilePicture: data[AUTH_STORAGE.PROFILE_PICTURE],
           role: data[AUTH_STORAGE.ROLE],
         };
         this._userInfo$.next(userData);
+        const refreshedAt = data[AUTH_STORAGE.REFRESHED_AT]
+        this.startAutomaticRefresh(refreshedAt)
       }
     }
   }
@@ -237,7 +238,8 @@ public adminLogout() {
     fullName: string,
     profilePicture: string | null,
     email: string,
-    role: string
+    role: string,
+    refreshAt: Date = new Date()
   ) {
     localStorage.setItem(
       AUTH_STORAGE.AUTH,
@@ -248,8 +250,48 @@ public adminLogout() {
         [AUTH_STORAGE.PROFILE_PICTURE]: profilePicture,
         [AUTH_STORAGE.EMAIL]: email,
         [AUTH_STORAGE.ROLE]: role,
+        [AUTH_STORAGE.REFRESHED_AT]: refreshAt,
       })
     );
+  }
+
+  private startAutomaticRefresh(lastRefresh: Date) {
+    const now = new Date();
+    const refreshIntervalMs = 15 * 60 * 1000;
+    const nextRefreshTime = new Date(lastRefresh.getTime() + refreshIntervalMs);
+    const delay = nextRefreshTime.getTime() - now.getTime();
+
+    if (delay <= 0) {
+      this.refreshToken();
+    } else {
+      setTimeout(() => this.refreshToken(), delay);
+    }
+
+  }
+
+
+  private refreshToken() {
+    const newRefreshTime = new Date();
+    const stored = localStorage.getItem(AUTH_STORAGE.AUTH);
+    if (!stored) return;
+
+    const data = JSON.parse(stored) as AuthStorage;
+
+    this.authBackend.refreshToken().pipe(take(1)).subscribe({
+      next: () => {
+        this.saveAuthToStorage(
+          data[AUTH_STORAGE.USER_ID], 
+          data[AUTH_STORAGE.FULL_NAME], 
+          data[AUTH_STORAGE.PROFILE_PICTURE], 
+          data[AUTH_STORAGE.EMAIL], 
+          data[AUTH_STORAGE.ROLE], 
+          newRefreshTime
+        )
+      },
+      error: () => {
+        this.logout()
+      }
+    })
   }
 
   private clearAuthStorage() {

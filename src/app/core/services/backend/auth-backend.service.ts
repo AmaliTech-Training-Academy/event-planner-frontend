@@ -8,7 +8,7 @@ import { User } from '../../models/user.model';
   providedIn: 'root',
 })
 export class AuthBackendService {
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   public login(email: string, password: string) {
     return this.http.post(API_ENDPOINTS.AUTH_LOGIN, { email, password });
@@ -56,9 +56,14 @@ export class AuthBackendService {
   public checkAuthUser(userId: string) {
     return this.http.get<{ data: User }>(API_ENDPOINTS.GET_USER(userId));
   }
+
+  public refreshToken() {
+    return this.http.get(API_ENDPOINTS.AUTH_REFRESH_TOKEN)
+  }
+
   public getAuthenticatedUser() {
     return this.http.get<AuthResponseBody<OtpBodyData>>(
-      API_ENDPOINTS.AUTH_ME // Add this constant
+      API_ENDPOINTS.AUTH_ME
     );
   }
 }

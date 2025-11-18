@@ -8,18 +8,18 @@ import { NotificationService } from './notification.service';
 })
 export class ErrorHandlerService {
 
-  constructor(private readonly notificationService:NotificationService) {}
+  constructor(private readonly notificationService: NotificationService) { }
 
-  
+
 
   handle(error: HttpErrorResponse) {
     let message = 'An unknown error occurred';
 
     if (error.error instanceof ErrorEvent) {
       message = `Network error: ${error.error.message}`;
-    } 
+    }
     else if (error.error?.description) {
-      message = error.error?.description
+      message = error.error?.data?.[0] || error.error?.description
     }
     else {
       // Backend error
@@ -45,7 +45,7 @@ export class ErrorHandlerService {
         default:
           message = error.error?.message || `Unexpected error: ${error.status}`;
       }
-      
+
     }
 
     this.notificationService.error(message);
