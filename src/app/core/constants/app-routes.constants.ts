@@ -14,5 +14,6 @@ export const APP_ROUTES = {
   CREATE_EVENT: '/app/create-event',
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   ADMIN_DASHBOARD: '/admin',
+  DEACTIVATED_MODAL: '/app/account-deactivated',
 };
 
