@@ -1,12 +1,13 @@
-@use 'sass:color';
-@use 'media_query' as *;
-
+@use "sass:color";
+@use "media_query" as *;
 
 :host {
   display: block;
   min-height: 100vh;
   width: 100%;
 }
+
+
 
 .my-events-content {
   max-width: 1280px;
@@ -27,7 +28,7 @@
 }
 
 .page-title {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 2rem;
   font-weight: 700;
   color: #292929;
@@ -84,7 +85,7 @@
 }
 
 .chart-title {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-size: 1rem;
   font-weight: 600;
   color: #292929;
@@ -112,7 +113,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.875rem;
   color: #6b7280;
 
@@ -129,11 +130,11 @@
   flex-shrink: 0;
 
   &.this-year {
-    background-color: #FF6B35;
+    background-color: #ff6b35;
   }
 
   &.last-year {
-    background-color: #9CA3AF;
+    background-color: #9ca3af;
   }
 }
 

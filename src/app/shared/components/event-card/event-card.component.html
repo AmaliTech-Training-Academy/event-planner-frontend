@@ -1,13 +1,9 @@
 <article class="event-card">
-  <img
-    [src]="event().flyerUrl"
-    [alt]="event().title"
-    class="event-card__image"
-  />
+  <img [src]="event().flyerUrl" [alt]="event().title" class="event-card__image" />
 
   <div class="event-card__content">
-   
-    @if (event().ticketPrice) {
+
+    @if (event()?.ticketPrice || event()?.isPaid) {
     <span class="event-card__badge badge--paid">Paid</span>
     } @else {
     <span class="event-card__badge badge--free">Free</span>
@@ -29,26 +25,18 @@
       @if (event()) {
       <span class="event-card__icon-text">
         <img src="icons/users-icon.png" alt="Attendees" class="info-icon" />
-        {{200 }} attendees
+        {{ event()?.attendeesCount || event()?.attendees || 0}} attendees
       </span>
       }
     </div>
 
-   
-     @if (variant() === 'manage') {
-    <app-button
-      [type]="'secondary'"
-      [extraClass]="'event-card__button'"
-      (click)="onManageClick()"
-    >
+
+    @if (variant() === 'manage') {
+    <app-button [type]="'secondary'" [extraClass]="'event-card__button'" (onClick)="onManageClick()">
       Manage Event
     </app-button>
     } @else {
-    <app-button
-      [type]="'secondary'"
-      [extraClass]="'event-card__button'"
-      (click)="navigateToDetails()"
-    >
+    <app-button [type]="'secondary'" [extraClass]="'event-card__button'" (onClick)="navigateToDetails()">
       View Event
     </app-button>
     }

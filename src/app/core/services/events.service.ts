@@ -10,6 +10,7 @@ import { GetEventProps } from '../models/event.model';
   providedIn: 'root'
 })
 export class EventsServiceService {
+  
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 

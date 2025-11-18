@@ -39,7 +39,9 @@ export interface MyEventItem {
     location: string;
     flyerUrl: string;
     attendeesCount: number;
+    attendees?: number;
     isPaid: boolean;
+    ticketPrice?: number;
 }
 
 export interface MyEventStatsResponse {
@@ -48,7 +50,7 @@ export interface MyEventStatsResponse {
 }
 
 export interface DashboardStats {
-  totalEvents: number;
-  totalAttendees: number;
-  totalTicketSales: number;
+    totalEvents: number;
+    totalAttendees: number;
+    totalTicketSales: number;
 }

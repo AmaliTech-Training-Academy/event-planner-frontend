@@ -138,6 +138,8 @@ export interface EventSummary {
   flyerUrl: string;
   ticketPrice: number;
   attendees?:number;
+  attendeesCount?:number;
+   isPaid?: boolean;
 }
 
 export interface EventTypeFilter { label: string, value: string }
