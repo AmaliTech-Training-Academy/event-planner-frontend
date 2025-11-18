@@ -39,7 +39,8 @@ export class AuditManagementService {
     size = 10,
     email?: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
+    status?: string
   ): Observable<AuditLogsResponse> {
     this._loading.next(true);
 
@@ -51,7 +52,9 @@ export class AuditManagementService {
           console.log('✅ Audit logs loaded:', {
             pageNumber: data.pageNumber,
             pageSize: data.pageSize,
-            totalLogs: data.auditListResponse.length,
+            totalElements: data.totalElements,
+            totalPages: data.totalPages,
+            currentPageLogs: data.auditListResponse.length,
           });
         }),
         catchError((err) => {
@@ -88,6 +91,14 @@ export class AuditManagementService {
    * Clear selected audit log
    */
   public clearSelectedAuditLog(): void {
+    this._selectedAuditLog.next(null);
+  }
+
+  /**
+   * Clear cache/data
+   */
+  public clearCache(): void {
+    this._auditLogsData.next(null);
     this._selectedAuditLog.next(null);
   }
 

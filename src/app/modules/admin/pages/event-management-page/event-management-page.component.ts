@@ -37,6 +37,7 @@ import {
   EventManagement,
   EventStatus,
 } from '../../../../core/models/events';
+import { PaginatedResponse } from '../../../../core/models/shared';
 
 interface EventTableData {
   id: number;
@@ -77,6 +78,11 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   private readonly _pageSize = signal<number>(10);
   private readonly _selectedStatus = signal<EventStatus | 'all'>('all');
   private readonly _searchQuery = signal<string>('');
+
+  // Add new signal for search results
+  private readonly _searchResults =
+    signal<PaginatedResponse<EventManagement> | null>(null);
+  private readonly _lastSearchQuery = signal<string>(''); // Track last successful search
 
   private readonly _searchSubject = new Subject<string>();
 
@@ -143,8 +149,29 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   });
 
   public readonly eventTableData = computed<EventTableData[]>(() => {
+    const searchResults = this._searchResults();
+
+    // If we have search results, use them
+    if (searchResults) {
+      return searchResults.content.map((event: EventManagement) => ({
+        id: event.id,
+        name: event.title,
+        organizer: event.organizer,
+        date: new Date(event.startTime).toISOString().split('T')[0],
+        attendees: event.attendeeCount,
+        status: this._mapStatusToTableStatus(event.status),
+        time: new Date(event.startTime).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZoneName: 'short',
+        }),
+        location: 'N/A',
+      }));
+    }
+
+    // Otherwise use normal dashboard data
     const data = this._dashboardData();
-    if (!data) return [];
+    if (!data || !data.eventManagement) return [];
 
     return data.eventManagement.content.map((event: EventManagement) => ({
       id: event.id,
@@ -163,14 +190,27 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   });
 
   public readonly totalPages = computed(() => {
+    const searchResults = this._searchResults();
+    if (searchResults) return searchResults.totalPages;
+
     const data = this._dashboardData();
-    return data?.eventManagement.totalPages ?? 0;
+    return data?.eventManagement?.totalPages ?? 0;
   });
 
   public readonly totalElements = computed(() => {
+    const searchResults = this._searchResults();
+    if (searchResults) return searchResults.totalElements;
+
     const data = this._dashboardData();
-    return data?.eventManagement.totalElements ?? 0;
+    return data?.eventManagement?.totalElements ?? 0;
   });
+  // Add computed property to check if we're in search mode
+  public readonly isSearchMode = computed(() => !!this._searchResults());
+  public readonly hasSearchResults = computed(() => {
+    const searchResults = this._searchResults();
+    return searchResults && searchResults.content.length > 0;
+  });
+  // Add computed property to check if we're in search mode
 
   public readonly isLoading = computed(() => this._isLoading());
   public readonly error = computed(() => this._error());
@@ -222,12 +262,22 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   };
 
   constructor() {
+    // Enhanced debouncing with distinctUntilChanged
     this._searchSubject
-      .pipe(debounceTime(600), takeUntilDestroyed())
+      .pipe(
+        debounceTime(800), // Increased debounce time
+        takeUntilDestroyed()
+      )
       .subscribe((query) => {
-        this._searchQuery.set(query);
-        this._currentPage.set(0);
-        this._loadDashboardData();
+        const trimmedQuery = query.trim();
+        const currentSearch = this._searchQuery();
+
+        // Only update and reload if the search actually changed meaningfully
+        if (trimmedQuery !== currentSearch) {
+          this._searchQuery.set(trimmedQuery);
+          this._currentPage.set(0);
+          this._loadDashboardData();
+        }
       });
 
     this._eventManagementService.loading$
@@ -241,6 +291,17 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         this._dashboardData.set(data);
       });
+
+    // Subscribe to search results from service
+    this._eventManagementService.searchResults$
+      .pipe(takeUntilDestroyed())
+      .subscribe((results) => {
+        this._searchResults.set(results);
+        // Update last search query when we get results
+        if (results) {
+          this._lastSearchQuery.set(this._searchQuery());
+        }
+      });
   }
 
   public ngOnInit(): void {
@@ -253,6 +314,12 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   }
 
   public refreshData(): void {
+    // Clear cache on manual refresh
+    this._eventManagementService.clearCache();
+    this._loadDashboardData();
+  }
+  public onPageChange(page: number): void {
+    this._currentPage.set(page);
     this._loadDashboardData();
   }
 
@@ -272,29 +339,18 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS, event.id]);
   }
 
-  public onPageChange(page: number): void {
-    this._currentPage.set(page);
-    this._loadDashboardData();
-  }
 
-  public onFilterChange(filters: Record<string, string>): void {
-    if (filters['status']) {
-      const status = filters['status'] as EventStatus | 'all';
-      this._selectedStatus.set(status);
-    }
-
-    if (filters['export']) {
-      this._handleExport(filters['export']);
-      return;
-    }
-
-    this._currentPage.set(0);
-    this._loadDashboardData();
-  }
 
   public onSearch(query: string): void {
     this._searchSubject.next(query);
   }
+  public onClearSearch(): void {
+    this._searchQuery.set('');
+    this._currentPage.set(0);
+    this._eventManagementService.clearSearch();
+    this._loadDashboardData();
+  }
+  // Replace your _loadDashboardData method with this fixed version
 
   private _loadDashboardData(): void {
     this._error.set(null);
@@ -303,15 +359,81 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     const size = this._pageSize();
     const status =
       this._selectedStatus() !== 'all' ? this._selectedStatus() : undefined;
-    const search = this._searchQuery().trim() || undefined;
+    const search = this._searchQuery().trim();
 
-    this._eventManagementService
-      .loadDashboardData(page, size, status, search)
-      .subscribe({
+    console.log('🔄 Loading data with params:', { search, status, page, size });
+
+    // Determine if we need to use search endpoint
+    const hasSearch = search && search.length >= 2;
+    const hasStatusFilter = status && status !== 'all';
+
+    if (hasSearch || hasStatusFilter) {
+      // Use search endpoint when we have search query OR status filter
+      const effectiveSearch = hasSearch ? search : ''; // Empty string for status-only filtering
+
+      console.log('🔍 Using search endpoint:', {
+        keyword: effectiveSearch,
+        status,
+        page,
+        size,
+      });
+
+      this._eventManagementService
+        .searchEvents(effectiveSearch, page, size, status)
+        .subscribe({
+          next: (results) => {
+            console.log('✅ Search/filter completed:', {
+              totalElements: results.totalElements,
+              resultsCount: results.content.length,
+            });
+          },
+          error: (err) => {
+            console.error('❌ Search/filter error:', err);
+            this._error.set('Failed to load events');
+          },
+        });
+    } else {
+      // Use normal dashboard endpoint only when no filters at all
+      console.log('📊 Using dashboard endpoint (no filters)');
+      this._eventManagementService.clearSearch();
+
+      this._eventManagementService.loadDashboardData(page, size).subscribe({
+        next: (data) => {
+          console.log('✅ Dashboard loaded:', {
+            totalEvents: data.eventManagement.totalElements,
+          });
+        },
         error: (err) => {
+          console.error('❌ Dashboard error:', err);
           this._error.set('Failed to load dashboard data');
         },
       });
+    }
+  }
+
+  // Also update your onFilterChange method to be more explicit:
+  public onFilterChange(filterEvent: { key: string; value: string }): void {
+    console.log('🔧 Filter change:', filterEvent);
+
+    if (filterEvent.key === 'status') {
+      const newStatus = filterEvent.value as EventStatus | 'all';
+      const currentStatus = this._selectedStatus();
+
+      if (newStatus !== currentStatus) {
+        console.log(`📌 Status changed: ${currentStatus} → ${newStatus}`);
+        this._selectedStatus.set(newStatus);
+        this._currentPage.set(0); // Reset to first page
+
+        // Force reload
+        this._loadDashboardData();
+      } else {
+        console.log('⏭️ Status unchanged, skipping reload');
+      }
+    }
+
+    if (filterEvent.key === 'export') {
+      this._handleExport(filterEvent.value);
+    }
   }
 
   private _onViewEvent(event: EventTableData): void {

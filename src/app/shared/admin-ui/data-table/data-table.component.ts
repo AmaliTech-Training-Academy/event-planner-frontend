@@ -313,17 +313,34 @@ export class DataTableComponent<T extends Record<string, any>> {
     this._searchSubject.next(query);
   }
   public updateFilter(filterKey: string, value: string): void {
+    console.log('DataTable: Filter updated', { filterKey, value }); // Debug log
+
     if (filterKey === 'export' && value) {
       this._handleExport(value);
       return; // Don't add to filters
     }
 
     const filters = new Map(this._activeFilters());
-    filters.set(filterKey, value);
+
+    // Update the filter value
+    if (value === 'all' || value === '') {
+      filters.delete(filterKey); // Remove filter if it's "all" or empty
+    } else {
+      filters.set(filterKey, value);
+    }
+
     this._activeFilters.set(filters);
     this._currentPage.set(1);
 
+    // For server-side pagination, emit the filter change
     if (this.serverSidePagination()) {
+      // Emit the filter change with the current filter state
+      const filterObj: Record<string, string> = {};
+      filters.forEach((val, key) => {
+        filterObj[key] = val;
+      });
+
+      // Emit individual filter change
       this.filterChange.emit({ key: filterKey, value });
     } else {
       this._performBackendSearch(0);

@@ -15,8 +15,10 @@ import {
   TableFilter,
   TableAction,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
-import { AuditLogTableData, mapAuditLogToTableData } from '@app/core/models/users/audit-logs.model';
-
+import {
+  AuditLogTableData,
+  mapAuditLogToTableData,
+} from '@app/core/models/users/audit-logs.model';
 
 @Component({
   selector: 'app-audit-logs',
@@ -42,7 +44,6 @@ export class AuditLogsComponent implements OnInit {
 
   protected readonly auditLogs = computed<AuditLogTableData[]>(() => {
     const data = this._auditLogsData();
-
 
     if (!data || !data.auditListResponse) {
       return [];
@@ -89,6 +90,16 @@ export class AuditLogsComponent implements OnInit {
       options: [],
     },
     {
+      key: 'status',
+      placeholder: 'Filter by Status',
+      options: [
+        { label: 'All', value: '' },
+        { label: 'Success', value: 'success' },
+        { label: 'Failed', value: 'failed' },
+        { label: 'Pending', value: 'pending' },
+      ],
+    },
+    {
       key: 'export',
       placeholder: 'Export As',
       options: [
@@ -99,6 +110,7 @@ export class AuditLogsComponent implements OnInit {
       ],
     },
   ];
+  private readonly _statusFilter = signal<string>('');
 
   protected readonly actions: TableAction<AuditLogTableData>[] = [
     {
@@ -110,7 +122,6 @@ export class AuditLogsComponent implements OnInit {
   ];
 
   constructor() {
-
     this._auditManagementService.loading$
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe((loading) => {
@@ -128,11 +139,9 @@ export class AuditLogsComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-
     this._layoutService.pageTitle.set('Audit Logs');
     this._layoutService.logoSrc.set('icons/audit.png');
     this._layoutService.logoAlt.set('Audit Logs');
-
 
     this._loadAuditLogs();
   }
@@ -143,14 +152,17 @@ export class AuditLogsComponent implements OnInit {
   }
 
   protected onFilterChange(filters: Record<string, string>): void {
-
     if (filters['export'] && filters['export'] !== '') {
       this._handleExport(filters['export']);
       return;
     }
 
-    if (filters['email'] !== undefined) {
+    if ('email' in filters) {
       this._emailFilter.set(filters['email']);
+    }
+
+    if ('status' in filters) {
+      this._statusFilter.set(filters['status']);
     }
 
     this._currentPage.set(0);
@@ -164,7 +176,6 @@ export class AuditLogsComponent implements OnInit {
   }
 
   private _loadAuditLogs(): void {
-
     this._error.set(null);
 
     const page = this._currentPage();
@@ -173,20 +184,17 @@ export class AuditLogsComponent implements OnInit {
     const startDate = this._startDate() || undefined;
     const endDate = this._endDate() || undefined;
 
-
     this._auditManagementService
       .loadAuditLogs(page, size, email, startDate, endDate)
       .subscribe({
-        next: (data) => {
-        },
+        next: (data) => {},
         error: (err) => {
           this._error.set('Failed to load audit logs');
         },
       });
   }
 
-  private _onViewLog(log: AuditLogTableData): void {
-  }
+  private _onViewLog(log: AuditLogTableData): void {}
 
   private _handleExport(format: string): void {
     if (!format) return;
