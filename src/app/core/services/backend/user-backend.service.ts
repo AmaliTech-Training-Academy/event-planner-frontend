@@ -8,6 +8,7 @@ import {
   InviteUserResponse,
   User,
   UserManagementResponse,
+  UserResponse,
   UserSearchResponse,
 } from '../../models/index';
 
@@ -49,29 +50,32 @@ export class UserBackendService {
     });
   }
 
-  public getUserById(userId: string): Observable<{ data: User }> {
-    return this.http.get<{ data: User }>(API_ENDPOINTS.GET_USER(userId));
+  public getUserById(userId: string): Observable<UserResponse> {
+    return this.http.get<UserResponse>(API_ENDPOINTS.GET_USER(userId));
   }
 
-  public createUser(user: Partial<User>): Observable<{ data: User }> {
-    return this.http.post<{ data: User }>(API_ENDPOINTS.CREATE_USER, user);
+  // Changed from { data: User } to UserResponse
+  public createUser(user: Partial<User>): Observable<UserResponse> {
+    return this.http.post<UserResponse>(API_ENDPOINTS.CREATE_USER, user);
   }
 
+  // Changed from { data: User } to UserResponse
   public updateUser(
     userId: string,
     payload: UpdateUserPayload
-  ): Observable<{ data: User }> {
-    return this.http.put<{ data: User }>(
+  ): Observable<UserResponse> {
+    return this.http.put<UserResponse>(
       API_ENDPOINTS.UPDATE_USER(userId),
       payload
     );
   }
 
+  // Changed from { data: User } to UserResponse
   public updateUserWithFormData(
     userId: string,
     formData: FormData
-  ): Observable<{ data: User }> {
-    return this.http.put<{ data: User }>(
+  ): Observable<UserResponse> {
+    return this.http.put<UserResponse>(
       API_ENDPOINTS.UPDATE_USER(userId),
       formData
     );

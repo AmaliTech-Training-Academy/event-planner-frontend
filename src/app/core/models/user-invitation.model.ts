@@ -9,10 +9,11 @@ export interface InviteUserPayload {
 }
 /** Invite user response */
 export interface InviteUserResponse {
+  success: boolean;
+  message: string;
   data: {
     invitationsSent: number;
   };
-  description: string | null;
 }
 
 /** Individual invitation item */

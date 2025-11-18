@@ -363,9 +363,7 @@ export class DataTableComponent<T extends Record<string, any>> {
     data: readonly T[],
     columns: readonly TableColumn<T>[]
   ): void {
-    // For PDF, you'd typically use a library like jsPDF
-    // For now, we'll create a simple HTML representation
-    alert('PDF export requires additional library. Exporting as HTML instead.');
+     alert('PDF export requires additional library. Exporting as HTML instead.');
 
     let html =
       '<html><head><style>table{border-collapse:collapse;width:100%;}th,td{border:1px solid #ddd;padding:8px;text-align:left;}th{background-color:#4CAF50;color:white;}</style></head><body>';
