@@ -77,13 +77,13 @@ export class ExplorePageComponent implements OnInit {
   public popularLocations = signal<PopularLocation[]>([]);
 
 
-  private lastFilters = signal<EventFiltersCache>({
+  private lastFilters : EventFiltersCache ={
     isPaid: 'all',
     past: null,
     date: null,
     searchTerm: '',
     locationTerm: ''
-  });
+  };
 
   constructor(private readonly router: Router, private readonly eventService: EventsServiceService) {
 
@@ -96,24 +96,24 @@ export class ExplorePageComponent implements OnInit {
       let currentPage = this.currentPage();
 
       const filtersChanged =
-        isPaid !== this.lastFilters().isPaid ||
-        past !== this.lastFilters().past ||
-        date !== this.lastFilters().date ||
-        searchTerm !== this.lastFilters().searchTerm ||
-        locationTerm !== this.lastFilters().locationTerm;
+        isPaid !== this.lastFilters.isPaid ||
+        past !== this.lastFilters.past ||
+        date !== this.lastFilters.date ||
+        searchTerm !== this.lastFilters.searchTerm ||
+        locationTerm !== this.lastFilters.locationTerm;
 
       if (filtersChanged) {
         currentPage = 0;
         this.currentPage.set(0);
       }
 
-      this.lastFilters.set({
+      this.lastFilters = {
         isPaid,
         past,
         date,
         searchTerm,
         locationTerm
-      });
+      };
 
 
 
