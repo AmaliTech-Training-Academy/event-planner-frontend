@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { TicketInfo } from '../../../core/models/event.model';
+import { TicketInfo } from '../../../core/models/events';
 
 @Component({
   selector: 'app-ticket-card',

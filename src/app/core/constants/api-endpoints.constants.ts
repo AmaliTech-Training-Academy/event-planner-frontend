@@ -50,4 +50,7 @@ export const API_ENDPOINTS = {
   EVENT_DETAILS: (eventId: number): string => `${BASE}/events/${eventId}`,
   UPDATE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
+ 
+
+  SEARCH_EVENTS: `${BASE}/events/search`,
 } as const;

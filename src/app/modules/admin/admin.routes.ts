@@ -31,15 +31,23 @@ export const ADMIN_ROUTES: Routes = [
     path: 'events/:id',
     loadComponent: () =>
       import(
-        '../admin/pages/event-management-page/components/event-details/event-details.component'
+        '../admin/pages/event-management-page/components/event-details-page/event-details.component-page'
       ).then((m) => m.EventDetailsPageComponent),
-    // canActivate: [AdminGuard],
   },
+
   {
     path: 'saved-invites',
     loadComponent: () =>
       import('./pages/saved-invite/saved-invite-page.component').then(
         (m) => m.SavedInviteComponent
+      ),
+    // canActivate: [AdminGuard], // Consider adding this for consistency
+  },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./pages/admin-settings/admin-settings.component').then(
+        (m) => m.AdminSettingsComponent
       ),
   },
   {
@@ -49,5 +57,5 @@ export const ADMIN_ROUTES: Routes = [
         (m) => m.TransactionsPageComponent
       ),
     // canActivate: [AdminGuard],
-  }
+  },
 ];

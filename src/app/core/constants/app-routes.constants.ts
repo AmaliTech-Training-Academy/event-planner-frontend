@@ -22,4 +22,5 @@ export const APP_ROUTES = {
   ADMIN_EVENT_DETAILS: '/admin/events/:id',
   ADMIN_ORGANIZERS: '/admin/organizers',
   ACCEPT_INVITE: '/auth/invitation/accept', // ADD THIS LINE
+  MANAGE_EVENT: '/app/manage-event',
 };
