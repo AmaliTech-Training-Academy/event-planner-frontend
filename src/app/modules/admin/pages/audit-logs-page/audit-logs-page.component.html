@@ -1,0 +1,15 @@
+<app-data-table
+  tableTitle="Audit Logs"
+  [data]="auditLogs()"
+  [columns]="columns"
+  [filters]="filters"
+  [showAvatar]="true"
+  [searchable]="true"
+  searchPlaceholder="Search users..."
+  [showCheckboxes]="true"
+  [showActionLabels]="false"
+  [actions]="[]"
+  [itemsPerPage]="10"
+  [serverSidePagination]="false"
+  [totalItems]="auditLogs().length"
+></app-data-table>
