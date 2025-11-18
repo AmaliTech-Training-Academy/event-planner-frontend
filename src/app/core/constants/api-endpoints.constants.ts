@@ -22,10 +22,7 @@ export const API_ENDPOINTS = {
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
   AUTH_ME: `${BASE}/auth/me`,
   UPDATE_PROFILE: (userId: string): string => `${BASE}/users/${userId}`,
-  UPLOAD_AVATAR: (userId: string): string =>
-    `${BASE}/users/${userId}/avatar`, 
-
-
+  UPLOAD_AVATAR: (userId: string): string => `${BASE}/users/${userId}/avatar`,
 
   DEACTIVATE_USER: (userId: string | number) =>
     `${BASE}/users/${userId}/deactivate`,
@@ -33,14 +30,13 @@ export const API_ENDPOINTS = {
     `${BASE}/users/${userId}/profile-image`,
   SEARCH_USERS: `${BASE}/users/search`,
 
-    EVENT_MANAGEMENT: `${BASE}/events/event-management`,
+  EVENT_MANAGEMENT: `${BASE}/events/event-management`,
   EVENT_DETAILS: (eventId: number) => `${BASE}/events/${eventId}`,
   GET_ALL_EVENTS: `${BASE}/events`,
   CREATE_EVENT: `${BASE}/events`,
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
-
-}
+};
 
 export const EVENTS_API_ENDPOINTS = {
   GET_EVENTS: `${BASE}/events/explore`,
