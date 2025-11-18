@@ -1,54 +1,165 @@
+@use 'sass:color';
+@use 'media_query' as *;
+
+
 :host {
   display: block;
-  background-color: #ffffff;
-  min-height: 100vh; 
+  min-height: 100vh;
+  width: 100%;
 }
 
 .my-events-content {
-  max-width: 1440px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 2.5rem 4rem; 
+  padding: 2rem 2.5rem 4rem;
+
+  @include sm {
+    padding: 1rem 1rem 2rem;
+  }
 }
 
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem; 
+  margin-bottom: 1rem;
+
+  @include sm {
+    margin-bottom: 0.5rem;
+  }
 }
 
 .page-title {
   font-family: 'Lato', sans-serif;
-  font-size: 2.5rem; 
+  font-size: 2rem;
   font-weight: 700;
   color: #292929;
   margin: 0;
+
+  @include sm {
+    font-size: 1.5rem;
+  }
 }
 
-.filter-link {
-  font-family: 'Lato', sans-serif;
-  font-size: 1rem; 
-  font-weight: 500;
-  color: #0787c2; 
-  text-decoration: none;
-  transition: opacity 0.2s ease;
-  cursor: pointer;
+.stat-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 0.5rem;
 
-  &:hover {
-    opacity: 0.8;
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
   }
+
+  @include sm {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+.chart-section {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  @include sm {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+
+  @include sm {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
+.chart-title {
+  font-family: 'Lato', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #292929;
+  margin: 0;
+  padding-right: 0.75rem;
+  border-right: 1px solid #e5e7eb;
+
+  @include sm {
+    font-size: 0.9375rem;
+    padding-right: 0.5rem;
+  }
+}
+
+.chart-legend {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+
+  @include sm {
+    gap: 1rem;
+  }
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: #6b7280;
+
+  @include sm {
+    font-size: 0.8125rem;
+  }
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+
+  &.this-year {
+    background-color: #FF6B35;
+  }
+
+  &.last-year {
+    background-color: #9CA3AF;
+  }
+}
+
+.chart-container {
+  height: 300px;
+
+  @include sm {
+    height: 250px;
+  }
+}
+
+.events-section {
+  margin-top: 1rem;
 }
 
 .event-grid {
   display: grid;
-  gap: 1.5rem; 
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
 
-  @media (min-width: 640px) {
+  @include md {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(3, 1fr);
+  @include sm {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
