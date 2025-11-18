@@ -1,6 +1,5 @@
 import { USER_ROLES } from '../constants/user.constants';
 
-/** User model (frontend representation) */
 export interface User {
   userId: number;
   name?: string;
