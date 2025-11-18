@@ -90,7 +90,6 @@ export function mapAuditLogToTableData(
 
   const avatarSeed = log.id || log.email || 'default';
   const avatarIndex = Math.floor(Math.random() * 70) + 1;
-  const avatarUrl = `https://i.pravatar.cc/150?img=${avatarIndex}`;
 
   return {
     id: log.id || '',

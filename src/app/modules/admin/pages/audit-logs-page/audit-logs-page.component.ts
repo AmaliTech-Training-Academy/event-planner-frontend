@@ -87,7 +87,6 @@ export class AuditLogsComponent implements OnInit {
     },
   ];
 
-  // Remove actions array since status is now in the column
   protected readonly actions = [];
 
   constructor() {
