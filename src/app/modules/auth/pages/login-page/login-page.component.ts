@@ -15,7 +15,7 @@ import { SecureTextComponent } from '../../../../shared/ui/secure-text/secure-te
 import { SocialLoginComponent } from '../../../../shared/ui/social-login-button/social-login-button.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { CheckboxComponent } from '../../../../shared/ui/checkbox/checkbox.component';
-
+import {AccountDeactivatedModalComponent} from "../../../../shared/account-deactivated-modal/account-deactivated-modal.component";
 // Import reusable UI components
 
 interface LoginForm {
@@ -37,11 +37,13 @@ interface LoginForm {
     SecureTextComponent,
     SocialLoginComponent,
     CheckboxComponent,
+    AccountDeactivatedModalComponent, 
   ],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent {
+   showDeactivatedModal = signal<boolean>(false);
   protected form: FormGroup<LoginForm>;
   protected isPasswordHidden = signal(true);
   protected hasAttemptedSubmit = signal(false);
@@ -111,4 +113,9 @@ export class LoginPageComponent {
   private capitalize(text: string): string {
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
+
+   onCloseDeactivatedModal(): void {
+    this.showDeactivatedModal.set(false);
+  }
 }
+

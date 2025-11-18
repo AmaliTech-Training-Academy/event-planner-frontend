@@ -63,4 +63,9 @@
       <a [routerLink]="APP_ROUTES.SIGNUP">Sign Up</a>
     </p>
   </div>
+@if (showDeactivatedModal()) {
+  <app-account-deactivated-modal
+    (close)="showDeactivatedModal.set(false)"
+  />
+}
 </div>
