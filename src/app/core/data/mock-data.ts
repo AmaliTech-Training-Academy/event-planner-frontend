@@ -7,7 +7,9 @@ import {
   SearchLocation,
   PopularLocation,
   TabToggle,
-} from '../models/events/index';
+  EventTypeFilter,
+  EventSummary,
+} from '../models/event.model';
 
 // import { UserCardData } from '../models/user.model';
 import { LineSeriesConfig } from '../models/chart.model';
@@ -24,7 +26,7 @@ export const MOCK_EVENT_DETAILS: EventDetails = {
   startDate: eventStartDate,
   location: 'Silicon Valley Convention Center',
   heroImageUrl: 'images/img.png',
-  
+
   description:
     'Join us for the most anticipated tech event of the year, bringing together industry leaders, innovators, and tech enthusiasts. The Tech Innovation Summit 2025 will showcase cutting-edge technologies, breakthrough innovations, and insights from world-renowned experts.',
   attendeesCount: '5000+',
@@ -87,7 +89,7 @@ export const MOCK_HELP_EMAIL: string = 'support@techevent.com';
 
 
 export const MOCK_EVENT_CARDS: EventCard[] = [
- 
+
   {
     id: 'evt123',
     title: 'Tech Innovation Summit 2025',
@@ -197,7 +199,7 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 2200,
   },
 
-  
+
   {
     id: 'evt134',
     title: 'Cloud Computing Summit',
@@ -208,7 +210,7 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 3000,
   },
 
-  
+
   {
     id: 'evt138',
     title: 'IoT World Congress',
@@ -237,7 +239,7 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 800,
   },
 
-  
+
   {
     id: 'evt141',
     title: 'Community Code & Coffee',
@@ -314,14 +316,25 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
 
 
 export const MOCK_EVENT_TOGGLES: TabToggle[] = [
-  { key: 'upcoming', label: 'Upcoming events' },
-  { key: 'past', label: 'Past events' },
+  { key: 'upcoming', label: 'Upcoming events', value: false },
+  { key: 'past', label: 'Past events', value: true },
 ];
 
-export const MOCK_EVENT_TYPE_OPTIONS: string[] = [
-  'All Events',
-  'Paid Events',
-  'Free Events',
+
+
+export const MOCK_EVENT_TYPE_OPTIONS: EventTypeFilter[] = [
+  {
+    label: 'All Events',
+    value: 'all'
+  },
+  {
+    label: 'Paid Events',
+    value: 'paid'
+  },
+  {
+    label: 'Free Events',
+    value: 'free'
+  },
 ];
 
 export const MOCK_RECENT_SEARCHES: SearchLocation[] = [
@@ -340,32 +353,35 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
 ];
 
 
-export const MOCK_MY_EVENTS_CARDS: EventCard[] = [
+export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
   {
-    id: 'evt123',
+    id: 1,
+    ticketPrice: 33,
+    description: "",
     title: 'Tech Innovation Summit 2025',
-    date: eventStartDate,
+    startTime: '',
     location: 'Silicon Valley, CA',
-    imageUrl: 'images/event1.jpg', 
-    isPaid: true,
+    flyerUrl: 'images/event1.jpg',
     attendees: 5000,
   },
   {
-    id: 'evt124',
+    id: 2,
+    ticketPrice: 33,
+    description: "",
     title: 'Community Code & Coffee',
-    date: new Date('2025-05-10T00:00:00Z'),
+    startTime: '',
     location: 'Austin, TX',
-    imageUrl: 'images/event2.jpg', 
-    isPaid: true,
+    flyerUrl: 'images/event2.jpg',
     attendees: 150,
   },
   {
-    id: 'evt125',
+    id: 3,
     title: 'AI World Conference',
-    date: new Date('2025-06-20T00:00:00Z'),
+    startTime: '',
     location: 'New York, NY',
-    imageUrl: 'images/event3.jpg', 
-    isPaid: true,
+    flyerUrl: 'images/event3.jpg',
+    ticketPrice: 400,
+    description: "",
     attendees: 2500,
   },
 ];

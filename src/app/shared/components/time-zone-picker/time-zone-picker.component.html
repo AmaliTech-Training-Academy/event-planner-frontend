@@ -1,9 +1,9 @@
 <div class="selector">
     <div class="options" role="list">
-        @for (timezone of timeZones; track $index) {
+        @for (timezone of timeZones(); track $index) {
             <button (click)="selectTimeZone(timezone)"  class="option" role="listitem">
-                <p>{{timezone.gmt}}</p>
-                <p>{{timezone.name}}</p>
+                <p>{{timezone.gmtOffset}}</p>
+                <p>{{timezone.displayName}}</p>
             </button>
 
             @if ($index != timeZones.length-1) {

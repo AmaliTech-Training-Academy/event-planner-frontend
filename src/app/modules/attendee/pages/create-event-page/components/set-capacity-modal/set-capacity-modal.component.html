@@ -8,7 +8,7 @@
                     reached.
                 </p>
             </div>
-            <app-input [formControlName]="EVENT_FORM_FIELDS.CAPACITY" type="text" placeholder="E.g., 20"></app-input>
+            <app-input [value]="capacity()?.toString()|| '0'" [formControlName]="EVENT_FORM_FIELDS.CAPACITY" type="number" placeholder="E.g., 20" [errorMessage]="getError(getControl(EVENT_FORM_FIELDS.CAPACITY))"></app-input>
         </div>
         <div class="actions">
             <app-button (onClick)="removeCapacityLimit()" type='secondary'>Remove Limit</app-button>

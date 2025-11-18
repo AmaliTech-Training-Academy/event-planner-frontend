@@ -1,5 +1,3 @@
-// core/constants/api-endpoints.constants.ts
-// core/constants/api-endpoints.constants.ts
 import { environment } from '../../../environments/environment';
 
 const API_VERSION = 'v1';
@@ -25,15 +23,30 @@ export const API_ENDPOINTS = {
   AUTH_ME: `${BASE}/auth/me`,
   DEACTIVATE_USER: (userId: string | number) =>
     `${BASE}/users/${userId}/deactivate`,
-
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
   SEARCH_USERS: `${BASE}/users/search`,
 
-  EVENT_MANAGEMENT: `${BASE}/events/event-management`,
+    EVENT_MANAGEMENT: `${BASE}/events/event-management`,
   EVENT_DETAILS: (eventId: number) => `${BASE}/events/${eventId}`,
   GET_ALL_EVENTS: `${BASE}/events`,
   CREATE_EVENT: `${BASE}/events`,
+  UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+  DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+}
+
+export const EVENTS_API_ENDPOINTS = {
+  GET_EVENTS: `${BASE}/events/explore`,
+  GET_EVENT: (id: string): string => `${BASE}/events/${id}`,
+  CREATE_EVENT: `${BASE}/events`,
+  GET_EVENT_TYPES: `${BASE}/event_types`,
+  GET_EVENT_TYPE: (id: number): string => `${BASE}/event_types/${id}`,
+  CREATE_EVENT_TYPE: `${BASE}/event_types`,
+  GET_TIME_ZONES: `${BASE}/timezones`,
+  GET_MEETING_TYPES: `${BASE}/event_meeting_types`,
+  EVENT_MANAGEMENT: `${BASE}/events/event-management`,
+  EVENT_DETAILS: (eventId: number) => `${BASE}/events/${eventId}`,
+  GET_ALL_EVENTS: `${BASE}/events`,
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
 
