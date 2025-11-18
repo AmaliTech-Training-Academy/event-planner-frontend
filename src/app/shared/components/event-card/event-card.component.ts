@@ -1,5 +1,5 @@
-import { Component, input, output, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { EventSummary } from '../../../core/models/event.model';

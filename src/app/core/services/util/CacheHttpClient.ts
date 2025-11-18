@@ -8,9 +8,9 @@ import { tap } from 'rxjs/operators';
 })
 export class CacheHttpService {
     
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
-  get<T>(url: string, expiryMs: number = 180000): Observable<T> {
+  public get<T>(url: string, expiryMs: number = 180000): Observable<T> {
     const cacheKey = `cache::${url}`;
     const cached = localStorage.getItem(cacheKey);
 
@@ -34,7 +34,7 @@ export class CacheHttpService {
     );
   }
 
-  clearCache(url?: string): void {
+  public clearCache(url?: string): void {
     if (url) {
       localStorage.removeItem(`cache::${url}`);
     } else {

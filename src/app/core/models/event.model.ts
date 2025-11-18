@@ -383,8 +383,6 @@ export function mapEventManagementToEventCard(
   };
 }
 
-
-
 export interface RegisterEventBody {
   ticketTypeId: number,
   numberOfTickets: number,

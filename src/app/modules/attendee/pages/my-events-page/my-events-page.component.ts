@@ -12,6 +12,7 @@ import { LineSeriesConfig } from '../../../../core/models/chart.model';
 import { EventCard } from '../../../../core/models/events';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { LineChartComponent } from '../../../admin/pages/dashboard-page/components/line-chart/line-chart.component';
 
 @Component({
