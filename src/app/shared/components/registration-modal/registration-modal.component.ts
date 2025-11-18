@@ -11,7 +11,7 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
 import { InputComponent } from '../../ui/input/input.component';
 import { QuantityInputComponent } from '../../ui/quantity-input/quantity-input.component';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { RegistrationInfo } from '../../../core/models/event.model';
+import { RegistrationInfo } from '../../../core/models/events';
 
 @Component({
   selector: 'app-registration-modal',

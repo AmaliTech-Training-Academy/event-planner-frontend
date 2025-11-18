@@ -227,9 +227,14 @@ export class UserManagementService {
         ...response,
         data: normalizeUserStatus(response.data),
       })),
-      tap((response) =>
-        this._users$.next([...this._users$.getValue(), response.data])
-      ),
+      tap((response) => {
+        const updatedUsers = [...this._users$.getValue(), response.data];
+        this._users$.next(updatedUsers);
+        
+        // Update cards instantly based on the new user
+        this._updateCardsFromUserList(updatedUsers);
+        this.invalidateCache();
+      }),
       catchError((err) => {
         this._errorHandler.handle(err);
         return throwError(() => err);
@@ -257,6 +262,8 @@ export class UserManagementService {
           );
         this._users$.next(users);
 
+        // Update cards instantly based on updated user list
+        this._updateCardsFromUserList(users);
         this.invalidateCache();
       }),
       catchError((err) => {
@@ -286,6 +293,8 @@ export class UserManagementService {
           );
         this._users$.next(users);
 
+        // Update cards instantly based on updated user list
+        this._updateCardsFromUserList(users);
         this.invalidateCache();
       }),
       catchError((err) => {
@@ -312,6 +321,8 @@ export class UserManagementService {
         });
         this._users$.next(updatedUsers);
 
+        // Update cards instantly based on the status change
+        this._updateCardsFromUserList(updatedUsers);
         this.invalidateCache();
       }),
       catchError((err) => {
@@ -328,6 +339,8 @@ export class UserManagementService {
       tap((response) => {
         if (response.data.invitationsSent > 0) {
           this.invalidateCache();
+          // Refresh users to update cards
+          this.fetchAllUsers(this._currentPage$.getValue());
         }
       }),
       catchError((err) => {
@@ -377,6 +390,32 @@ export class UserManagementService {
 
   private _invalidateSearchCache(): void {
     this._searchCache.clear();
+  }
+
+  /**
+   * Calculate and update user cards based on current user list
+   * This provides instant updates when users are modified
+   */
+  private _updateCardsFromUserList(users: User[]): void {
+    const totalUsers = users.length;
+    const totalOrganizers = users.filter(
+      (u) => (u.role === 'ORGANISER' || u.role === 'CO_ORGANIZER') && u.status === 'Active'
+    ).length;
+    const totalAttendees = users.filter(
+      (u) => u.role === 'ATTENDEE' && u.status === 'Active'
+    ).length;
+    const totalDeactivatedUsers = users.filter(
+      (u) => u.status === 'Inactive'
+    ).length;
+
+    this._userStats = {
+      totalUsers,
+      totalOrganizers,
+      totalAttendees,
+      totalDeactivatedUsers,
+    };
+
+    this._updateUserCards();
   }
 
   private _updateUserCards(data?: any): void {

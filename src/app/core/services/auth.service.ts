@@ -35,6 +35,7 @@ export class AuthService {
     this.onload();
   }
 
+
   public login(email: string, password: string) {
     this.setLoading(true);
 
@@ -110,7 +111,8 @@ export class AuthService {
             userData.role
           );
         }
-        this.router.navigate([APP_ROUTES.LANDING_PAGE]);
+        // Route to Explore page instead
+        this.router.navigate([APP_ROUTES.EXPLORE]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
