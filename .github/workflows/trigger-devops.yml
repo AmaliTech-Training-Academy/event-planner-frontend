@@ -2,9 +2,9 @@ name: Trigger DevOps Pipeline
 
 on:
   push:
-    branches: [dev, staging, prod]
+    branches: [dev, staging, prod, temporal-deploy]
   # pull_request:
-  #   branches: [dev, staging, prod]
+  #   branches: [dev, staging, prod, temporal-deploy]
 
 jobs:
   trigger-devops:
