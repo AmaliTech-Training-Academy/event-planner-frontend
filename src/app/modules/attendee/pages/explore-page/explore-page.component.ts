@@ -11,6 +11,7 @@ import { TabToggleComponent } from '../../../../shared/components/tab-toggle/tab
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 
 import {
+  EventFiltersCache,
   EventTypeFilter,
   GetEventProps,
   GetEventsResponse,
@@ -49,7 +50,7 @@ import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagi
     CommonModule,
     FormsModule,
     PaginationComponent
-],
+  ],
   templateUrl: './explore-page.component.html',
   styleUrl: './explore-page.component.scss',
 })
@@ -75,6 +76,15 @@ export class ExplorePageComponent implements OnInit {
   public recentSearches = signal<SearchLocation[]>([]);
   public popularLocations = signal<PopularLocation[]>([]);
 
+
+  private lastFilters = signal<EventFiltersCache>({
+    isPaid: 'all',
+    past: null,
+    date: null,
+    searchTerm: '',
+    locationTerm: ''
+  });
+
   constructor(private readonly router: Router, private readonly eventService: EventsServiceService) {
 
     effect(() => {
@@ -83,7 +93,29 @@ export class ExplorePageComponent implements OnInit {
       const date = this.selectedDate();
       const searchTerm = this.searchQuery();
       const locationTerm = this.locationTerm();
-      const currentPage = this.currentPage();
+      let currentPage = this.currentPage();
+
+      const filtersChanged =
+        isPaid !== this.lastFilters().isPaid ||
+        past !== this.lastFilters().past ||
+        date !== this.lastFilters().date ||
+        searchTerm !== this.lastFilters().searchTerm ||
+        locationTerm !== this.lastFilters().locationTerm;
+
+      if (filtersChanged) {
+        currentPage = 0;
+        this.currentPage.set(0);
+      }
+
+      this.lastFilters.set({
+        isPaid,
+        past,
+        date,
+        searchTerm,
+        locationTerm
+      });
+
+
 
       this.searchEvents(isPaid, past, date, searchTerm, locationTerm, currentPage);
     });

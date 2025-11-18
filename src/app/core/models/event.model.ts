@@ -363,3 +363,12 @@ export function mapEventManagementToEventCard(
     attendees: event.attendeeCount,
   };
 }
+
+
+export   interface EventFiltersCache {
+  isPaid: string | null;
+  past: boolean | null;
+  date: Date | null;
+  searchTerm: string;
+  locationTerm: string;
+}
