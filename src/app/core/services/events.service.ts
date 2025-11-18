@@ -47,7 +47,7 @@ export class EventsServiceService {
       take(1),
       tap((response) => {
         this.router.navigate([APP_ROUTES.CREATE_EVENT_SUCCESS], {
-          state: { eventResponse: response}
+          state: { eventResponse: response }
         });
 
       }),
@@ -100,8 +100,31 @@ export class EventsServiceService {
     )
   }
 
+  public myEvents(page: number = 0) {
+    const params = new URLSearchParams();
+
+    params.append('page', page.toString())
+
+    this.setLoading(true)
+    return this.eventBackendService.getMyEvents(params).pipe(
+      take(1),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
+  public myEventOverview() {
+    this.setLoading(true)
+    return this.eventBackendService.myEventOverview().pipe(
+      take(1),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
   private setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);
   }
+
 
 }
