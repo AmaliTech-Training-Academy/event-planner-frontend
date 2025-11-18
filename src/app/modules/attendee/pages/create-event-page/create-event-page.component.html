@@ -1,7 +1,13 @@
 <form [formGroup]="form" method="post" class="wrapper">
     <div class="left-panel">
+        <app-upload-event-flyer (selectedFlyer)="onFlyerImageSelected($event)"
+            [flyerPreview]="flyerPreview"></app-upload-event-flyer>
         <div class="title-container">
-            <input autofocus type="text" [formControlName]="EVENT_FORM_FIELDS.TITLE" placeholder="Add Event Title" class="title">
+            <section>
+                <input type="text" [formControlName]="EVENT_FORM_FIELDS.TITLE" placeholder="Add Event Title"
+                    class="title">
+                <app-form-error [message]="getError(form.get(EVENT_FORM_FIELDS.TITLE))"></app-form-error>
+            </section>
             <div class="time-container">
                 <div class="day-container">
                     <p>Select event type:</p>
@@ -40,19 +46,35 @@
             </div>
             @if (meetingType?.value === MEETING_TYPES.IN_PERSON) {
             <div class="in-person-details" [formGroupName]="EVENT_FORM_FIELDS.IN_PERSON_DETAILS">
-                <app-input placeholder="Type location here" iconSrc="icons/pin.svg" type="text"
-                    label="Add event location" [formControlName]="EVENT_FORM_FIELDS.LOCATION"></app-input>
+                <div class="field">
+                    <app-location-search [error]="inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION)?.invalid && 
+                                        inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION)?.touched"
+                        label="Add event location" placeholder="Type location here"
+                        [formControlName]="EVENT_FORM_FIELDS.LOCATION"></app-location-search>
+                    <app-form-error
+                        [message]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.LOCATION))"></app-form-error>
+                </div>
                 <div class="field">
                     <label for="description">Add event description</label>
-                    <textarea name="description" [formControlName]="EVENT_FORM_FIELDS.DESCRIPTION" id="description"
+                    <textarea [ngClass]="{
+                        'error': inPersonDetails.get(EVENT_FORM_FIELDS.DESCRIPTION)?.invalid && 
+                                        inPersonDetails.get(EVENT_FORM_FIELDS.DESCRIPTION)?.touched
+                      }" name="description" [formControlName]="EVENT_FORM_FIELDS.DESCRIPTION" id="description"
                         placeholder="Type description here"></textarea>
+                    <app-form-error
+                        [message]="getError(inPersonDetails.get(EVENT_FORM_FIELDS.DESCRIPTION))"></app-form-error>
                 </div>
                 <div class="upload-continer">
                     <div class="image-container">
                         <p>Upload up to 5 images of venue</p>
                         <div class="preview-container">
                             @for (image of inPersonDetails.get(EVENT_FORM_FIELDS.IMAGES)?.value; track $index) {
-                            <img [src]="getImageSrc(image)" alt="" class="preview" />
+                            <div class="preview">
+                                <img [src]="getImageSrc(image)" alt="" />
+                                <button (click)="removeImage($index)">
+                                    <img src="icons/close_red.svg" alt="" />
+                                </button>
+                            </div>
                             }
                             <input #venueFileInput type="file" accept="image/*" (change)="onVenueImageSelected($event)"
                                 multiple hidden />
@@ -72,6 +94,16 @@
             }
             @if (meetingType?.value === MEETING_TYPES.VIRTUAL) {
             <div class="virtual-details" [formGroupName]="EVENT_FORM_FIELDS.VIRTUAL_DETAILS">
+                <div class="field">
+                    <label for="description">Add event description</label>
+                    <textarea [ngClass]="{
+                        'error': virtualDetails.get(EVENT_FORM_FIELDS.DESCRIPTION)?.invalid && 
+                                        virtualDetails.get(EVENT_FORM_FIELDS.DESCRIPTION)?.touched
+                      }" name="description" [formControlName]="EVENT_FORM_FIELDS.DESCRIPTION" id="description"
+                        placeholder="Type description here"></textarea>
+                    <app-form-error
+                        [message]="getError(virtualDetails.get(EVENT_FORM_FIELDS.DESCRIPTION))"></app-form-error>
+                </div>
                 <p>Choose Virtual Option</p>
                 <app-button (click)="toggleConnectZoomModal()" type="plain">
                     <div class="button-content">
@@ -96,17 +128,19 @@
             <app-event-options-container [form]="form" [checked]="checked" (openCapacityModal)="toggleCapacityModal()"
                 (openPriceModal)="togglePriceModal()"
                 (requireApprovalChange)="onToggle()"></app-event-options-container>
-            <app-button buttonType="button" type="primary" [fullWidth]="true" (onClick)="createEvent()">
+            <app-button [disabled]="loading" buttonType="button" type="primary" [fullWidth]="true" (onClick)="createEvent()">
                 Create Event
             </app-button>
         </div>
 
         @if (showPriceModal) {
-        <app-set-price-modal (onSetPrice)="setPrice()" (closeModal)="togglePriceModal()"></app-set-price-modal>
+        <app-set-price-modal [price]="form.get(EVENT_FORM_FIELDS.PRICE)?.value" (onSetPrice)="setPrice()"
+            (closeModal)="togglePriceModal()"></app-set-price-modal>
         }
 
         @if (showCapacityModal) {
-        <app-set-capacity-modal (removeCapacity)="removeCapacityLimit()" (setCapacity)="setCapacityLimit()"
+        <app-set-capacity-modal [capacity]="form.get(EVENT_FORM_FIELDS.CAPACITY)?.value"
+            (removeCapacity)="removeCapacityLimit()" (setCapacity)="setCapacityLimit()"
             (close)="toggleCapacityModal()"></app-set-capacity-modal>
         }
 

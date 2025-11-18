@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { EventTypeFilter } from '../../../core/models/event.model';
 
 @Component({
   selector: 'app-filter-dropdown',
@@ -8,15 +9,15 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './filter-dropdown.component.scss'
 })
 export class FilterDropdownComponent {
-  @Input() public options: string[] = [];
+  @Input() public options: EventTypeFilter[] = [];
   
  
-  @Input() public selectedOption: string = ''; 
+  @Input() public selectedOption: EventTypeFilter|null = null; 
   
-  @Output() public optionSelected = new EventEmitter<string>();
+  @Output() public optionSelected = new EventEmitter<EventTypeFilter>();
 
   
-  public onOptionSelect(option: string): void {
+  public onOptionSelect(option: EventTypeFilter): void {
     this.optionSelected.emit(option);
   }
 }

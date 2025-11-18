@@ -1,8 +1,8 @@
 <div class="tab-toggle-container">
   @for (tab of toggles(); track tab.key) {
   <app-button
-    [type]="activeToggle() === tab.key ? 'primary' : 'secondary'"
-    (click)="onTabClick(tab.key)"
+    [type]="activeToggle() === tab.value ? 'primary' : 'secondary'"
+    (click)="onTabClick(tab.value)"
     [extraClass]="'tab-button'"
   >
     {{ tab.label }}
