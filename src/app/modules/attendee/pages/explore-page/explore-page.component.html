@@ -11,14 +11,12 @@
 
         <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
           <div class="filter-button-wrapper">
-            <app-location-search (focus)="onFocusHandler()" [(ngModel)]="locationTerm"
-              label="" />
+            <app-location-search (focus)="onFocusHandler()" [(ngModel)]="locationTerm" label="" />
           </div>
 
           @if (showLocationDropdown()) {
-          <app-location-dropdown
-            (close)="closeLocationDropdown()" (locationSelected)="onLocationSelected($event)"
-           ></app-location-dropdown>
+          <app-location-dropdown (close)="closeLocationDropdown()"
+            (locationSelected)="onLocationSelected($event)"></app-location-dropdown>
           }
         </div>
 
@@ -67,16 +65,26 @@
       </div>
     </div>
 
-    <app-tab-toggle [toggles]="eventToggles()" [activeToggle]="activeToggle()"
+    <div class="app-tab-toggle-container">
+      <app-tab-toggle [toggles]="eventToggles()" [activeToggle]="activeToggle()"
       (tabChange)="onTabChange($event)"></app-tab-toggle>
+      @if(hasActiveFilters()){
+        <app-button (onClick)="clearSearchFilters()">Clear Filters</app-button>
+      }
+    </div>
 
     <section class="event-section">
-      <div class="event-grid">
-        @for (event of allEvents()?.events || []; track $index) {
-        <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
+      @if (!loading() && (allEvents()?.events?.length ?? 0) < 1) { <app-empty-list-message
+        (handleAction)="clearSearchFilters()" actionText="Clear Filters"
+        descrition="No results found. You may want to clear your filters or return to the previous page."
+        title="No Events Here"></app-empty-list-message>
         }
-      </div>
+        <div class="event-grid">
+          @for (event of allEvents()?.events || []; track $index) {
+          <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
+          }
+        </div>
     </section>
-    <app-pagination [totalItems]="allEvents()?.pageSize||1"  [(currentPage)]="currentPage"></app-pagination>
+    <app-pagination [totalItems]="allEvents()?.pageSize||1" [(currentPage)]="currentPage"></app-pagination>
   </div>
 </section>
