@@ -59,7 +59,7 @@ export class MyEventsPageComponent implements OnInit {
     this.eventService.myEventOverview().subscribe({
       next: (response) => {
         this.statCards.update(prev => {
-          const updated = [...prev]; 
+          const updated = [...prev];
 
           Object.entries(response.data).forEach(([key, value]) => {
             const card = updated.find(c => c.backend_key === key);
@@ -85,10 +85,10 @@ export class MyEventsPageComponent implements OnInit {
     this.router.navigate([this.routes.MANAGE_EVENT]);
   }
 
-  protected navigateToCreateEvent(){
+  protected navigateToCreateEvent() {
     this.router.navigate([APP_ROUTES.CREATE_EVENT])
   }
-  protected navigateToExploreEvent(){
+  protected navigateToExploreEvent() {
     this.router.navigate([APP_ROUTES.EXPLORE])
   }
 }
