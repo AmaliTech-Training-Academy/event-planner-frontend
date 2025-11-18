@@ -56,7 +56,7 @@ import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagi
 export class ExplorePageComponent implements OnInit {
 
   protected allEvents = signal<GetEventsResponse | null>(null);
-  protected currentPage = signal<number>(1);
+  protected currentPage = signal<number>(0);
   private readonly EVENTS_PER_PAGE = 12;
 
 

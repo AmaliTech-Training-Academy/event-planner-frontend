@@ -13,15 +13,17 @@
 
 
   <div class="events-section">
-
-    <app-empty-list-message (handleSecondary)="navigateToExploreEvent()" (handleAction)="navigateToCreateEvent()" [secondaryText]="'Explore Events'" [actionText]="'Create Event'"></app-empty-list-message>
-
-    <div class="event-grid">
-      @for (event of myEvents(); track event.id;) {
-      <app-event-card  [event]="event" [variant]="'manage'" (manageEvent)="onManageEvent()" />
+    @if(myEvents().length < 1 && !loading()){ <app-empty-list-message (handleSecondary)="navigateToExploreEvent()"
+      (handleAction)="navigateToCreateEvent()" [secondaryText]="'Explore Events'" [actionText]="'Create Event'">
+      </app-empty-list-message>
       }
-    </div>
-    <app-pagination [totalItems]="totalaPages()" [(currentPage)]="page"></app-pagination>
+
+      <div class="event-grid">
+        @for (event of myEvents(); track event.id;) {
+        <app-event-card [event]="event" [variant]="'manage'" (manageEvent)="onManageEvent()" />
+        }
+      </div>
+      <app-pagination [totalItems]="totalaPages()" [(currentPage)]="page"></app-pagination>
   </div>
 
 </main>
