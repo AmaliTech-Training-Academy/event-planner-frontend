@@ -40,8 +40,10 @@ export const API_ENDPOINTS = {
   CREATE_EVENT: `${BASE}/events`,
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
-SEARCH_EVENTS: `${BASE}/events/event-management/search`,
-}
+  SEARCH_EVENTS: `${BASE}/events/event-management/search`,
+  GET_AUDIT_LOGS: `${BASE}/auth/audit_logs`,
+  GET_AUDIT_LOG_BY_ID: (logId: string) => `${BASE}/audit-logs/${logId}`,
+};
 
 export const EVENTS_API_ENDPOINTS = {
   GET_EVENTS: `${BASE}/events/explore`,
@@ -59,6 +61,5 @@ export const EVENTS_API_ENDPOINTS = {
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
 
 
-  GET_AUDIT_LOGS: `${BASE}/auth/audit_logs`,
-  GET_AUDIT_LOG_BY_ID: (logId: string) => `${BASE}/audit-logs/${logId}`,
+  
 } as const;
