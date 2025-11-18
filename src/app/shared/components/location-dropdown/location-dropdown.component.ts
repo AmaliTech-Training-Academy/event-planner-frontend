@@ -1,4 +1,8 @@
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
+import { LocationStoreService } from '../../../core/services/util/location-store.service';
+import { StoredRecentLocation } from '../../../core/models/recent-location.model';
+import { POPULAR_SEARCHES } from './constant/popular-search.constant';
+
 
 @Component({
   selector: 'app-location-dropdown',
@@ -7,27 +11,26 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
   templateUrl: './location-dropdown.component.html',
   styleUrl: './location-dropdown.component.scss'
 })
-export class LocationDropdownComponent {
-  // --- Angular Decorators ---
-  @Input() public recentSearches: any[] = [];
-  @Input() public popularLocations: any[] = [];
+export class LocationDropdownComponent implements OnInit {
 
-  @Output() public locationSelected = new EventEmitter<any>();
-  @Output() public useCurrentLocation = new EventEmitter<void>();
+  protected recentSearches: StoredRecentLocation[] = [];
+  protected popularSearch: StoredRecentLocation[] = POPULAR_SEARCHES;
+  @Output() public locationSelected = new EventEmitter<StoredRecentLocation>();
   @Output() public close = new EventEmitter<void>();
 
-  // --- Template-facing Methods ---
-  public selectLocation(location: any, isRecent = false): void {
-    // For recent searches, we just emit the object
-    // For popular, we create a new object
-    const selected = isRecent ? location : { name: `${location.name}, ${location.meta}`, id: location.name };
-    this.locationSelected.emit(selected);
+  constructor(private readonly recentLocation: LocationStoreService) { }
+
+  ngOnInit(): void {
+    this.recentSearches = this.recentLocation.recentLocations()
   }
 
-  public removeRecent(event: Event, searchId: string): void {
-    event.stopPropagation(); // Prevent dropdown from closing
-    console.log('Removing recent search:', searchId);
-    // TODO: Add logic to emit this removal
+
+  protected selectLocation(location: StoredRecentLocation, isRecent = false): void {
+    this.locationSelected.emit({address:location.address});
+  }
+
+  protected removeRecent(searchId: string): void {
+    this.recentLocation.removeLocation(searchId)
   }
 }
 

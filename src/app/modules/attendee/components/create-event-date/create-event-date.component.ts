@@ -14,7 +14,7 @@ export class CreateEventDateComponent {
   protected currentValue: string = "";
 
   public readonly icon = input<string>('');
-  public readonly title = input<string>('');
+  public readonly title = input<string | undefined>('');
   public readonly clicked = output<void>();
 
 

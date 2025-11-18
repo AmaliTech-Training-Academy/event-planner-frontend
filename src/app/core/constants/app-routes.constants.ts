@@ -15,6 +15,7 @@ export const APP_ROUTES = {
   CREATE_EVENT: '/app/create-event',
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   MY_EVENTS: '/app/my-events',
+  MY_EVENT: (id: string) => `/app/my-events/${id}`,
   PAYMENT_SETTINGS: '/app/payment-settings',
   ADMIN_DASHBOARD: '/admin',
   PROFILE_PAGE: '/app/profile',
