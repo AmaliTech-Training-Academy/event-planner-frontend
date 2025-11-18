@@ -234,3 +234,11 @@
     }
   </div>
 </div>
+
+<!-- Add Team Member Modal -->
+@if (showAddTeamMemberModal()) {
+<app-add-team-member
+  (submit)="handleAddTeamMemberSubmit($event)"
+  (close)="handleAddTeamMemberClose()"
+></app-add-team-member>
+}

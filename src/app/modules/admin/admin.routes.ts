@@ -46,8 +46,8 @@ export const ADMIN_ROUTES: Routes = [
   {
     path: 'settings',
     loadComponent: () =>
-      import('./pages/admin-settings/admin-settings.component').then(
-        (m) => m.AdminSettingsComponent
+      import('./pages/admin-settings/admin-settings-page.component').then(
+        (m) => m.AdminSettingsPageComponent
       ),
   },
   {
