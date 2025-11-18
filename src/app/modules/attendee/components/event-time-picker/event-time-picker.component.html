@@ -2,6 +2,6 @@
     <app-create-event-date (clicked)="toggleState()" icon="icons/clock.svg"
         [title]="selectedTime || 'Time'"></app-create-event-date>
     @if (isOpen) {
-    <app-time-picker (selectTime)="selectTime($event)"></app-time-picker>
+    <app-time-picker [timeSlots]="selectableTime" (selectTime)="selectTime($event)"></app-time-picker>
     }
 </div>

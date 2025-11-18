@@ -7,7 +7,7 @@
                 <p>Tickets</p>
             </div>
             <div class="right">
-                <p>{{form()?.get(EVENT_FORM_FIELDS.PRICE)?.value | currency}}</p>
+                <p>{{form()?.get(EVENT_FORM_FIELDS.PRICE)?.value == '0' ? 'Free' : form()?.get(EVENT_FORM_FIELDS.PRICE)?.value | currency}}</p>
                 <app-button buttonType="button" (onClick)="togglePriceModal()" type="plain">
                     <img width="24" height="24" ngSrc="icons/pencil.svg" alt="" class="preview">
                 </app-button>

@@ -1,9 +1,9 @@
-import { Component, input, output, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { ButtonComponent } from '../../ui/button/button.component';
 import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
-import { EventCard } from '../../../core/models/events';
+import { EventSummary } from '../../../core/models/event.model';
+import { ButtonComponent } from '../../ui/button/button.component';
 
 @Component({
   selector: 'app-event-card',
@@ -14,13 +14,9 @@ import { EventCard } from '../../../core/models/events';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventCardComponent {
- 
-  public event = input.required<EventCard>();
-  
-  public variant = input<'explore' | 'manage' | 'view-events'>('explore');
-
-  
-  public manageEvent = output<EventCard>();
+  public event = input.required<EventSummary>();
+  public variant = input<'explore' | 'manage'|'view-events'>('explore');
+  public manageEvent = output<EventSummary>();
 
   
   protected readonly routes = APP_ROUTES;
@@ -28,7 +24,9 @@ export class EventCardComponent {
 
   
   protected navigateToDetails(): void {
-    this.router.navigate([this.routes.EVENT_DETAILS, this.event().id]);
+   
+    const route = this.routes.EVENT_DETAILS(this.event().id.toString());
+    this.router.navigate([route]);
   }
   protected onManageClick(): void {
     this.manageEvent.emit(this.event());

@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, input, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, input, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DatePickerComponent } from "../../../../shared/components/date-picker/date-picker.component";
 import { CreateEventDateComponent } from "../create-event-date/create-event-date.component";
@@ -9,13 +9,21 @@ import { CreateEventDateComponent } from "../create-event-date/create-event-date
   templateUrl: './event-date-picker.component.html',
   styleUrl: './event-date-picker.component.scss',
 })
-export class EventDatePickerComponent {
+export class EventDatePickerComponent implements OnInit {
 
   public readonly control = input<FormControl | undefined>(undefined);
   protected isOpen: boolean = false;
   protected currentSelectedDate: Date | null = null;
 
   constructor(private readonly elementRef: ElementRef) { }
+
+
+  ngOnInit(): void {
+    const currentValue = this.control()?.value
+    if (currentValue) {
+      this.currentSelectedDate = currentValue as Date;
+    }
+  }
 
   protected toggleState() {
     this.isOpen = !this.isOpen;
@@ -29,7 +37,7 @@ export class EventDatePickerComponent {
       this.control()?.setValue(date);
       this.control()?.markAsDirty();
     }
-    
+
     this.isOpen = false;
   }
 
