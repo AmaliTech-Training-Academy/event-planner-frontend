@@ -90,7 +90,7 @@ The Event Planner Frontend is a static Angular application hosted on AWS using a
 - AWS Managed Rules for common threats
 - Rate-based rules to prevent abuse
 - IP reputation lists
-- Custom rules for application-specific threats
+
 
 ### 5. AWS Shield Standard
 
