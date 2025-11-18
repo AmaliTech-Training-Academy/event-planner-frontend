@@ -8,12 +8,14 @@ import { StatCardComponent } from '../../../../shared/components/stat-card/stat-
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { StatCardData } from '../../../../core/models/event.model';
 import { DataTableComponent, TableColumn, TableFilter } from '../../../../shared/admin-ui/data-table/data-table.component';
-import { 
-  EventDetails,
-  EventHost 
-} from '../../../../modules/admin/pages/event-management-page/components/event-details/event-details.component';
+import { EventDetails } from '../../../../core/models/event.model';
+import { EventHost } from '../../../admin/pages/event-management-page/components/event-details/event-details.component';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ModalWrapperComponent } from '../../../../shared/components/modal-wrapper/modal-wrapper.component';
 
-export interface TicketType {
+import { MOCK_EVENT_DETAILS } from '../../../../core/data/mock-data';
+
+export interface TicketType { 
   name: string;
   price: number;
   sold: number;
@@ -41,12 +43,15 @@ interface ManageEventPageState {
     NgOptimizedImage, 
     ButtonComponent,
     StatCardComponent,
-    DataTableComponent
+    DataTableComponent,
+    ReactiveFormsModule,
+    ModalWrapperComponent,
   ],
   templateUrl: './manage-event-page.component.html',
   styleUrls: ['./manage-event-page.component.scss'],
 })
 export class ManageEventPageComponent implements OnInit {
+  private readonly _fb = inject(FormBuilder);
   private readonly _router = inject(Router);
   private readonly _location = inject(Location);
   private readonly _layoutService = inject(LayoutService);
@@ -57,33 +62,27 @@ export class ManageEventPageComponent implements OnInit {
   protected readonly ticketTypes = signal<TicketType[]>([]);
   protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
-
+  protected readonly showInviteModal = signal<boolean>(false);
   public readonly registrations = signal<Registration[]>([]);
 
-  public readonly registrationColumns = signal<TableColumn<Registration>[]>([
-    {
-      key: 'fullName',
-      header: 'Name',
-      sortable: true
-    },
-    {
-      key: 'email',
-      header: 'Email',
-      sortable: true
-    },
-    {
-      key: 'numberOfTickets',
-      header: 'Number of Tickets',
-      sortable: true
-    },
-    {
-      key: 'ticketType',
-      header: 'Ticket Type',
-      sortable: true
-    }
-  ]);
+   protected inviteForm: FormGroup = this._fb.group({
+    title: ['', Validators.required],
+    name: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    event: ['', Validators.required],
+    role: ['attendee', Validators.required], 
+    message: ['']
+  });
+ 
+  
+  public readonly registrationColumns: TableColumn<Registration>[] = [
+    { key: 'fullName', header: 'Name', sortable: true },
+    { key: 'email', header: 'Email', sortable: true },
+    { key: 'numberOfTickets', header: 'Number of Tickets', sortable: true },
+    { key: 'ticketType', header: 'Ticket Type', sortable: true }
+  ];
 
-  public readonly registrationFilters = signal<TableFilter[]>([
+  public readonly registrationFilters: TableFilter[] = [
     {
       key: 'ticketType',
       placeholder: 'Ticket Type',
@@ -93,8 +92,9 @@ export class ManageEventPageComponent implements OnInit {
         { label: 'Regular', value: 'regular' }
       ]
     }
-  ]);
+  ];
 
+ 
   protected readonly statCards = computed<StatCardData[]>(() => {
     const event = this.eventDetails();
     if (!event) return [];
@@ -104,7 +104,7 @@ export class ManageEventPageComponent implements OnInit {
     return [
       {
         title: 'Attendees',
-        value: event.attendees,
+        value: event.attendees || 0,
         icon: '/icons/users-icon.png'
       },
       {
@@ -115,7 +115,7 @@ export class ManageEventPageComponent implements OnInit {
     ];
   });
 
-  
+ 
   public ngOnInit(): void {
     const state = this._location.getState() as ManageEventPageState;
     const eventData = state.eventData;
@@ -123,35 +123,43 @@ export class ManageEventPageComponent implements OnInit {
     if (eventData) {
       this._loadEventFromState(eventData);
     } else {
-      // TODO: Fetch event by ID from API
-     
+      
+      this._loadEventFromState(MOCK_EVENT_DETAILS);
     }
   }
 
  
   private _loadEventFromState(eventData: EventDetails): void {
-    // Use the event data as provided by the router state or by the API.
-    // TODO: Validate eventData
-    const event: EventDetails = {
-      ...eventData
-     
-    };
-
+    const event: EventDetails = { ...eventData };
     this.eventDetails.set(event);
 
-    // TODO: Replace with API calls to fetch associated data (tickets, hosts, registrations)
+    
     this._loadTicketsAndHosts(event);
 
-    // Set page title (layout service)
-    this._layoutService.pageTitle.set(event.name);
+    this._layoutService.pageTitle.set(event.title);
   }
 
   private _loadTicketsAndHosts(event: EventDetails): void {
-    // TODO: Replace the following with real API calls and set the signals accordingly.
     
+    this.ticketTypes.set([
+      { name: 'VIP', price: 100, sold: 20, total: 50 },
+      { name: 'Regular', price: 50, sold: 150, total: 300 }
+    ]);
+
+    
+    this.hosts.set([
+      { name: 'Jane Doe', email: 'jane@example.com', avatar: '' },
+      { name: 'John Smith', email: 'john@example.com', avatar: '' }
+    ]);
+
+   
+    this.registrations.set([
+        { fullName: 'Alice Johnson', email: 'alice@test.com', numberOfTickets: 2, ticketType: 'VIP' },
+        { fullName: 'Bob Brown', email: 'bob@test.com', numberOfTickets: 1, ticketType: 'Regular' }
+    ]);
   }
 
-  
+ 
   protected setActiveTab(tab: TabType): void {
     this.activeTab.set(tab);
   }
@@ -171,19 +179,36 @@ export class ManageEventPageComponent implements OnInit {
     this.setActiveTab('guests');
   }
 
-  protected onViewTickets(): void {
-    // TODO: Navigate to ticket management, or open tickets modal
+  protected onViewTickets(): void { }
+
+ protected onInviteGuest(): void {
+    this.showInviteModal.set(true);
+  }
+protected onCloseInviteModal(): void {
+  this.showInviteModal.set(false);
+  this.inviteForm.reset(); 
+}
+  protected onSendInvite(): void {
+    if (this.inviteForm.valid) {
+      // TODO: Call API to invite user
+      this.showInviteModal.set(false);
+      this.inviteForm.reset({ role: 'attendee' });
+    } else {
+      this.inviteForm.markAllAsTouched(); 
+    }
+  }
+  protected onInviteSuccess(): void {
+    this.showInviteModal.set(false);
   }
 
-  protected onInviteGuest(): void {
-    // TODO: Open invite guest modal or navigate to invite page
-  }
-
+  
   protected getStatusClass(status: string): string {
+    if (!status) return 'event-status';
     return `event-status event-status--${status.toLowerCase()}`;
   }
 
   protected formatDate(dateString: string): string {
+    if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
@@ -191,19 +216,6 @@ export class ManageEventPageComponent implements OnInit {
       day: 'numeric',
       year: 'numeric',
     });
-  }
-
-  protected getInitials(name: string): string {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  }
-
-  protected getTicketProgress(sold: number, total: number): number {
-    return (sold / total) * 100;
   }
 
   protected calculateTotalRevenue(): number {

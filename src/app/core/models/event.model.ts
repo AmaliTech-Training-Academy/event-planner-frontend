@@ -1,6 +1,7 @@
 
 
 export interface EventDetails {
+  attendees: string | number;
   id: string;
   title: string;
   date: string;
@@ -10,6 +11,9 @@ export interface EventDetails {
   isPaid: boolean;
   description: string;
   attendeesCount: string;
+  status: string;
+  time: string;
+  organizer: string;
 }
 
 export interface VenueImage {
@@ -72,11 +76,7 @@ export interface PopularLocation {
   meta: string;
 }
 
-// event.model.ts
 
-// ============================================
-// EXISTING MODELS (from your codebase)
-// ============================================
 
 export interface EventDetails {
   id: string;
@@ -240,16 +240,17 @@ export interface PaginatedResponse<T> {
   number: number;
 }
 
-// ============================================
-// UTILITY/MAPPER FUNCTIONS
-// ============================================
 
-/**
- * Converts API EventDetailResponse to frontend EventDetails model
- */
 export function mapEventDetailResponseToEventDetails(
   response: EventDetailResponse
 ): EventDetails {
+  const formatTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: 'numeric', 
+      hour12: true 
+    });
+  };
   return {
     id: response.id.toString(),
     title: response.title,
@@ -260,12 +261,14 @@ export function mapEventDetailResponseToEventDetails(
     isPaid: response.isPaid,
     description: response.description,
     attendeesCount: response.attendeeCount.toString(),
+    attendees: response.attendeeCount,
+    status: (response as any).status || 'Published',
+    time: formatTime(response.startTime),
+    organizer: (response as any).organizer || 'Organiser Name'
   };
 }
 
-/**
- * Converts API Event to frontend EventCard model
- */
+
 export function mapEventToEventCard(event: Event): EventCard {
   return {
     id: event.id.toString(),
@@ -278,9 +281,7 @@ export function mapEventToEventCard(event: Event): EventCard {
   };
 }
 
-/**
- * Converts API EventManagement to frontend EventCard model
- */
+
 export function mapEventManagementToEventCard(
   event: EventManagement
 ): EventCard {
@@ -288,7 +289,7 @@ export function mapEventManagementToEventCard(
     id: event.id.toString(),
     title: event.title,
     date: new Date(event.startTime),
-    location: 'N/A', // EventManagement doesn't include location
+    location: 'N/A', 
     imageUrl: '',
     isPaid: false,
     attendees: event.attendeeCount,
