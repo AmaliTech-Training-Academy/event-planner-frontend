@@ -1,17 +1,16 @@
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   Component,
+  computed,
+  EventEmitter,
+  HostListener,
   Input,
   OnChanges,
-  SimpleChanges,
+  Output,
   signal,
-  computed,
-  HostListener,
+  SimpleChanges,
 } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { VenueImage } from '../../../core/models/event.model';  
-
-
 
 @Component({
   selector: 'app-venue-image-slider',
@@ -21,7 +20,13 @@ import { VenueImage } from '../../../core/models/event.model';
   styleUrl: './venue-image-slider.component.scss',
 })
 export class VenueImageSliderComponent implements OnChanges {
-  @Input() images: VenueImage[] = [];
+  
+  @Input() images: string[] = [];
+   @Output() imageClick = new EventEmitter<string>();
+  
+  onImageClick(image: string): void {
+    this.imageClick.emit(image);
+  }
 
   protected currentIndex = signal(0);
   protected slidesPerView = signal(4);
@@ -71,4 +76,3 @@ export class VenueImageSliderComponent implements OnChanges {
     );
   }
 }
-

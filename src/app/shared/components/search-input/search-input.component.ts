@@ -1,35 +1,60 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, input, output, signal, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import {
+  NG_VALUE_ACCESSOR,
+  ControlValueAccessor,
+  FormsModule,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-search-input',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './search-input.component.html',
-  styleUrl: './search-input.component.scss'
+  styleUrl: './search-input.component.scss',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => SearchInputComponent),
+      multi: true,
+    },
+  ],
 })
-export class SearchInputComponent {
+export class SearchInputComponent implements ControlValueAccessor {
+  public placeholder = input<string>('');
+  public value = signal('');
+
+  
+  public valueChange = output<string>();
+
  
-  @Input() public placeholder: string = 'Search...';
-  @Input() public iconPath: string = '';
+  private onChange: (value: string) => void = () => {};
+  private onTouched: () => void = () => {};
+
+  writeValue(value: string | null): void {
+    this.value.set(value || '');
+  }
+  registerOnChange(fn: (value: string) => void): void {
+    this.onChange = fn;
+  }
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+  setDisabledState?(isDisabled: boolean): void {
+  
+  }
 
   
-  private _value: string = '';
-  @Input()
-  public get value(): string {
-    return this._value;
+  protected onValueChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.value.set(value);
+    this.onChange(value); 
+    this.valueChange.emit(value); 
   }
-  public set value(val: string) {
-    if (val !== this._value) {
-      this._value = val;
-      this.valueChange.emit(this._value);
-    }
-  }
-  @Output() public valueChange = new EventEmitter<string>();
 
-  
-  public onValueChange(newValue: string): void {
-    this.value = newValue; 
+  protected onBlur(): void {
+    this.onTouched();
   }
 }
+
+

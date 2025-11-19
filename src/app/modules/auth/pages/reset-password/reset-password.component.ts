@@ -1,27 +1,25 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
-  Validators,
+  FormsModule,
   ReactiveFormsModule,
-  AbstractControl,
   ValidationErrors,
   ValidatorFn,
-  FormsModule
+  Validators
 } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Router, RouterModule } from '@angular/router';
 import { finalize } from 'rxjs/operators';
-import { LogoComponent } from '../../components/logo/logo.component';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { FormErrorComponent } from '../../../../shared/ui/form-error/form-error.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
-import { AuthService } from '../../../../core/services/auth.service';
-import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { OtpInputComponent } from '../../../../shared/ui/otp-input/otp-input.component';
+import { LogoComponent } from '../../components/logo/logo.component';
 
 
 export function passwordMatchValidator(passwordField: string, confirmPasswordField: string): ValidatorFn {
@@ -57,7 +55,6 @@ export function passwordMatchValidator(passwordField: string, confirmPasswordFie
     FormErrorComponent,
     InputComponent,
     FormsModule,
-    OtpInputComponent
   ],
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.scss']
@@ -69,7 +66,7 @@ export class ResetPasswordComponent implements OnInit {
   protected userEmail: string = 'Loading...';
   protected apiError: string | null = null;
 
-  private token: string | null = null;
+  private otp: string | null = null;
   private email: string | null = null;
 
   constructor(
@@ -82,12 +79,16 @@ export class ResetPasswordComponent implements OnInit {
 
    ngOnInit(): void {
     this.email = this.authService.getEmail()
-    if (!this.email) {
+    this.otp = this.authService.getOtp()
+
+    if (!this.email || !this.otp) {
       this.router.navigate([APP_ROUTES.FORGOT_PASSWORD]);
       return
     }
 
     this.setPasswordForm = this.createForm();
+    this.setPasswordForm.get('otp')?.setValue(this.otp)
+    this.setPasswordForm.get('otp')?.markAllAsTouched()
   }
 
   protected goBack(): void {
@@ -117,11 +118,6 @@ export class ResetPasswordComponent implements OnInit {
     return this.setPasswordForm.errors?.['passwordMismatch'] as boolean;
   }
 
-
-  protected onOtpChange(otpValue: string): void {
-    this.token = otpValue;
-  }
-
   protected onSubmit(): void {
     this.apiError = null;
     if (this.setPasswordForm.invalid) {
@@ -129,18 +125,13 @@ export class ResetPasswordComponent implements OnInit {
       return;
     }
 
-    if (!this.token || !this.email) {
-      this.apiError = 'Cannot submit: Token or email missing from URL.';
-      return;
-    }
-
     this.isLoading = true;
 
 
-    const { newPassword } = this.setPasswordForm.value;
+    const { newPassword,otp } = this.setPasswordForm.value;
 
 
-    this.authService.resetPassword(this.token, this.email, newPassword)
+    this.authService.resetPassword(otp, this.email as string, newPassword)
       .pipe(
         finalize(() => this.isLoading = false)
       )

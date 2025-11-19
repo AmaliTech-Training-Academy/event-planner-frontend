@@ -8,6 +8,37 @@ $warning-background: #ffeeba;
 $info-background: #bee5eb;
 $success-background: #c3e6cb;
 
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+}
+
+@keyframes progress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
 .alert {
   border-right: 8px solid transparent;
   display: flex;
@@ -20,6 +51,33 @@ $success-background: #c3e6cb;
   max-width: 21.125rem;
   padding: 1.594rem 1.125rem;
   gap: 1rem;
+  z-index: 1000;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideInLeft 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+
+  &.closing {
+    animation: slideOutLeft 0.3s ease forwards;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background-color: currentColor;
+    opacity: 0.3;
+    animation: progress 5s linear forwards;
+  }
 
   &.error {
     background-color: $error-background;
@@ -30,13 +88,13 @@ $success-background: #c3e6cb;
   &.warning {
     background-color: $warning-background;
     border-color: $warning-color;
-    color: darken($warning-color, 20%);
+    color: darken($warning-color, 40%);
   }
 
   &.info {
     background-color: $info-background;
     border-color: $info-color;
-    color: darken($info-color, 20%);
+    color: darken($info-color, 40%);
   }
 
   &.success {
@@ -47,6 +105,12 @@ $success-background: #c3e6cb;
 
   .content {
     flex-grow: 1;
+    
+    p {
+      margin: 0;
+      line-height: 1.5;
+      font-size: 0.938rem;
+    }
   }
 
   app-button {
@@ -55,14 +119,22 @@ $success-background: #c3e6cb;
     cursor: pointer;
     padding: 0;
     color: inherit;
+    flex-shrink: 0;
+    transition: transform 0.2s ease, opacity 0.2s ease;
 
     img {
       height: 1.25rem;
       width: 1.25rem;
+      display: block;
     }
 
     &:hover {
       opacity: 0.7;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
     }
   }
 }

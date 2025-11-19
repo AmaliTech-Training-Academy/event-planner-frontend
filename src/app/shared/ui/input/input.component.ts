@@ -6,7 +6,6 @@ import {
   forwardRef,
   output,
   ChangeDetectionStrategy,
-  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -34,7 +33,9 @@ import { FormErrorComponent } from '../form-error/form-error.component';
 })
 export class InputComponent implements ControlValueAccessor {
   // Inputs - reactive values from parent
-  public readonly type = input<'text' | 'email' | 'password' | 'number'>('text');
+  public readonly type = input<
+    'text' | 'email' | 'password' | 'number' | 'url' | 'tel' | 'search'
+  >('text');
   public readonly placeholder = input<string>('');
   public readonly label = input<string>('');
   public readonly formControlName = input<string>('');
@@ -42,7 +43,7 @@ export class InputComponent implements ControlValueAccessor {
   public readonly iconSrc = input<string | undefined>();
   public readonly required = input<boolean>(false);
   public readonly disabled = input<boolean>(false);
-  public readonly value = input<string>(''); // ✅ Add this
+  public readonly value = input<string>('');
 
   // Outputs
   public readonly valueChange = output<string>();
@@ -55,24 +56,22 @@ export class InputComponent implements ControlValueAccessor {
 
   // Computed values - derived state
   public readonly hasError = computed(() => !!this.errorMessage());
-  public readonly inputType = computed(() =>
-    this.type() === 'password' && !this._showPassword() ? 'password' : this.type()
-  );
+
+  // ✅ FIX: When password is shown, change type to 'text'
+  public readonly inputType = computed(() => {
+    if (this.type() === 'password') {
+      return this._showPassword() ? 'text' : 'password';
+    }
+    return this.type();
+  });
+
   public readonly showPassword = computed(() => this._showPassword());
   public readonly isFocused = computed(() => this._isFocused());
   public readonly isDisabled = computed(
     () => this.disabled() || this._isDisabled()
   );
 
-  // ✅ Add effect to sync external value input with internal state
-  constructor() {
-    effect(() => {
-      const externalValue = this.value();
-      if (externalValue !== this._internalValue()) {
-        this._internalValue.set(externalValue);
-      }
-    });
-  }
+  constructor() {}
 
   // ControlValueAccessor callbacks
   private onChange: (value: string) => void = () => {};
@@ -102,12 +101,18 @@ export class InputComponent implements ControlValueAccessor {
     return this._internalValue();
   }
 
-  public onValueChange(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this._internalValue.set(value);
+  private _emitValue(value: string) {
     this.onChange(value);
     this.valueChange.emit(value);
   }
+
+  public onValueChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this._internalValue.set(value);
+    this._emitValue(value);
+  }
+
+  public readonly inputValue = computed(() => this._internalValue());
 
   public onFocus(): void {
     this._isFocused.set(true);

@@ -1,10 +1,8 @@
-import { Component, output } from '@angular/core';
-import { TIME_ZONES } from '../../../modules/attendee/data/timezones.data';
+import { Component, input, OnInit, output } from '@angular/core';
+import { TimeZone } from '../../../core/models/event.model';
+import { EventsServiceService } from '../../../core/services/events.service';
 
-interface TimeZone {
-  gmt: string,
-  name: string
-}
+
 
 @Component({
   selector: 'app-time-zone-picker',
@@ -13,13 +11,10 @@ interface TimeZone {
   styleUrl: './time-zone-picker.component.scss'
 })
 export class TimeZonePickerComponent {
+  public readonly timeZoneSelected = output<TimeZone>();
+  public readonly timeZones = input<TimeZone[]>([]);
 
-public readonly timeZoneSelected = output<TimeZone>();
-
-  // TODO: fetch time zones from backend
-  protected readonly timeZones: readonly TimeZone[] = TIME_ZONES;
-
-
+  
   protected selectTimeZone(timeZone: TimeZone) {
     this.timeZoneSelected.emit(timeZone);
   }

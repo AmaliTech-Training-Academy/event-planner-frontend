@@ -1,11 +1,11 @@
-<nav class="tab-toggle">
-  @for (tab of tabs; track tab.key) {
-    <button
-      class="toggle-btn"
-      [class.active]="tab.key === activeTabKey"
-      (click)="selectTab(tab.key)"
-    >
-      {{ tab.label }}
-    </button>
+<div class="tab-toggle-container">
+  @for (tab of toggles(); track tab.key) {
+  <app-button
+    [type]="activeToggle() === tab.value ? 'primary' : 'secondary'"
+    (click)="onTabClick(tab.value)"
+    [extraClass]="'tab-button'"
+  >
+    {{ tab.label }}
+  </app-button>
   }
-</nav>
+</div>

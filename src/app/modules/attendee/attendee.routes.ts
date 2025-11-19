@@ -29,7 +29,7 @@ export const ATTENDEE_ROUTES: Routes = [
       import(
         '../attendee/pages/create-event-page/create-event-page.component'
       ).then((m) => m.CreateEventPageComponent),
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: 'define-venue-sections',
@@ -37,7 +37,7 @@ export const ATTENDEE_ROUTES: Routes = [
       import(
         '../attendee/pages/define-venue/define-venue.component'
       ).then((m) => m.DefineVenueComponent),
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: 'create-event',
@@ -53,7 +53,7 @@ export const ATTENDEE_ROUTES: Routes = [
       import(
         '../attendee/pages/create-event-success/create-event-success.component'
       ).then((m) => m.CreateEventSuccessComponent),
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: 'event/:id',
@@ -68,15 +68,31 @@ export const ATTENDEE_ROUTES: Routes = [
       import('../attendee/pages/profile-page/profile-page.component').then(
         (m) => m.ProfilePageComponent
       ),
-    // canActivate: [AuthGuard],
-},
+    canActivate: [AuthGuard],
+  },
   {
     path: 'my-events',
     loadComponent: () =>
       import('../attendee/pages/my-events-page/my-events-page.component').then(
         (m) => m.MyEventsPageComponent
       ),
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'payment-settings',
+    loadComponent: () =>
+      import('../attendee/pages/payment-settings/payment-settings.component').then(
+        (m) => m.PaymentSettingsPageComponent
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'event-payment-success',
+    loadComponent: () =>
+      import('../attendee/pages/event-payment-success/event-payment-success.component').then(
+        (m) => m.EventPaymentSuccessComponent
+      ),
+    canActivate: [AuthGuard],
   },
   {
   path: 'account-deactivated',

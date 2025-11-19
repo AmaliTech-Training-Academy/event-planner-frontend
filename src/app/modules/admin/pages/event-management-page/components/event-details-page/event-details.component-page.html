@@ -1,0 +1,272 @@
+<!-- event-details-page.component.html -->
+@if (eventDetails(); as event) {
+<div class="event-details-page">
+  <!-- Breadcrumb -->
+  <nav class="event-details-page__breadcrumb">
+    <a class="breadcrumb-link" (click)="onBack()">Event Overview</a>
+    <span class="breadcrumb-separator">›</span>
+    <span class="breadcrumb-current">{{ event.name }}</span>
+  </nav>
+
+  <!-- Page Title -->
+  <h1 class="event-details-page__title">{{ event.name }}</h1>
+
+  <!-- Tabs -->
+  <div class="event-details-page__tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      class="tab-button"
+      [class.tab-button--active]="activeTab() === 'overview'"
+      [attr.aria-selected]="activeTab() === 'overview'"
+      (click)="setActiveTab('overview')"
+    >
+      Overview
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="tab-button"
+      [class.tab-button--active]="activeTab() === 'guests'"
+      [attr.aria-selected]="activeTab() === 'guests'"
+      (click)="setActiveTab('guests')"
+    >
+      Guests
+    </button>
+    <button
+      type="button"
+      role="tab"
+      class="tab-button"
+      [class.tab-button--active]="activeTab() === 'registration'"
+      [attr.aria-selected]="activeTab() === 'registration'"
+      (click)="setActiveTab('registration')"
+    >
+      Registration
+    </button>
+  </div>
+
+  <!-- Overview Tab Content -->
+  @if (activeTab() === 'overview') {
+  <div class="event-details-page__content">
+    <!-- Status Badge -->
+    <div class="event-details-page__status-section">
+      <span [class]="getStatusClass(event.status)">
+        Event is {{ event.status }}
+      </span>
+    </div>
+
+    <!-- Grid Layout -->
+    <div class="event-details-page__grid">
+      <!-- Event Summary Card -->
+      <div class="info-card">
+        <div class="info-card__header">
+          <h3 class="info-card__title">Event Summary</h3>
+          <app-button
+            type="action"
+            extraClass="icon-button"
+            (click)="onEdit()"
+            [ariaLabel]="'Edit event'"
+          >
+            <img
+              ngSrc="/icons/edit-icon.png"
+              alt="Edit"
+              width="16"
+              height="16"
+            />
+          </app-button>
+        </div>
+
+        <div class="info-card__body">
+          <div class="info-row">
+            <img
+              ngSrc="/icons/user-icon.png"
+              alt="Organizer"
+              class="info-icon"
+              width="20"
+              height="20"
+            />
+            <div class="info-content">
+              <span class="info-label">Organizer:</span>
+              <span class="info-value">{{ event.organizer }}</span>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <img
+              ngSrc="/icons/calender-icon.png"
+              alt="Date"
+              class="info-icon"
+              width="20"
+              height="20"
+            />
+            <div class="info-content">
+              <span class="info-label">Date:</span>
+              <span class="info-value">{{ formatDate(event.date) }}</span>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <img
+              ngSrc="/icons/clock.svg"
+              alt="Time"
+              class="info-icon"
+              width="20"
+              height="20"
+            />
+            <div class="info-content">
+              <span class="info-label">Time:</span>
+              <span class="info-value">{{ event.time }}</span>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <img
+              ngSrc="/icons/map.png"
+              alt="Location"
+              class="info-icon"
+              width="20"
+              height="20"
+            />
+            <div class="info-content">
+              <span class="info-label">Location:</span>
+              <span class="info-value">{{ event.location }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback Card -->
+      <div class="info-card">
+        <div class="info-card__header">
+          <h3 class="info-card__title">Feedback</h3>
+        </div>
+
+        <div class="info-card__body info-card__body--empty">
+          <div class="empty-state">
+            <div class="empty-state__icon">
+              <img
+                ngSrc="/images/feedback.png"
+                alt="No feedback"
+                width="48"
+                height="48"
+              />
+            </div>
+            <p class="empty-state__text">No Feedback Collected Yet</p>
+            <app-button
+              type="action"
+              extraClass="link-button"
+              (click)="onScheduleFeedback()"
+            >
+              Schedule a Feedback Email
+            </app-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invites Card -->
+      <div class="info-card">
+        <div class="info-card__header">
+          <h3 class="info-card__title">Invites</h3>
+        </div>
+
+        <div class="info-card__body info-card__body--empty">
+          <div class="empty-state">
+            <div class="empty-state__icon">
+              <img
+                ngSrc="/icons/mail.png"
+                alt="No invites"
+                width="48"
+                height="48"
+              />
+            </div>
+            <p class="empty-state__text">No Invite Sent</p>
+            <app-button
+              type="action"
+              extraClass="link-button"
+              (click)="onSendInvites()"
+            >
+              Send Invites via Email
+            </app-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guests Card -->
+      <div class="info-card">
+        <div class="info-card__header">
+          <h3 class="info-card__title">Guests</h3>
+        </div>
+
+        <div class="info-card__body info-card__body--empty">
+          <div class="empty-state">
+            <div class="empty-state__icon">
+              <img
+                ngSrc="/icons/users-icon.png"
+                alt="No guests"
+                width="48"
+                height="48"
+              />
+            </div>
+            <p class="empty-state__text">No Guest Added</p>
+            <button class="link-button" (click)="onViewAllGuests()">
+              View all Guests
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hosts Section -->
+    <div class="hosts-section">
+      <h3 class="hosts-section__title">Hosts</h3>
+      <p class="hosts-section__subtitle">
+        Add co-hosts, attendees, and venue staffs
+      </p>
+
+      <div class="hosts-list">
+        @for (host of hosts(); track host.email) {
+        <div class="host-item">
+          <div class="host-item__avatar">
+            @if (host.avatar) {
+            <img
+              [ngSrc]="host.avatar"
+              [alt]="host.name"
+              width="40"
+              height="40"
+            />
+            } @else {
+            <div class="host-item__avatar-placeholder">
+              {{ getInitials(host.name) }}
+            </div>
+            }
+          </div>
+          <div class="host-item__info">
+            <p class="host-item__name">{{ host.name }}</p>
+            <p class="host-item__email">{{ host.email }}</p>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Guests Tab Content -->
+  @if (activeTab() === 'guests') {
+  <div class="event-details-page__content">
+    <p>Guests tab content coming soon...</p>
+  </div>
+  }
+
+  <!-- Registration Tab Content -->
+  @if (activeTab() === 'registration') {
+  <div class="event-details-page__content">
+    <p>Registration tab content coming soon...</p>
+  </div>
+  }
+</div>
+} @else {
+<div class="event-details-page__loading">
+  <p>Loading event details...</p>
+</div>
+}

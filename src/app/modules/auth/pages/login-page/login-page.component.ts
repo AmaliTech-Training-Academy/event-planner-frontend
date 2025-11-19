@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
-import { Subscription } from 'rxjs';
+import { finalize, Subscription } from 'rxjs';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
@@ -48,8 +48,6 @@ export class LoginPageComponent {
 
   private readonly emailRegex =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  private readonly passwordRegex =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -74,14 +72,10 @@ export class LoginPageComponent {
         Validators.required,
         Validators.pattern(this.emailRegex),
       ]),
-      password: this.fb.control('', [
-        Validators.required,
-        Validators.pattern(this.passwordRegex),
-      ]),
+      password: this.fb.control('', [Validators.required]),
       remember: this.fb.control(false),
     });
   }
-
   public togglePasswordVisibility(): void {
     this.isPasswordHidden.update((v) => !v);
   }
@@ -99,10 +93,12 @@ export class LoginPageComponent {
 
     this.authService
       .login(email, password)
-
+      .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: () => {
-          this.notificationService.success("Credentials authenticated! Please provide the 2FA code sent to your email.");
+          this.notificationService.success(
+            'Credentials authenticated! Please provide the 2FA code sent to your email.'
+          );
         },
         error: (err) => {
           if (err?.status === 401) {
@@ -135,18 +131,12 @@ export class LoginPageComponent {
         return `${this.capitalize(fieldName)} is required`;
       case !!errors?.['pattern'] && fieldName === 'email':
         return 'Please enter a valid email address';
-      case !!errors?.['pattern'] && fieldName === 'password':
-        return 'Password must include at least 8 chars, one number & one special character';
       default:
         return 'Invalid input';
     }
   }
   goBack(): void {
-    if (window.history.length > 1) {
-      this.location.back();
-    } else {
-      this.router.navigate(['/']);
-    }
+    this.router.navigate(['/']);
   }
 }
 

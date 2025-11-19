@@ -1,13 +1,17 @@
-import { Component, input, output, computed } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  computed,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { InputComponent } from '../../ui/input/input.component';
 import { QuantityInputComponent } from '../../ui/quantity-input/quantity-input.component';
 import { ButtonComponent } from '../../ui/button/button.component';
-
-
-import { RegistrationInfo } from '../../../core/models/event.model';
+import { RegistrationInfo } from '../../../core/models/events';
 
 @Component({
   selector: 'app-registration-modal',
@@ -28,13 +32,17 @@ export class RegistrationModalComponent {
   public cancelRegistration = output<void>();
   public submitRegistration = output<any>();
 
- 
   protected fullName = '';
   protected email = '';
   protected ticketCount = 1;
 
-  
   protected isPaid = computed(() => this.registrationInfo().ticketPrice > 0);
+
+  @HostListener('document:keydown.escape', ['$event'])
+  protected onEscapeKey(event: Event): void {
+    event.preventDefault();
+    this.onCancel();
+  }
 
   protected onCancel(): void {
     this.cancelRegistration.emit();
@@ -44,8 +52,7 @@ export class RegistrationModalComponent {
     this.submitRegistration.emit({
       fullName: this.fullName,
       email: this.email,
-      tickets: this.isPaid() ? this.ticketCount : 1, 
+      tickets: this.isPaid() ? this.ticketCount : 1,
     });
   }
 }
-

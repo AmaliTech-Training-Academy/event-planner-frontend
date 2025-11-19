@@ -1,6 +1,6 @@
 <div class="selector">
     <div class="options" role="list">
-        @for (time of timeSlots; track $index) {
+        @for (time of timeSlots(); track $index) {
             <button (click)="timeSelected(time)" class="option" role="listitem">
                 {{time}}
             </button>

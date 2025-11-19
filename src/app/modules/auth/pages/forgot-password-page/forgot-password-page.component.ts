@@ -79,7 +79,6 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.notificationService.success(response.description);
           this.forgotPasswordForm.reset();
-          this.router.navigate([APP_ROUTES.RESET_PASSWORD]);
         }
       });
   }

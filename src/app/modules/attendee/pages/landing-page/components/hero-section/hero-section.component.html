@@ -9,6 +9,8 @@
           type="primary"
           label="Create an event"
           (click)="onCreateEvent()"
+          [routerLink]="APP_ROUTES.CREATE_EVENT"
+
         >
           Create An Event
         </app-button>
@@ -17,6 +19,7 @@
           type="secondary"
           label="View events"
           (click)="onViewEvents()"
+          [routerLink]="APP_ROUTES.EXPLORE"
         >
           View Events
         </app-button>

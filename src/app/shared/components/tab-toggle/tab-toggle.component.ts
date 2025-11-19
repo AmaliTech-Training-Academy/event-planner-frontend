@@ -1,35 +1,29 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../../ui/button/button.component';
+import { TabToggle } from '../../../core/models/events';
 
-export interface TabToggle {
-  key: string;  
-  label: string; 
-}
+
 
 @Component({
   selector: 'app-tab-toggle',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './tab-toggle.component.html',
-  styleUrl: './tab-toggle.component.scss'
+  styleUrl: './tab-toggle.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TabToggleComponent implements OnInit {
- 
-  @Input() public tabs: TabToggle[] = [];
-  @Input() public activeTabKey: string = '';
-  @Output() public tabSelected = new EventEmitter<string>();
+export class TabToggleComponent {
+  public toggles = input.required<TabToggle[]>();
+  public activeToggle = input.required<boolean|null>();
+  public tabChange = output<boolean|null>();
 
-  
-  public ngOnInit(): void {
-    if (!this.activeTabKey && this.tabs.length > 0) {
-      this.activeTabKey = this.tabs[0].key;
+  protected onTabClick(value: boolean|null): void {
+    if (value !== this.activeToggle()) {
+      this.tabChange.emit(value);
     }
-  }
-
- 
-  public selectTab(tabKey: string): void {
-    if (this.activeTabKey !== tabKey) {
-      this.activeTabKey = tabKey;
-      this.tabSelected.emit(this.activeTabKey);
+    else{
+       this.tabChange.emit(null);
     }
   }
 }
