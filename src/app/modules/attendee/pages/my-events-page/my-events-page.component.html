@@ -1,51 +1,29 @@
-
 <main class="my-events-content">
- 
+
   <div class="page-header">
     <h1 class="page-title">My Events</h1>
   </div>
 
-  
+
   <div class="stat-card-grid">
     @for (card of statCards(); track card.title) {
-      <app-admin-user-card [data]="card" />
+    <app-admin-user-card [data]="card" />
     }
-  </div>
-
- 
-  <div class="chart-section">
-    <div class="chart-header">
-      <h2 class="chart-title">Total Events</h2>
-      <div class="chart-legend">
-        <span class="legend-item">
-          <span class="legend-dot this-year"></span>
-          This year
-        </span>
-        <span class="legend-item">
-          <span class="legend-dot last-year"></span>
-          Last year
-        </span>
-      </div>
-    </div>
-    <div class="chart-container">
-      <app-line-chart 
-        [seriesConfig]="chartSeries()"
-        [showLegend]="false"
-        [height]="'300px'"
-      />
-    </div>
   </div>
 
 
   <div class="events-section">
-    <div class="event-grid">
-      <!-- @for (event of myEvents(); track event.id; let i = $index) {
-        <app-event-card 
-          [event]="event"
-          [variant]="i === 0 ? 'explore' : 'manage'"
-          (manageEvent)="onManageEvent()"
-        />
-      } -->
-    </div>
+    @if(myEvents().length < 1 && !loading()){ <app-empty-list-message (handleSecondary)="navigateToExploreEvent()"
+      (handleAction)="navigateToCreateEvent()" [secondaryText]="'Explore Events'" [actionText]="'Create Event'">
+      </app-empty-list-message>
+      }
+
+      <div class="event-grid">
+        @for (event of myEvents(); track event.id;) {
+        <app-event-card [event]="event" [variant]="'manage'" (manageEvent)="onManageEvent()" />
+        }
+      </div>
+      <app-pagination [totalItems]="totalaPages()" [(currentPage)]="page"></app-pagination>
   </div>
+
 </main>

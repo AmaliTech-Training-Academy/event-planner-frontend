@@ -360,54 +360,6 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
 ];
 
 
-export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
-  {
-    id: 1,
-    ticketPrice: 33,
-    description: "",
-    title: 'Tech Innovation Summit 2025',
-    startTime: '',
-    location: 'Silicon Valley, CA',
-    flyerUrl: 'images/event1.jpg',
-    attendees: 5000,
-  },
-  {
-    id: 2,
-    ticketPrice: 33,
-    description: "",
-    title: 'Community Code & Coffee',
-    startTime: '',
-    location: 'Austin, TX',
-    flyerUrl: 'images/event2.jpg',
-    attendees: 150,
-  },
-  {
-    id: 3,
-    title: 'AI World Conference',
-    startTime: '',
-    location: 'New York, NY',
-    flyerUrl: 'images/event3.jpg',
-    ticketPrice: 400,
-    description: "",
-    attendees: 2500,
-  },
-];
-
-export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin = {
-  id: 'evt123',
-  name: 'Tech Innovation Summit 2025',
-  organizer: 'Tech Events Inc.',
-  date: '2025-04-15T00:00:00Z',
-  startDate: eventStartDate,
-  location: 'Silicon Valley Convention Center',
-  heroImageUrl: 'images/event-hero.png',
-  isPaid: true,
-  description: '...',
-  attendees: 5000,
-  status: 'Active',
-  time: '09:00am GMT',
-};
-
 
 export const MOCK_MANAGE_EVENT_TABS: TabToggle[] = [
   { key: 'overview', label: 'Overview', value: null},
@@ -428,24 +380,3 @@ export const MOCK_MANAGE_STATS: StatCardData[] = [
   },
 ];
 
-export const MOCK_EVENT_SUMMARY: EventSummary = {
-  description:"",
-  flyerUrl:"",
-  id:1,
-  startTime:"",
-  location:'',
-  ticketPrice:0,
-  title:"",
-  attendees:0,
-  organizer: 'William Pen (Senior UI/UX Designer)',
-};
-
-export const MOCK_TICKET_STATUS: TicketStatus[] = [
-  { name: 'Regular', sold: 6, left: 21 },
-  { name: 'VIP', sold: 14, left: 12 },
-  { name: 'VVIP', sold: 19, left: 43 },
-];
-
-export const MOCK_HOSTS: EventHostAdmin[] = [
-  { name: 'William Pen', email: 'william.pen@example.com' },
-];
