@@ -9,18 +9,12 @@ import {
   VenueImage,
   VenueSection
 } from '../../../../core/models/event.model';
-import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
+import { EventsServiceService } from '../../../../core/services/events.service';
 import { HelpCardComponent } from '../../../../shared/components/help-card/help-card.component';
 import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
 import { TicketCardComponent } from '../../../../shared/components/ticket-card/ticket-card.component';
 import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
-
-import { EventsServiceService } from '../../../../core/services/events.service';
-
-
-
-
 @Component({
   selector: 'app-event-page',
   standalone: true,
