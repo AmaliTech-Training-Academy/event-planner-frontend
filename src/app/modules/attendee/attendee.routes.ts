@@ -94,4 +94,11 @@ export const ATTENDEE_ROUTES: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+  path: 'account-deactivated',
+  loadComponent: () =>
+    import('../../shared/components/account-deactivated-modal/account-deactivated-modal.component').then(
+      (m) => m.AccountDeactivatedModalComponent
+    ),
+}
 ];
