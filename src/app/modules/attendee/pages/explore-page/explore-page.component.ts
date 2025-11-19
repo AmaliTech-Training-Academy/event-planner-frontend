@@ -298,6 +298,7 @@ export class ExplorePageComponent implements OnInit {
     this.selectedDate.set(date);
     this.showDatePicker.set(false);
   }
+  
 
 
 }

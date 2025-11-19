@@ -1,7 +1,7 @@
 <main class="event-page-content">
   <div class="container">
     <a [routerLink]="routes.EXPLORE" class="back-link">
-      <img src="icons/Navigation1.png" alt="Back" class="back-icon" aria-hidden="true" />
+      <img  src="icons/Navigation1.png" (error)="onImageError($event)" alt="Back" class="back-icon" aria-hidden="true" />
       <span>Back to event</span>
     </a>
 
@@ -44,7 +44,7 @@
             <h2>About The Event</h2>
             <p>{{ eventDetails()?.description }}</p>
             <div class="attendees-info">
-              <img src="icons/Frame.png" alt="Attendees" class="attendees-icon" />
+              <img src="icons/Frame.png" (error)="onImageError($event)" alt="Attendees" class="attendees-icon" />
               {{ eventDetails()?.totalAttendees }} Attendees
             </div>
           </section>
