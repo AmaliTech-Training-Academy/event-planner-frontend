@@ -16,6 +16,34 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
+  // Empty state styles
+  &--empty {
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    background-color: $gray-100;
+    border-style: dashed;
+  }
+
+  &__empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-3;
+    text-align: center;
+  }
+
+  &__empty-icon {
+    width: 48px;
+    height: 48px;
+    opacity: 0.5;
+  }
+
+  &__empty-text {
+    @include body-2;
+    color: $gray-500;
+  }
+
   &__icon {
     width: 48px;
     height: 48px;
@@ -88,10 +116,18 @@
   }
 }
 
-
 @media (max-width: 767px) {
   .user-card {
     padding: $spacing-4;
+
+    &--empty {
+      min-height: 80px;
+    }
+
+    &__empty-icon {
+      width: 40px;
+      height: 40px;
+    }
 
     &__icon {
       width: 40px;

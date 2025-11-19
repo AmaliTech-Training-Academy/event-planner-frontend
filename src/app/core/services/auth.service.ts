@@ -143,20 +143,20 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
-public adminLogout() {
-  this.setLoading(true);
-  return this.authBackend.logout().pipe(
-    take(1),
-    tap(() => {
-      this._loggedIn$.next(false);
-      this._userInfo$.next(null);
-      this.clearAuthStorage();
-      this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
-    }),
-    catchError((err) => this.errorHandlerService.handle(err)),
-    finalize(() => this.setLoading(false))
-  );
-}
+  public adminLogout() {
+    this.setLoading(true);
+    return this.authBackend.logout().pipe(
+      take(1),
+      tap(() => {
+        this._loggedIn$.next(false);
+        this._userInfo$.next(null);
+        this.clearAuthStorage();
+        this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+      }),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
 
   public checkAuthUser(userId: string) {
     this.setLoading(true);
@@ -277,5 +277,28 @@ public adminLogout() {
 
   public getOtp(): string {
     return this._otp;
+  }
+  public acceptInvitation(
+    fullName: string,
+    password: string,
+    confirmPassword: string,
+    invitationToken: string
+  ) {
+    this.setLoading(true);
+    return this.authBackend
+      .acceptInvitation({
+        fullName,
+        password,
+        confirmPassword,
+        invitationToken,
+      })
+      .pipe(
+        take(1),
+        tap(() => {
+          this.router.navigate([APP_ROUTES.LOGIN]);
+        }),
+        catchError((err) => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
   }
 }

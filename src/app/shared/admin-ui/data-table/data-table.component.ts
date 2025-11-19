@@ -251,12 +251,7 @@ export class DataTableComponent<T extends Record<string, any>> {
       urlParts[urlParts.length - 1] = encodedFileName;
       profileImageUrl = urlParts.join('/');
 
-      console.log(
-        '📸 Original URL:',
-        item['profileImageUrl'] || item['avatar']
-      );
-      console.log('📸 Encoded URL:', profileImageUrl);
-
+     
       return profileImageUrl;
     }
 
