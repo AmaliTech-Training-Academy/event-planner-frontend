@@ -20,7 +20,7 @@ import { OtpBodyData } from '../models/auth-response.model';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private _loggedIn$ = new BehaviorSubject<boolean>(false);
-  private _userInfo$ = new BehaviorSubject<OtpBodyData | null>(null); // Change User to OtpBodyData
+  private _userInfo$ = new BehaviorSubject<OtpBodyData | null>(null);
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
   private _email: string = '';
@@ -34,6 +34,7 @@ export class AuthService {
   ) {
     this.onload();
   }
+
 
   public login(email: string, password: string) {
     this.setLoading(true);
@@ -98,20 +99,20 @@ export class AuthService {
         const userData = response?.data;
         if (userData) {
           this._loggedIn$.next(true);
-          this._userInfo$.next(userData); // userData is now OtpBodyData with number id
+          this._userInfo$.next(userData);
           this._email = '';
           this._otp = '';
 
-          // Convert id to string when saving to storage
           this.saveAuthToStorage(
-            userData.id.toString(), // Convert number to string here
+            userData.id.toString(),
             userData.fullName,
             userData.profilePicture,
             userData.email,
             userData.role
           );
         }
-        this.router.navigate([APP_ROUTES.LANDING_PAGE]);
+        // Route to Explore page instead
+        this.router.navigate([APP_ROUTES.EXPLORE]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))

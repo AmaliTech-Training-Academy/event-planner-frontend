@@ -10,7 +10,7 @@ export interface TimeSeriesDataPoint {
 }
 
 export interface LineSeriesConfig {
-  name: string; 
+  name: string;
   data: TimeSeriesDataPoint[];
   color: string;
   showArea?: boolean;

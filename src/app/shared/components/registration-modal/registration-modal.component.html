@@ -1,14 +1,7 @@
 <app-modal (closeModal)="onCancel()">
   <div class="modal-header">
     <h2 class="modal-title">{{ registrationInfo().eventName }}</h2>
-    <app-button
-      type="secondary"
-      variant="icon"
-      (click)="onCancel()"
-      aria-label="Close modal"
-    >
-      <img src="icons/close.png" alt="Close" />
-    </app-button>
+    
   </div>
 
   <form (ngSubmit)="onSubmit()" class="registration-form">

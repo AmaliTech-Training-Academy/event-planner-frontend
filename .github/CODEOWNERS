@@ -1,5 +1,8 @@
-# Global code ownership - jaakumasi is the reviewer
+# Global code ownership - jaakumasi is the reviewer (except temporal-deploy branch)
 * @jaakumasi
+
+# No code ownership for temporal-deploy branch
+temporal-deploy
 
 # DevOps files - only devops team reviews
 /.github/ @mangucletus @kistlerk19 @jsabrokwah

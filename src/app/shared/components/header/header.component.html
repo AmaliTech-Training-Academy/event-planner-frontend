@@ -23,12 +23,12 @@
         aria-label="Close menu"
       >
         <img
-          src="icons/close.png"
+          ngSrc="icons/close.png"
           alt=""
           class="header__icon"
           width="24"
           height="24"
-          loading="lazy"
+          priority
         />
       </button>
       } 
@@ -39,16 +39,15 @@
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: link.path === '/' }"
         class="header__link"
-        (click)="closeMenu()"
+        (click)="closeMenu(); closeUserMenu()"
         [attr.aria-label]="link.label"
       >
         <img
-          [src]="link.icon"
+          [ngSrc]="link.icon"
           [alt]="''"
           class="header__icon"
           width="18"
           height="18"
-          loading="lazy"
         />
         <span>{{ link.label }}</span>
       </a>
@@ -70,32 +69,53 @@
             (click)="toggleUserMenu()"
           >
             <div class="header__user-avatar">
-              <img
-                src="icons/profile-avata.png"
-                class="avatar"
-                alt="User Avatar"
-              />
+              @if (getUserProfilePicture()) {
+                <img
+                  [src]="getUserProfilePicture()!"
+                  class="avatar"
+                  alt="User Avatar"
+                  width="40"
+                  height="40"
+                />
+              } @else {
+                <img
+                  ngSrc="icons/profile-avata.png"
+                  class="avatar"
+                  alt="User Avatar"
+                  width="40"
+                  height="40"
+                />
+              }
             </div>
             <span class="header__user-name">{{ getUserName() }}</span>
             <img
-              src="icons/drop-down.png"
+              ngSrc="icons/drop-down.png"
               alt="Dropdown"
               class="header__dropdown-icon"
               [class.open]="isUserMenuOpen()"
+              width="16"
+              height="16"
             />
           </div>
 
           @if (isUserMenuOpen()) {
           <div class="header__user-menu header__user-menu--desktop">
-            <a class="header__dropdown-item" [routerLink]="APP_ROUTES.PROFILE"
+            <a 
+              class="header__dropdown-item" 
+              [routerLink]="APP_ROUTES.PROFILE"
+              (click)="closeUserMenu()"
               >Profile</a
             >
-            <a class="header__dropdown-item" [routerLink]="APP_ROUTES.MY_EVENTS"
+            <a 
+              class="header__dropdown-item" 
+              [routerLink]="APP_ROUTES.MY_EVENTS"
+              (click)="closeUserMenu()"
               >My Events</a
             >
             <a
               class="header__dropdown-item"
               [routerLink]="APP_ROUTES.PAYMENT_SETTINGS"
+              (click)="closeUserMenu()"
               >Payment Settings</a
             >
             <a
@@ -141,7 +161,23 @@
     <div class="header__mobile-actions">
       @if (isLoggedIn()) {
       <div class="header__user-avatar">
-        <img src="icons/profile-avata.png" class="avatar" alt="User Avatar" />
+        @if (getUserProfilePicture()) {
+          <img
+            [src]="getUserProfilePicture()!"
+            class="avatar"
+            alt="User Avatar"
+            width="40"
+            height="40"
+          />
+        } @else {
+          <img
+            ngSrc="icons/profile-avata.png"
+            class="avatar"
+            alt="User Avatar"
+            width="40"
+            height="40"
+          />
+        }
       </div>
       <span class="header__user-name">{{ getUserName() }}</span>
       }
@@ -152,9 +188,12 @@
         [attr.aria-label]="isMenuOpen() ? 'Close menu' : 'Open menu'"
       >
         <img
-          [src]="isMenuOpen() ? 'icons/close.png' : 'icons/menu.png'"
+          [ngSrc]="isMenuOpen() ? 'icons/close.png' : 'icons/menu.png'"
           [alt]="isMenuOpen() ? 'Close' : 'Menu'"
           class="header__icon"
+          width="24"
+          height="24"
+          priority
         />
       </button>
     </div>

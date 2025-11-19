@@ -6,24 +6,27 @@
   </div>
 
   <div class="user-management-page__table">
-   <app-data-table
-  [data]="users()"
-  [columns]="tableColumns"
-  [actions]="tableActions"
-  [filters]="tableFilters"
-  [loading]="loading()"
-  [primaryAction]="primaryAction"
-  [searchable]="true"
-  [serverSidePagination]="true"    
-  [totalItems]="totalElements()"    
-  (pageChange)="onPageChange($event)" 
-  (rowExpanded)="onRowExpanded($event)"
-  [serverSidePagination]="true"
-[totalItems]="totalElements()"
-(pageChange)="onPageChange($event)"
-(searchChange)="onSearchChange($event)"
-(filterChange)="onFilterChange($event)"
-/>
+    <app-data-table
+      tableTitle="User List"
+      searchPlaceholder="Search users by name or email..."
+      [data]="users()"
+      [columns]="tableColumns"
+      [actions]="tableActions"
+      [filters]="tableFilters"
+      [loading]="loading()"
+      [primaryAction]="primaryAction"
+      [searchable]="true"
+      [showAvatar]="true"
+      [showCheckboxes]="true"
+      [showActionLabels]="false"
+      [itemsPerPage]="10"
+      [serverSidePagination]="true"
+      [totalItems]="totalElements()"
+      (pageChange)="onPageChange($event)"
+      (searchChange)="onSearchChange($event)"
+      (filterChange)="onFilterChange($event)"
+      (rowExpanded)="onRowExpanded($event)"
+    />
   </div>
 
   @if (isInviteModalOpen()) {
