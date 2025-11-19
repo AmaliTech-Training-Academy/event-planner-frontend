@@ -1055,3 +1055,72 @@
   }
 }
 
+.success-modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; 
+}
+
+
+.success-modal-content {
+  background: white;
+  width: 360px;
+  height: 360px; 
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  
+ 
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+
+.success-icon-wrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #E0F2E9; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+
+.success-icon-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+
+.success-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #374151; 
+  text-align: center;
+  margin: 0;
+}
+
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+

@@ -11,7 +11,7 @@ export interface EventDetails {
   isPaid: boolean;
   description: string;
   attendeesCount: string;
-  status: string;
+  status: 'pending' | 'completed' | 'cancelled'  |'upcoming';
   time: string;
   organizer: string;
 }

@@ -57,7 +57,7 @@ export class ManageEventPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   protected readonly APP_ROUTES = APP_ROUTES;
 
-  
+   protected readonly showSuccessModal = signal<boolean>(false);
   protected readonly eventDetails = signal<EventDetails | null>(null);
   protected readonly ticketTypes = signal<TicketType[]>([]);
   protected readonly hosts = signal<EventHost[]>([]);
@@ -181,27 +181,41 @@ export class ManageEventPageComponent implements OnInit {
 
   protected onViewTickets(): void { }
 
- protected onInviteGuest(): void {
+  protected onInviteGuest(): void {
     this.showInviteModal.set(true);
   }
-protected onCloseInviteModal(): void {
-  this.showInviteModal.set(false);
-  this.inviteForm.reset(); 
-}
+
+  protected onCloseInviteModal(): void {
+    this.showInviteModal.set(false);
+    this.inviteForm.reset({ role: 'attendee' });
+  }
+
+  
   protected onSendInvite(): void {
     if (this.inviteForm.valid) {
-      // TODO: Call API to invite user
+      
       this.showInviteModal.set(false);
+      
+      this.showSuccessModal.set(true);
+      
+     
       this.inviteForm.reset({ role: 'attendee' });
+
+     
+      setTimeout(() => {
+        this.showSuccessModal.set(false);
+      }, 3000);
+
     } else {
       this.inviteForm.markAllAsTouched(); 
     }
   }
-  protected onInviteSuccess(): void {
-    this.showInviteModal.set(false);
+
+  protected onCloseSuccessModal(): void {
+    this.showSuccessModal.set(false);
   }
 
-  
+ 
   protected getStatusClass(status: string): string {
     if (!status) return 'event-status';
     return `event-status event-status--${status.toLowerCase()}`;
@@ -210,17 +224,10 @@ protected onCloseInviteModal(): void {
   protected formatDate(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   protected calculateTotalRevenue(): number {
-    return this.ticketTypes().reduce((total, ticket) => {
-      return total + (ticket.price * ticket.sold);
-    }, 0);
+    return this.ticketTypes().reduce((total, ticket) => { return total + (ticket.price * ticket.sold); }, 0);
   }
 }

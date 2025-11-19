@@ -26,7 +26,7 @@ export const MOCK_EVENT_DETAILS: EventDetails = {
   startDate: eventStartDate,
   location: 'Silicon Valley Convention Center',
   heroImageUrl: 'images/img.png',
-  status:'string',
+  status:'upcoming',
   time: '10:00 AM',
   description:
     'Join us for the most anticipated tech event of the year, bringing together industry leaders, innovators, and tech enthusiasts. The Tech Innovation Summit 2025 will showcase cutting-edge technologies, breakthrough innovations, and insights from world-renowned experts.',
