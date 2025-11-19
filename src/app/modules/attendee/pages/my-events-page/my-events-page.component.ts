@@ -17,6 +17,7 @@ import { UserCardData } from '../../../../core/models';
 import { EventCard } from '../../../../core/models/events';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
+import { ButtonComponent } from "@app/shared/ui/button/button.component";
 
 @Component({
   selector: 'app-my-events-page',
@@ -27,8 +28,9 @@ import { EventCardComponent } from '../../../../shared/components/event-card/eve
     EventCardComponent,
     AdminUserCardComponent,
     PaginationComponent,
-    EmptyListMessageComponent
-  ],
+    EmptyListMessageComponent,
+    ButtonComponent
+],
   templateUrl: './my-events-page.component.html',
   styleUrl: './my-events-page.component.scss',
 })
