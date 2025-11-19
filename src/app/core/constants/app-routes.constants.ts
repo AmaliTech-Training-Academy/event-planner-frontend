@@ -25,5 +25,6 @@ export const APP_ROUTES = {
   ADMIN_ORGANIZERS: '/admin/organizers',
   ACCEPT_INVITE: '/auth/invitation/accept',
   MANAGE_EVENT: '/app/manage-event/:id',
+  DEACTIVATED_MODAL: '/app/account-deactivated',
 
 };
