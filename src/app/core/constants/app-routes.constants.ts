@@ -19,7 +19,6 @@ export const APP_ROUTES = {
   PAYMENT_SETTINGS: '/app/payment-settings',
   ADMIN_DASHBOARD: '/admin',
   EVENT_PAYMENT_SUCCESS: '/app/event-payment-success',
-
   PROFILE_PAGE: '/app/profile',
   ADMIN_EVENTS: '/admin/events',
   ADMIN_EVENT_DETAILS: '/admin/events/:id',
