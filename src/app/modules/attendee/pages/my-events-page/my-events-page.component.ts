@@ -17,8 +17,6 @@ import { UserCardData } from '../../../../core/models';
 import { EventCard } from '../../../../core/models/events';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { LineChartComponent } from '../../../admin/pages/dashboard-page/components/line-chart/line-chart.component';
 
 @Component({
   selector: 'app-my-events-page',
@@ -28,10 +26,7 @@ import { LineChartComponent } from '../../../admin/pages/dashboard-page/componen
     RouterModule,
     EventCardComponent,
     AdminUserCardComponent,
-    LineChartComponent,
-    ButtonComponent,
     PaginationComponent,
-    ButtonComponent,
     EmptyListMessageComponent
   ],
   templateUrl: './my-events-page.component.html',
@@ -58,15 +53,9 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
           this.loading.set(loading_)
         }
       })
+      
+    this.getMyEvents()
 
-    this.eventService.myEvents(this.page())
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.myEvents.set(response.data.content);
-          this.totalaPages.set(response.data.totalPages)
-        }
-      })
 
     this.eventService.myEventOverview()
       .pipe(takeUntil(this.destroy$))
@@ -95,12 +84,24 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+
+  private getMyEvents() {
+    this.eventService.myEvents(this.page())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.myEvents.set(response.data.content);
+          this.totalaPages.set(response.data.totalPages)
+        }
+      })
+  }
+
   protected handleManageEvent(event: EventCard): void {
     this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
   }
 
-  protected onManageEvent(): void {
-    this.router.navigate([this.routes.MANAGE_EVENT]);
+  protected onManageEvent(id: string): void {
+    this.router.navigate([this.routes.MANAGE_EVENT(id)]);
   }
 
   protected navigateToCreateEvent() {
@@ -108,5 +109,10 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
   }
   protected navigateToExploreEvent() {
     this.router.navigate([APP_ROUTES.EXPLORE])
+  }
+
+  protected setCurrentPage(page: number) {
+    this.page.set(page);
+    this.getMyEvents();
   }
 }

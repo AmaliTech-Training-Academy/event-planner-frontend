@@ -20,10 +20,10 @@ import { ButtonComponent } from '../../ui/button/button.component';
   styleUrl: './venue-image-slider.component.scss',
 })
 export class VenueImageSliderComponent implements OnChanges {
-  
+
   @Input() images: string[] = [];
-   @Output() imageClick = new EventEmitter<string>();
-  
+  @Output() imageClick = new EventEmitter<string>();
+
   onImageClick(image: string): void {
     this.imageClick.emit(image);
   }

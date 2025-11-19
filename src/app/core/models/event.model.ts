@@ -461,3 +461,20 @@ export   interface EventFiltersCache {
   searchTerm: string;
   locationTerm: string;
 }
+
+export interface RegisterEventBody {
+  ticketTypeId: number,
+  numberOfTickets: number,
+  fullName: string,
+  email: string
+}
+
+
+export interface RegisterEventResponse {
+  id: number;
+  eventTitle: string | null;
+  location: string | null;
+  organizer: string | null;
+  startDate: string | null;
+  authorizationUrl: string | null;
+}

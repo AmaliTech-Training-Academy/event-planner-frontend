@@ -23,7 +23,7 @@
         <div class="hero-details">
           <span class="hero-detail-item">
             <img src="icons/Mixed.png" alt="" class="hero-icon" aria-hidden="true" />
-            <button (click)="toggleDatePicker()" class="hero-date-btn">
+            <button class="hero-date-btn">
               {{ eventDetails()?.startTime | date }}
             </button>
           </span>
@@ -82,10 +82,6 @@
 </main>
 
 @if (showRegistrationModal() && selectedTicket()) {
-<app-registration-modal [registrationInfo]="{
-    eventName: eventDetails()?.title || 'Registration',
-    ticketName: selectedTicket()?.type || '',
-    ticketPrice: selectedTicket()!.price
-  }" (cancelRegistration)="onCancelRegistration()"
-  (submitRegistration)="onSubmitRegistration($event)"></app-registration-modal>
+<app-registration-modal [currentEvent]="eventDetails()" [selectedTicket]="selectedTicket()"
+  (cancelRegistration)="onCancelRegistration()"></app-registration-modal>
 }

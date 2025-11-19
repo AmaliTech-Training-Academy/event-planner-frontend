@@ -212,7 +212,6 @@ export class AuthService {
 
   private onload() {
     const stored = localStorage.getItem(AUTH_STORAGE.AUTH);
-
     if (stored) {
       const data = JSON.parse(stored) as AuthStorage;
       this._loggedIn$.next(data[AUTH_STORAGE.AUTHENTICATED]);
@@ -228,7 +227,7 @@ export class AuthService {
         };
         this._userInfo$.next(userData);
         const refreshedAt = data[AUTH_STORAGE.REFRESHED_AT]
-        this.startAutomaticRefresh(refreshedAt)
+        // this.startAutomaticRefresh(refreshedAt)
       }
     }
   }

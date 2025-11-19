@@ -22,15 +22,13 @@ import {
 
 import {
   MOCK_EVENT_TOGGLES,
-  MOCK_EVENT_TYPE_OPTIONS,
-  MOCK_POPULAR_LOCATIONS,
-  MOCK_RECENT_SEARCHES
+  MOCK_EVENT_TYPE_OPTIONS
 } from '../../../../core/data/mock-data';
-import { EventsServiceService } from '../../../../core/services/events.service';
-import { LocationSearchComponent } from "../../../../shared/components/location-search/location-search.component";
 import { StoredRecentLocation } from '../../../../core/models/recent-location.model';
+import { EventsServiceService } from '../../../../core/services/events.service';
 import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagination.component";
 import { EmptyListMessageComponent } from "@app/shared/components/empty-list-message/empty-list-message.component";
+import { LocationSearchComponent } from "../../../../shared/components/location-search/location-search.component";
 
 @Component({
   selector: 'app-explore-page',
@@ -168,8 +166,6 @@ export class ExplorePageComponent implements OnInit {
     })
     this.eventToggles.set(MOCK_EVENT_TOGGLES);
     this.eventTypeOptions.set(MOCK_EVENT_TYPE_OPTIONS);
-    this.recentSearches.set(MOCK_RECENT_SEARCHES);
-    this.popularLocations.set(MOCK_POPULAR_LOCATIONS);
   }
 
   protected clearSearchFilters() {
