@@ -10,16 +10,19 @@ export class ErrorHandlerService {
 
   constructor(private readonly notificationService: NotificationService) { }
 
+  
+
   handle(error: HttpErrorResponse) {
     let message = 'An unknown error occurred';
 
     if (error.error instanceof ErrorEvent) {
       message = `Network error: ${error.error.message}`;
-    }
+    } 
     else if (error.error?.description) {
-      message = error.error?.description
+      message = error.error?.data?.[0] || error.error?.description
     }
     else {
+      // Backend error
       switch (error.status) {
         case 0:
           message = 'Cannot connect to the server. Please check your internet connection.';

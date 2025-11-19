@@ -5,7 +5,7 @@
       [class.selected]="option === selectedOption"
       [class.has-divider]="!$first" 
       (click)="onOptionSelect(option)">
-      {{ option }}
+      {{ option.label }}
     </li>
   }
 </ul>

@@ -7,7 +7,12 @@ import {
   SearchLocation,
   PopularLocation,
   TabToggle,
+  EventTypeFilter,
+  EventSummary,
 } from '../models/event.model';
+
+// import { UserCardData } from '../models/user.model';
+import { LineSeriesConfig } from '../models/chart.model';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
 
@@ -21,7 +26,7 @@ export const MOCK_EVENT_DETAILS: EventDetails = {
   startDate: eventStartDate,
   location: 'Silicon Valley Convention Center',
   heroImageUrl: 'images/img.png',
-  
+
   description:
     'Join us for the most anticipated tech event of the year, bringing together industry leaders, innovators, and tech enthusiasts. The Tech Innovation Summit 2025 will showcase cutting-edge technologies, breakthrough innovations, and insights from world-renowned experts.',
   attendeesCount: '5000+',
@@ -84,7 +89,7 @@ export const MOCK_HELP_EMAIL: string = 'support@techevent.com';
 
 
 export const MOCK_EVENT_CARDS: EventCard[] = [
- 
+
   {
     id: 'evt123',
     title: 'Tech Innovation Summit 2025',
@@ -194,7 +199,7 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 2200,
   },
 
-  
+
   {
     id: 'evt134',
     title: 'Cloud Computing Summit',
@@ -205,7 +210,7 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 3000,
   },
 
-  
+
   {
     id: 'evt138',
     title: 'IoT World Congress',
@@ -234,7 +239,7 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 800,
   },
 
-  
+
   {
     id: 'evt141',
     title: 'Community Code & Coffee',
@@ -311,14 +316,25 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
 
 
 export const MOCK_EVENT_TOGGLES: TabToggle[] = [
-  { key: 'upcoming', label: 'Upcoming events' },
-  { key: 'past', label: 'Past events' },
+  { key: 'upcoming', label: 'Upcoming events', value: false },
+  { key: 'past', label: 'Past events', value: true },
 ];
 
-export const MOCK_EVENT_TYPE_OPTIONS: string[] = [
-  'All Events',
-  'Paid Events',
-  'Free Events',
+
+
+export const MOCK_EVENT_TYPE_OPTIONS: EventTypeFilter[] = [
+  {
+    label: 'All Events',
+    value: 'all'
+  },
+  {
+    label: 'Paid Events',
+    value: 'paid'
+  },
+  {
+    label: 'Free Events',
+    value: 'free'
+  },
 ];
 
 export const MOCK_RECENT_SEARCHES: SearchLocation[] = [
@@ -337,32 +353,101 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
 ];
 
 
-export const MOCK_MY_EVENTS_CARDS: EventCard[] = [
+export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
   {
-    id: 'evt123',
+    id: 1,
+    ticketPrice: 33,
+    description: "",
     title: 'Tech Innovation Summit 2025',
-    date: eventStartDate,
+    startTime: '',
     location: 'Silicon Valley, CA',
-    imageUrl: 'images/event1.jpg', 
-    isPaid: true,
+    flyerUrl: 'images/event1.jpg',
     attendees: 5000,
   },
   {
-    id: 'evt124',
+    id: 2,
+    ticketPrice: 33,
+    description: "",
     title: 'Community Code & Coffee',
-    date: new Date('2025-05-10T00:00:00Z'),
+    startTime: '',
     location: 'Austin, TX',
-    imageUrl: 'images/event2.jpg', 
-    isPaid: true,
+    flyerUrl: 'images/event2.jpg',
     attendees: 150,
   },
   {
-    id: 'evt125',
+    id: 3,
     title: 'AI World Conference',
-    date: new Date('2025-06-20T00:00:00Z'),
+    startTime: '',
     location: 'New York, NY',
-    imageUrl: 'images/event3.jpg', 
-    isPaid: true,
+    flyerUrl: 'images/event3.jpg',
+    ticketPrice: 400,
+    description: "",
     attendees: 2500,
   },
 ];
+
+
+
+
+export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
+  {
+    name: 'This year',
+    color: '#FF6B35', 
+    showArea: true,
+    lineStyle: 'solid',
+    areaGradient: {
+      start: 'rgba(255, 107, 53, 0.2)',
+      end: 'rgba(255, 107, 53, 0.05)',
+    },
+    data: [
+      { month: 'Jan', value: 12000 },
+      { month: 'Feb', value: 15000 },
+      { month: 'Mar', value: 18000 },
+      { month: 'Apr', value: 22000 },
+      { month: 'May', value: 28000 },
+      { month: 'Jun', value: 25000 },
+      { month: 'Jul', value: 27000 },
+    ],
+  },
+  {
+    name: 'Last year',
+    color: '#6B7280',
+    showArea: false,
+    lineStyle: 'dashed',
+    data: [
+      { month: 'Jan', value: 10000 },
+      { month: 'Feb', value: 12000 },
+      { month: 'Mar', value: 14000 },
+      { month: 'Apr', value: 16000 },
+      { month: 'May', value: 20000 },
+      { month: 'Jun', value: 22000 },
+      { month: 'Jul', value: 24000 },
+    ],
+  },
+];
+
+
+// export const MOCK_STAT_CARDS: UserCardData[] = [
+//   {
+   
+//     title: 'Total Events Organized',
+//     count: 3,
+//     icon: 'icons/user-icon-orange.png',
+//     bgColor: '#FFF7EC',
+//     percentageChange: 11.01,
+//   },
+//   {
+   
+//     title: 'Attendees',
+//     count: 387,
+//     icon: 'icons/user-icon-blue.png',
+//     bgColor: '#F0F9FF',
+//   },
+//   {
+  
+//     title: 'Total Tickets Sold',
+//     count: 565,
+//     icon: 'icons/user-icon-blue.png',
+//     bgColor: '#F0F9FF',
+//   },
+// ];
