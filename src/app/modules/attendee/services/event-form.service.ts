@@ -8,6 +8,7 @@ import { EVENT_TYPE, EVENT_FORM_FIELDS as F, MEETING_TYPE, PRICE_TYPE } from '..
 export class EventFormService {
   private form: FormGroup;
   private destroy$ = new Subject<void>();
+  private objectUrlCache = new WeakMap<File, string>();
 
   constructor(private readonly fb: FormBuilder) {
     this.form = this.fb.group({
@@ -15,10 +16,10 @@ export class EventFormService {
       [F.DATES]: this.fb.array([]),
       [F.MEETING_TYPE]: [MEETING_TYPE.IN_PERSON, [Validators.required]],
       [F.FLYER]: ['', Validators.required],
-      [F.TITLE]: ['', Validators.required],
-      [F.CAPACITY]: [0],
-      [F.PRICE]: [0],
-      [F.PERCS]: ['', Validators.required],
+      [F.TITLE]: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+      [F.CAPACITY]: [0, [Validators.min(0)]],
+      [F.PRICE]: [0, [Validators.min(0)]],
+      [F.PERCS]: ['', [Validators.required, Validators.minLength(3)]],
       [F.REQUIRE_APPROVAL]: [false, Validators.required],
       [F.PRICE_TYPE]: [PRICE_TYPE.FREE, Validators.required],
       [F.VENUE_SECTIONS]: this.fb.array([]),
@@ -54,6 +55,9 @@ export class EventFormService {
   public get inPersonDetails() {
     return this.form.get(F.IN_PERSON_DETAILS) as FormGroup;
   }
+  public get vertualDetails() {
+    return this.form.get(F.VIRTUAL_DETAILS) as FormGroup;
+  }
 
   public get requireApproval() {
     return this.form.get(F.REQUIRE_APPROVAL);
@@ -63,7 +67,17 @@ export class EventFormService {
     return this.inPersonDetails.get(F.IMAGES);
   }
 
-  private createDateGroup(label?: 'startsAt' | 'endsAt'): FormGroup {
+  public removeVenueImage(index: number): void {
+    const control = this.venueImages;
+    const images = control?.value ?? [];
+
+    const updated = images.filter((_: any, i: number) => i !== index);
+
+    control?.setValue(updated);
+    control?.markAsDirty();
+    control?.markAsTouched();
+  }
+  private createDateGroup(label?: 'start' | 'end'): FormGroup {
     return this.fb.group({
       [F.LABEL]: [label || 'startsAt'],
       [F.DATE]: ['', Validators.required],
@@ -74,20 +88,30 @@ export class EventFormService {
 
   private createVirtualDetailGroup(): FormGroup {
     return this.fb.group({
-      [F.MEETING_LINK]: ['', Validators.required],
+      [F.DESCRIPTION]: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+      [F.MEETING_LINK]: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            // Basic URL pattern (http/https)
+            /^(https?:\/\/)[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#\[\]@!$&'\(\)\*\+,;=.]+$/
+          ),
+        ],
+      ],
     });
   }
 
   private createInPersonDetailGroup(): FormGroup {
     return this.fb.group({
-      [F.LOCATION]: ['', Validators.required],
-      [F.DESCRIPTION]: ['', Validators.required],
-      [F.IMAGES]: [[]],
+      [F.LOCATION]: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      [F.DESCRIPTION]: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]],
+      [F.IMAGES]: [[], Validators.maxLength(5)],
     });
   }
 
 
-  public addVenueSection(name:string,capacity:number,price:number,description:string,color:string,image:File){
+  public addVenueSection(name: string, capacity: number, price: number, description: string, color: string, image: File) {
     const newGroup = this.fb.group({
       [F.VENUE_SECTION_NAME]: [name, Validators.required],
       [F.VENUE_SECTION_CAPACITY]: [capacity, Validators.required],
@@ -104,52 +128,59 @@ export class EventFormService {
 
   public registerValueChangeHandlers() {
     this.form.get(F.EVENT_TYPE)?.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((type) => {
-      if (type === EVENT_TYPE.MULTI_DAY && this.eventDates.length < 2) {
-        this.addDateGroup();
-      } else if (type === EVENT_TYPE.SINGLE_DAY && this.eventDates.length > 1) {
-        const startData = this.eventDates.at(0).value;
-        this.eventDates.clear();
-        this.eventDates.push(this.fb.group(startData));
-      }
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((type) => {
+        if (type === EVENT_TYPE.MULTI_DAY && this.eventDates.length < 2) {
+          this.addDateGroup();
+        } else if (type === EVENT_TYPE.SINGLE_DAY && this.eventDates.length > 1) {
+          const startData = this.eventDates.at(0).value;
+          this.eventDates.clear();
+          this.eventDates.push(this.fb.group(startData));
+        }
+      });
 
-     this.meetingType?.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((type) => {
-      this.form.removeControl(F.VIRTUAL_DETAILS);
-      this.form.removeControl(F.IN_PERSON_DETAILS);
+    this.meetingType?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((type) => {
+        this.form.removeControl(F.VIRTUAL_DETAILS);
+        this.form.removeControl(F.IN_PERSON_DETAILS);
 
-      if (type === MEETING_TYPE.IN_PERSON) {
-        this.form.addControl(F.IN_PERSON_DETAILS, this.createInPersonDetailGroup());
-      } else if (type === MEETING_TYPE.VIRTUAL) {
-        this.form.addControl(F.VIRTUAL_DETAILS, this.createVirtualDetailGroup());
-      }
-    });
+        if (type === MEETING_TYPE.IN_PERSON) {
+          this.form.addControl(F.IN_PERSON_DETAILS, this.createInPersonDetailGroup());
+        } else if (type === MEETING_TYPE.VIRTUAL) {
+          this.form.addControl(F.VIRTUAL_DETAILS, this.createVirtualDetailGroup());
+        }
+      });
 
     this.form.get(F.PRICE_TYPE)?.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((type) => {
-      const priceControl = this.form.get(F.PRICE);
-      const includedControl = this.form.get(F.PERCS);
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((type) => {
+        const priceControl = this.form.get(F.PRICE);
+        const includedControl = this.form.get(F.PERCS);
 
-      if (type === 'free') {
-        priceControl?.setValue(0);
-        priceControl?.disable({ emitEvent: false });
-        includedControl?.disable({ emitEvent: false });
-      } else {
-        priceControl?.enable({ emitEvent: false });
-        includedControl?.enable({ emitEvent: false });
-      }
-    });
+        if (type === PRICE_TYPE.FREE) {
+          priceControl?.setValue(0, { emitEvent: false });
+          priceControl?.disable({ emitEvent: false });
+          includedControl?.setValue('', { emitEvent: false });
+          includedControl?.disable({ emitEvent: false });
+        } else {
+          priceControl?.enable({ emitEvent: false });
+          includedControl?.enable({ emitEvent: false });
+        }
+      });
 
+    const currentPriceType = this.form.get(F.PRICE_TYPE)?.value;
 
-    this.form.get(F.PRICE_TYPE)?.setValue(PRICE_TYPE.FREE);
+    if (!currentPriceType) {
+      this.form.get(F.PRICE_TYPE)?.setValue(PRICE_TYPE.FREE);
+    } else {
+      this.form.get(F.PRICE_TYPE)?.setValue(currentPriceType);
+    }
+
   }
 
   private addDateGroup(): void {
-    const label = this.eventDates.length === 0 ? 'startsAt' : 'endsAt';
+    const label = this.eventDates.length === 0 ? 'start' : 'end';
     this.eventDates.push(this.createDateGroup(label));
   }
 
@@ -158,7 +189,10 @@ export class EventFormService {
   }
 
   public resetForm(): void {
-    this.form.reset();
+    this.form.reset({
+      [F.EVENT_TYPE]: EVENT_TYPE.SINGLE_DAY,
+      [F.MEETING_TYPE]: MEETING_TYPE.IN_PERSON
+    })
   }
 
   public destroy() {
@@ -172,7 +206,11 @@ export class EventFormService {
 
   public getImageSrc(image: any): string {
     if (image instanceof File) {
-      return URL.createObjectURL(image);
+      const cached = this.objectUrlCache.get(image);
+      if (cached) return cached;
+      const url = URL.createObjectURL(image);
+      this.objectUrlCache.set(image, url);
+      return url;
     }
     return image;
   }

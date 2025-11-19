@@ -9,12 +9,6 @@ import { VenueImageSliderComponent } from '../../../../shared/components/venue-i
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
 import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import {
-  EventDetails,
-  TicketInfo,
-  VenueImage,
-  VenueSection,
-} from '../../../../core/models/event.model';
 
 import {
   MOCK_EVENT_DETAILS,
@@ -23,6 +17,7 @@ import {
   MOCK_VENUE_SECTIONS,
   MOCK_HELP_EMAIL,
 } from '../../../../core/data/mock-data';
+import { EventDetails, TicketInfo, VenueImage, VenueSection } from '../../../../core/models/events';
 
 @Component({
   selector: 'app-event-page',

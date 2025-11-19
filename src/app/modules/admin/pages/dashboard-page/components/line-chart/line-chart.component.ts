@@ -62,6 +62,9 @@ const DEFAULT_X_AXIS: Omit<XAXisComponentOption, 'data'> = {
 
 const DEFAULT_Y_AXIS: YAXisComponentOption = {
   type: 'value',
+  min: 0, 
+  max: 30000, 
+  interval: 10000,
   axisLine: { show: false },
   axisTick: { show: false },
   splitLine: {
@@ -86,7 +89,7 @@ const DEFAULT_Y_AXIS: YAXisComponentOption = {
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [provideEchartsCore({ echarts: () => import('echarts') })],  
+  providers: [provideEchartsCore({ echarts: () => import('echarts') })],
 })
 export class LineChartComponent implements OnInit, OnChanges {
   @Input() public seriesConfig: LineSeriesConfig[] = [];
@@ -129,6 +132,13 @@ export class LineChartComponent implements OnInit, OnChanges {
     const chartSeries = series.map((config) => this._createSeries(config));
 
     const options: EChartsOption = {
+      // Add animation configuration for smooth transitions
+      animation: true,
+      animationDuration: 300, // Match sidebar transition
+      animationEasing: 'cubicInOut',
+      animationDurationUpdate: 300, // Smooth resize animation
+      animationEasingUpdate: 'cubicInOut',
+
       title: this.chartTitle
         ? {
             text: this.chartTitle,

@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 
@@ -15,6 +21,11 @@ export class ModalHeaderComponent {
   @Input() subtitle?: string;
 
   @Output() readonly close = new EventEmitter<void>();
+
+  @HostListener('document:keydown.escape')
+  protected onEscapeKey(): void {
+    this.onClose();
+  }
 
   public onClose(): void {
     this.close.emit();

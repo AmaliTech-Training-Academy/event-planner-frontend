@@ -1,87 +1,50 @@
 <section class="explore-page-content">
   <div class="container">
     <div class="filter-bar">
-      
+
       <div class="search-wrapper">
-        <app-search-input
-          [placeholder]="'Search events...'"
-          [ngModel]="searchQuery()"
-          (ngModelChange)="onSearchChange($event)"
-        ></app-search-input>
+        <app-search-input [placeholder]="'Search events...'" [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchChange($event)"></app-search-input>
       </div>
 
       <div class="secondary-filters-group">
-        
+
         <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
           <div class="filter-button-wrapper">
-            <app-button
-              type="secondary"
-              [extraClass]="'filter-button'"
-              (onClick)="toggleLocationDropdown()"
-            >
-              <div class="filter-content">
-                <span [class.is-placeholder]="selectedLocation() === 'Location'">
-                  {{ selectedLocation() }}
-                </span>
-                <img
-                  src="icons/room.png"
-                  alt=""
-                  class="filter-icon"
-                />
-              </div>
-            </app-button>
+            <app-location-search (focus)="onFocusHandler()" [(ngModel)]="locationTerm"
+              label="" />
           </div>
 
           @if (showLocationDropdown()) {
           <app-location-dropdown
-            [recentSearches]="recentSearches()"
-            [popularLocations]="popularLocations()"
-            (close)="closeLocationDropdown()"
-            (locationSelected)="onLocationSelected($event)"
-            (useCurrentLocation)="onUseCurrentLocation()"
-          ></app-location-dropdown>
+            (close)="closeLocationDropdown()" (locationSelected)="onLocationSelected($event)"
+           ></app-location-dropdown>
           }
         </div>
 
-        
+
         <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
           <div class="filter-button-wrapper">
-            <app-button
-              type="secondary"
-              [extraClass]="'filter-button'"
-              (onClick)="toggleEventTypeDropdown()"
-            >
+            <app-button type="secondary" [extraClass]="'filter-button'" (onClick)="toggleEventTypeDropdown()">
               <div class="filter-content">
-                <span [class.is-placeholder]="selectedEventType() === 'All Events'">
-                  {{ selectedEventType() }}
+                <span [class.is-placeholder]="selectedEventType().label === 'All Events'">
+                  {{ selectedEventType().label }}
                 </span>
-                <img
-                  src="icons/Vector.png"
-                  alt=""
-                  class="filter-icon"
-                />
+                <img src="icons/Vector.png" alt="" class="filter-icon" />
               </div>
             </app-button>
           </div>
 
           @if (showEventTypeDropdown()) {
-          <app-filter-dropdown
-            [options]="eventTypeOptions()"
-            [selectedOption]="selectedEventType()"
-            (close)="closeEventTypeDropdown()"
-            (optionSelected)="onEventTypeSelected($event)"
-          ></app-filter-dropdown>
+          <app-filter-dropdown [options]="eventTypeOptions()" [selectedOption]="selectedEventType()"
+            (close)="closeEventTypeDropdown()" (optionSelected)="onEventTypeSelected($event)"></app-filter-dropdown>
           }
         </div>
 
-        
+
         <div class="filter-dropdown-wrapper" (click)="$event.stopPropagation()">
           <div class="filter-button-wrapper">
-            <app-button
-              type="secondary"
-              [extraClass]="'filter-button'"
-              (onClick)="toggleDatePicker()"
-            >
+            <app-button type="secondary" [extraClass]="'filter-button'" (onClick)="toggleDatePicker()">
               <div class="filter-content">
                 <span [class.is-placeholder]="!selectedDate()">
                   @if (selectedDate(); as date) {
@@ -90,61 +53,30 @@
                   Date
                   }
                 </span>
-                <img
-                  src="icons/Mixed.png"
-                  alt=""
-                  class="filter-icon"
-                />
+                <img src="icons/Mixed.png" alt="" class="filter-icon" />
               </div>
             </app-button>
           </div>
 
           @if (showDatePicker()) {
           <div class="date-picker-dropdown">
-            <app-date-picker
-              (dateSelected)="onDateSelected($event)"
-            ></app-date-picker>
+            <app-date-picker (dateSelected)="onDateSelected($event)"></app-date-picker>
           </div>
           }
         </div>
       </div>
     </div>
 
-    <app-tab-toggle
-      [toggles]="eventToggles()"
-      [activeToggle]="activeToggle()"
-      (tabChange)="onTabChange($event)"
-    ></app-tab-toggle>
+    <app-tab-toggle [toggles]="eventToggles()" [activeToggle]="activeToggle()"
+      (tabChange)="onTabChange($event)"></app-tab-toggle>
 
     <section class="event-section">
-      
-      @if (activeListTitle()) {
-        <h2>{{ activeListTitle() }}</h2>
-      }
-
-      @if (paginatedEvents().length > 0) {
-        <div class="event-grid">
-          @for (event of paginatedEvents(); track event.id) {
-          <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
-          }
-        </div>
-
-        <div class="pagination-wrapper">
-          <app-pagination
-            [currentPage]="currentPage()"
-            (currentPageChange)="currentPage.set($event)"
-            [totalItems]="totalEvents()"
-            [itemsPerPage]="EVENTS_PER_PAGE"
-            (pageChange)="onPageChange($event)"
-          ></app-pagination>
-        </div>
-
-      } @else {
-        <div class="no-events-found">
-          <p>No events found matching your criteria. Try adjusting your filters.</p>
-        </div>
-      }
+      <div class="event-grid">
+        @for (event of allEvents()?.events || []; track $index) {
+        <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
+        }
+      </div>
     </section>
-
+    <app-pagination [totalItems]="allEvents()?.pageSize||1"  [(currentPage)]="currentPage"></app-pagination>
   </div>
 </section>
