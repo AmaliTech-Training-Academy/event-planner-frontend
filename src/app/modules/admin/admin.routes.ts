@@ -31,7 +31,7 @@ export const ADMIN_ROUTES: Routes = [
     path: 'events/:id',
     loadComponent: () =>
       import(
-        '../admin/pages/event-management-page/components/event-details-page/event-details.component-page'
+        './pages/event-management-page/components/event-details-page/event-details-page.component'
       ).then((m) => m.EventDetailsPageComponent),
   },
 

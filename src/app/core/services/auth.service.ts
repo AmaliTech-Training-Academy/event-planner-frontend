@@ -35,7 +35,6 @@ export class AuthService {
     this.onload();
   }
 
-
   public login(email: string, password: string) {
     this.setLoading(true);
 

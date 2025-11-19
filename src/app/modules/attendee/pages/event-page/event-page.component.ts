@@ -17,7 +17,8 @@ import {
   MOCK_VENUE_SECTIONS,
   MOCK_HELP_EMAIL,
 } from '../../../../core/data/mock-data';
-import { EventDetails, TicketInfo, VenueImage, VenueSection } from '../../../../core/models/events';
+// In event-page.component.ts
+import { EventDetails, TicketInfo, VenueImage, VenueSection } from '../../../../core/models/event.model';
 
 @Component({
   selector: 'app-event-page',

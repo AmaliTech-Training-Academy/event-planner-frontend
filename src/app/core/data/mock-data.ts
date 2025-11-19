@@ -16,8 +16,6 @@ import { LineSeriesConfig } from '../models/chart.model';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
 
-
-
 export const MOCK_EVENT_DETAILS: EventDetails = {
   id: 'evt123',
   title: 'Tech Innovation Summit 2025',
@@ -86,10 +84,7 @@ export const MOCK_TICKETS: TicketInfo[] = [
 
 export const MOCK_HELP_EMAIL: string = 'support@techevent.com';
 
-
-
 export const MOCK_EVENT_CARDS: EventCard[] = [
-
   {
     id: 'evt123',
     title: 'Tech Innovation Summit 2025',
@@ -199,7 +194,6 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 2200,
   },
 
-
   {
     id: 'evt134',
     title: 'Cloud Computing Summit',
@@ -209,7 +203,6 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     isPaid: false,
     attendees: 3000,
   },
-
 
   {
     id: 'evt138',
@@ -238,7 +231,6 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     isPaid: false,
     attendees: 800,
   },
-
 
   {
     id: 'evt141',
@@ -314,26 +306,23 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
   },
 ];
 
-
 export const MOCK_EVENT_TOGGLES: TabToggle[] = [
   { key: 'upcoming', label: 'Upcoming events', value: false },
   { key: 'past', label: 'Past events', value: true },
 ];
 
-
-
 export const MOCK_EVENT_TYPE_OPTIONS: EventTypeFilter[] = [
   {
     label: 'All Events',
-    value: 'all'
+    value: 'all',
   },
   {
     label: 'Paid Events',
-    value: 'paid'
+    value: 'paid',
   },
   {
     label: 'Free Events',
-    value: 'free'
+    value: 'free',
   },
 ];
 
@@ -352,12 +341,11 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
   { name: 'Berlin, Germany', meta: 'Europe' },
 ];
 
-
 export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
   {
     id: 1,
     ticketPrice: 33,
-    description: "",
+    description: '',
     title: 'Tech Innovation Summit 2025',
     startTime: '',
     location: 'Silicon Valley, CA',
@@ -367,7 +355,7 @@ export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
   {
     id: 2,
     ticketPrice: 33,
-    description: "",
+    description: '',
     title: 'Community Code & Coffee',
     startTime: '',
     location: 'Austin, TX',
@@ -381,18 +369,15 @@ export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
     location: 'New York, NY',
     flyerUrl: 'images/event3.jpg',
     ticketPrice: 400,
-    description: "",
+    description: '',
     attendees: 2500,
   },
 ];
 
-
-
-
 export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
   {
     name: 'This year',
-    color: '#FF6B35', 
+    color: '#FF6B35',
     showArea: true,
     lineStyle: 'solid',
     areaGradient: {
@@ -426,10 +411,9 @@ export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
   },
 ];
 
-
 // export const MOCK_STAT_CARDS: UserCardData[] = [
 //   {
-   
+
 //     title: 'Total Events Organized',
 //     count: 3,
 //     icon: 'icons/user-icon-orange.png',
@@ -437,14 +421,14 @@ export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
 //     percentageChange: 11.01,
 //   },
 //   {
-   
+
 //     title: 'Attendees',
 //     count: 387,
 //     icon: 'icons/user-icon-blue.png',
 //     bgColor: '#F0F9FF',
 //   },
 //   {
-  
+
 //     title: 'Total Tickets Sold',
 //     count: 565,
 //     icon: 'icons/user-icon-blue.png',
