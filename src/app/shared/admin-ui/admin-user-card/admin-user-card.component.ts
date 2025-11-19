@@ -1,6 +1,6 @@
 import { Component, Input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserCardData } from '../../../core/models/user.model';
+import { UserCardData } from '../../../core/models';
 
 @Component({
   selector: 'app-admin-user-card',

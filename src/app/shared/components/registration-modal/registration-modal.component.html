@@ -1,33 +1,9 @@
 <app-modal (closeModal)="onCancel()">
- 
   <div class="modal-header">
     <h2 class="modal-title">{{ registrationInfo().eventName }}</h2>
-    <app-button
-      type="secondary"
-      variant="icon"
-      (click)="onCancel()"
-      aria-label="Close modal"
-    >
-      <svg
-        icon
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        width="24"
-        height="24"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M6 18 18 6M6 6l12 12"
-        />
-      </svg>
-    </app-button>
+    
   </div>
 
-  
   <form (ngSubmit)="onSubmit()" class="registration-form">
     <app-input
       label="Full Name"
@@ -46,7 +22,6 @@
       [required]="true"
     ></app-input>
 
-    
     @if (isPaid()) {
     <div class="quantity-group">
       <label class="form-label"
@@ -59,10 +34,8 @@
     </div>
     }
 
-    
     <app-button type="primary" [buttonType]="'submit'">
       @if (isPaid()) { Proceed to Payment } @else { Register for Event }
     </app-button>
   </form>
 </app-modal>
-

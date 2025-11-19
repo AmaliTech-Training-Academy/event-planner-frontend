@@ -21,6 +21,7 @@ import {
 } from './components/donut-chart/donut-chart.component';
 import { TrafficListComponent } from './components/traffic-list/traffic-list.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { UserManagementService } from '../../../../core/services/user-management.service';
 
 interface DashboardCard {
   readonly title: string;
@@ -54,39 +55,14 @@ interface TrafficByWebsite {
 })
 export class DashboardPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
+  private readonly _userService = inject(UserManagementService);
 
-  protected readonly dashboardCards: DashboardCard[] = [
-    {
-      title: 'Total Users',
-      count: 2593,
-      percentageChange: 11.01,
-      icon: 'icons/user-icon-orange.png',
-      bgColor: '#FFF4ED',
-      iconColor: '#FF6B2C',
-    },
-    {
-      title: 'Total Events',
-      count: 342,
-      percentageChange: 6.45,
-      icon: 'icons/user-icon-blue.png',
-      bgColor: '#E3F2FD',
-      iconColor: '#2196F3',
-    },
-    {
-      title: 'Active Venues',
-      count: 29,
-      icon: 'icons/user-icon-green.png',
-      bgColor: '#E8F5E9',
-      iconColor: '#4CAF50',
-    },
-    {
-      title: 'Pending Approvals',
-      count: 8,
-      icon: 'icons/user-icon-red.png',
-      bgColor: '#FFEBEE',
-      iconColor: '#F44336',
-    },
+  private readonly _staticCards: DashboardCard[] = [
+  
   ];
+
+  // Dashboard cards signal
+  protected readonly dashboardCards = signal<DashboardCard[]>([]);
 
   protected readonly totalUsersData: TimeSeriesDataPoint[] = [
     { month: 'Jan', value: 12000 },
@@ -137,9 +113,20 @@ export class DashboardPageComponent implements OnInit {
 
   ngOnInit(): void {
     this._layoutService.pageTitle.set('Dashboard Overview');
+    this._layoutService.logoSrc.set('icons/editor-icon.png');
+    this._layoutService.logoAlt.set('Dashboard Icon');
+
+    // Subscribe to live user card updates
+    this._userService.userCards$.subscribe((cards) => {
+      this.dashboardCards.set([...cards, ...this._staticCards]);
+    });
+
+    // Initial fetch
+    this._userService.fetchAllUsers(0, 10).subscribe();
   }
 
   protected switchChartTab(tab: 'users' | 'events'): void {
     this.activeChartTab.set(tab);
   }
 }
+

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
@@ -9,12 +9,6 @@ import { VenueImageSliderComponent } from '../../../../shared/components/venue-i
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
 import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import {
-  EventDetails,
-  TicketInfo,
-  VenueImage,
-  VenueSection,
-} from '../../../../core/models/event.model';
 
 import {
   MOCK_EVENT_DETAILS,
@@ -23,6 +17,7 @@ import {
   MOCK_VENUE_SECTIONS,
   MOCK_HELP_EMAIL,
 } from '../../../../core/data/mock-data';
+import { EventDetails, TicketInfo, VenueImage, VenueSection } from '../../../../core/models/events';
 
 @Component({
   selector: 'app-event-page',
@@ -42,16 +37,25 @@ import {
   styleUrl: './event-page.component.scss',
 })
 export class EventPageComponent implements OnInit {
-  public eventDetails = signal<EventDetails | null>(null);
-  public venueImages = signal<VenueImage[]>([]);
-  public venueSections = signal<VenueSection[]>([]);
-  public tickets = signal<TicketInfo[]>([]);
-  public helpEmail = signal<string>('');
-  public showDatePicker = signal(false);
-  public showRegistrationModal = signal(false);
- public selectedTicket = signal<TicketInfo | null>(null);
+  
+  @ViewChild('heroSection') heroSection!: ElementRef;
 
- protected readonly routes = APP_ROUTES;
+   eventDetails = signal<EventDetails | null>(null);
+   venueImages = signal<VenueImage[]>([]);
+   venueSections = signal<VenueSection[]>([]);
+   tickets = signal<TicketInfo[]>([]);
+   helpEmail = signal<string>('');
+   showDatePicker = signal(false);
+   showRegistrationModal = signal(false);
+   selectedTicket = signal<TicketInfo | null>(null);
+
+  
+   selectedHeroImage = signal<string | null>(null);
+   selectedHeroImageAlt = signal<string | null>(null);
+   selectedHeroImageDescription = signal<string | null>(null);
+
+  protected readonly routes = APP_ROUTES;
+
   public ngOnInit(): void {
     this.loadEventData();
   }
@@ -64,7 +68,6 @@ export class EventPageComponent implements OnInit {
     this.helpEmail.set(MOCK_HELP_EMAIL);
   }
 
-  
   protected onRegister(ticket: TicketInfo): void {
     this.selectedTicket.set(ticket);
     this.showRegistrationModal.set(true);
@@ -72,12 +75,12 @@ export class EventPageComponent implements OnInit {
 
   protected onCancelRegistration(): void {
     this.showRegistrationModal.set(false);
-    this.selectedTicket.set(null); 
+    this.selectedTicket.set(null);
   }
 
   protected onSubmitRegistration(formData: any): void {
-   this.showRegistrationModal.set(false);
-    this.selectedTicket.set(null); 
+    this.showRegistrationModal.set(false);
+    this.selectedTicket.set(null);
   }
 
   protected toggleDatePicker(): void {
@@ -100,5 +103,33 @@ export class EventPageComponent implements OnInit {
 
     this.showDatePicker.set(false);
   }
-}
 
+  
+  protected onVenueImageClick(imageData: VenueImage): void {
+    
+    this.selectedHeroImage.set(imageData.url);
+    this.selectedHeroImageAlt.set(imageData.alt || 'Venue image');
+    this.selectedHeroImageDescription.set(imageData.description || null);
+
+   
+    this.scrollToHero();
+  }
+
+ 
+  
+  protected resetHeroImage(): void {
+    this.selectedHeroImage.set(null);
+    this.selectedHeroImageAlt.set(null);
+    this.selectedHeroImageDescription.set(null);
+  }
+
+  
+  private scrollToHero(): void {
+    setTimeout(() => {
+      this.heroSection?.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
+  }
+}

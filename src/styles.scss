@@ -21,5 +21,8 @@ html, body {
   max-width: 90%;
   margin: 0 auto;
   padding: auto 120px;
+  @media(max-width:991px){
+    padding: auto 32px;
+  }
 
 }

@@ -96,6 +96,9 @@
     border-radius: $radius-full;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     border: 1.5px solid rgba(255, 255, 255, 0.5);
+      @media(max-width:557px){
+         gap: $spacing-4;
+        }
   }
 
   &__icon {
@@ -109,32 +112,22 @@
     justify-content: center;
     transition: all 0.2s ease;
     background: transparent;
+    @media(max-width:400px){
+        width: 30px;
+        height: 30px;
+        }
 
     &:hover {
       background-color: #e5e7eb;
       transform: scale(1.1);
     }
 
-    &--accent {
-      background-color: #ef4444;
-
-      &:hover {
-        background-color: #dc2626;
-      }
-      &.red
-
-      .hero__icon-content {
-        filter: brightness(0) invert(1);
-      }
-    }
-
+   
     &:focus-visible {
       outline: 2px solid #ea580c;
       outline-offset: 2px;
     }
   }
 
-  &__icon-content {
-    font-size: 1.25rem;
-  }
+ 
 }

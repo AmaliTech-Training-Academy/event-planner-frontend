@@ -108,18 +108,10 @@
         [buttonType]="'submit'"
         [disabled]="!loginForm.valid || isSubmitting()"
       >
-        @if (isSubmitting()) {
-          Please wait…
-        } @else {
-          Sign In to Dashboard
-        }
+        @if (isSubmitting()) { Please wait… } @else { Sign In to Dashboard }
       </app-button>
 
-      <app-secure-text
-        text="Secure login enabled"
-        subText="This is a secure, encrypted connection"
-        iconSrc="icons/info.svg"
-      />
+      <app-secure-text></app-secure-text>
     </form>
   </div>
 </div>

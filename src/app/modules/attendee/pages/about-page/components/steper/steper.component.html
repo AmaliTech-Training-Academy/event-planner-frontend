@@ -1,0 +1,37 @@
+<div class="stepper-container">
+    <div class="strip"></div>
+    <div class="left">
+        @for (story of ourStory; track $index) {
+            @if($index%2 === 0){
+            <div class="card">
+                <h5>{{story.year}} - {{story.title}}</h5>
+                <p>{{story.text}}</p>
+                <img [src]="story.cover" alt="">
+            </div>
+            }
+            @else {
+            <img [src]="story.cover" alt="">
+
+            }
+        }
+    </div>
+    <div class="right">
+        @for (story of ourStory; track $index) {
+            @if($index%2 !== 0){
+            <div class="card">
+                <h5>{{story.year}} - {{story.title}}</h5>
+                <p>{{story.text}}</p>
+                <img [src]="story.cover" alt="">
+            </div>
+            }
+            @else {
+                <img [src]="story.cover" alt="">
+            }
+        }
+    </div>
+    <div class="pointers">
+        @for (story of ourStory; track $index) {
+        <div class="circle"></div>
+        }
+    </div>
+</div>

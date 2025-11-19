@@ -1,25 +1,34 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
-import { AppEvent } from '../../../core/models/event-model';
-import { CommonModule, NgOptimizedImage} from '@angular/common';
+import { EventSummary } from '../../../core/models/event.model';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-event-card',
   standalone: true,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, RouterModule, DatePipe, ButtonComponent],
   templateUrl: './event-card.component.html',
-  styleUrls: ['./event-card.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrl: './event-card.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventCardComponent {
- @Input({ required: true }) event!: AppEvent;
-  public APP_ROUTES = APP_ROUTES;
+  public event = input.required<EventSummary>();
+  public variant = input<'explore' | 'manage'|'view-events'>('explore');
+  public manageEvent = output<EventSummary>();
 
-  constructor(private router: Router) {}
+  
+  protected readonly routes = APP_ROUTES;
+  private readonly router = inject(Router);
 
-  public navigateToDetails(): void {
-    this.router.navigate([ this.APP_ROUTES.EVENT_DETAILS( this.event.id)]);
+  
+  protected navigateToDetails(): void {
+   
+    const route = this.routes.EVENT_DETAILS(this.event().id.toString());
+    this.router.navigate([route]);
+  }
+  protected onManageClick(): void {
+    this.manageEvent.emit(this.event());
   }
 }
-

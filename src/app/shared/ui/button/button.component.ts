@@ -1,3 +1,4 @@
+// button.component.ts
 import { CommonModule } from '@angular/common';
 import { Component, input, computed, output } from '@angular/core';
 
@@ -9,7 +10,6 @@ import { Component, input, computed, output } from '@angular/core';
   styleUrls: ['./button.component.scss'],
 })
 export class ButtonComponent {
-  // Extended to include "danger" and "success"
   public readonly type = input<
     | 'primary'
     | 'secondary'
@@ -23,6 +23,9 @@ export class ButtonComponent {
   public readonly disabled = input(false);
   public readonly fullWidth = input(false);
   public readonly onClick = output<void>();
+
+  // NEW: Add showLabel input for controlling label visibility
+  public readonly showLabel = input<boolean>(false);
 
   protected handleClick(): void {
     if (this.disabled()) return;
@@ -49,6 +52,8 @@ export class ButtonComponent {
       `app-button--${this.type()}`,
       this.color() ? `btn-${this.color()}` : '',
       this.fullWidth() ? 'full-width' : '',
+      // Add class to indicate if label is shown
+      this.showLabel() ? 'app-button--with-label' : 'app-button--icon-only',
       ...normalizedExtra,
     ].filter(Boolean);
   });

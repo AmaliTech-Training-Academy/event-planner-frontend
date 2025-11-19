@@ -9,52 +9,7 @@ The Event Planner Frontend is a static Angular application hosted on AWS using a
 
 ## Architecture Diagram
 
-```mermaid
-graph LR
-    %% Users
-    Users([Users])
-    
-    %% DNS & Content Delivery Layer
-    subgraph DNS["DNS & Content Delivery"]
-        Route53[("Route53<br/>DNS")]
-        CloudFront[("CloudFront<br/>CDN")]
-    end
-    
-    %% Frontend Hosting
-    subgraph Frontend["Frontend Hosting"]
-        S3[("S3<br/>Angular App")]
-    end
-    
-    %% Security Layer
-    subgraph Security["Security"]
-        Shield[("AWS Shield<br/>DDoS Protection")]
-        WAF[("AWS WAF<br/>Web Protection")]
-    end
-    
-    %% Monitoring
-    subgraph Monitoring["Monitoring"]
-        CloudWatch[("AWS CloudWatch<br/>Logs & Metrics")]
-    end
-    
-    %% Connections
-    Users -->|DNS lookup| Route53
-    Route53 -->|route traffic| CloudFront
-    CloudFront -->|fetch static assets| S3
-    CloudFront -->|DDoS Protection| Shield
-    CloudFront -->|web protection| WAF
-    CloudFront -.->|logs & metrics| CloudWatch
-    
-    %% Styling
-    classDef dnsStyle fill:#A153A0,stroke:#fff,stroke-width:2px,color:#000
-    classDef frontendStyle fill:#008A00,stroke:#005700,stroke-width:2px,color:#000
-    classDef securityStyle fill:#008A00,stroke:#005700,stroke-width:2px,color:#000
-    classDef monitoringStyle fill:#008A00,stroke:#005700,stroke-width:2px,color:#000
-    
-    class Route53,CloudFront dnsStyle
-    class S3 frontendStyle
-    class Shield,WAF securityStyle
-    class CloudWatch monitoringStyle
-```
+![Event Planner Frontend Architecture](./frontend-architecture.png)
 
 ## AWS Services & Justification
 
@@ -135,7 +90,7 @@ graph LR
 - AWS Managed Rules for common threats
 - Rate-based rules to prevent abuse
 - IP reputation lists
-- Custom rules for application-specific threats
+
 
 ### 5. AWS Shield Standard
 
@@ -235,7 +190,6 @@ graph LR
 ### Alerts
 - Email/SMS notifications for critical issues
 - Slack/Teams integration for team notifications
-- PagerDuty integration for on-call escalation
 
 ## Cost Optimization
 
@@ -263,6 +217,3 @@ graph LR
 - **S3 Transfer Acceleration:** Faster uploads for global teams
 - **AWS Global Accelerator:** Additional performance optimization
 
-## Conclusion
-
-This AWS infrastructure provides a robust, scalable, and secure foundation for the Event Planner Frontend application. The serverless architecture eliminates operational overhead while ensuring high performance and availability for users worldwide. Each service is carefully selected to address specific requirements while maintaining cost efficiency and following AWS best practices.

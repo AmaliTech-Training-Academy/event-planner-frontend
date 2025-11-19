@@ -48,26 +48,24 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: $spacing-5;
-    flex-wrap: wrap;
-    gap: $spacing-4;
-  }
-
-  &__title {
-    @include h-6;
-    color: $header-dark;
-    margin: 0;
-    font-weight: 600;
-  }
+  min-width: 0; 
+  width: 100%;
+  overflow: hidden; 
 
   &__body {
     flex: 1;
     min-height: 350px;
+    width: 100%;
+    min-width: 0; // Allow shrinking
+    max-width: 100%; // Prevent expansion
+    overflow: hidden; // Clip overflowing chart
+    position: relative;
+    
+    // Ensure all child elements respect width
+    > * {
+      max-width: 100%;
+      width: 100%;
+    }
   }
 
   &--large {
@@ -82,7 +80,6 @@
     }
   }
 }
-
 .chart-tabs {
   display: flex;
   gap: $spacing-2;
