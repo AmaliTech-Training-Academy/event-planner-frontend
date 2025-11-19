@@ -1,7 +1,5 @@
-// src/app/constants/api-endpoints.constants.ts
-
-import { environment } from "@environments/environment";
-
+// core/constants/api-endpoints.constants.ts
+import { environment } from '../../../environments/environment';
 
 const API_VERSION = 'v1';
 const BASE = `${environment.API_URL}/${API_VERSION}`;
@@ -38,6 +36,9 @@ export const API_ENDPOINTS = {
   GET_ALL_INVITATIONS: `${BASE}/event-invitations`,
 
   // Event Management (legacy endpoints - consider using EVENTS_API_ENDPOINTS instead)
+  // Invitation endpoints
+
+  // Event endpoints
   EVENT_MANAGEMENT: `${BASE}/events/event-management`,
   EVENT_DETAILS: (eventId: number) => `${BASE}/events/${eventId}`,
   GET_ALL_EVENTS: `${BASE}/events`,
