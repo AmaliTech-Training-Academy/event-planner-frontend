@@ -25,6 +25,8 @@ export class AuthService {
   private _email: string = '';
   private _otp: string = '';
   private _isResset: boolean = false;
+  private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+
 
   constructor(
     private readonly authBackend: AuthBackendService,
@@ -75,7 +77,6 @@ export class AuthService {
           this.router.navigate([APP_ROUTES.LOGIN]);
         }),
         catchError((err) => this.errorHandlerService.handle(err)),
-
         finalize(() => this.setLoading(false))
       );
   }
@@ -226,7 +227,7 @@ export class AuthService {
         };
         this._userInfo$.next(userData);
         const refreshedAt = data[AUTH_STORAGE.REFRESHED_AT]
-        // this.startAutomaticRefresh(refreshedAt)
+        this.startAutomaticRefresh(refreshedAt)
       }
     }
   }
@@ -253,10 +254,17 @@ export class AuthService {
     );
   }
 
-  private startAutomaticRefresh(lastRefresh: Date) {
+  private startAutomaticRefresh(lastRefresh: Date | string) {
+
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+    }
+
+
+    const lastRefresh_ = new Date(lastRefresh)
     const now = new Date();
     const refreshIntervalMs = 15 * 60 * 1000;
-    const nextRefreshTime = new Date(lastRefresh.getTime() + refreshIntervalMs);
+    const nextRefreshTime = new Date(lastRefresh_.getTime() + refreshIntervalMs);
     const delay = nextRefreshTime.getTime() - now.getTime();
 
     if (delay <= 0) {
@@ -278,11 +286,11 @@ export class AuthService {
     this.authBackend.refreshToken().pipe(take(1)).subscribe({
       next: () => {
         this.saveAuthToStorage(
-          data[AUTH_STORAGE.USER_ID], 
-          data[AUTH_STORAGE.FULL_NAME], 
-          data[AUTH_STORAGE.PROFILE_PICTURE], 
-          data[AUTH_STORAGE.EMAIL], 
-          data[AUTH_STORAGE.ROLE], 
+          data[AUTH_STORAGE.USER_ID],
+          data[AUTH_STORAGE.FULL_NAME],
+          data[AUTH_STORAGE.PROFILE_PICTURE],
+          data[AUTH_STORAGE.EMAIL],
+          data[AUTH_STORAGE.ROLE],
           newRefreshTime
         )
       },
@@ -294,6 +302,10 @@ export class AuthService {
 
   private clearAuthStorage() {
     localStorage.removeItem(AUTH_STORAGE.AUTH);
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   }
 
   public isLoggedIn(): Observable<boolean> {
