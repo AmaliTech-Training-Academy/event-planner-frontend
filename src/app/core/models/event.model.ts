@@ -7,6 +7,7 @@ export interface VenueSection {
   availabilityType: 'full' | 'available';
 }
 export interface EventDetails {
+  attendees: string | number;
   id: string;
   title: string;
   date: string;
@@ -16,6 +17,9 @@ export interface EventDetails {
   isPaid: boolean;
   description: string;
   attendeesCount: string;
+  status: string;
+  time: string;
+  organizer: string;
 }
 
 export interface RegistrationInfo {
@@ -162,14 +166,12 @@ export interface EventSummary {
   flyerUrl: string;
   ticketPrice: number;
   attendees?:number;
+  organizer?:string;
 }
 
 export interface EventTypeFilter { label: string, value: string }
 // event.model.ts
 
-// ============================================
-// EXISTING MODELS (from your codebase)
-// ============================================
 
 export interface EventDetails {
   id: string;
@@ -316,6 +318,8 @@ export interface Event {
   imageUrl?: string;
   isPaid: boolean;
   price?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ApiResponse<T> {
@@ -331,16 +335,17 @@ export interface PaginatedResponse<T> {
   number: number;
 }
 
-// ============================================
-// UTILITY/MAPPER FUNCTIONS
-// ============================================
 
-/**
- * Converts API EventDetailResponse to frontend EventDetails model
- */
 export function mapEventDetailResponseToEventDetails(
   response: EventDetailResponse
 ): EventDetails {
+  const formatTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: 'numeric', 
+      hour12: true 
+    });
+  };
   return {
     id: response.id.toString(),
     title: response.title,
@@ -351,12 +356,14 @@ export function mapEventDetailResponseToEventDetails(
     isPaid: response.isPaid,
     description: response.description,
     attendeesCount: response.attendeeCount.toString(),
+    attendees: response.attendeeCount,
+    status: (response as any).status || 'Published',
+    time: formatTime(response.startTime),
+    organizer: (response as any).organizer || 'Organiser Name'
   };
 }
 
-/**
- * Converts API Event to frontend EventCard model
- */
+
 export function mapEventToEventCard(event: Event): EventCard {
   return {
     id: event.id.toString(),
@@ -369,9 +376,7 @@ export function mapEventToEventCard(event: Event): EventCard {
   };
 }
 
-/**
- * Converts API EventManagement to frontend EventCard model
- */
+
 export function mapEventManagementToEventCard(
   event: EventManagement
 ): EventCard {
@@ -379,9 +384,70 @@ export function mapEventManagementToEventCard(
     id: event.id.toString(),
     title: event.title,
     date: new Date(event.startTime),
-    location: 'N/A', // EventManagement doesn't include location
+    location: 'N/A', 
     imageUrl: '',
     isPaid: false,
     attendees: event.attendeeCount,
   };
+}
+
+// --- Interfaces for Manage Event Page ---
+export interface StatCardData {
+  title: string;
+  value: string | number;
+  icon: string;
+}
+
+export interface TicketStatus {
+  name: string;
+  sold: number;
+  left: number;
+}
+
+export interface EventHostAdmin {
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface Event {
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export function mapResponseToEventDetailsAdmin(
+  response: EventDetailResponse
+): EventDetailsAdmin {
+  return {
+    id: response.id.toString(),
+    name: response.title,
+    organizer: response.organizer,
+    date: response.startTime,
+    startDate: new Date(response.startTime),
+    location: response.location,
+    heroImageUrl: response.heroImageUrl || response.imageUrl || '',
+    isPaid: response.isPaid,
+    description: response.description,
+    attendees: response.attendeeCount,
+    status: response.status === 'ACTIVE' ? 'Active' :
+            response.status === 'DRAFT' ? 'Draft' :
+            response.status === 'COMPLETED' ? 'Completed' : 'Cancelled',
+    time: new Date(response.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }),
+  };
+}
+
+export interface EventDetailsAdmin {
+  id: string;
+  name: string; 
+  organizer: string;
+  date: string;
+  startDate: Date;
+  location: string;
+  heroImageUrl: string;
+  isPaid: boolean;
+  description: string;
+  attendees: number;
+  status: 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled';
+  time?: string;
 }

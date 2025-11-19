@@ -7,11 +7,14 @@ import {
   SearchLocation,
   PopularLocation,
   TabToggle,
-  EventTypeFilter,
+  EventHostAdmin,
+  StatCardData,
   EventSummary,
+  TicketStatus,
+  EventDetailsAdmin,
+  EventTypeFilter
 } from '../models/event.model';
 
-// import { UserCardData } from '../models/user.model';
 import { LineSeriesConfig } from '../models/chart.model';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
@@ -26,10 +29,14 @@ export const MOCK_EVENT_DETAILS: EventDetails = {
   startDate: eventStartDate,
   location: 'Silicon Valley Convention Center',
   heroImageUrl: 'images/img.png',
-
+  status:'string',
+  time: '10:00 AM',
   description:
     'Join us for the most anticipated tech event of the year, bringing together industry leaders, innovators, and tech enthusiasts. The Tech Innovation Summit 2025 will showcase cutting-edge technologies, breakthrough innovations, and insights from world-renowned experts.',
   attendeesCount: '5000+',
+  attendees: 0,
+  organizer: 'Acme Corp',
+  
 };
 
 export const MOCK_VENUE_IMAGES: VenueImage[] = [
@@ -386,68 +393,59 @@ export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
   },
 ];
 
+export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin = {
+  id: 'evt123',
+  name: 'Tech Innovation Summit 2025',
+  organizer: 'Tech Events Inc.',
+  date: '2025-04-15T00:00:00Z',
+  startDate: eventStartDate,
+  location: 'Silicon Valley Convention Center',
+  heroImageUrl: 'images/event-hero.png',
+  isPaid: true,
+  description: '...',
+  attendees: 5000,
+  status: 'Active',
+  time: '09:00am GMT',
+};
 
 
+export const MOCK_MANAGE_EVENT_TABS: TabToggle[] = [
+  { key: 'overview', label: 'Overview', value: null},
+  { key: 'guests', label: 'Guests',value: null },
+  { key: 'registrations', label: 'Registrations',value: null },
+];
 
-export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
+export const MOCK_MANAGE_STATS: StatCardData[] = [
   {
-    name: 'This year',
-    color: '#FF6B35', 
-    showArea: true,
-    lineStyle: 'solid',
-    areaGradient: {
-      start: 'rgba(255, 107, 53, 0.2)',
-      end: 'rgba(255, 107, 53, 0.05)',
-    },
-    data: [
-      { month: 'Jan', value: 12000 },
-      { month: 'Feb', value: 15000 },
-      { month: 'Mar', value: 18000 },
-      { month: 'Apr', value: 22000 },
-      { month: 'May', value: 28000 },
-      { month: 'Jun', value: 25000 },
-      { month: 'Jul', value: 27000 },
-    ],
+    title: 'Attendees',
+    value: 387,
+    icon: 'icons/users.svg',
   },
   {
-    name: 'Last year',
-    color: '#6B7280',
-    showArea: false,
-    lineStyle: 'dashed',
-    data: [
-      { month: 'Jan', value: 10000 },
-      { month: 'Feb', value: 12000 },
-      { month: 'Mar', value: 14000 },
-      { month: 'Apr', value: 16000 },
-      { month: 'May', value: 20000 },
-      { month: 'Jun', value: 22000 },
-      { month: 'Jul', value: 24000 },
-    ],
+    title: 'Total Tickets Sold',
+    value: '$565.00',
+    icon: 'icons/ticket.svg',
   },
 ];
 
+export const MOCK_EVENT_SUMMARY: EventSummary = {
+  description:"",
+  flyerUrl:"",
+  id:1,
+  startTime:"",
+  location:'',
+  ticketPrice:0,
+  title:"",
+  attendees:0,
+  organizer: 'William Pen (Senior UI/UX Designer)',
+};
 
-// export const MOCK_STAT_CARDS: UserCardData[] = [
-//   {
-   
-//     title: 'Total Events Organized',
-//     count: 3,
-//     icon: 'icons/user-icon-orange.png',
-//     bgColor: '#FFF7EC',
-//     percentageChange: 11.01,
-//   },
-//   {
-   
-//     title: 'Attendees',
-//     count: 387,
-//     icon: 'icons/user-icon-blue.png',
-//     bgColor: '#F0F9FF',
-//   },
-//   {
-  
-//     title: 'Total Tickets Sold',
-//     count: 565,
-//     icon: 'icons/user-icon-blue.png',
-//     bgColor: '#F0F9FF',
-//   },
-// ];
+export const MOCK_TICKET_STATUS: TicketStatus[] = [
+  { name: 'Regular', sold: 6, left: 21 },
+  { name: 'VIP', sold: 14, left: 12 },
+  { name: 'VVIP', sold: 19, left: 43 },
+];
+
+export const MOCK_HOSTS: EventHostAdmin[] = [
+  { name: 'William Pen', email: 'william.pen@example.com' },
+];

@@ -15,7 +15,7 @@ export const APP_ROUTES = {
   CREATE_EVENT: '/app/create-event',
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   MY_EVENTS: '/app/my-events',
-  MY_EVENT: (id: string) => `/app/my-events/${id}`,
+  MY_EVENT: (id: string) => `/app/my-event/${id}`,
   PAYMENT_SETTINGS: '/app/payment-settings',
   ADMIN_DASHBOARD: '/admin',
   EVENT_PAYMENT_SUCCESS: '/app/event-payment-success',
@@ -23,6 +23,7 @@ export const APP_ROUTES = {
   ADMIN_EVENTS: '/admin/events',
   ADMIN_EVENT_DETAILS: '/admin/events/:id',
   ADMIN_ORGANIZERS: '/admin/organizers',
-  ACCEPT_INVITE: '/auth/invitation/accept', // ADD THIS LINE
-  MANAGE_EVENT: '/app/manage-event',
+  ACCEPT_INVITE: '/auth/invitation/accept',
+  MANAGE_EVENT: '/app/manage-event/:id',
+
 };
