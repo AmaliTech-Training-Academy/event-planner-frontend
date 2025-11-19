@@ -44,7 +44,7 @@ export class InviteUserModalComponent {
   });
 
   public readonly roles = [
-    { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
+    { label: 'Organiser', value: USER_ROLES.ORGANIZER },
     { label: 'Admin', value: USER_ROLES.ADMIN },
   ];
 
