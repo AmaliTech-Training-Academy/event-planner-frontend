@@ -20,12 +20,12 @@ import {
 } from '../../../../core/models/event.model';
 
 import {
-  MOCK_EVENT_CARDS,
   MOCK_EVENT_TOGGLES,
   MOCK_EVENT_TYPE_OPTIONS,
   MOCK_RECENT_SEARCHES,
   MOCK_POPULAR_LOCATIONS,
 } from '../../../../core/data/mock-data';
+import { EmptyListMessageComponent } from "@app/shared/components/empty-list-message/empty-list-message.component";
 
 @Component({
   selector: 'app-explore-page',
@@ -44,7 +44,8 @@ import {
     SearchInputComponent,
     DatePickerComponent,
     PaginationComponent,
-  ],
+    EmptyListMessageComponent
+],
   templateUrl: './explore-page.component.html',
   styleUrl: './explore-page.component.scss',
 })
