@@ -1,26 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 import { FormErrorComponent } from "../../../../shared/ui/form-error/form-error.component";
 import { InputComponent } from "../../../../shared/ui/input/input.component";
 import { SwitchComponent } from "../../../../shared/ui/switch/switch.component";
 import { PaymentSettings } from './model/payment.model';
-import { paymentSetting } from './constant/payment.contant';
-
-
+import { MY_EVENT_STAT_CARDS, paymentSetting } from './constant/payment.contant';
+import { UserCardData } from '../../../../core/models';
+import { AdminUserCardComponent } from "../../../../shared/admin-ui/admin-user-card/admin-user-card.component";
+import { ModalComponent } from "../../../../shared/components/modal/modal.component";
+import { ModalContainerComponent } from "../../../../shared/components/modal-container/modal-container.component";
 
 @Component({
   selector: 'app-payment-settings-page',
-  imports: [ButtonComponent, CommonModule, InputComponent, FormErrorComponent, SwitchComponent, ReactiveFormsModule],
+  imports: [ButtonComponent, CommonModule, InputComponent, FormErrorComponent, SwitchComponent, ReactiveFormsModule, AdminUserCardComponent, ModalComponent, ModalContainerComponent],
   templateUrl: './payment-settings.component.html',
   styleUrl: './payment-settings.component.scss'
 })
 export class PaymentSettingsPageComponent implements OnInit {
 
-
+  protected analytics: UserCardData[] = MY_EVENT_STAT_CARDS;
   protected paymentSettings: PaymentSettings = paymentSetting;
-
+  protected showPayoutModal = signal<boolean>(false)
   protected form!: FormGroup;
   constructor(private readonly fb: FormBuilder) { }
 
@@ -32,6 +34,12 @@ export class PaymentSettingsPageComponent implements OnInit {
 
     this.registerHandlers()
   }
+
+
+  protected showPayoutModalToggle(){
+    this.showPayoutModal.update(prev=>!prev)
+  }
+
   private createMethodForm(method: PaymentSettings[number]): FormGroup {
 
     const fieldGroups: FormGroup[] = [];

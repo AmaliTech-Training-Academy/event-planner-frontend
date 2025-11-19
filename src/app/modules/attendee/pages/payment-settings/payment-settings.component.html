@@ -1,4 +1,12 @@
 <div class="container">
+
+
+    <div class="card-container">
+        @for (card of analytics; track $index) {
+        <app-admin-user-card [data]="card"></app-admin-user-card>
+        }
+    </div>
+
     <h2>Payment Settings</h2>
 
     <form method="POST" [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -62,8 +70,23 @@
     </form>
 
     <div class="request-payout">
-        <app-button type="primary">
+        <app-button (onClick)="showPayoutModalToggle()" type="primary">
             Request Payout
         </app-button>
     </div>
+
+
+    @if (showPayoutModal()) {
+        <app-modal-container>
+            <div class="modal-content">
+                <div class="header">
+                    <h3>Request Payout</h3>
+                    <p>Enter the amount you want to withdraw</p>
+                </div>
+                <app-input iconSrc="icons/money.svg" placeholder="0.00" [type]="'number'"></app-input>
+                <app-button (onClick)="showPayoutModalToggle()">Withdraw</app-button>
+            </div>
+        </app-modal-container>
+    }
+
 </div>

@@ -6,4 +6,5 @@ export interface UserCardData {
   bgColor: string;
   iconColor: string;
   percentageChange?: number;
+  backend_key?:string;
 }
