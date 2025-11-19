@@ -3,7 +3,7 @@
     <h2 class="slider-title">Venue Images</h2>
     <div class="slider-nav">
       <app-button
-        type="secondary"
+        type="plain"
         variant="icon"
         (click)="prev()"
         [disabled]="isPrevDisabled()"
@@ -13,7 +13,7 @@
       </app-button>
 
       <app-button
-        type="secondary"
+        type="plain"
         variant="icon"
         (click)="next()"
         [disabled]="isNextDisabled()"
@@ -31,7 +31,7 @@
         'translateX(' + -currentIndex() * slideWidthPercentage() + '%)'
       "
     >
-      @for (image of images; track image.url) {
+      @for (image of images; track image) {
       <div
         class="image-slide"
         [style.width.%]="slideWidthPercentage()"
@@ -40,20 +40,19 @@
         (keydown.space)="onImageClick(image); $event.preventDefault()"
         role="button"
         tabindex="0"
-        [attr.aria-label]="'View ' + (image.alt || 'venue image') + ' in full size'"
       >
         <div class="image-wrapper">
           <img
-            [ngSrc]="image.url"
-            [alt]="image.alt"
+            [ngSrc]="image"
+            [alt]="'location image '+$index+1"
             class="venue-image"
             width="300"
             height="150"
           />
           
-          @if (image.description) {
+          @if (image) {
           <div class="image-caption">
-            <span>{{ image.description }}</span>
+            <span>{{ image }}</span>
           </div>
           }
           
