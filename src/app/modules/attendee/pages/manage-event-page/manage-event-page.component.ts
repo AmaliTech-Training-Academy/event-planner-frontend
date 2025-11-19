@@ -13,7 +13,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { ModalWrapperComponent } from '../../../../shared/components/modal-wrapper/modal-wrapper.component';
 
 import { MOCK_EVENT_DETAILS } from '../../../../core/data/mock-data';
-import { EventHost } from '@app/modules/admin/pages/event-management-page/components/event-details-page/event-details.component-page';
+import { EventHost } from '@app/core/models/events';
 
 export interface TicketType { 
   name: string;
