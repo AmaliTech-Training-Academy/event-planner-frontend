@@ -127,10 +127,31 @@ export class ProfilePageComponent implements OnInit {
   }
 
 
+  private updateFormValues() {
+    const user = this.authService.currentUser();
+    if (!user) return;
+
+    this.profileForm.patchValue({
+      basicInfo: {
+        fullName: user.fullName,
+        email: user.email,
+      },
+      contactInfo: {
+        phone: user.phone || '',
+        address: user.address || '',
+      }
+    });
+  }
+
+
   private updateProfile(data: UpdateUserPayload) {
     this.authService.updateUser(`${this.currentUser?.id}`, data).subscribe({
       next: () => {
         this.notificationnService.success(`Profile updated successfully`)
+        this.updateFormValues()
+      },
+      error: () => {
+        this.updateFormValues()
       }
     })
   }

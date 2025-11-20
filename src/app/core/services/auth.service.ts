@@ -218,8 +218,14 @@ export class AuthService {
 
 
   public updateUser(userId: string, data: UpdateUserPayload) {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value as any);
+    });
+
     this.setLoading(true);
-    return this.userBackendService.updateUser(userId, data).pipe(
+    return this.userBackendService.updateUserWithFormData(userId, formData).pipe(
       take(1),
       tap((response) => {
         let user_: User = response.data
