@@ -7,11 +7,15 @@ import {
   SearchLocation,
   PopularLocation,
   TabToggle,
+ EventSummary,
+  EventDetailsAdmin,
+  StatCardData,
+  TicketStatus,
+  EventHostAdmin,
   EventTypeFilter,
-  EventSummary,
 } from '../models/event.model';
 
-// import { UserCardData } from '../models/user.model';
+
 import { LineSeriesConfig } from '../models/chart.model';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
@@ -26,10 +30,14 @@ export const MOCK_EVENT_DETAILS: EventDetails = {
   startDate: eventStartDate,
   location: 'Silicon Valley Convention Center',
   heroImageUrl: 'images/img.png',
-
+  status:'upcoming',
+  time: '10:00 AM',
   description:
     'Join us for the most anticipated tech event of the year, bringing together industry leaders, innovators, and tech enthusiasts. The Tech Innovation Summit 2025 will showcase cutting-edge technologies, breakthrough innovations, and insights from world-renowned experts.',
   attendeesCount: '5000+',
+  attendees: 0,
+  organizer: 'Acme Corp',
+  
 };
 
 export const MOCK_VENUE_IMAGES: VenueImage[] = [
@@ -354,38 +362,67 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
 
 
 export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
+  
+] 
+  
+
+export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin  = {
+  id: 'evt123',
+  name: 'Tech Innovation Summit 2025',
+  organizer: 'Tech Events Inc.',
+  date: '2025-04-15T00:00:00Z',
+  startDate: eventStartDate,
+  location: 'Silicon Valley Convention Center',
+  heroImageUrl: 'images/event-hero.png',
+  isPaid: true,
+  description: '...',
+  attendees: 5000,
+  status: 'Active',
+  time: '09:00am GMT',
+};
+
+
+export const MOCK_MANAGE_EVENT_TABS: TabToggle[] = [
+  { key: 'overview', label: 'Overview', value: true },
+  { key: 'guests', label: 'Guests', value: false  },
+  { key: 'registrations', label: 'Registrations', value: false},
+];
+
+export const MOCK_MANAGE_STATS: StatCardData[] = [
   {
-    id: 1,
-    ticketPrice: 33,
-    description: "",
-    title: 'Tech Innovation Summit 2025',
-    startTime: '',
-    location: 'Silicon Valley, CA',
-    flyerUrl: 'images/event1.jpg',
-    attendees: 5000,
+    title: 'Attendees',
+    value: 387,
+    icon: 'icons/users.svg',
   },
   {
-    id: 2,
-    ticketPrice: 33,
-    description: "",
-    title: 'Community Code & Coffee',
-    startTime: '',
-    location: 'Austin, TX',
-    flyerUrl: 'images/event2.jpg',
-    attendees: 150,
-  },
-  {
-    id: 3,
-    title: 'AI World Conference',
-    startTime: '',
-    location: 'New York, NY',
-    flyerUrl: 'images/event3.jpg',
-    ticketPrice: 400,
-    description: "",
-    attendees: 2500,
+    title: 'Total Tickets Sold',
+    value: '$565.00',
+    icon: 'icons/ticket.svg',
   },
 ];
 
+export const MOCK_EVENT_SUMMARY: EventSummary = {
+  id:2,
+  title: 'Tech Innovation Summit 2025',
+  startTime: '2025-04-15T00:00:00Z',
+  description:"",
+  flyerUrl: 'images/flyer.jpg',
+  ticketPrice:0,
+  organizer: 'William Pen (Senior UI/UX Designer)',
+  date: '3rd May, 2025',
+  time: '09:00am GMT',
+  location: 'Virtual (Zoom Meeting)',
+};
+
+export const MOCK_TICKET_STATUS: TicketStatus[] = [
+  { name: 'Regular', sold: 6, left: 21 },
+  { name: 'VIP', sold: 14, left: 12 },
+  { name: 'VVIP', sold: 19, left: 43 },
+];
+
+export const MOCK_HOSTS: EventHostAdmin[] = [
+  { name: 'William Pen', email: 'william.pen@example.com' },
+];
 
 
 
