@@ -14,7 +14,7 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { DataTableComponent, TableColumn, TableFilter } from '../../../../shared/admin-ui/data-table/data-table.component';
 import { ModalWrapperComponent } from '../../../../shared/components/modal-wrapper/modal-wrapper.component';
-import { EventHost } from '@app/modules/admin/pages/event-management-page/components/event-details-page/event-details.component-page';
+import { EventHost } from '@app/core/models/events';
 
 
 export interface TicketType { 

@@ -10,16 +10,19 @@ export function mapEventDetailResponseToEventDetails(
 ): EventDetails {
   return {
     id: response.id.toString(),
+    name: response.title,
     title: response.title,
-    date: response.startTime,
-    startDate: new Date(response.startTime),
+    organizer: response.organizer || '',
+    date: response.startTime || '',
+    attendees: response.attendeeCount || 0,
+    totalTicketsSold: 0, // Remove response.ticketsSold - set default or get from correct property
+    ticketRevenue: 0, // Remove response.revenue - set default or get from correct property
+    status: response.status as EventStatus,
     location: response.location,
-    heroImageUrl: response.heroImageUrl || response.imageUrl || '',
-    isPaid: response.isPaid,
     description: response.description,
-    attendeesCount: response.attendeeCount.toString(),
   };
 }
+
 
 export function mapEventToEventCard(event: Event): EventCard {
   return {
@@ -52,14 +55,16 @@ export function mapEventManagementToEventDetails(
 ): EventDetails {
   return {
     id: event.id.toString(),
+    name: event.title,
     title: event.title,
+    organizer: '',
     date: event.startTime,
-    startDate: new Date(event.startTime),
+    attendees: event.attendeeCount,
+    totalTicketsSold: 0,
+    ticketRevenue: 0,
+    status: (event.status as EventStatus) || 'DRAFT', // Add this line
     location: 'TBD',
-    heroImageUrl: '',
-    isPaid: false,
     description: '',
-    attendeesCount: event.attendeeCount.toString(),
   };
 }
 

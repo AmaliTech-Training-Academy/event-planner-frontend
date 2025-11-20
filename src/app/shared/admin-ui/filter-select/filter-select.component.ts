@@ -18,7 +18,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { FormErrorComponent } from '../../ui/form-error/form-error.component';
-import { ButtonComponent } from "../../ui/button/button.component";
+import { ButtonComponent } from '../../ui/button/button.component';
 
 interface FilterOption {
   readonly label: string;
@@ -28,7 +28,13 @@ interface FilterOption {
 @Component({
   selector: 'app-filter-select',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, FormErrorComponent, ButtonComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    FormErrorComponent,
+    ButtonComponent,
+  ],
   templateUrl: './filter-select.component.html',
   styleUrls: ['./filter-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,6 +54,7 @@ export class FilterSelectComponent implements ControlValueAccessor {
   public readonly value = input<string>('');
   public readonly disabled = input<boolean>(false);
   public readonly showReset = input<boolean>(true);
+  public readonly extraClass = input<string>(''); // ✅ Add this
   public readonly valueChange = output<string>();
   public readonly reset = output<void>();
 
@@ -68,6 +75,10 @@ export class FilterSelectComponent implements ControlValueAccessor {
     const classes = [`filter-select--${this.size()}`];
     if (this.isDisabled()) {
       classes.push('filter-select--disabled');
+    }
+    // ✅ Add extraClass if provided
+    if (this.extraClass()) {
+      classes.push(this.extraClass());
     }
     return classes.join(' ');
   });
