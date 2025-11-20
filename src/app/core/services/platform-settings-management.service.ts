@@ -16,93 +16,104 @@ import {
   TeamMember,
   UpdateSecuritySettingsPayload,
   UpdateNotificationSettingsPayload,
+  SecuritySettingsResponse,
+  NotificationSettingsResponse,
+  TeamMembersResponse,
+  SettingsUpdateResponse,
 } from '../models/platform-settings.model';
 
 @Injectable({ providedIn: 'root' })
 export class PlatformSettingsService {
-  private readonly _securitySettings$ =
+  private readonly _securitySettings$: BehaviorSubject<SecuritySettings | null> =
     new BehaviorSubject<SecuritySettings | null>(null);
-  private readonly _notificationSettings$ =
+  private readonly _notificationSettings$: BehaviorSubject<NotificationSettings | null> =
     new BehaviorSubject<NotificationSettings | null>(null);
-  private readonly _teamMembers$ = new BehaviorSubject<TeamMember[]>([]);
-  private readonly _loadingStateSubject = new BehaviorSubject<boolean>(false);
+  private readonly _teamMembers$: BehaviorSubject<TeamMember[]> =
+    new BehaviorSubject<TeamMember[]>([]);
+  private readonly _loadingStateSubject: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
 
-  public readonly loading$ = this._loadingStateSubject.asObservable();
-  public readonly securitySettings$ = this._securitySettings$.asObservable();
-  public readonly notificationSettings$ =
+  public readonly loading$: Observable<boolean> =
+    this._loadingStateSubject.asObservable();
+  public readonly securitySettings$: Observable<SecuritySettings | null> =
+    this._securitySettings$.asObservable();
+  public readonly notificationSettings$: Observable<NotificationSettings | null> =
     this._notificationSettings$.asObservable();
-  public readonly teamMembers$ = this._teamMembers$.asObservable();
+  public readonly teamMembers$: Observable<TeamMember[]> =
+    this._teamMembers$.asObservable();
 
   constructor(
-    private readonly platformSettingsBackend: PlatformSettingsBackendService,
-    private readonly errorHandlerService: ErrorHandlerService
+    private readonly _platformSettingsBackend: PlatformSettingsBackendService,
+    private readonly _errorHandlerService: ErrorHandlerService
   ) {}
 
-  public loadSecuritySettings() {
-    this.setLoading(true);
-    return this.platformSettingsBackend.getSecuritySettings().pipe(
+  public loadSecuritySettings(): Observable<SecuritySettingsResponse | null> {
+    this._setLoading(true);
+    return this._platformSettingsBackend.getSecuritySettings().pipe(
       take(1),
-      tap((response) => {
+      tap((response: SecuritySettingsResponse): void => {
         this._securitySettings$.next(response.data);
       }),
-      catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      catchError((err: any) => this._errorHandlerService.handle(err)),
+      finalize((): void => this._setLoading(false))
     );
   }
 
-  public updateSecuritySettings(payload: UpdateSecuritySettingsPayload) {
-    this.setLoading(true);
-    return this.platformSettingsBackend.updateSecuritySettings(payload).pipe(
+  public updateSecuritySettings(
+    payload: UpdateSecuritySettingsPayload
+  ): Observable<SettingsUpdateResponse | null> {
+    this._setLoading(true);
+    return this._platformSettingsBackend.updateSecuritySettings(payload).pipe(
       take(1),
-      tap(() => {
+      tap((): void => {
         this.loadSecuritySettings().subscribe();
       }),
-      catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      catchError((err: any) => this._errorHandlerService.handle(err)),
+      finalize((): void => this._setLoading(false))
     );
   }
 
-  public loadNotificationSettings() {
-    this.setLoading(true);
-    return this.platformSettingsBackend.getNotificationSettings().pipe(
+  public loadNotificationSettings(): Observable<NotificationSettingsResponse | null> {
+    this._setLoading(true);
+    return this._platformSettingsBackend.getNotificationSettings().pipe(
       take(1),
-      tap((response) => {
+      tap((response: NotificationSettingsResponse): void => {
         this._notificationSettings$.next(response.data);
       }),
-      catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      catchError((err: any) => this._errorHandlerService.handle(err)),
+      finalize((): void => this._setLoading(false))
     );
   }
 
   public updateNotificationSettings(
     payload: UpdateNotificationSettingsPayload
-  ) {
-    this.setLoading(true);
-    return this.platformSettingsBackend
+  ): Observable<SettingsUpdateResponse | null> {
+    this._setLoading(true);
+    return this._platformSettingsBackend
       .updateNotificationSettings(payload)
       .pipe(
         take(1),
-        tap(() => {
+        tap((): void => {
           this.loadNotificationSettings().subscribe();
         }),
-        catchError((err) => this.errorHandlerService.handle(err)),
-        finalize(() => this.setLoading(false))
+        catchError((err: any) => this._errorHandlerService.handle(err)),
+        finalize((): void => this._setLoading(false))
       );
   }
 
-  public loadTeamMembers() {
-    this.setLoading(true);
-    return this.platformSettingsBackend.getTeamMembers().pipe(
+  public loadTeamMembers(): Observable<TeamMembersResponse | null> {
+    this._setLoading(true);
+    return this._platformSettingsBackend.getTeamMembers().pipe(
       take(1),
-      tap((response) => {
+      tap((response: TeamMembersResponse): void => {
         this._teamMembers$.next(response.data);
       }),
-      catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      catchError((err: any) => this._errorHandlerService.handle(err)),
+      finalize((): void => this._setLoading(false))
     );
   }
 
-  public loadAllSettings() {
+  public loadAllSettings(): void {
     this.loadSecuritySettings().subscribe();
     this.loadNotificationSettings().subscribe();
     this.loadTeamMembers().subscribe();
@@ -120,7 +131,9 @@ export class PlatformSettingsService {
     return this._teamMembers$.getValue();
   }
 
-  public toggleMaintenanceMode(enabled: boolean) {
+  public toggleMaintenanceMode(
+    enabled: boolean
+  ): Observable<SettingsUpdateResponse | null> {
     return this.updateSecuritySettings({ maintenanceMode: enabled });
   }
 
@@ -128,7 +141,7 @@ export class PlatformSettingsService {
     return this._securitySettings$.getValue()?.maintenanceMode ?? false;
   }
 
-  private setLoading(isLoading: boolean): void {
+  private _setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);
   }
 }

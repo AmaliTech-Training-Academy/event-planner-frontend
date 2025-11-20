@@ -139,8 +139,9 @@
     right: 8px;
     width: 36px;
     height: 36px;
-    background: $orange-500;
-    border: 3px solid white;
+    background: url('../../../../../assets/icons/camera.png');
+    background-size: cover;
+    background-repeat: no-repeat;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -149,14 +150,9 @@
     transition: all 0.2s ease;
     z-index: 2;
 
-    img {
-      width: 16px;
-      height: 16px;
-      filter: brightness(0) invert(1);
-    }
+   
 
     &:hover {
-      background: darken($orange-500, 10%);
       transform: scale(1.1);
     }
 
@@ -419,8 +415,8 @@
   }
 
   .profile-avatar {
-    width: 96px;
-    height: 96px;
+    width: 76px;
+    height: 76px;
 
     .avatar-edit-btn {
       width: 32px;

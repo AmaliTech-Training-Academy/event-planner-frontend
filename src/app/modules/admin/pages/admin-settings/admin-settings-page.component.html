@@ -189,12 +189,12 @@
         <div class="team-member">
           <div class="team-member__info">
             <img
-              [src]="member.avatar"
-              [alt]="member.name"
+              [src]="member.profilePicture"
+              [alt]="member.fullName + ' avatar'"
               class="team-member__avatar"
             />
             <div class="team-member__details">
-              <h3>{{ member.name }}</h3>
+              <h3>{{ member.fullName }}</h3>
               <p>{{ member.email }}</p>
             </div>
           </div>
@@ -207,7 +207,7 @@
             <label class="toggle">
               <input
                 type="checkbox"
-                [checked]="member.active"
+                [checked]="member.isActive"
                 (change)="toggleMemberStatus(member.id)"
                 class="toggle__input"
               />

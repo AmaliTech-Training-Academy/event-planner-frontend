@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal, inject, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  signal,
+  inject,
+  ViewChild,
+  OnDestroy,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,6 +14,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -14,6 +22,14 @@ import {
   AddTeamMemberModalComponent,
   TeamMemberPayload,
 } from './add-team-member/add-team-member.component';
+import {
+  SecuritySettings,
+  NotificationSettings,
+  TeamMember,
+  UpdateSecuritySettingsPayload,
+  UpdateNotificationSettingsPayload,
+} from '../../../../core/models/platform-settings.model';
+import { PlatformSettingsService } from '@app/core/services/platform-settings-management.service';
 
 interface SecurityForm {
   platformName: FormControl<string | null>;
@@ -23,20 +39,11 @@ interface SecurityForm {
   maintenanceMode: FormControl<boolean>;
 }
 
-interface Notification {
-  id: string;
+interface NotificationItem {
+  id: keyof NotificationSettings;
   title: string;
   description: string;
   enabled: boolean;
-}
-
-interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: string;
-  active: boolean;
 }
 
 @Component({
@@ -52,67 +59,41 @@ interface TeamMember {
   templateUrl: './admin-settings-page.component.html',
   styleUrls: ['./admin-settings-page.component.scss'],
 })
-export class AdminSettingsPageComponent implements OnInit {
-  private readonly fb = inject(FormBuilder);
-  private readonly notificationService = inject(NotificationService);
+export class AdminSettingsPageComponent implements OnInit, OnDestroy {
+  private readonly _fb: FormBuilder = inject(FormBuilder);
+  private readonly _notificationService: NotificationService =
+    inject(NotificationService);
+  private readonly _platformSettingsService: PlatformSettingsService = inject(
+    PlatformSettingsService
+  );
+  private readonly _destroy$: Subject<void> = new Subject<void>();
 
   @ViewChild(AddTeamMemberModalComponent)
-  addTeamMemberModal?: AddTeamMemberModalComponent;
+  private _addTeamMemberModal?: AddTeamMemberModalComponent;
 
   protected readonly activeTab = signal<'general' | 'notifications' | 'team'>(
     'general'
   );
-  protected readonly isSubmitting = signal(false);
-  protected readonly hasAttemptedSubmit = signal(false);
-  protected readonly showAddTeamMemberModal = signal(false);
+  protected readonly isSubmitting = signal<boolean>(false);
+  protected readonly hasAttemptedSubmit = signal<boolean>(false);
+  protected readonly showAddTeamMemberModal = signal<boolean>(false);
 
   protected readonly securityForm: FormGroup<SecurityForm>;
-  protected readonly notifications = signal<Notification[]>([
-    {
-      id: '1',
-      title: 'Email Notifications',
-      description: 'Receive email notifications for important updates',
-      enabled: true,
-    },
-    {
-      id: '2',
-      title: 'Push Notifications',
-      description: 'Receive push notifications on your device',
-      enabled: false,
-    },
-    {
-      id: '3',
-      title: 'SMS Notifications',
-      description: 'Receive SMS notifications for critical alerts',
-      enabled: true,
-    },
-  ]);
-
-  protected readonly teamMembers = signal<TeamMember[]>([
-    {
-      id: '1',
-      name: 'John Doe',
-      email: 'john@eventhub.com',
-      avatar: 'icons/user-avatar.png',
-      role: 'Admin',
-      active: true,
-    },
-    {
-      id: '2',
-      name: 'Jane Smith',
-      email: 'jane@eventhub.com',
-      avatar: 'icons/user-avatar.png',
-      role: 'Editor',
-      active: true,
-    },
-  ]);
+  protected readonly notifications = signal<NotificationItem[]>([]);
+  protected readonly teamMembers = signal<TeamMember[]>([]);
 
   constructor() {
-    this.securityForm = this.createSecurityForm();
+    this.securityForm = this._createSecurityForm();
   }
 
-  ngOnInit(): void {
-    this.loadSecuritySettings();
+  public ngOnInit(): void {
+    this._loadAllSettings();
+    this._subscribeToSettingsChanges();
+  }
+
+  public ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   protected switchTab(tab: 'general' | 'notifications' | 'team'): void {
@@ -123,27 +104,75 @@ export class AdminSettingsPageComponent implements OnInit {
     this.hasAttemptedSubmit.set(true);
     this.securityForm.markAllAsTouched();
 
-    if (this.securityForm.invalid || this.isSubmitting()) return;
+    if (this.securityForm.invalid || this.isSubmitting()) {
+      return;
+    }
 
     this.isSubmitting.set(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      this.isSubmitting.set(false);
-      this.notificationService.success('Security settings saved successfully!');
-      this.hasAttemptedSubmit.set(false);
-    }, 1500);
+    const payload: UpdateSecuritySettingsPayload = {
+      platformName: this.securityForm.value.platformName || undefined,
+      platformUrl: this.securityForm.value.platformUrl || undefined,
+      contactEmail: this.securityForm.value.contactEmail || undefined,
+      platformDescription:
+        this.securityForm.value.platformDescription || undefined,
+      maintenanceMode: this.securityForm.value.maintenanceMode,
+    };
+
+    this._platformSettingsService
+      .updateSecuritySettings(payload)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (): void => {
+          this.isSubmitting.set(false);
+          this.hasAttemptedSubmit.set(false);
+          this._notificationService.success(
+            'Security settings saved successfully!'
+          );
+        },
+        error: (): void => {
+          this.isSubmitting.set(false);
+        },
+      });
   }
 
   protected saveNotificationSettings(): void {
-    this.notificationService.success(
-      'Notification settings saved successfully!'
-    );
+    const currentNotifications: NotificationItem[] = this.notifications();
+    const payload: UpdateNotificationSettingsPayload = {
+      eventCreation:
+        currentNotifications.find((n) => n.id === 'eventCreation')?.enabled ||
+        false,
+      paymentFailures:
+        currentNotifications.find((n) => n.id === 'paymentFailures')?.enabled ||
+        false,
+      platformErrors:
+        currentNotifications.find((n) => n.id === 'platformErrors')?.enabled ||
+        false,
+    };
+
+    this._platformSettingsService
+      .updateNotificationSettings(payload)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (): void => {
+          this._notificationService.success(
+            'Notification settings saved successfully!'
+          );
+        },
+        error: (): void => {
+          // Error is handled by the service
+        },
+      });
   }
 
-  protected toggleNotification(notificationId: string): void {
-    const updatedNotifications = this.notifications().map((n) =>
-      n.id === notificationId ? { ...n, enabled: !n.enabled } : n
+  protected toggleNotification(
+    notificationId: keyof NotificationSettings
+  ): void {
+    const updatedNotifications: NotificationItem[] = this.notifications().map(
+      (notification: NotificationItem) =>
+        notification.id === notificationId
+          ? { ...notification, enabled: !notification.enabled }
+          : notification
     );
     this.notifications.set(updatedNotifications);
   }
@@ -153,27 +182,23 @@ export class AdminSettingsPageComponent implements OnInit {
   }
 
   protected handleAddTeamMemberSubmit(payload: TeamMemberPayload): void {
-    // Set the modal to submitting state
-    this.addTeamMemberModal?.setSubmitting(true);
+    this._addTeamMemberModal?.setSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      // Add the new team member to the list
+    // Simulate API call - replace with actual service call when available
+    setTimeout((): void => {
       const newMember: TeamMember = {
-        id: Date.now().toString(),
-        name: payload.fullName,
+        id: Date.now(),
         email: payload.email,
-        avatar: 'icons/user-avatar.png',
-        role: 'Editor',
-        active: true,
+        fullName: payload.fullName,
+        profilePicture: 'icons/user-avatar.png',
+        role: 'ADMIN',
+        isActive: true,
       };
 
       this.teamMembers.set([...this.teamMembers(), newMember]);
-
-      // Close modal and reset submitting state
-      this.addTeamMemberModal?.setSubmitting(false);
+      this._addTeamMemberModal?.setSubmitting(false);
       this.showAddTeamMemberModal.set(false);
-      this.notificationService.success('Team member added successfully!');
+      this._notificationService.success('Team member added successfully!');
     }, 1500);
   }
 
@@ -183,39 +208,45 @@ export class AdminSettingsPageComponent implements OnInit {
 
   protected editTeamMember(member: TeamMember): void {
     console.log('Edit team member:', member);
-    this.notificationService.info('Edit functionality coming soon!');
+    this._notificationService.info('Edit functionality coming soon!');
   }
 
-  protected toggleMemberStatus(memberId: string): void {
-    const updatedMembers = this.teamMembers().map((m) =>
-      m.id === memberId ? { ...m, active: !m.active } : m
+  protected toggleMemberStatus(memberId: number): void {
+    const updatedMembers: TeamMember[] = this.teamMembers().map(
+      (member: TeamMember) => (member.id === memberId ? { ...member } : member)
     );
     this.teamMembers.set(updatedMembers);
-    this.notificationService.success('Member status updated!');
+    this._notificationService.success('Member status updated!');
   }
 
   protected getRoleBadgeClass(role: string): string {
     const roleMap: Record<string, string> = {
-      Admin: 'badge--admin',
-      Editor: 'badge--editor',
-      Viewer: 'badge--viewer',
+      ADMIN: 'badge--admin',
+      EDITOR: 'badge--editor',
+      VIEWER: 'badge--viewer',
     };
     return roleMap[role] || 'badge--default';
   }
 
   protected hasFieldError(fieldName: keyof SecurityForm): boolean {
-    const field = this.securityForm?.get(fieldName);
+    const field: FormControl | null = this.securityForm?.get(
+      fieldName
+    ) as FormControl;
     return !!(field?.invalid && (field?.touched || this.hasAttemptedSubmit()));
   }
 
   protected getFieldErrorMessage(fieldName: keyof SecurityForm): string {
-    const field = this.securityForm?.get(fieldName);
-    if (!field?.errors) return '';
+    const field: FormControl | null = this.securityForm?.get(
+      fieldName
+    ) as FormControl;
+    if (!field?.errors) {
+      return '';
+    }
 
     const errors = field.errors;
     switch (true) {
       case !!errors?.['required']:
-        return `${this.capitalize(fieldName)} is required`;
+        return `${this._capitalize(fieldName)} is required`;
       case !!errors?.['email']:
         return 'Please enter a valid email address';
       case !!errors?.['pattern']:
@@ -225,35 +256,81 @@ export class AdminSettingsPageComponent implements OnInit {
     }
   }
 
-  private loadSecuritySettings(): void {
-    // Load settings from API or local storage
-    this.securityForm.patchValue({
-      platformName: 'Event Hub',
-      platformUrl: 'https://eventhub.com',
-      contactEmail: 'support@eventhub.com',
-      platformDescription:
-        'EventHub is a comprehensive event management platform for organizers and attendees.',
-      maintenanceMode: false,
-    });
+  private _loadAllSettings(): void {
+    this._platformSettingsService.loadAllSettings();
   }
 
-  private createSecurityForm(): FormGroup<SecurityForm> {
-    return this.fb.group({
-      platformName: this.fb.control('', [Validators.required]),
-      platformUrl: this.fb.control('', [
+  private _subscribeToSettingsChanges(): void {
+    // Subscribe to security settings changes
+    this._platformSettingsService.securitySettings$
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((settings: SecuritySettings | null): void => {
+        if (settings) {
+          this.securityForm.patchValue({
+            platformName: settings.platformName,
+            platformUrl: settings.platformUrl,
+            contactEmail: settings.contactEmail,
+            platformDescription: settings.platformDescription,
+            maintenanceMode: settings.maintenanceMode,
+          });
+        }
+      });
+
+    // Subscribe to notification settings changes
+    this._platformSettingsService.notificationSettings$
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((settings: NotificationSettings | null): void => {
+        if (settings) {
+          const notifications: NotificationItem[] = [
+            {
+              id: 'eventCreation',
+              title: 'Event Creation Notifications',
+              description: 'Receive notifications when new events are created',
+              enabled: settings.eventCreation,
+            },
+            {
+              id: 'paymentFailures',
+              title: 'Payment Failure Notifications',
+              description:
+                'Receive notifications for payment processing failures',
+              enabled: settings.paymentFailures,
+            },
+            {
+              id: 'platformErrors',
+              title: 'Platform Error Notifications',
+              description: 'Receive notifications for system errors and issues',
+              enabled: settings.platformErrors,
+            },
+          ];
+          this.notifications.set(notifications);
+        }
+      });
+
+    // Subscribe to team members changes
+    this._platformSettingsService.teamMembers$
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((members: TeamMember[]): void => {
+        this.teamMembers.set(members);
+      });
+  }
+
+  private _createSecurityForm(): FormGroup<SecurityForm> {
+    return this._fb.group({
+      platformName: this._fb.control('', [Validators.required]),
+      platformUrl: this._fb.control('', [
         Validators.required,
         Validators.pattern(/^https?:\/\/.+/),
       ]),
-      contactEmail: this.fb.control('', [
+      contactEmail: this._fb.control('', [
         Validators.required,
         Validators.email,
       ]),
-      platformDescription: this.fb.control('', [Validators.required]),
-      maintenanceMode: this.fb.control(false, { nonNullable: true }),
+      platformDescription: this._fb.control('', [Validators.required]),
+      maintenanceMode: this._fb.control(false, { nonNullable: true }),
     });
   }
 
-  private capitalize(text: string): string {
+  private _capitalize(text: string): string {
     return text?.charAt(0)?.toUpperCase() + text?.slice(1);
   }
 }

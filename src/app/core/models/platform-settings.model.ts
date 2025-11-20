@@ -47,6 +47,7 @@ export interface TeamMember {
   fullName: string;
   profilePicture: string | null;
   role: 'ADMIN';
+  isActive: boolean;
 }
 
 export interface TeamMembersResponse {
