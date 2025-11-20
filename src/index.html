@@ -1,37 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Event Planner</title>
-    <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="
-  default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com;
-  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' data: blob: https://maps.googleapis.com https://maps.gstatic.com https://event-planner-backend-dev-files-904570587823.s3.eu-west-1.amazonaws.com;
-  connect-src 'self' https://maps.googleapis.com https://api.sankofagrid.com data:;
-"
-    />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="
-  default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com;
-  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' data: blob: https://maps.googleapis.com https://maps.gstatic.com https://event-planner-backend-dev-files-904570587823.s3.eu-west-1.amazonaws.com https://ui-avatars.com;
-  connect-src 'self' ws://localhost:* ws://127.0.0.1:* wss://localhost:* https://maps.googleapis.com https://api.sankofagrid.com data:;
-"
-    />
-  </head>
-
-  <body>
-    <app-root></app-root>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <title>Event Planner</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="img-src 'self' data: https: blob:;">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root></app-root>
+</body>
 </html>

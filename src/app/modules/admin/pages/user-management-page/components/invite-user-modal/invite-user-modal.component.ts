@@ -58,22 +58,10 @@ export class InviteUserModalComponent implements OnInit {
   public isSubmitting = false;
 
   ngOnInit(): void {
-    this.loadInvitations();
     this.loadEvents();
   }
 
-  private loadInvitations(): void {
-    this.userManagementService.fetchInvitations().subscribe({
-      next: (invitations) => {
-        this.invitations = invitations;
-        console.log('📥 Fetched Invitations:', invitations);
-      },
-      error: (err) => {
-        console.error('❌ Failed to load invitations:', err);
-        this.invitations = [];
-      },
-    });
-  }
+
 
   private loadEvents(): void {
     // TODO: Replace with your actual event service
@@ -148,14 +136,11 @@ export class InviteUserModalComponent implements OnInit {
 
     this.userManagementService.inviteUsers(payload).subscribe({
       next: (response) => {
-        console.log('✅ Invitation Response:', response);
-        alert(`✅ Invitations sent successfully!`);
         this.success.emit();
         this.close.emit();
         this.isSubmitting = false;
       },
       error: (err) => {
-        console.error('❌ Invitation Error:', err);
         const errorMessage =
           err?.error?.description ||
           err?.error?.message ||
@@ -168,8 +153,7 @@ export class InviteUserModalComponent implements OnInit {
   }
 
   public onSaveProgress(): void {
-    console.log('💾 Saving progress:', this.inviteForm.value);
-    // TODO: Implement save as draft functionality
+    
   }
 
   public onCancel(): void {

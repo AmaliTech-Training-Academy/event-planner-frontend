@@ -1,0 +1,414 @@
+@use 'colors' as *;
+@use 'typography' as *;
+@use 'variables' as *;
+@use 'media_query' as *;
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.team-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  background: white;
+  border: 1px solid $gray-200;
+  border-radius: $radius-4;
+  padding: $spacing-8;
+  animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: $spacing-6;
+    border-bottom: 1px solid $gray-200;
+  }
+
+  &__title {
+    h2 {
+      @include h-4;
+      color: $header-dark;
+      margin-bottom: $spacing-2;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    p {
+      @include body-2;
+      color: $gray-400;
+      font-size: 0.875rem;
+    }
+  }
+
+  @include md {
+    padding: $spacing-5 $spacing-6;
+  }
+
+  @include sm {
+    padding: $spacing-4 $spacing-5;
+  }
+}
+
+.team-list-container {
+  max-height: 600px;
+  min-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+  position: relative;
+  
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $gray-100;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $gray-300;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: $gray-400;
+    }
+  }
+
+  // Firefox scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: $gray-300 $gray-100;
+
+  @include md {
+    max-height: 500px;
+    min-height: 350px;
+  }
+
+  @include sm {
+    max-height: 400px;
+    min-height: 300px;
+  }
+}
+
+.team-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.team-member {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-5;
+  background: white;
+  border: 1px solid $gray-200;
+  border-radius: $radius-3;
+  gap: $spacing-4;
+  animation: slideUp 0.5s ease-out both;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    flex: 1;
+  }
+
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &__details {
+    h3 {
+      @include body-1;
+      color: $header-dark;
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 1rem;
+      transition: color 0.2s ease;
+    }
+
+    p {
+      @include body-2;
+      color: $gray-400;
+      font-size: 0.875rem;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+  }
+
+  @include sm {
+    flex-direction: column;
+    align-items: flex-start;
+
+    &__actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+.scroll-sentinel {
+  height: 1px;
+  visibility: hidden;
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-6;
+  gap: $spacing-3;
+  animation: slideUp 0.3s ease-out;
+
+  .spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid $gray-200;
+    border-top-color: $gray-600;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  p {
+    @include body-2;
+    color: $gray-400;
+    font-size: 0.875rem;
+  }
+}
+
+.end-of-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-6;
+  margin-top: $spacing-2;
+  animation: slideUp 0.3s ease-out;
+
+  p {
+    @include body-2;
+    color: $gray-400;
+    font-size: 0.875rem;
+    text-align: center;
+    padding: $spacing-3 $spacing-4;
+    background: $gray-50;
+    border-radius: $radius-2;
+    border: 1px dashed $gray-300;
+  }
+}
+
+.badge {
+  @include body-2;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &--super-admin {
+    background: #16a34a;
+    color: white;
+  }
+
+  &--admin {
+    background: #374151;
+    color: white;
+  }
+
+  &--manager {
+    background: #2563eb;
+    color: white;
+  }
+
+  &--editor {
+    background: #7c3aed;
+    color: white;
+  }
+
+  &--viewer {
+    background: #64748b;
+    color: white;
+  }
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  flex-shrink: 0;
+  z-index: 1;
+
+  &__input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .toggle__slider {
+      background: $gray-400;
+
+      &::before {
+        transform: translateX(24px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    &:focus + .toggle__slider {
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
+    }
+
+    &:checked:focus + .toggle__slider {
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.2);
+    }
+  }
+
+  &__slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $gray-300;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 24px;
+    z-index: 1;
+
+    &:hover {
+      background-color: $gray-400;
+    }
+
+    &::before {
+      position: absolute;
+      content: '';
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      z-index: 2;
+    }
+
+    &:active::before {
+      width: 22px;
+    }
+  }
+}
+
+.btn-add-team-member {
+  display: flex !important;
+  align-items: center;
+  gap: $spacing-2;
+  padding: $spacing-2 $spacing-4 !important;
+  background: white !important;
+  border: 1px solid $gray-300 !important;
+  border-radius: $radius-2 !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  @include body-2;
+  color: $text-primary !important;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  box-shadow: none !important;
+  min-height: auto !important;
+  height: auto !important;
+  width: auto !important;
+  position: relative;
+  z-index: 2;
+
+  span:first-child {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  &:hover {
+    background: $gray-50 !important;
+    border-color: $gray-400 !important;
+    transform: none !important;
+  }
+
+  &:active {
+    transform: scale(0.98) !important;
+  }
+}
+
+.btn-edit-member {
+  display: flex !important;
+  align-items: center;
+  gap: $spacing-2;
+  padding: 6px 12px !important;
+  background: transparent !important;
+  border: 1px solid $gray-300 !important;
+  border-radius: $radius-2 !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+  @include body-2;
+  color: $text-primary !important;
+  font-weight: 500;
+  font-size: 0.875rem;
+  box-shadow: none !important;
+  min-height: auto !important;
+  height: auto !important;
+  width: auto !important;
+
+  &__icon {
+    width: 16px !important;
+    height: 16px !important;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background: $gray-50 !important;
+    border-color: $gray-400 !important;
+    transform: none !important;
+  }
+
+  &:active {
+    transform: scale(0.98) !important;
+  }
+}

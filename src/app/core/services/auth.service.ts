@@ -380,7 +380,7 @@ export class AuthService {
     localStorage.setItem(storageKey, JSON.stringify(authData));
   }
 
-  private clearAuthStorage(context: 'user' | 'admin') {
+  public clearAuthStorage(context: 'user' | 'admin') {
     const storageKey =
       context === 'admin' ? AUTH_STORAGE.AUTH + '_admin' : AUTH_STORAGE.AUTH;
 
@@ -413,5 +413,21 @@ export class AuthService {
 
   public getOtp(): string {
     return this._otp;
+  }
+
+
+  public clearAdminSession(): void {
+    this._loggedIn$.next(false);
+    this._userInfo$.next(null);
+    this._currentAuthContext = null;
+    this.clearAuthStorage('admin');
+  }
+
+ 
+  public clearUserSession(): void {
+    this._loggedIn$.next(false);
+    this._userInfo$.next(null);
+    this._currentAuthContext = null;
+    this.clearAuthStorage('user');
   }
 }
