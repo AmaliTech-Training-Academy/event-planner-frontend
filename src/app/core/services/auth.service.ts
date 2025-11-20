@@ -26,7 +26,7 @@ export class AuthService {
   private _otp: string = '';
   private _isResset: boolean = false;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
-  private TOKEN_REFRESH_INTERVAL:number = 30 as const;
+  private TOKEN_REFRESH_INTERVAL:number = .5 as const;
 
   constructor(
     private readonly authBackend: AuthBackendService,

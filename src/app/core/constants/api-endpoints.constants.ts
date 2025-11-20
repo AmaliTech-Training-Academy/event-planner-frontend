@@ -15,7 +15,7 @@ export const API_ENDPOINTS = {
   AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
   AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
-  AUTH_REFRESH_TOKEN: `${BASE}/auth/refresh-token`,
+  AUTH_REFRESH_TOKEN: `${BASE}/auth/refresh`,
   AUTH_ME: `${BASE}/auth/me`,
 
   // User endpoints
