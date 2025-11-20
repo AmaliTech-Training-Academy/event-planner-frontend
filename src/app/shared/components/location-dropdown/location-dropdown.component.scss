@@ -1,36 +1,40 @@
 @use 'index' as *;
 
 :host {
-  // Position the dropdown
   position: absolute;
-  top: calc(100% + $spacing-1); // 8px below the button
+  top: calc(100% + $spacing-1); 
   left: 0;
-  width: 236px; // Reduced width
-  height: 490px;
+  width: 236px; 
+  max-height: 490px;
   z-index: 10;
 }
+ 
+
 
 .dropdown-panel {
   background-color: #fff;
   border-radius: $radius-4;
   border: $stroke-0 solid $general-stroke-light;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  padding: $spacing-3 0 $spacing-4; // Increased padding for height
+  padding: $spacing-3 0 $spacing-4;
+
+   button{
+    background-color: transparent;
+    border: none;
+    display: flex;
+  }
 }
 
 .dropdown-section {
-  border-top: $stroke-0 solid $general-stroke-light;
   margin-top: $spacing-2;
   padding-top: $spacing-2;
 }
 
 .dropdown-header {
-  // Replaced @include body-3
   font-family: $font-lato;
   font-size: 0.75rem;
   line-height: 1.125rem;
   font-weight: 400;
-  // End Replaced Mixin
 
   color: $paragraph-text;
   font-weight: 600;
@@ -47,24 +51,27 @@
   transition: background-color 0.2s ease;
   color: $header-dark;
   
-  // Replaced @include body-1
   font-family: $font-lato;
   font-size: 1rem;
   line-height: auto;
   font-weight: 400;
-  // End Replaced Mixin
+
 
   font-weight: 500;
+
 
   &:hover {
     background-color: #f9f9f9;
   }
 }
 
-// Style for the blue "Use current location" text
+
 .use-location-btn {
-  color: $link-color; // Use the link color from your variables
+  color: $link-color; 
   font-weight: 600;
+  flex-direction: row;
+     align-items: center;
+
 
   &:hover {
     color: darken($link-color, 10%);
@@ -100,23 +107,23 @@
     flex-direction: column;
   }
   .location-name {
-    // Replaced @include body-1
+
     font-family: $font-lato;
     font-size: 1rem;
     line-height: auto;
     font-weight: 400;
-    // End Replaced Mixin
+
     
     color: $header-dark;
     font-weight: 500;
   }
   .location-meta {
-    // Replaced @include body-2
+
     font-family: $font-lato;
     font-size: 0.875rem;
     line-height: auto;
     font-weight: 400;
-    // End Replaced Mixin
+
 
     color: $paragraph-text;
   }

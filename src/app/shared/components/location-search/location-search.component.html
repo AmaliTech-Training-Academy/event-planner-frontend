@@ -1,0 +1,19 @@
+<div class="location-search">
+  <label class="input-label">{{ label() }}</label>
+  <div class="input-wrapper" [ngClass]="{'error': !!error()}">
+    <img [src]="iconSrc()" alt="" class="input-icon" />
+    <input
+      type="text"
+      class="form-input"
+      [placeholder]="placeholder()"
+      [value]="currentValue()"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+      (focus)="onFocus()"
+      [disabled]="disabled"
+      #inputRef
+    />
+  </div>
+</div>
+
+

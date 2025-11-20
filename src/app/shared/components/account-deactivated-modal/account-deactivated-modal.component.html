@@ -1,0 +1,33 @@
+@if (isVisible) {
+  <div class="deactivated-overlay" (click)="onOverlayClick($event)">
+    <div class="deactivated-modal" (click)="$event.stopPropagation()">
+      <button class="close-button" (click)="onClose()" aria-label="Close modal">
+        <img ngSrc="/icons/close.png" alt="Close" class="close-icon" width="24" height="24" priority />
+      </button>
+
+      <h1 class="deactivated-title">Account Deactivated</h1>
+
+      <p class="deactivated-message">
+        Your account has been deactivated and access is currently restricted.
+        If you believe this is a mistake or you'd like to reactivate your account,
+        please contact support or your platform administrator.
+      </p>
+
+      <div class="deactivated-actions">
+        <app-button
+          type="primary"
+          (onClick)="onContactSupport()"
+        >
+          Contact Support
+        </app-button>
+
+        <app-button
+          type="secondary"
+          (onClick)="onGoBack()"
+        >
+          Go back
+        </app-button>
+      </div>
+    </div>
+  </div>
+}

@@ -37,6 +37,8 @@
     user-select: none;
     font-weight: 500;
   }
+} 
+
 .pagination__button {
   &--page {
     background-color: transparent;
@@ -48,8 +50,8 @@
     }
 
     &.pagination__button--active {
-      background-color: $gray-900; 
-      color: $gray-50;            
+      background-color: $gray-900;
+      color: $gray-50;
       border-color: $gray-900;
 
       &:hover {
@@ -62,7 +64,4 @@
   &--nav {
     @extend .pagination__button--page;
   }
-}
-
-
 }

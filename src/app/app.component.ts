@@ -10,4 +10,5 @@ import { NotificationCardComponent } from "./shared/ui/notification-card/notific
 })
 export class AppComponent {
   title = 'event-planner';
+  // TEST: This change is only on temporal-deploy branch for deployment testing
 }

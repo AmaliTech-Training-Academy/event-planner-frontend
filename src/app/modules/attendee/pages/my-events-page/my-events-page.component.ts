@@ -1,21 +1,19 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
-  OnInit,
-  signal,
-  ChangeDetectionStrategy,
   inject,
+  OnInit,
+  signal
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
-import { MOCK_MY_EVENTS_CARDS } from '../../../../core/data/mock-data';
-import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import { EventCard } from '../../../../core/models/events';
-import { LineChartComponent } from '../../../admin/pages/dashboard-page/components/line-chart/line-chart.component';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { UserCardData } from '../../../../core/models';
 import { LineSeriesConfig } from '../../../../core/models/chart.model';
+import { EventCard } from '../../../../core/models/events';
+import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
+import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { LineChartComponent } from '../../../admin/pages/dashboard-page/components/line-chart/line-chart.component';
 
 @Component({
   selector: 'app-my-events-page',
@@ -45,7 +43,7 @@ export class MyEventsPageComponent implements OnInit {
   protected chartSeries = signal<LineSeriesConfig[]>([]);
   
   public ngOnInit(): void {
-    this.myEvents.set(MOCK_MY_EVENTS_CARDS);
+    this.myEvents.set([]);
   }
 
   protected handleManageEvent(event: EventCard): void {

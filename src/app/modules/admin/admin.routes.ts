@@ -44,11 +44,25 @@ export const ADMIN_ROUTES: Routes = [
     // canActivate: [AdminGuard], // Consider adding this for consistency
   },
   {
+    path: 'audit-logs',
+    loadComponent: () =>
+      import('./pages/audit-logs-page/audit-logs-page.component').then(
+        (m) => m.AuditLogsComponent
+      ),
+  },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./pages/admin-settings/admin-settings.component').then(
+        (m) => m.AdminSettingsComponent
+      ),
+  },
+  {
     path: 'transactions',
     loadComponent: () =>
       import('./pages/transactions-page/transactions-page.component').then(
         (m) => m.TransactionsPageComponent
       ),
     // canActivate: [AdminGuard],
-  }
+  },
 ];
