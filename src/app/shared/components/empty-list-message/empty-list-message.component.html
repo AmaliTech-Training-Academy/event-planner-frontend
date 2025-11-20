@@ -1,0 +1,23 @@
+<div class="empty-container">
+
+    <img src="images/empty.png" alt="" srcset="">
+    <div class="message">
+        <h3 class="empty-title">{{title() || 'No Events To Manage'}}</h3>
+        <p class="empty-text">
+            @if(descrition() !== ''){
+            {{descrition()}}
+            }@else{
+            You currently have no events available. Click <strong>Create Event</strong> below to create your first
+            event.
+            }
+        </p>
+    </div>
+    <div class="action-container">
+        @if (actionText() !== '') {
+        <app-button (onClick)="handleActionPress()">{{actionText()||'Create Event'}}</app-button>
+        }
+        @if(secondaryText() !== ''){
+        <app-button (onClick)="handleSecondaryPress()" type="secondary">{{secondaryText()||'Create Event'}}</app-button>
+        }
+    </div>
+</div>

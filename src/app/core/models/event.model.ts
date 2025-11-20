@@ -17,7 +17,7 @@ export interface EventDetails {
   isPaid: boolean;
   description: string;
   attendeesCount: string;
-  status: 'pending' | 'completed' | 'cancelled'  |'upcoming';
+  status: 'pending' | 'completed' | 'cancelled' | 'upcoming';
   time: string;
   organizer: string;
 }
@@ -60,12 +60,12 @@ export interface EventDetail {
   id: number;
   title: string;
   description: string;
-  totalAttendees:number;
+  totalAttendees: number;
   location: string;
-  startTime: string; 
+  startTime: string;
   flyerUrl: string;
   capacity: number;
-  isPaid:boolean;
+  isPaid: boolean;
   eventImagesUrl: string[];
   ticketTypes: TicketType[];
 }
@@ -125,7 +125,7 @@ export interface EventCard {
 export interface TabToggle {
   key: string;
   label: string;
-  value: boolean|null;
+  value: boolean | null;
 }
 
 export interface SearchLocation {
@@ -165,7 +165,9 @@ export interface EventSummary {
   location: string | null;
   flyerUrl: string;
   ticketPrice: number;
-  attendees?:number;
+  attendees?: number;
+  attendeesCount?: number;
+  isPaid?: boolean;
 }
 
 export interface EventTypeFilter { label: string, value: string }
@@ -318,7 +320,7 @@ export interface Event {
   isPaid: boolean;
   price?: number;
   createdAt?: string;
-  updatedAt?: string;
+  updatedAt?: string;
 }
 
 export interface ApiResponse<T> {
@@ -339,10 +341,10 @@ export function mapEventDetailResponseToEventDetails(
   response: EventDetailResponse
 ): EventDetails {
   const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: 'numeric', 
-      hour12: true 
+    return new Date(dateString).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
     });
   };
   return {
@@ -383,13 +385,21 @@ export function mapEventManagementToEventCard(
     id: event.id.toString(),
     title: event.title,
     date: new Date(event.startTime),
-    location: 'N/A', 
+    location: 'N/A',
     imageUrl: '',
     isPaid: false,
     attendees: event.attendeeCount,
   };
 }
 
+
+export interface EventFiltersCache {
+  isPaid: string | null;
+  past: boolean | null;
+  date: Date | null;
+  searchTerm: string;
+  locationTerm: string;
+}
 // --- Interfaces for Manage Event Page ---
 export interface StatCardData {
   title: string;
@@ -437,15 +447,15 @@ export function mapResponseToEventDetailsAdmin(
     description: response.description,
     attendees: response.attendeeCount,
     status: response.status === 'ACTIVE' ? 'Active' :
-            response.status === 'DRAFT' ? 'Draft' :
-            response.status === 'COMPLETED' ? 'Completed' : 'Cancelled',
+      response.status === 'DRAFT' ? 'Draft' :
+        response.status === 'COMPLETED' ? 'Completed' : 'Cancelled',
     time: new Date(response.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }),
   };
 }
 
 export interface EventDetailsAdmin {
   id: string;
-  name: string; 
+  name: string;
   organizer: string;
   date: string;
   startDate: Date;
