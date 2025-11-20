@@ -1,19 +1,20 @@
-import { Component, inject, signal, OnInit, computed } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, OnDestroy } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { tap } from 'rxjs/operators';
 import { LayoutService } from '../../../../core/services/layout.service';
+import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
+import { StatCardData, EventDetails } from '../../../../core/models/event.model';
+import { MOCK_EVENT_DETAILS } from '../../../../core/data/mock-data';
+import { UserBackendService } from '../../../../core/services/backend/user-backend.service';
+import { InviteUserPayload } from '../../../../core/models/index'; 
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
-import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import { StatCardData } from '../../../../core/models/event.model';
 import { DataTableComponent, TableColumn, TableFilter } from '../../../../shared/admin-ui/data-table/data-table.component';
-import { EventDetails } from '../../../../core/models/event.model';
-import { EventHost } from '../../../admin/pages/event-management-page/components/event-details/event-details.component';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalWrapperComponent } from '../../../../shared/components/modal-wrapper/modal-wrapper.component';
-
-import { MOCK_EVENT_DETAILS } from '../../../../core/data/mock-data';
+import { EventHost } from '../../../admin/pages/event-management-page/components/event-details/event-details.component';
 
 export interface TicketType { 
   name: string;
@@ -41,39 +42,46 @@ interface ManageEventPageState {
   imports: [
     CommonModule, 
     NgOptimizedImage, 
-    ButtonComponent,
-    StatCardComponent,
-    DataTableComponent,
     ReactiveFormsModule,
     ModalWrapperComponent,
+    ButtonComponent,
+    StatCardComponent,
+    DataTableComponent
   ],
   templateUrl: './manage-event-page.component.html',
   styleUrls: ['./manage-event-page.component.scss'],
 })
-export class ManageEventPageComponent implements OnInit {
+export class ManageEventPageComponent implements OnInit, OnDestroy {
   private readonly _fb = inject(FormBuilder);
   private readonly _router = inject(Router);
+  private readonly _route = inject(ActivatedRoute);
   private readonly _location = inject(Location);
   private readonly _layoutService = inject(LayoutService);
+  private readonly _userBackendService = inject(UserBackendService);
+
   protected readonly APP_ROUTES = APP_ROUTES;
 
-   protected readonly showSuccessModal = signal<boolean>(false);
   protected readonly eventDetails = signal<EventDetails | null>(null);
   protected readonly ticketTypes = signal<TicketType[]>([]);
   protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
-  protected readonly showInviteModal = signal<boolean>(false);
   public readonly registrations = signal<Registration[]>([]);
+  
+  protected readonly availableEvents = signal<{id: number, title: string}[]>([]);
+  protected readonly currentEventId = signal<number | null>(null);
 
-   protected inviteForm: FormGroup = this._fb.group({
+  protected readonly showInviteModal = signal<boolean>(false);
+  protected readonly showSuccessModal = signal<boolean>(false);
+  protected readonly isSubmitting = signal<boolean>(false);
+
+  protected inviteForm: FormGroup = this._fb.group({
     title: ['', Validators.required],
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    event: ['', Validators.required],
-    role: ['attendee', Validators.required], 
+    event: [null, Validators.required],
+    role: ['ATTENDEE', Validators.required],
     message: ['']
   });
- 
   
   public readonly registrationColumns: TableColumn<Registration>[] = [
     { key: 'fullName', header: 'Name', sortable: true },
@@ -94,84 +102,79 @@ export class ManageEventPageComponent implements OnInit {
     }
   ];
 
- 
   protected readonly statCards = computed<StatCardData[]>(() => {
     const event = this.eventDetails();
     if (!event) return [];
-
     const totalRevenue = this.calculateTotalRevenue();
-
     return [
-      {
-        title: 'Attendees',
-        value: event.attendees || 0,
-        icon: '/icons/users-icon.png'
-      },
-      {
-        title: 'Total Tickets Sold',
-        value: `$${totalRevenue.toFixed(2)}`,
-        icon: '/icons/ticket.svg'
-      }
+      { title: 'Attendees', value: event.attendees || 0, icon: '/icons/users-icon.png' },
+      { title: 'Total Tickets Sold', value: `$${totalRevenue.toFixed(2)}`, icon: '/icons/ticket.svg' }
     ];
   });
 
- 
   public ngOnInit(): void {
-    const state = this._location.getState() as ManageEventPageState;
-    const eventData = state.eventData;
-
-    if (eventData) {
-      this._loadEventFromState(eventData);
-    } else {
+    this._route.params.subscribe(params => {
+      const urlEventId = params['id']; 
       
-      this._loadEventFromState(MOCK_EVENT_DETAILS);
-    }
+      if (urlEventId) {
+        const eventId = Number(urlEventId);
+        this.currentEventId.set(eventId);
+        
+        const state = this._location.getState() as ManageEventPageState;
+        if (state.eventData) {
+          this._loadEventFromState(state.eventData, eventId);
+        } else {
+          this._loadEventFromState(MOCK_EVENT_DETAILS, eventId);
+        }
+      }
+    });
   }
 
- 
-  private _loadEventFromState(eventData: EventDetails): void {
-    const event: EventDetails = { ...eventData };
+  public ngOnDestroy(): void {
+    this._toggleBodyScroll(false);
+  }
+
+  private _loadEventFromState(eventData: EventDetails, eventId: number): void {
+    const event: EventDetails = { ...eventData, id: eventId.toString() };
     this.eventDetails.set(event);
-
-    
     this._loadTicketsAndHosts(event);
-
     this._layoutService.pageTitle.set(event.title);
+    
+    this.availableEvents.set([
+      { id: eventId, title: event.title || 'Current Event' }
+    ]);
+    
+    this.inviteForm.patchValue({ event: eventId });
   }
 
   private _loadTicketsAndHosts(event: EventDetails): void {
-    
     this.ticketTypes.set([
       { name: 'VIP', price: 100, sold: 20, total: 50 },
       { name: 'Regular', price: 50, sold: 150, total: 300 }
     ]);
-
-    
     this.hosts.set([
       { name: 'Jane Doe', email: 'jane@example.com', avatar: '' },
       { name: 'John Smith', email: 'john@example.com', avatar: '' }
     ]);
-
-   
     this.registrations.set([
-        { fullName: 'Alice Johnson', email: 'alice@test.com', numberOfTickets: 2, ticketType: 'VIP' },
-        { fullName: 'Bob Brown', email: 'bob@test.com', numberOfTickets: 1, ticketType: 'Regular' }
+      { fullName: 'Alice Johnson', email: 'alice@test.com', numberOfTickets: 2, ticketType: 'VIP' },
+      { fullName: 'Bob Brown', email: 'bob@test.com', numberOfTickets: 1, ticketType: 'Regular' }
     ]);
   }
 
- 
   protected setActiveTab(tab: TabType): void {
     this.activeTab.set(tab);
   }
 
   protected onBack(): void {
-    this._router.navigate(['/attendee/events']);
+    this._router.navigate([this.APP_ROUTES.MY_EVENTS]);
   }
 
   protected onEdit(): void {
-    const event = this.eventDetails();
-    if (event?.id) {
-      this._router.navigate(['/attendee/events/edit', event.id]);
+    const eventId = this.currentEventId();
+    if (eventId) {
+      
+      this._router.navigate([this.APP_ROUTES.CREATE_EVENT, eventId]);
     }
   }
 
@@ -179,43 +182,129 @@ export class ManageEventPageComponent implements OnInit {
     this.setActiveTab('guests');
   }
 
-  protected onViewTickets(): void { }
+  protected onViewTickets(): void {}
 
   protected onInviteGuest(): void {
+    const eventId = this.currentEventId();
+    
+    if (!eventId) {
+      alert('Error: No Event ID found. Please refresh the page.');
+      return;
+    }
+
+    this.inviteForm.reset({
+      title: '',
+      name: '',
+      email: '',
+      message: '',
+      event: eventId,
+      role: 'ATTENDEE'
+    });
+    
     this.showInviteModal.set(true);
+    this._toggleBodyScroll(true);
   }
 
   protected onCloseInviteModal(): void {
     this.showInviteModal.set(false);
-    this.inviteForm.reset({ role: 'attendee' });
+    const eventId = this.currentEventId();
+    this.inviteForm.reset({ 
+      role: 'ATTENDEE',
+      event: eventId || null 
+    });
+    this._toggleBodyScroll(false);
   }
 
-  
   protected onSendInvite(): void {
     if (this.inviteForm.valid) {
-      
-      this.showInviteModal.set(false);
-      
-      this.showSuccessModal.set(true);
-      
-     
-      this.inviteForm.reset({ role: 'attendee' });
-
-     
-      setTimeout(() => {
-        this.showSuccessModal.set(false);
-      }, 3000);
-
+      this._submitInvitation('SENT');
     } else {
       this.inviteForm.markAllAsTouched(); 
     }
   }
 
-  protected onCloseSuccessModal(): void {
-    this.showSuccessModal.set(false);
+  protected onSaveInvite(): void {
+    if (this.inviteForm.valid) {
+      this._submitInvitation('SAVE');
+    } else {
+      this.inviteForm.markAllAsTouched();
+    }
   }
 
- 
+  private _submitInvitation(status: 'SAVE' | 'SENT'): void {
+    const formData = this.inviteForm.value;
+    this.isSubmitting.set(true);
+
+    const selectedEventId = Number(formData.event);
+
+    if (!selectedEventId) {
+      this.isSubmitting.set(false);
+      return;
+    }
+
+    const payload: InviteUserPayload = {
+      invitationTitle: formData.title,
+      invitees: [
+        {
+          inviteeName: formData.name,
+          inviteeEmail: formData.email,
+          role: formData.role 
+        }
+      ],
+      event: selectedEventId, 
+      status: status,
+      message: formData.message || ''
+    };
+
+    this._userBackendService.inviteUsers(payload).pipe(
+    
+    ).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this._handleSuccess(status);
+      },
+      error: (err) => {
+        this.isSubmitting.set(false);
+        
+        if (err.status === 0) {
+           alert('Connection blocked (CORS). Please use the CORS extension temporarily.');
+        } else {
+           alert(`Failed to send. Server says: ${err.statusText || 'Unknown error'}`); 
+        }
+      }
+    });
+  }
+
+  private _handleSuccess(status: string): void {
+    this.showInviteModal.set(false);
+    const eventId = this.currentEventId();
+    
+    this.inviteForm.reset({ 
+      role: 'ATTENDEE',
+      event: eventId || null
+    });
+
+    if (status === 'SENT') {
+      this.showSuccessModal.set(true);
+      setTimeout(() => {
+        this.showSuccessModal.set(false);
+        this._toggleBodyScroll(false);
+      }, 3000);
+    } else {
+      this._toggleBodyScroll(false);
+    }
+  }
+
+  protected onCloseSuccessModal(): void {
+    this.showSuccessModal.set(false);
+    this._toggleBodyScroll(false);
+  }
+
+  private _toggleBodyScroll(lock: boolean): void {
+    const body = document.body;
+    body.style.overflow = lock ? 'hidden' : '';
+  }
+
   protected getStatusClass(status: string): string {
     if (!status) return 'event-status';
     return `event-status event-status--${status.toLowerCase()}`;
@@ -224,10 +313,17 @@ export class ManageEventPageComponent implements OnInit {
   protected formatDate(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
   }
 
   protected calculateTotalRevenue(): number {
-    return this.ticketTypes().reduce((total, ticket) => { return total + (ticket.price * ticket.sold); }, 0);
+    return this.ticketTypes().reduce((total, ticket) => {
+      return total + (ticket.price * ticket.sold);
+    }, 0);
   }
 }
