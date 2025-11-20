@@ -17,13 +17,16 @@ import {
   ValidationErrors,
 } from '@angular/forms';
 import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
-import { finalize } from 'rxjs';
+import { finalize, take } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { LayoutService } from '../../../../core/services/layout.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { UserManagementService } from '../../../../core/services/user-management.service';
+import { PlatformSettingsService } from '../../../../core/services/platform-settings-management.service';
 import { OtpBodyData } from '../../../../core/models/auth-response.model';
+import { TeamMember } from '../../../../core/models/platform-settings.model';
 
 interface CountryOption {
   readonly value: CountryCode;
@@ -54,6 +57,7 @@ export class EditProfileComponent implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly showPhoneField = signal<boolean>(false);
   protected readonly showAddressField = signal<boolean>(false);
+  protected readonly isEditingTeamMember = signal<boolean>(false);
 
   protected readonly statusIcon: string = 'icons/camera.png';
 
@@ -62,8 +66,21 @@ export class EditProfileComponent implements OnInit {
   private _selectedImageFile: File | null = null;
   private _originalImageUrl: string | null = null;
   private _currentUserId: string | null = null;
+  private _editingMember: TeamMember | null = null;
 
   protected readonly currentProfileImage = computed(() => {
+    // If editing a team member, show their image
+    if (this.isEditingTeamMember() && this._editingMember) {
+      const name = this._editingMember.fullName || 'Team Member';
+      return (
+        this._editingMember.profilePicture ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          name
+        )}&background=FF6B35&color=fff&size=128`
+      );
+    }
+
+    // Otherwise show current user's image
     const user = this._authService.currentUser();
     const name = user?.fullName || 'Admin';
     return (
@@ -98,7 +115,10 @@ export class EditProfileComponent implements OnInit {
     private readonly _fb: FormBuilder,
     private readonly _layoutService: LayoutService,
     private readonly _authService: AuthService,
-    private readonly _userManagementService: UserManagementService
+    private readonly _userManagementService: UserManagementService,
+    private readonly _platformSettingsService: PlatformSettingsService,
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
   ) {
     this.profileForm = this._fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
@@ -113,10 +133,13 @@ export class EditProfileComponent implements OnInit {
     });
 
     effect(() => {
-      const user = this._authService.currentUser();
-      if (user) {
-        this._initializeForm(user);
-        this._initializeProfileImage();
+      // Only auto-initialize if not editing a team member
+      if (!this.isEditingTeamMember()) {
+        const user = this._authService.currentUser();
+        if (user) {
+          this._initializeForm(user);
+          this._initializeProfileImage();
+        }
       }
     });
   }
@@ -126,11 +149,83 @@ export class EditProfileComponent implements OnInit {
     this._layoutService.logoSrc.set('icons/user-icon-orange.png');
     this._layoutService.logoAlt.set('Edit Profile Icon');
 
-    const currentUser = this._authService.currentUser();
-    if (currentUser?.id) {
-      this._currentUserId = currentUser.id.toString();
-      this._authService.checkAuthUser(this._currentUserId).subscribe();
-    }
+    // Check if we're editing a team member or current user
+    this.route.params.subscribe((params) => {
+      const userId = params['userId'];
+      if (userId) {
+        // Editing a team member
+        this.isEditingTeamMember.set(true);
+        this._loadTeamMemberData(userId);
+      } else {
+        // Editing current user
+        this.isEditingTeamMember.set(false);
+        const currentUser = this._authService.currentUser();
+        if (currentUser?.id) {
+          this._currentUserId = currentUser.id.toString();
+          this._authService.checkAuthUser(this._currentUserId).subscribe();
+        }
+      }
+    });
+  }
+
+  private _loadTeamMemberData(userId: string): void {
+    // Subscribe to team members from the platform settings service
+    this._platformSettingsService.teamMembers$
+      .pipe(take(1))
+      .subscribe((members: TeamMember[]) => {
+        const member = members.find((m) => m.id.toString() === userId);
+
+        if (member) {
+          this._editingMember = member;
+          this._currentUserId = member.id.toString();
+
+          // Convert TeamMember to OtpBodyData format for form initialization
+          const userData: OtpBodyData = {
+            id: member.id,
+            email: member.email,
+            fullName: member.fullName,
+            profilePicture: member.profilePicture,
+            role: member.role,
+          };
+
+          this._initializeForm(userData);
+          this._initializeProfileImage();
+        } else {
+          // Member not found in current state, load from backend
+          this._platformSettingsService.loadTeamMembers().subscribe({
+            next: (response) => {
+              if (response?.data) {
+                const foundMember = response.data.find(
+                  (m) => m.id.toString() === userId
+                );
+                if (foundMember) {
+                  this._editingMember = foundMember;
+                  this._currentUserId = foundMember.id.toString();
+
+                  const userData: OtpBodyData = {
+                    id: foundMember.id,
+                    email: foundMember.email,
+                    fullName: foundMember.fullName,
+                    profilePicture: foundMember.profilePicture,
+                    role: foundMember.role,
+                  };
+
+                  this._initializeForm(userData);
+                  this._initializeProfileImage();
+                } else {
+                  this.error.set('Team member not found');
+                  this.router.navigate(['/admin/settings']);
+                }
+              }
+            },
+            error: (err) => {
+              console.error('Failed to load team member:', err);
+              this.error.set('Failed to load team member data');
+              this.router.navigate(['/admin/settings']);
+            },
+          });
+        }
+      });
   }
 
   private _initializeForm(user: OtpBodyData): void {
@@ -295,36 +390,46 @@ export class EditProfileComponent implements OnInit {
         next: (response) => {
           const updatedUser = response.data || response;
 
-          // Update AuthService with new data
-          const authData: OtpBodyData = {
-            id: updatedUser.userId || parseInt(this._currentUserId!, 10),
-            email: updatedUser.email,
-            fullName: updatedUser.fullName || updatedUser.name,
-            profilePicture: updatedUser.profileImageUrl || updatedUser.avatar,
-            role: updatedUser.role,
-          };
+          // If editing current user, update auth service
+          if (!this.isEditingTeamMember()) {
+            const authData: OtpBodyData = {
+              id: updatedUser.userId || parseInt(this._currentUserId!, 10),
+              email: updatedUser.email,
+              fullName: updatedUser.fullName || updatedUser.name,
+              profilePicture: updatedUser.profileImageUrl || updatedUser.avatar,
+              role: updatedUser.role,
+            };
 
-          this._authService['_userInfo$'].next(authData);
+            this._authService['_userInfo$'].next(authData);
 
-          // Get current context or determine it from user role
-          const context =
-            this._authService.getCurrentAuthContext() ||
-            (authData.role === 'admin' ? 'admin' : 'user');
+            const context =
+              this._authService.getCurrentAuthContext() ||
+              (authData.role === 'admin' ? 'admin' : 'user');
 
-          this._authService['saveAuthToStorage'](
-            authData.id.toString(),
-            authData.fullName,
-            authData.profilePicture,
-            authData.email,
-            authData.role,
-            context // Add the 6th parameter
-          );
+            this._authService['saveAuthToStorage'](
+              authData.id.toString(),
+              authData.fullName,
+              authData.profilePicture,
+              authData.email,
+              authData.role,
+              context
+            );
+          } else {
+            // If editing team member, reload team members list
+            this._platformSettingsService.loadTeamMembers().subscribe();
+          }
 
           this._resetForm();
           this.error.set(null);
 
-          // Show success message or navigate
           console.log('Profile updated successfully');
+
+          // Navigate back to settings if editing team member
+          if (this.isEditingTeamMember()) {
+            setTimeout(() => {
+              this.router.navigate(['/admin/settings']);
+            }, 500);
+          }
         },
         error: (err) => {
           if (
@@ -358,15 +463,23 @@ export class EditProfileComponent implements OnInit {
       } catch {}
     }
 
-    const currentUser = this._authService.currentUser();
-    if (!currentUser) throw new Error('No user data available');
+    // Use editing member data if available, otherwise use current user
+    let userRole = 'admin';
+    if (this.isEditingTeamMember() && this._editingMember) {
+      userRole = this._editingMember.role;
+    } else {
+      const currentUser = this._authService.currentUser();
+      if (currentUser) {
+        userRole = currentUser.role;
+      }
+    }
 
     const userUpdateRequest = {
       fullName: this.profileForm.value.fullName,
       email: this.profileForm.value.emailAddress,
       phone: formattedPhone,
       address: this.profileForm.value.address || '',
-      status: true, // Admin is always active
+      status: true, // Admin/team members are active
     };
 
     const formData = new FormData();
@@ -395,12 +508,29 @@ export class EditProfileComponent implements OnInit {
       this.profileImage.set(this._originalImageUrl);
     }
 
-    const currentUser = this._authService.currentUser();
-    if (currentUser) {
-      this._initializeForm(currentUser);
+    // Reset form with appropriate user data
+    if (this.isEditingTeamMember() && this._editingMember) {
+      const userData: OtpBodyData = {
+        id: this._editingMember.id,
+        email: this._editingMember.email,
+        fullName: this._editingMember.fullName,
+        profilePicture: this._editingMember.profilePicture,
+        role: this._editingMember.role,
+      };
+      this._initializeForm(userData);
+    } else {
+      const currentUser = this._authService.currentUser();
+      if (currentUser) {
+        this._initializeForm(currentUser);
+      }
     }
 
     this._resetForm();
+
+    // Navigate back to settings if editing a team member
+    if (this.isEditingTeamMember()) {
+      this.router.navigate(['/admin/settings']);
+    }
   }
 
   private _phoneNumberValidator(

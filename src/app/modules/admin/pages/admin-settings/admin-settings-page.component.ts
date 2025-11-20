@@ -31,6 +31,9 @@ import {
 } from '../../../../core/models/platform-settings.model';
 import { PlatformSettingsService } from '@app/core/services/platform-settings-management.service';
 import { PlatformStateService } from '@app/core/services/platform-state.service';
+import { EditProfileComponent } from "../admin-edit-profile/admin-edit-profile.component";
+import { Router } from '@angular/router';
+import { InviteUserModalComponent } from "../user-management-page/components/invite-user-modal/invite-user-modal.component";
 
 interface SecurityForm {
   platformName: FormControl<string | null>;
@@ -56,6 +59,8 @@ interface NotificationItem {
     ButtonComponent,
     InputComponent,
     AddTeamMemberModalComponent,
+    EditProfileComponent,
+    InviteUserModalComponent,
   ],
   templateUrl: './admin-settings-page.component.html',
   styleUrls: ['./admin-settings-page.component.scss'],
@@ -70,11 +75,13 @@ export class AdminSettingsPageComponent implements OnInit, OnDestroy {
   private readonly _platformStateService: PlatformStateService =
     inject(PlatformStateService);
 
+  private readonly router = inject(Router);
+
   private readonly _destroy$: Subject<void> = new Subject<void>();
 
   @ViewChild(AddTeamMemberModalComponent)
   private _addTeamMemberModal?: AddTeamMemberModalComponent;
-
+  public showInviteAdminModal = signal(false);
   protected readonly activeTab = signal<'general' | 'notifications' | 'team'>(
     'general'
   );
@@ -174,6 +181,7 @@ export class AdminSettingsPageComponent implements OnInit, OnDestroy {
       });
   }
 
+  
   protected toggleNotification(
     notificationId: keyof NotificationSettings
   ): void {
@@ -187,7 +195,7 @@ export class AdminSettingsPageComponent implements OnInit, OnDestroy {
   }
 
   protected addTeamMember(): void {
-    this.showAddTeamMemberModal.set(true);
+    this.showInviteAdminModal.set(true);
   }
 
   protected handleAddTeamMemberSubmit(payload: TeamMemberPayload): void {
@@ -212,14 +220,16 @@ export class AdminSettingsPageComponent implements OnInit, OnDestroy {
   }
 
   protected handleAddTeamMemberClose(): void {
-    this.showAddTeamMemberModal.set(false);
+    this.showInviteAdminModal.set(false);
   }
+  handleInviteAdminSuccess() {
+  this.showInviteAdminModal.set(false);
+}
 
   protected editTeamMember(member: TeamMember): void {
-    console.log('Edit team member:', member);
-    this._notificationService.info('Edit functionality coming soon!');
+    // Navigate to the edit profile page with the member's ID
+    this.router.navigate(['/admin/profile', member.id]);
   }
-
   protected toggleMemberStatus(memberId: number): void {
     const updatedMembers: TeamMember[] = this.teamMembers().map(
       (member: TeamMember) => (member.id === memberId ? { ...member } : member)

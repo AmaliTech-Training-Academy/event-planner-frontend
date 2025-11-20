@@ -242,3 +242,10 @@
   (close)="handleAddTeamMemberClose()"
 ></app-add-team-member>
 }
+
+@if (showInviteAdminModal()) {
+  <app-invite-user-modal
+    (close)="handleInviteAdminSuccess()"
+    (success)="handleInviteAdminSuccess()"
+  ></app-invite-user-modal>
+}

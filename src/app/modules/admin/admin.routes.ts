@@ -65,6 +65,7 @@ export const ADMIN_ROUTES: Routes = [
       ),
     // canActivate: [AdminGuard],
   },
+
   {
     path: 'profile',
     loadComponent: () =>
@@ -72,4 +73,11 @@ export const ADMIN_ROUTES: Routes = [
         (m) => m.EditProfileComponent
       ),
   },
+  {
+    path: 'profile/:userId',
+    loadComponent: () =>
+      import('./pages/admin-edit-profile/admin-edit-profile.component').then(
+        (m) => m.EditProfileComponent
+      ),
+  }
 ];
