@@ -1,6 +1,30 @@
 <div class="edit-profile">
   <div class="profile-card">
-    <h2 class="profile-card__title">Profile Information</h2>
+    <!-- Profile Header with Avatar and Title -->
+    <div class="profile-header">
+      <div class="profile-avatar" (click)="triggerFileInput()" style="cursor: pointer;">
+        <img
+          [src]="profileImage()"
+          alt="Profile picture"
+          width="128"
+          height="128"
+          priority
+        />
+
+        <button
+          class="avatar-edit-btn"
+          type="button"
+          (click)="triggerFileInput(); $event.stopPropagation()"
+        >
+          <img [src]="statusIcon" alt="Change photo" width="16" height="16" />
+        </button>
+      </div>
+
+      <div class="profile-header__info">
+        <h3>Edit Profile</h3>
+        <p>Update your personal information</p>
+      </div>
+    </div>
 
     <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
       <!-- Error Banner -->
@@ -28,32 +52,6 @@
         (change)="onImageSelect($event)"
       />
 
-      <!-- Profile Header -->
-      <div class="profile-header">
-        <div class="profile-avatar" (click)="triggerFileInput()" style="cursor: pointer;">
-          <img
-            [src]="profileImage()"
-            alt="Profile picture"
-            width="128"
-            height="128"
-            priority
-          />
-
-          <button
-            class="avatar-edit-btn"
-            type="button"
-            (click)="triggerFileInput(); $event.stopPropagation()"
-          >
-            <img [src]="statusIcon" alt="Change photo" width="16" height="16" />
-          </button>
-        </div>
-
-        <div class="profile-header__info">
-          <h3>Edit Profile</h3>
-          <p>Update your personal information</p>
-        </div>
-      </div>
-
       <!-- Basic Information Section -->
       <div class="form-section">
         <h3 class="form-section__title">Basic Information</h3>
@@ -66,19 +64,19 @@
             type="text"
             formControlName="fullName"
             placeholder="Enter your full name"
-            [errorMessage]="getErrorMessage('fullName')"
+            [errorMessage]="hasError('fullName') ? getErrorMessage('fullName') : ''"
           ></app-input>
         </div>
 
         <!-- Email Address -->
         <div class="form-field">
-          <label for="emailAddress">Email Address</label>
+          <label for="emailAddress">Email Address <span style="color: #9ca3af; font-size: 0.875rem;">(Optional)</span></label>
           <app-input
             id="emailAddress"
             type="email"
             formControlName="emailAddress"
-            placeholder="admin@eventhub.com"
-            [errorMessage]="getErrorMessage('emailAddress')"
+            placeholder="user@eventhub.com"
+            [errorMessage]="hasError('emailAddress') ? getErrorMessage('emailAddress') : ''"
           ></app-input>
         </div>
       </div>
@@ -87,7 +85,7 @@
       <div class="form-section">
         <h3 class="form-section__title">Contact Information</h3>
 
-        <!-- Phone Number Toggle -->
+        <!-- Phone Number Field or Add Button -->
         @if (!showPhoneField()) {
         <div class="add-field-container">
           <app-button
@@ -116,7 +114,7 @@
             </button>
           </div>
 
-          <!-- Country Code Selector -->
+          <!-- Country Code and Phone Input -->
           <div class="phone-input-group">
             <select
               class="phone-code-select"
@@ -131,10 +129,10 @@
 
             <app-input
               id="phone"
-              type="text"
+              type="tel"
               formControlName="phone"
               placeholder="241234567"
-              [errorMessage]="getErrorMessage('phone')"
+              [errorMessage]="hasError('phone') ? getErrorMessage('phone') : ''"
             ></app-input>
           </div>
 
@@ -147,7 +145,7 @@
         </div>
         }
 
-        <!-- Address Toggle -->
+        <!-- Address Field or Add Button -->
         @if (!showAddressField()) {
         <div class="add-field-container">
           <app-button
@@ -186,32 +184,26 @@
         }
       </div>
 
-      
-    <!-- Toggle Phone Field -->
-<app-button
-  type="secondary"
-  buttonType="button"
-  (click)="togglePhoneField()" 
-  extraClass="btn-add-field"
->
-  <span class="button-content">
-    <span class="icon">+</span>
-    Add Phone Number
-  </span>
-</app-button>
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <app-button
+          type="secondary"
+          buttonType="button"
+          (onClick)="cancelEdit()" 
+          [disabled]="saving()"
+          extraClass="btn-cancel"
+        >
+          Cancel
+        </app-button>
 
-<!-- Toggle Address Field -->
-<app-button
-  type="secondary"
-  buttonType="button"
-  (click)="toggleAddressField()" 
-  extraClass="btn-add-field"
->
-  <span class="button-content">
-    <span class="icon">+</span>
-    Add Address
-  </span>
-</app-button>
+        <app-button
+          type="primary"
+          buttonType="submit"
+          [disabled]="profileForm.invalid || saving() || uploadingImage()"
+        >
+          {{ saving() ? "Saving..." : "Save Changes" }}
+        </app-button>
+      </div>
     </form>
   </div>
 </div>

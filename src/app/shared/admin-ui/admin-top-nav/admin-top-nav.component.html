@@ -39,14 +39,14 @@
         type="plain"
         [buttonType]="'button'"
         [extraClass]="'admin-top-nav__user'"
-        [attr.aria-label]="userName"
+        [attr.aria-label]="displayName()"
         (onClick)="toggleDropdown()"
       >
         <img
-          ngSrc="{{ avatarSrc }}"
+          [ngSrc]="displayAvatar()"
           width="32"
           height="32"
-          [alt]="userName"
+          [alt]="displayName()"
           class="admin-top-nav__avatar"
         />
         <img
@@ -63,14 +63,14 @@
       <div class="admin-top-nav__dropdown">
         <div class="admin-top-nav__dropdown-header">
           <img
-            ngSrc="{{ avatarSrc }}"
+            [ngSrc]="displayAvatar()"
             width="40"
             height="40"
-            [alt]="userName"
+            [alt]="displayName()"
             class="admin-top-nav__dropdown-avatar"
           />
           <div class="admin-top-nav__dropdown-info">
-            <p class="admin-top-nav__dropdown-name">{{ userName }}</p>
+            <p class="admin-top-nav__dropdown-name">{{ displayName() }}</p>
             <p class="admin-top-nav__dropdown-role">Administrator</p>
           </div>
         </div>
@@ -107,18 +107,13 @@
 
         <div class="admin-top-nav__dropdown-divider"></div>
 
-        <a 
+        <a
           type="social"
           class="admin-top-nav__dropdown-item admin-top-nav__dropdown-item--danger"
           (click)="logout($event)"
           [routerLink]="APP_ROUTES.ADMIN_LOGOUT"
         >
-          <img
-            ngSrc="icons/logout.png"
-            width="20"
-            height="20"
-            alt="Logout"
-          />
+          <img ngSrc="icons/logout.png" width="20" height="20" alt="Logout" />
           <span>Logout</span>
         </a>
       </div>
