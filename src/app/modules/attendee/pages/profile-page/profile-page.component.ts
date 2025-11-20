@@ -6,6 +6,9 @@ import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '@app/core/services/auth.service';
+import { NotificationService } from '@app/core/services/notification.service';
+import { OtpBodyData } from '@app/core/models/auth-response.model';
+import { UpdateUserPayload } from '@app/core/services/backend/user-backend.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -25,7 +28,8 @@ export class ProfilePageComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
-
+  private readonly notificationnService = inject(NotificationService)
+  private currentUser: OtpBodyData | null = null;
   protected readonly routes = APP_ROUTES;
   protected isLoggingOut = signal(false);
   protected avatarUrl = signal('icons/profile-avata.png');
@@ -43,7 +47,6 @@ export class ProfilePageComponent implements OnInit {
     this.isContactInfoDisabled() ? 'Edit' : 'Save'
   );
 
-  // Form group getters
   protected get basicInfoGroup() {
     return this.profileForm.get('basicInfo');
   }
@@ -52,12 +55,12 @@ export class ProfilePageComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    const currentUser = this.authService.currentUser();
+    this.currentUser = this.authService.currentUser();
 
     this.profileForm = this.fb.group({
       basicInfo: this.fb.group({
-        fullName: [currentUser?.fullName, [Validators.required]],
-        email: [currentUser?.email, [Validators.email, Validators.required]],
+        fullName: [this.currentUser?.fullName, [Validators.required]],
+        email: [this.currentUser?.email, [Validators.email, Validators.required]],
       }),
       contactInfo: this.fb.group({
         phone: ['', [Validators.required]],
@@ -68,6 +71,17 @@ export class ProfilePageComponent implements OnInit {
     this.disableBasicInfo();
     this.disableContactInfo();
   }
+
+  protected hasError(controlName: string, group: 'basicInfo' | 'contactInfo'): string {
+    const control = this.profileForm.get(`${group}.${controlName}`);
+    if (!control || !control.touched || !control.invalid) return '';
+
+    if (control.errors?.['required']) return 'This field is required';
+    if (control.errors?.['email']) return 'Enter a valid email';
+
+    return '';
+  }
+
 
   private disableBasicInfo() {
     this.basicInfoGroup?.disable();
@@ -105,28 +119,34 @@ export class ProfilePageComponent implements OnInit {
   private saveBasicInfo(): void {
     if (this.basicInfoGroup?.valid) {
       const basicInfo = this.basicInfoGroup?.value;
-      console.log('Saving Basic Info:', basicInfo);
-
-      // TODO: Call API to save basic info
-
+      this.updateProfile({ fullName: basicInfo?.fullName, email: basicInfo?.email })
       this.disableBasicInfo();
+      return
     }
+    this.notificationnService.error('Please fill in all required fields.');
+  }
+
+
+  private updateProfile(data: UpdateUserPayload) {
+    this.authService.updateUser(`${this.currentUser?.id}`, data).subscribe({
+      next: () => {
+        this.notificationnService.success(`Profile updated successfully`)
+      }
+    })
   }
 
   private saveContactInfo(): void {
     if (this.contactInfoGroup?.valid) {
       const contactInfo = this.contactInfoGroup?.value;
-      console.log('Saving Contact Info:', contactInfo);
-
-      // TODO: Call API to save contact info
-
+      this.updateProfile({ fullName: contactInfo?.phone, email: contactInfo?.address })
       this.disableContactInfo();
+      return
     }
+    this.notificationnService.error('Please fill in all required fields.');
   }
 
   protected onLogout(): void {
     this.isLoggingOut.set(true);
-
     this.authService.logout().subscribe({
       next: () => this.router.navigate([this.routes.LOGIN]),
       error: () => this.isLoggingOut.set(false)

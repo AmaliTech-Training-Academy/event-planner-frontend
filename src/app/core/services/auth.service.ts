@@ -6,16 +6,17 @@ import {
   finalize,
   Observable,
   of,
-  tap,
   take,
+  tap,
 } from 'rxjs';
 import { APP_ROUTES } from '../constants/app-routes.constants';
-import { User } from '../models/user.model';
-import { AuthBackendService } from './backend/auth-backend.service';
-import { ErrorHandlerService } from './error-handler.service';
 import { AUTH_STORAGE } from '../constants/storage.constants';
-import { AuthStorage } from '../models/auth.model';
 import { OtpBodyData } from '../models/auth-response.model';
+import { AuthStorage } from '../models/auth.model';
+import { AuthBackendService } from './backend/auth-backend.service';
+import { UpdateUserPayload, UserBackendService } from './backend/user-backend.service';
+import { ErrorHandlerService } from './error-handler.service';
+import { User } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -30,7 +31,8 @@ export class AuthService {
   constructor(
     private readonly authBackend: AuthBackendService,
     private readonly router: Router,
-    private readonly errorHandlerService: ErrorHandlerService
+    private readonly errorHandlerService: ErrorHandlerService,
+    private readonly userBackendService: UserBackendService
   ) {
     this.onload();
   }
@@ -50,6 +52,7 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public adminLogin(email: string, password: string) {
     this.setLoading(true);
     return this.authBackend.adminLogin(email, password).pipe(
@@ -123,7 +126,7 @@ export class AuthService {
     this.setLoading(true);
     return this.authBackend.resendOtp(email).pipe(
       take(1),
-      tap(() => {}),
+      tap(() => { }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );
@@ -143,20 +146,21 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
-public adminLogout() {
-  this.setLoading(true);
-  return this.authBackend.logout().pipe(
-    take(1),
-    tap(() => {
-      this._loggedIn$.next(false);
-      this._userInfo$.next(null);
-      this.clearAuthStorage();
-      this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
-    }),
-    catchError((err) => this.errorHandlerService.handle(err)),
-    finalize(() => this.setLoading(false))
-  );
-}
+
+  public adminLogout() {
+    this.setLoading(true);
+    return this.authBackend.logout().pipe(
+      take(1),
+      tap(() => {
+        this._loggedIn$.next(false);
+        this._userInfo$.next(null);
+        this.clearAuthStorage();
+        this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+      }),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
 
   public checkAuthUser(userId: string) {
     this.setLoading(true);
@@ -181,6 +185,7 @@ public adminLogout() {
       finalize(() => this.setLoading(false))
     );
   }
+
   public resetPassword(otp: string, email: string, password: string) {
     this.setLoading(true);
     return this.authBackend.resetPassword(otp, email, password).pipe(
@@ -209,6 +214,29 @@ public adminLogout() {
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );
+  }
+
+
+  public updateUser(userId: string, data: UpdateUserPayload) {
+    this.setLoading(true);
+    return this.userBackendService.updateUser(userId, data).pipe(
+      take(1),
+      tap((response) => {
+        let user_: User = response.data
+        const data: OtpBodyData = {
+          email: user_.email,
+          fullName: user_.fullName,
+          role: user_.role,
+          profilePicture: user_.profileImageUrl as string,
+          id: user_.userId,
+          address: user_.address,
+          phone: user_.phone
+        }
+        this._userInfo$.next(data);
+      }),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
   }
 
   private onload() {
