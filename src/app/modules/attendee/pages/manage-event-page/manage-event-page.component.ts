@@ -220,7 +220,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
   protected onSendInvite(): void {
     if (this.inviteForm.valid) {
-      this._submitInvitation('SENT');
+      this._submitInvitation('SEND');
     } else {
       this.inviteForm.markAllAsTouched(); 
     }
@@ -234,7 +234,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  private _submitInvitation(status: 'SAVE' | 'SENT'): void {
+  private _submitInvitation(status: string): void {
     const formData = this.inviteForm.value;
     this.isSubmitting.set(true);
 
@@ -256,11 +256,10 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         }
       ],
       event: selectedEventId, 
-      status: status,
+      status: status as any,
       message: formData.message || ''
     };
 
-    
     this._userBackendService.inviteUsers(payload).subscribe({
       next: () => {
         this.isSubmitting.set(false);
@@ -272,7 +271,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         if (err.status === 0) {
            this._notificationService.error('Connection blocked (CORS). Please check your network or use the CORS extension.');
         } else {
-           const errorMessage = err.error?.message || err.statusText || 'Unknown error occurred';
+           const errorMessage = err.error?.description || err.error?.message || err.statusText || 'Unknown error occurred';
            this._notificationService.error(`Failed to send: ${errorMessage}`); 
         }
       }
@@ -288,8 +287,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       event: eventId || null
     });
 
-    if (status === 'SENT') {
-      this._notificationService.success('Invitation sent successfully!');
+    if (status === 'SEND') {
+      this._notificationService.success('');
       
       this.showSuccessModal.set(true);
       setTimeout(() => {

@@ -450,7 +450,7 @@
       <div class="custom-select-wrapper">
         <select formControlName="event" class="form-input form-select">
           @for (event of availableEvents(); track event.id) {
-          
+           
             <option [ngValue]="event.id">{{ event.title }}</option>
           }
         </select>
@@ -462,6 +462,7 @@
       <label>Select Role</label>
       <div class="custom-select-wrapper">
         <select formControlName="role" class="form-input form-select">
+          
           <option value="CO_ORGANIZER">Co-Organizer</option>
           <option value="VENUE_STAFF">Venue Staff</option>
           <option value="ATTENDEE">Attendee</option>
@@ -477,4 +478,20 @@
   </form>
 
 </app-modal-wrapper>
+}
+@if (showSuccessModal()) {
+<div class="success-modal-overlay">
+  <div class="success-modal-card">
+    <div class="success-icon-wrapper">
+      
+      <img 
+        ngSrc="/icons/success-mark.png" 
+        alt="Success" 
+        width="32" 
+        height="32"
+      />
+    </div>
+    <h3 class="success-title">Invite successfullySent</h3>
+  </div>
+</div>
 }
