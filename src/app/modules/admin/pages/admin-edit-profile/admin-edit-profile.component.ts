@@ -305,12 +305,19 @@ export class EditProfileComponent implements OnInit {
           };
 
           this._authService['_userInfo$'].next(authData);
+
+          // Get current context or determine it from user role
+          const context =
+            this._authService.getCurrentAuthContext() ||
+            (authData.role === 'admin' ? 'admin' : 'user');
+
           this._authService['saveAuthToStorage'](
             authData.id.toString(),
             authData.fullName,
             authData.profilePicture,
             authData.email,
-            authData.role
+            authData.role,
+            context // Add the 6th parameter
           );
 
           this._resetForm();

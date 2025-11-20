@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
   // User endpoints
   GET_USER: (userId: string): string => `${BASE}/users/${userId}`,
   GET_ALL_USERS: `${BASE}/users/management`,
+  GET_ADMIN_LIST: `${BASE}/users/admin-list`,
   UPDATE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   DELETE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   CREATE_USER: `${BASE}/users`,

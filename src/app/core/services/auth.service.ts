@@ -16,6 +16,7 @@ import { ErrorHandlerService } from './error-handler.service';
 import { AUTH_STORAGE } from '../constants/storage.constants';
 import { AuthStorage } from '../models/auth.model';
 import { OtpBodyData } from '../models/auth-response.model';
+import { USER_ROLES } from '../constants/user.constants';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -26,6 +27,7 @@ export class AuthService {
   private _email: string = '';
   private _otp: string = '';
   private _isResset: boolean = false;
+  private _currentAuthContext: 'user' | 'admin' | null = null;
 
   constructor(
     private readonly authBackend: AuthBackendService,
@@ -43,6 +45,7 @@ export class AuthService {
       tap(() => {
         this._email = email;
         this._isResset = false;
+        this._currentAuthContext = 'user';
         this.router.navigate([APP_ROUTES.VERIFY_EMAIL]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
@@ -60,13 +63,15 @@ export class AuthService {
         if (userData) {
           this._loggedIn$.next(true);
           this._userInfo$.next(userData);
+          this._currentAuthContext = 'admin';
 
           this.saveAuthToStorage(
             userData.id.toString(),
             userData.fullName,
             userData.profilePicture,
             userData.email,
-            userData.role
+            userData.role,
+            'admin'
           );
         }
 
@@ -93,6 +98,7 @@ export class AuthService {
       .pipe(
         take(1),
         tap(() => {
+          this._currentAuthContext = 'user';
           this.router.navigate([APP_ROUTES.LOGIN]);
         }),
         catchError((err) => this.errorHandlerService.handle(err)),
@@ -120,13 +126,15 @@ export class AuthService {
           this._userInfo$.next(userData);
           this._email = '';
           this._otp = '';
+          this._currentAuthContext = 'user';
 
           this.saveAuthToStorage(
             userData.id.toString(),
             userData.fullName,
             userData.profilePicture,
             userData.email,
-            userData.role
+            userData.role,
+            'user'
           );
         }
         this.router.navigate([APP_ROUTES.EXPLORE]);
@@ -153,7 +161,8 @@ export class AuthService {
       tap(() => {
         this._loggedIn$.next(false);
         this._userInfo$.next(null);
-        this.clearAuthStorage();
+        this.clearAuthStorage('user');
+        this._currentAuthContext = null;
         this.router.navigate([APP_ROUTES.LOGIN]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
@@ -168,7 +177,8 @@ export class AuthService {
       tap(() => {
         this._loggedIn$.next(false);
         this._userInfo$.next(null);
-        this.clearAuthStorage();
+        this.clearAuthStorage('admin');
+        this._currentAuthContext = null;
         this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
@@ -243,12 +253,14 @@ export class AuthService {
           const userData = response?.data;
           if (userData) {
             this._userInfo$.next(userData);
+            const context = this._currentAuthContext || 'user';
             this.saveAuthToStorage(
               userData.id.toString(),
               userData.fullName,
               userData.profilePicture,
               userData.email,
-              userData.role
+              userData.role,
+              context
             );
           }
         }),
@@ -274,12 +286,14 @@ export class AuthService {
             profilePicture: newAvatarUrl,
           };
           this._userInfo$.next(updatedUser);
+          const context = this._currentAuthContext || 'user';
           this.saveAuthToStorage(
             updatedUser.id.toString(),
             updatedUser.fullName,
             updatedUser.profilePicture,
             updatedUser.email,
-            updatedUser.role
+            updatedUser.role,
+            context
           );
         }
       }),
@@ -288,13 +302,45 @@ export class AuthService {
     );
   }
 
-  private onload() {
-    const stored = localStorage.getItem(AUTH_STORAGE.AUTH);
+  public updateStoredUserInfo(userData: OtpBodyData): void {
+    this._userInfo$.next(userData);
+    const context =
+      this._currentAuthContext ||
+      (userData.role === USER_ROLES.ADMIN ? 'admin' : 'user');
+    this.saveAuthToStorage(
+      userData.id.toString(),
+      userData.fullName,
+      userData.profilePicture,
+      userData.email,
+      userData.role,
+      context
+    );
+  }
 
-    if (stored) {
+  private onload() {
+    const userStored = localStorage.getItem(AUTH_STORAGE.AUTH);
+    const adminStored = localStorage.getItem(AUTH_STORAGE.AUTH + '_admin');
+
+    const currentPath = window.location.pathname;
+    const isAdminRoute = currentPath.includes('/admin');
+
+    let stored = null;
+    let context: 'user' | 'admin' | null = null;
+
+    if (isAdminRoute && adminStored) {
+      stored = adminStored;
+      context = 'admin';
+    } else if (!isAdminRoute && userStored) {
+      stored = userStored;
+      context = 'user';
+    }
+
+    if (stored && context) {
       try {
         const data = JSON.parse(stored) as AuthStorage;
+
         this._loggedIn$.next(data[AUTH_STORAGE.AUTHENTICATED]);
+        this._currentAuthContext = context;
 
         if (data[AUTH_STORAGE.AUTHENTICATED]) {
           const userData: OtpBodyData = {
@@ -304,11 +350,10 @@ export class AuthService {
             profilePicture: data[AUTH_STORAGE.PROFILE_PICTURE],
             role: data[AUTH_STORAGE.ROLE],
           };
+
           this._userInfo$.next(userData);
         }
-      } catch (error) {
-        // Silent error handling
-      }
+      } catch (error) {}
     }
   }
 
@@ -317,7 +362,8 @@ export class AuthService {
     fullName: string,
     profilePicture: string | null,
     email: string,
-    role: string
+    role: string,
+    context: 'user' | 'admin'
   ) {
     const authData = {
       [AUTH_STORAGE.AUTHENTICATED]: true,
@@ -328,11 +374,17 @@ export class AuthService {
       [AUTH_STORAGE.ROLE]: role,
     };
 
-    localStorage.setItem(AUTH_STORAGE.AUTH, JSON.stringify(authData));
+    const storageKey =
+      context === 'admin' ? AUTH_STORAGE.AUTH + '_admin' : AUTH_STORAGE.AUTH;
+
+    localStorage.setItem(storageKey, JSON.stringify(authData));
   }
 
-  private clearAuthStorage() {
-    localStorage.removeItem(AUTH_STORAGE.AUTH);
+  private clearAuthStorage(context: 'user' | 'admin') {
+    const storageKey =
+      context === 'admin' ? AUTH_STORAGE.AUTH + '_admin' : AUTH_STORAGE.AUTH;
+
+    localStorage.removeItem(storageKey);
   }
 
   public isLoggedIn(): Observable<boolean> {
@@ -345,6 +397,10 @@ export class AuthService {
 
   public currentUser(): OtpBodyData | null {
     return this._userInfo$.getValue();
+  }
+
+  public getCurrentAuthContext(): 'user' | 'admin' | null {
+    return this._currentAuthContext;
   }
 
   private setLoading(isLoading: boolean): void {

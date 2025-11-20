@@ -30,6 +30,7 @@ import {
   UpdateNotificationSettingsPayload,
 } from '../../../../core/models/platform-settings.model';
 import { PlatformSettingsService } from '@app/core/services/platform-settings-management.service';
+import { PlatformStateService } from '@app/core/services/platform-state.service';
 
 interface SecurityForm {
   platformName: FormControl<string | null>;
@@ -66,6 +67,9 @@ export class AdminSettingsPageComponent implements OnInit, OnDestroy {
   private readonly _platformSettingsService: PlatformSettingsService = inject(
     PlatformSettingsService
   );
+  private readonly _platformStateService: PlatformStateService =
+    inject(PlatformStateService);
+
   private readonly _destroy$: Subject<void> = new Subject<void>();
 
   @ViewChild(AddTeamMemberModalComponent)
@@ -129,6 +133,11 @@ export class AdminSettingsPageComponent implements OnInit, OnDestroy {
           this._notificationService.success(
             'Security settings saved successfully!'
           );
+
+          // Immediately update the platform state
+          if (payload.platformName) {
+            this._platformStateService.updatePlatformName(payload.platformName);
+          }
         },
         error: (): void => {
           this.isSubmitting.set(false);

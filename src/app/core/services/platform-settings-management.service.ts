@@ -66,6 +66,7 @@ export class PlatformSettingsService {
     return this._platformSettingsBackend.updateSecuritySettings(payload).pipe(
       take(1),
       tap((): void => {
+        // Reload settings to ensure UI is updated
         this.loadSecuritySettings().subscribe();
       }),
       catchError((err: any) => this._errorHandlerService.handle(err)),
