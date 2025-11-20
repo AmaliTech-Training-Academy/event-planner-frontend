@@ -91,11 +91,8 @@ export class EventsServiceService {
 
   public getEvent(id: string) {
     this.setLoading(true)
-    this.eventBackendService.getEvent(id).pipe(
+    return this.eventBackendService.getEvent(id).pipe(
       take(1),
-      tap((response) => {
-        console.log(response)
-      }),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     )

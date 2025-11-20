@@ -13,17 +13,15 @@
 
     <div class="filter-select__actions">
       @if (showReset() && hasValue() && !isDisabled()) {
-        <app-button
+        <span
           class="filter-select__reset extra-reset"
-          size="sm"
-          [extraClass]="'filter-reset'"
 
           (click)="resetFilter($event)"
           aria-label="Reset filter"
           title="Reset filter"
         >
           <img src="icons/close.png" alt="">
-        </app-button>
+      </span>
       }
 
       <img src="icons/drop-down.png" alt="">

@@ -21,6 +21,9 @@
 
 .page-header {
   margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   @include sm {
     margin-bottom: 0.5rem;

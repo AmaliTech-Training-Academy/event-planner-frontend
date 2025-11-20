@@ -5,6 +5,7 @@ import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
 import { EventSummary } from '../../../core/models/event.model';
 import { ButtonComponent } from '../../ui/button/button.component';
 import { MyEventItem } from '@app/core/models/myevent.model';
+import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
 
 @Component({
   selector: 'app-event-card',
@@ -34,4 +35,10 @@ export class EventCardComponent {
   protected onManageClick(): void {
     this.manageEvent.emit(this.event() as EventSummary);
   }
+
+  protected handleImageFallback(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = PLACEHOLDER_IMAGE;
+  }
+
 }

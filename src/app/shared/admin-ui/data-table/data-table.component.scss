@@ -313,13 +313,12 @@
       font-size: 0.75rem;
     }
 
-    &--inactive {
-      background: $red-50;
-      color: $red-600;
-      border: 1px solid $red-300;
-    }
+  &--inactive {
+    background: $red-50;
+    color: $red-600;
+    border: 1px solid $red-300;
   }
-
+}
   &__user-cell {
     display: flex;
     align-items: center;
