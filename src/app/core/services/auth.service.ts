@@ -111,7 +111,7 @@ export class AuthService {
           );
         }
         // Route to Explore page instead
-        this.router.navigate([APP_ROUTES.EXPLORE]);
+        this.router.navigate([APP_ROUTES.MY_EVENT]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
@@ -284,6 +284,12 @@ export class AuthService {
     invitationToken: string
   ) {
     this.setLoading(true);
+
+    console.log('🚀 Starting invitation acceptance with:', {
+      fullName,
+      invitationToken,
+    });
+
     return this.authBackend
       .acceptInvitation({
         fullName,
@@ -293,11 +299,51 @@ export class AuthService {
       })
       .pipe(
         take(1),
-        tap(() => {
-          this.router.navigate([APP_ROUTES.LOGIN]);
+        tap((response) => {
+          console.log('✅ Full response received:', response);
+
+          const userData = response?.data;
+          console.log('👤 User data extracted:', userData);
+
+          if (userData) {
+            console.log('🔍 User role:', userData.role);
+
+            // Don't log them in - just route to appropriate login page
+            // They need to actually log in with their new credentials
+
+            // Route based on role
+            if (userData.role === 'ADMIN') {
+              console.log('🎯 Routing to ADMIN_LOGIN');
+              console.log('🔍 Route path:', APP_ROUTES.ADMIN_LOGIN);
+              console.log('🔍 Current URL before navigation:', this.router.url);
+
+              this.router.navigate([APP_ROUTES.ADMIN_LOGIN]).then((success) => {
+                console.log('🔍 Navigation success:', success);
+                console.log(
+                  '🔍 Current URL after navigation:',
+                  this.router.url
+                );
+              });
+            } else {
+              console.log('🎯 Routing to regular LOGIN');
+              this.router.navigate([APP_ROUTES.LOGIN]).then((success) => {
+                console.log('🔍 Navigation success:', success);
+                console.log(
+                  '🔍 Current URL after navigation:',
+                  this.router.url
+                );
+              });
+            }
+          }
         }),
-        catchError((err) => this.errorHandlerService.handle(err)),
-        finalize(() => this.setLoading(false))
+        catchError((err) => {
+          console.error('❌ Error during invitation acceptance:', err);
+          return this.errorHandlerService.handle(err);
+        }),
+        finalize(() => {
+          console.log('🏁 Invitation acceptance process completed');
+          this.setLoading(false);
+        })
       );
   }
 }

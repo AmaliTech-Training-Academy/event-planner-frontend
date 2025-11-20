@@ -69,7 +69,7 @@ export const ATTENDEE_ROUTES: Routes = [
         (m) => m.ProfilePageComponent
       ),
     canActivate: [AuthGuard],
-},
+  },
   {
     path: 'my-events',
     loadComponent: () =>
@@ -78,4 +78,35 @@ export const ATTENDEE_ROUTES: Routes = [
       ),
     canActivate: [AuthGuard],
   },
+  {
+    path: 'manage-event/:id',
+    loadComponent: () =>
+      import('../attendee/pages/manage-event-page/manage-event-page.component').then(
+        (m) => m.ManageEventPageComponent
+      ),
+   canActivate: [AuthGuard],
+  },
+  {
+    path: 'payment-settings',
+    loadComponent: () =>
+      import('../attendee/pages/payment-settings/payment-settings.component').then(
+        (m) => m.PaymentSettingsPageComponent
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'event-payment-success',
+    loadComponent: () =>
+      import('../attendee/pages/event-payment-success/event-payment-success.component').then(
+        (m) => m.EventPaymentSuccessComponent
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
+  path: 'account-deactivated',
+  loadComponent: () =>
+    import('../../shared/components/account-deactivated-modal/account-deactivated-modal.component').then(
+      (m) => m.AccountDeactivatedModalComponent
+    ),
+}
 ];

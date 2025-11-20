@@ -1,0 +1,14 @@
+<div class="stat-card">
+  <div class="stat-icon">
+    <img [src]="data().icon" [alt]="data().title" />
+  </div>
+  <div class="stat-content">
+    <span class="stat-title">{{ data().title }}</span>
+    
+    @if (isString(data().value)) {
+    <span class="stat-value">{{ data().value }}</span>
+    } @else {
+    <span class="stat-value">{{ data().value | number }}</span>
+    }
+  </div>
+</div>

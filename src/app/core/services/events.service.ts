@@ -10,6 +10,7 @@ import { GetEventProps } from '../models/event.model';
   providedIn: 'root'
 })
 export class EventsServiceService {
+  
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
@@ -47,7 +48,7 @@ export class EventsServiceService {
       take(1),
       tap((response) => {
         this.router.navigate([APP_ROUTES.CREATE_EVENT_SUCCESS], {
-          state: { eventResponse: response}
+          state: { eventResponse: response }
         });
 
       }),
@@ -90,11 +91,30 @@ export class EventsServiceService {
 
   public getEvent(id: string) {
     this.setLoading(true)
-    this.eventBackendService.getEvent(id).pipe(
+    return this.eventBackendService.getEvent(id).pipe(
       take(1),
-      tap((response) => {
-        console.log(response)
-      }),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
+  public myEvents(page: number = 0) {
+    const params = new URLSearchParams();
+
+    params.append('page', page.toString())
+
+    this.setLoading(true)
+    return this.eventBackendService.getMyEvents(params).pipe(
+      take(1),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
+  public myEventOverview() {
+    this.setLoading(true)
+    return this.eventBackendService.myEventOverview().pipe(
+      take(1),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     )
@@ -103,5 +123,6 @@ export class EventsServiceService {
   private setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);
   }
+
 
 }

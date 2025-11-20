@@ -1,8 +1,9 @@
    @if (header(); as headerComponent) {
     <ng-container *ngComponentOutlet="headerComponent" />
     }
-
-    <router-outlet />
+    <div class="router-container">
+       <router-outlet />
+    </div>
 
     @if (footer(); as footerComponent) {
     <ng-container *ngComponentOutlet="footerComponent" />

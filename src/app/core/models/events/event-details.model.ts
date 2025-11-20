@@ -18,11 +18,14 @@ export interface EventDetails {
 
 
 export interface TicketType {
-  id?: number;
-  name: string;
-  sold: number;
-  remaining: number;
-  price?: number;
+  id: number;
+  type: string;
+  description: string;
+  price: number;
+  isActive: boolean;
+  remainingTickets: number;
+  soldTickets?: number;
+  isPaid: boolean;
 }
 
 export interface EventHost {
