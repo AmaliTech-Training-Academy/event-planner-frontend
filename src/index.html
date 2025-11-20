@@ -1,26 +1,29 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <title>Event Planner</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="img-src 'self' data: https: blob:;">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
- <meta http-equiv="Content-Security-Policy" content="
+  <head>
+    <meta charset="utf-8" />
+    <title>Event Planner</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="img-src 'self' data: https: blob:;"
+    />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
   default-src 'self';
   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' data: blob: https://maps.googleapis.com https://maps.gstatic.com;
-  connect-src 'self' ws: https://maps.googleapis.com https://api.sankofagrid.com data:;
-">
+  img-src 'self' data: blob: https://maps.googleapis.com https://maps.gstatic.com https://event-planner-backend-dev-files-904570587823.s3.eu-west-1.amazonaws.com;
+  connect-src 'self' https://maps.googleapis.com https://api.sankofagrid.com data:;
+"
+    />
+  </head>
 
-</head>
-
-<body>
-  <app-root></app-root>
-</body>
-
+  <body>
+    <app-root></app-root>
+  </body>
 </html>
