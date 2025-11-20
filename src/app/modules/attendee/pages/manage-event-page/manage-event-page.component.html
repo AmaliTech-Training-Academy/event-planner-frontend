@@ -417,13 +417,14 @@
   }
 
 </div> 
-} @if (showInviteModal()) {
+}@if (showInviteModal()) {
 <app-modal-wrapper
   title="Invite New User/Guest"
   primaryBtnLabel="Send Invite"
-  [isSubmitDisabled]="inviteForm.invalid"
+  secondaryBtnLabel="Save Progress"
+  [isSubmitDisabled]="inviteForm.invalid || isSubmitting()"
   (close)="onCloseInviteModal()"
-  (secondaryAction)="onCloseInviteModal()" 
+  (secondaryAction)="onSaveInvite()" 
   (primaryAction)="onSendInvite()"
 >
   
@@ -448,9 +449,9 @@
       <label>Select Event</label>
       <div class="custom-select-wrapper">
         <select formControlName="event" class="form-input form-select">
-          <option value="" disabled selected>Select Event</option>
-          <option value="uiux">UIUX Mentorship</option>
-          <option value="design">Design Systems Workshop</option>
+          @for (event of availableEvents(); track event.id) {
+            <option [ngValue]="event.id">{{ event.title }}</option>
+          }
         </select>
         <img ngSrc="/icons/Vector.png" class="dropdown-icon" width="12" height="7" alt="▼">
       </div>
@@ -460,10 +461,9 @@
       <label>Select Role</label>
       <div class="custom-select-wrapper">
         <select formControlName="role" class="form-input form-select">
-          <option value="" disabled selected>Select Role</option>
-          <option value="co-organizer">Co-Organizer</option>
-          <option value="venue-staff">Venue Staff</option>
-          <option value="attendee">Attendee</option>
+          <option value="CO_ORGANIZER">Co-Organizer</option>
+          <option value="VENUE_STAFF">Venue Staff</option>
+          <option value="ATTENDEE">Attendee</option>
         </select>
         <img ngSrc="/icons/Vector.png" class="dropdown-icon" width="12" height="7" alt="▼">
       </div>
@@ -476,21 +476,4 @@
   </form>
 
 </app-modal-wrapper>
-}
-
-@if (showSuccessModal()) {
-<div class="success-modal-container" (click)="onCloseSuccessModal()">
-  <div class="success-modal-content" (click)="$event.stopPropagation()">
-    <div class="success-icon-wrapper">
-      <img 
-        ngSrc="/icons/success-mark.png" 
-        width="60" 
-        height="60" 
-        alt="Success" 
-        class="success-icon-img"
-      />
-    </div>
-    <h3 class="success-text">Invite Successfully Sent</h3>
-  </div>
-</div>
 }

@@ -1,5 +1,11 @@
-
-
+export interface VenueSection {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+  availability: string;
+  availabilityType: 'full' | 'available';
+}
 export interface EventDetails {
   attendees: string | number;
   id: string;
@@ -14,6 +20,12 @@ export interface EventDetails {
   status: 'pending' | 'completed' | 'cancelled'  |'upcoming';
   time: string;
   organizer: string;
+}
+
+export interface RegistrationInfo {
+  eventName: string;
+  ticketName: string;
+  ticketPrice: number;
 }
 
 export interface VenueImage {
@@ -39,6 +51,56 @@ export interface TicketInfo {
   buttonText: string;
 }
 
+export interface BaseType {
+  id: number;
+  name: string;
+}
+
+export interface EventDetail {
+  id: number;
+  title: string;
+  description: string;
+  totalAttendees:number;
+  location: string;
+  startTime: string; 
+  flyerUrl: string;
+  capacity: number;
+  isPaid:boolean;
+  eventImagesUrl: string[];
+  ticketTypes: TicketType[];
+}
+
+export interface TicketType {
+  id: number;
+  type: string;
+  description: string;
+  price: number;
+  isActive: boolean;
+  remainingTickets: number;
+  isPaid: boolean;
+}
+
+
+export interface EventResponse {
+  id: string;
+  title: string;
+  description: string;
+  startTime: Date;
+  location: string;
+  flyerUrl: string;
+  timeZoneOffSet: string;
+}
+
+export type EventType = BaseType;
+export type MeetingType = BaseType;
+
+
+
+export interface TimeZone {
+  zoneId: string,
+  gmtOffset: string,
+  displayName: string
+}
 
 
 export interface RegistrationInfo {
@@ -60,10 +122,10 @@ export interface EventCard {
 }
 
 
-
 export interface TabToggle {
   key: string;
   label: string;
+  value: boolean|null;
 }
 
 export interface SearchLocation {
@@ -76,6 +138,38 @@ export interface PopularLocation {
   meta: string;
 }
 
+export interface GetEventProps {
+  sortBy?: string[];
+  pageNumber?: number;
+  pageSize?: number;
+  location?: string;
+  hasTitle?: string;
+  date?: string;
+  paid?: boolean;
+  priceFilter?: string;
+  past?: boolean;
+}
+
+
+export interface GetEventsResponse {
+  pageNumber: number;
+  pageSize: number;
+  events: EventSummary[];
+}
+
+export interface EventSummary {
+  id: number;
+  title: string;
+  description: string;
+  startTime: string | null;
+  location: string | null;
+  flyerUrl: string;
+  ticketPrice: number;
+  attendees?:number;
+}
+
+export interface EventTypeFilter { label: string, value: string }
+// event.model.ts
 
 
 export interface EventDetails {
@@ -307,7 +401,7 @@ export interface EventSummary {
   organizer: string;
   date: string;
   time: string;
-  location: string;
+  location: string | null;
 }
 
 export interface TicketStatus {

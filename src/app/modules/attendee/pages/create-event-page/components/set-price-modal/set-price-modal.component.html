@@ -18,12 +18,13 @@
                     value="paid">
                 </app-radio-button>
             </div>
-            <app-input [iconSrc]="'icons/money.svg'" [label]="'Price'" [formControlName]="EVENT_FORM_FIELDS.PRICE"
-                [type]="'text'" [placeholder]="'0.00'"></app-input>
+            <app-input type="number" [value]="price()?.toString()|| '0'" [iconSrc]="'icons/money.svg'" [label]="'Price'" [formControlName]="EVENT_FORM_FIELDS.PRICE"
+                 [placeholder]="'0.00'" [errorMessage]="getError(getControl(EVENT_FORM_FIELDS.PRICE))"></app-input>
             <div class="field">
                 <label for="price-included">What’s included with this ticket?</label>
                 <textarea [formControlName]="EVENT_FORM_FIELDS.PERCS" name="price-included" id="price-included"
                     placeholder="Enter what’s included with this ticket"></textarea>
+                <app-form-error [message]="getError(getControl(EVENT_FORM_FIELDS.PERCS))"></app-form-error>
             </div>
             <app-button (onClick)="setPrice()" [fullWidth]="true" type="primary">Set Price</app-button>
         </div>

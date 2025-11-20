@@ -7,12 +7,16 @@ import {
   SearchLocation,
   PopularLocation,
   TabToggle,
-  EventHostAdmin,
+ EventSummary,
+  EventDetailsAdmin,
   StatCardData,
-  EventSummary,
   TicketStatus,
-  EventDetailsAdmin
+  EventHostAdmin,
+  EventTypeFilter,
 } from '../models/event.model';
+
+
+import { LineSeriesConfig } from '../models/chart.model';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
 
@@ -93,7 +97,7 @@ export const MOCK_HELP_EMAIL: string = 'support@techevent.com';
 
 
 export const MOCK_EVENT_CARDS: EventCard[] = [
- 
+
   {
     id: 'evt123',
     title: 'Tech Innovation Summit 2025',
@@ -203,7 +207,7 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 2200,
   },
 
-  
+
   {
     id: 'evt134',
     title: 'Cloud Computing Summit',
@@ -214,7 +218,7 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 3000,
   },
 
-  
+
   {
     id: 'evt138',
     title: 'IoT World Congress',
@@ -243,7 +247,7 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
     attendees: 800,
   },
 
-  
+
   {
     id: 'evt141',
     title: 'Community Code & Coffee',
@@ -320,14 +324,25 @@ export const MOCK_EVENT_CARDS: EventCard[] = [
 
 
 export const MOCK_EVENT_TOGGLES: TabToggle[] = [
-  { key: 'upcoming', label: 'Upcoming events' },
-  { key: 'past', label: 'Past events' },
+  { key: 'upcoming', label: 'Upcoming events', value: false },
+  { key: 'past', label: 'Past events', value: true },
 ];
 
-export const MOCK_EVENT_TYPE_OPTIONS: string[] = [
-  'All Events',
-  'Paid Events',
-  'Free Events',
+
+
+export const MOCK_EVENT_TYPE_OPTIONS: EventTypeFilter[] = [
+  {
+    label: 'All Events',
+    value: 'all'
+  },
+  {
+    label: 'Paid Events',
+    value: 'paid'
+  },
+  {
+    label: 'Free Events',
+    value: 'free'
+  },
 ];
 
 export const MOCK_RECENT_SEARCHES: SearchLocation[] = [
@@ -346,37 +361,12 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
 ];
 
 
-export const MOCK_MY_EVENTS_CARDS: EventCard[] = [
-  {
-    id: 'evt123',
-    title: 'Tech Innovation Summit 2025',
-    date: eventStartDate,
-    location: 'Silicon Valley, CA',
-    imageUrl: 'images/event1.jpg', 
-    isPaid: true,
-    attendees: 5000,
-  },
-  {
-    id: 'evt124',
-    title: 'Community Code & Coffee',
-    date: new Date('2025-05-10T00:00:00Z'),
-    location: 'Austin, TX',
-    imageUrl: 'images/event2.jpg', 
-    isPaid: true,
-    attendees: 150,
-  },
-  {
-    id: 'evt125',
-    title: 'AI World Conference',
-    date: new Date('2025-06-20T00:00:00Z'),
-    location: 'New York, NY',
-    imageUrl: 'images/event3.jpg', 
-    isPaid: true,
-    attendees: 2500,
-  },
-];
+export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
+  
+] 
+  
 
-export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin = {
+export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin  = {
   id: 'evt123',
   name: 'Tech Innovation Summit 2025',
   organizer: 'Tech Events Inc.',
@@ -393,9 +383,9 @@ export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin = {
 
 
 export const MOCK_MANAGE_EVENT_TABS: TabToggle[] = [
-  { key: 'overview', label: 'Overview' },
-  { key: 'guests', label: 'Guests' },
-  { key: 'registrations', label: 'Registrations' },
+  { key: 'overview', label: 'Overview', value: true },
+  { key: 'guests', label: 'Guests', value: false  },
+  { key: 'registrations', label: 'Registrations', value: false},
 ];
 
 export const MOCK_MANAGE_STATS: StatCardData[] = [
@@ -412,6 +402,12 @@ export const MOCK_MANAGE_STATS: StatCardData[] = [
 ];
 
 export const MOCK_EVENT_SUMMARY: EventSummary = {
+  id:2,
+  title: 'Tech Innovation Summit 2025',
+  startTime: '2025-04-15T00:00:00Z',
+  description:"",
+  flyerUrl: 'images/flyer.jpg',
+  ticketPrice:0,
   organizer: 'William Pen (Senior UI/UX Designer)',
   date: '3rd May, 2025',
   time: '09:00am GMT',
@@ -427,3 +423,68 @@ export const MOCK_TICKET_STATUS: TicketStatus[] = [
 export const MOCK_HOSTS: EventHostAdmin[] = [
   { name: 'William Pen', email: 'william.pen@example.com' },
 ];
+
+
+
+export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
+  {
+    name: 'This year',
+    color: '#FF6B35', 
+    showArea: true,
+    lineStyle: 'solid',
+    areaGradient: {
+      start: 'rgba(255, 107, 53, 0.2)',
+      end: 'rgba(255, 107, 53, 0.05)',
+    },
+    data: [
+      { month: 'Jan', value: 12000 },
+      { month: 'Feb', value: 15000 },
+      { month: 'Mar', value: 18000 },
+      { month: 'Apr', value: 22000 },
+      { month: 'May', value: 28000 },
+      { month: 'Jun', value: 25000 },
+      { month: 'Jul', value: 27000 },
+    ],
+  },
+  {
+    name: 'Last year',
+    color: '#6B7280',
+    showArea: false,
+    lineStyle: 'dashed',
+    data: [
+      { month: 'Jan', value: 10000 },
+      { month: 'Feb', value: 12000 },
+      { month: 'Mar', value: 14000 },
+      { month: 'Apr', value: 16000 },
+      { month: 'May', value: 20000 },
+      { month: 'Jun', value: 22000 },
+      { month: 'Jul', value: 24000 },
+    ],
+  },
+];
+
+
+// export const MOCK_STAT_CARDS: UserCardData[] = [
+//   {
+   
+//     title: 'Total Events Organized',
+//     count: 3,
+//     icon: 'icons/user-icon-orange.png',
+//     bgColor: '#FFF7EC',
+//     percentageChange: 11.01,
+//   },
+//   {
+   
+//     title: 'Attendees',
+//     count: 387,
+//     icon: 'icons/user-icon-blue.png',
+//     bgColor: '#F0F9FF',
+//   },
+//   {
+  
+//     title: 'Total Tickets Sold',
+//     count: 565,
+//     icon: 'icons/user-icon-blue.png',
+//     bgColor: '#F0F9FF',
+//   },
+// ];

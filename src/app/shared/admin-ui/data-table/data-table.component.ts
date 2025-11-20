@@ -1,4 +1,3 @@
-// data-table.component.ts
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -24,7 +23,14 @@ export interface TableColumn<T> {
   readonly header: string;
   readonly sortable?: boolean;
   readonly filterable?: boolean;
+    cell?: (row: T) => any; // Add this line
+
   readonly getValue?: (item: T) => string | number | boolean | null;
+}
+export interface EmptyState {
+  readonly imageSrc: string;
+  readonly imageAlt: string;
+  readonly message: string;
 }
 
 export interface TableAction<T> {
@@ -82,10 +88,10 @@ export class DataTableComponent<T extends Record<string, any>> {
   public readonly searchKey = input<string>('');
 
   public readonly expandable = input<boolean>(false);
-  public readonly showCheckboxes = input<boolean>(false); // Add this
-  public readonly showActionLabels = input<boolean>(false); // Add this
+  public readonly showCheckboxes = input<boolean>(false);
+  public readonly showActionLabels = input<boolean>(false);
 
-  public readonly showExport = input<boolean>(false); // Add this
+  public readonly showExport = input<boolean>(false);
   public readonly showAvatar = input<boolean>(true);
   public readonly searchChange = output<string>();
   public readonly filterChange = output<{ key: string; value: string }>();
@@ -112,49 +118,83 @@ export class DataTableComponent<T extends Record<string, any>> {
   private readonly _searchQuery = signal<string>('');
   private readonly _currentPage = signal<number>(1);
 
+  public readonly effectiveSearchPlaceholder = computed(() => {
+    const customPlaceholder = this.searchPlaceholder();
+    const title = this.tableTitle();
+
+    if (customPlaceholder) {
+      return customPlaceholder;
+    }
+
+    if (title.toLowerCase().includes('user')) {
+      return 'Search users...';
+    } else if (title.toLowerCase().includes('event')) {
+      return 'Search events...';
+    } else if (title.toLowerCase().includes('invitation')) {
+      return 'Search invitations...';
+    } else if (title.toLowerCase().includes('audit')) {
+      return 'Search audit logs...';
+    }
+
+    if (title.toLowerCase().includes('role')) {
+      return 'Search roles...';
+    }
+    if (title.toLowerCase().includes('saved')) {
+      return 'Search saved invitations...';
+    }
+
+    return `Search ${title.toLowerCase()}...`;
+  });
   public readonly currentPage = computed(() => this._currentPage());
   public readonly searchQuery = computed(() => this._searchQuery());
 
   public readonly filteredData = computed(() => {
     const localQuery = this._localSearchQuery().toLowerCase().trim();
     const items = this.data();
+    const activeFilters = this._activeFilters();
 
-    if (!localQuery || !this.serverSidePagination()) {
+    if (this.serverSidePagination()) {
       return items;
     }
 
-    return items.filter((item) => {
-      const searchableFields = [
-        item['fullName'],
-        item['name'],
-        item['email'],
-        item['role'],
-      ]
-        .filter(Boolean)
-        .map((field) => String(field))
-        .join(' ')
-        .toLowerCase();
+    let filtered = items;
 
-      return searchableFields.includes(localQuery);
+    if (localQuery) {
+      filtered = filtered.filter((item) => {
+        const searchableText = Object.values(item)
+          .filter((value) => value != null && typeof value !== 'object')
+          .map((value) => String(value))
+          .join(' ')
+          .toLowerCase();
+
+        return searchableText.includes(localQuery);
+      });
+    }
+
+    activeFilters.forEach((value, key) => {
+      if (value && value !== 'all') {
+        filtered = filtered.filter((item) => {
+          const itemValue = String(item[key] || '').toLowerCase();
+          return itemValue === value.toLowerCase();
+        });
+      }
     });
+
+    return filtered;
   });
 
   private _searchSubject = new Subject<string>();
   constructor() {
-    this._searchSubject
-      .pipe(
-        debounceTime(600) // Wait 600ms after user stops typing
-      )
-      .subscribe((query) => {
-        this._searchQuery.set(query);
-        this._currentPage.set(1);
+    this._searchSubject.pipe(debounceTime(600)).subscribe((query) => {
+      this._searchQuery.set(query);
+      this._currentPage.set(1);
 
-        if (this.serverSidePagination()) {
-          this.searchChange.emit(query);
-        } else {
-          this._performBackendSearch(0);
-        }
-      });
+      if (this.serverSidePagination()) {
+        this.searchChange.emit(query);
+      } else {
+        this._performBackendSearch(0);
+      }
+    });
   }
 
   public setCurrentPage(page: number): void {
@@ -167,11 +207,28 @@ export class DataTableComponent<T extends Record<string, any>> {
     }
   }
 
-  public readonly paginatedData = computed(() => this.filteredData());
+  public readonly paginatedData = computed(() => {
+    const filtered = this.filteredData();
 
+    if (this.serverSidePagination()) {
+      return filtered;
+    }
+
+    const itemsPerPage = this.itemsPerPage();
+    const currentPage = this._currentPage();
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    return filtered.slice(startIndex, endIndex);
+  });
   public isSelected(item: T): boolean {
     return this._selectedItems().has(item);
   }
+  public readonly emptyState = input<EmptyState>({
+    imageSrc: '/images/table-empty.png',
+    imageAlt: 'No data found',
+    message: 'No data available',
+  });
 
   protected toggleSelect(item: T): void {
     const selected: Set<T> = new Set(this._selectedItems());
@@ -184,11 +241,29 @@ export class DataTableComponent<T extends Record<string, any>> {
     return value.charAt(0).toUpperCase() + value.slice(1);
   }
 
-  public getRandomAvatar(item: T): string {
-    const identifier = item['userId'] || item['email'] || item['id'] || '';
-    const avatarNumber = (String(identifier).charCodeAt(0) % 70) + 1;
+  public getUserAvatar(item: T): string {
+    let profileImageUrl = item['profileImageUrl'] || item['avatar'];
 
-    return `https://i.pravatar.cc/150?img=${avatarNumber}`;
+    if (profileImageUrl) {
+      const urlParts = profileImageUrl.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const encodedFileName = encodeURIComponent(fileName);
+      urlParts[urlParts.length - 1] = encodedFileName;
+      profileImageUrl = urlParts.join('/');
+
+      console.log(
+        '📸 Original URL:',
+        item['profileImageUrl'] || item['avatar']
+      );
+      console.log('📸 Encoded URL:', profileImageUrl);
+
+      return profileImageUrl;
+    }
+
+    const name = item['fullName'] || item['name'] || item['email'] || 'User';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      name
+    )}&background=FF6B35&color=fff&size=128`;
   }
   public isAllSelected(): boolean {
     const pageData = this.paginatedData();
@@ -238,18 +313,34 @@ export class DataTableComponent<T extends Record<string, any>> {
     this._searchSubject.next(query);
   }
   public updateFilter(filterKey: string, value: string): void {
-    // Handle export separately
+    console.log('DataTable: Filter updated', { filterKey, value }); // Debug log
+
     if (filterKey === 'export' && value) {
       this._handleExport(value);
       return; // Don't add to filters
     }
 
     const filters = new Map(this._activeFilters());
-    filters.set(filterKey, value);
+
+    // Update the filter value
+    if (value === 'all' || value === '') {
+      filters.delete(filterKey); // Remove filter if it's "all" or empty
+    } else {
+      filters.set(filterKey, value);
+    }
+
     this._activeFilters.set(filters);
     this._currentPage.set(1);
 
+    // For server-side pagination, emit the filter change
     if (this.serverSidePagination()) {
+      // Emit the filter change with the current filter state
+      const filterObj: Record<string, string> = {};
+      filters.forEach((val, key) => {
+        filterObj[key] = val;
+      });
+
+      // Emit individual filter change
       this.filterChange.emit({ key: filterKey, value });
     } else {
       this._performBackendSearch(0);
@@ -280,7 +371,6 @@ export class DataTableComponent<T extends Record<string, any>> {
       columns
         .map((col) => {
           const value = col.getValue ? col.getValue(item) : item[col.key];
-          // Escape commas and quotes
           return `"${String(value).replace(/"/g, '""')}"`;
         })
         .join(',')
@@ -310,8 +400,6 @@ export class DataTableComponent<T extends Record<string, any>> {
     data: readonly T[],
     columns: readonly TableColumn<T>[]
   ): void {
-    // For PDF, you'd typically use a library like jsPDF
-    // For now, we'll create a simple HTML representation
     alert('PDF export requires additional library. Exporting as HTML instead.');
 
     let html =
@@ -361,11 +449,12 @@ export class DataTableComponent<T extends Record<string, any>> {
     window.URL.revokeObjectURL(url);
   }
   private _totalFilteredItems = signal<number>(0);
+
   public readonly totalFilteredItems = computed(() => {
     if (this.serverSidePagination()) {
       return this.totalItems();
     }
-    return this._totalFilteredItems();
+    return this.filteredData().length;
   });
 
   private _performBackendSearch(page: number): void {
@@ -431,6 +520,8 @@ export class DataTableComponent<T extends Record<string, any>> {
       attendee: 'attendee',
       active: 'active',
       inactive: 'inactive',
+      successful: 'successful',
+      failed: 'failed',
     };
 
     const badgeClass = roleMap[normalized] || normalized;
