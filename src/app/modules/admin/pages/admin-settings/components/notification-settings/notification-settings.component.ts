@@ -4,7 +4,8 @@ import {
   Output,
   EventEmitter,
   signal,
-  effect,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '@app/shared/ui/button/button.component';
@@ -27,68 +28,62 @@ interface NotificationItem {
   templateUrl: './notification-settings.component.html',
   styleUrls: ['./notification-settings.component.scss'],
 })
-export class NotificationSettingsComponent {
-  @Input() settings: NotificationSettings | null = null;
-  @Output() save = new EventEmitter<UpdateNotificationSettingsPayload>();
+export class NotificationSettingsComponent implements OnChanges {
+  @Input() public settings: NotificationSettings | null = null;
+  @Output() public save: EventEmitter<UpdateNotificationSettingsPayload> = new EventEmitter<UpdateNotificationSettingsPayload>();
 
   protected readonly notifications = signal<NotificationItem[]>([]);
 
-  constructor() {
-    // Update notifications when input changes
-    effect(() => {
-      const settings = this.settings;
-      if (settings) {
-        this.notifications.set([
-          {
-            id: 'eventCreation',
-            title: 'Event Creation Notifications',
-            description: 'Receive notifications when new events are created',
-            enabled: settings.eventCreation,
-          },
-          {
-            id: 'paymentFailures',
-            title: 'Payment Failure Notifications',
-            description:
-              'Receive notifications for payment processing failures',
-            enabled: settings.paymentFailures,
-          },
-          {
-            id: 'platformErrors',
-            title: 'Platform Error Notifications',
-            description: 'Receive notifications for system errors and issues',
-            enabled: settings.platformErrors,
-          },
-        ]);
-      }
-    });
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['settings']?.currentValue) {
+      this._updateNotifications(changes['settings'].currentValue);
+    }
   }
 
   protected toggleNotification(
     notificationId: keyof NotificationSettings
   ): void {
-    const updated = this.notifications().map((notification) =>
-      notification.id === notificationId
-        ? { ...notification, enabled: !notification.enabled }
-        : notification
+    this.notifications.update((current) =>
+      current.map((n) =>
+        n.id === notificationId ? { ...n, enabled: !n.enabled } : n
+      )
     );
-    this.notifications.set(updated);
   }
 
   protected saveSettings(): void {
-    const currentNotifications = this.notifications();
+    const items = this.notifications();
     const payload: UpdateNotificationSettingsPayload = {
       eventCreation:
-        currentNotifications.find((n) => n.id === 'eventCreation')?.enabled ||
-        false,
+        items.find((n) => n.id === 'eventCreation')?.enabled ?? false,
       paymentFailures:
-        currentNotifications.find((n) => n.id === 'paymentFailures')?.enabled ||
-        false,
+        items.find((n) => n.id === 'paymentFailures')?.enabled ?? false,
       platformErrors:
-        currentNotifications.find((n) => n.id === 'platformErrors')?.enabled ||
-        false,
+        items.find((n) => n.id === 'platformErrors')?.enabled ?? false,
     };
 
-    // Emit the save event to parent
     this.save.emit(payload);
+  }
+
+  private _updateNotifications(settings: NotificationSettings): void {
+    this.notifications.set([
+      {
+        id: 'eventCreation',
+        title: 'Event Creation Notifications',
+        description: 'Receive notifications when new events are created',
+        enabled: settings.eventCreation,
+      },
+      {
+        id: 'paymentFailures',
+        title: 'Payment Failure Notifications',
+        description: 'Receive notifications for payment processing failures',
+        enabled: settings.paymentFailures,
+      },
+      {
+        id: 'platformErrors',
+        title: 'Platform Error Notifications',
+        description: 'Receive notifications for system errors and issues',
+        enabled: settings.platformErrors,
+      },
+    ]);
   }
 }

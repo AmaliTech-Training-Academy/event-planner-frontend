@@ -23,8 +23,9 @@ import { NotificationService } from '@app/core/services/notification.service';
   styleUrls: ['./team-management.component.scss'],
 })
 export class TeamManagementComponent implements AfterViewInit, OnDestroy {
-  @Input() teamMembers: TeamMember[] = [];
-  @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
+  @Input() public teamMembers: TeamMember[] = [];
+  @ViewChild('scrollContainer')
+  public scrollContainer!: ElementRef<HTMLDivElement>;
 
   private readonly _router = inject(Router);
   private readonly _notificationService = inject(NotificationService);
@@ -33,8 +34,8 @@ export class TeamManagementComponent implements AfterViewInit, OnDestroy {
   protected readonly showInviteModal = signal(false);
   protected readonly displayedMembers = signal<TeamMember[]>([]);
   protected readonly isLoading = signal(false);
-  protected readonly pageSize = 10;
-  protected currentPage = 0;
+  protected readonly pageSize: number = 10;
+  protected currentPage: number = 0;
 
   ngAfterViewInit(): void {
     this._loadInitialMembers();
@@ -72,7 +73,7 @@ export class TeamManagementComponent implements AfterViewInit, OnDestroy {
       EDITOR: 'badge--editor',
       VIEWER: 'badge--viewer',
     };
-    return roleMap[role] || 'badge--default';
+    return roleMap[role] ?? 'badge--default';
   }
 
   protected trackByMemberId(index: number, member: TeamMember): number {
@@ -86,13 +87,10 @@ export class TeamManagementComponent implements AfterViewInit, OnDestroy {
   }
 
   private _loadMoreMembers(): void {
-    if (this.isLoading() || this._hasLoadedAll()) {
-      return;
-    }
+    if (this.isLoading() || this._hasLoadedAll()) return;
 
     this.isLoading.set(true);
 
-    // Simulate async loading (replace with actual service call if needed)
     setTimeout(() => {
       const start = this.currentPage * this.pageSize;
       const end = start + this.pageSize;
@@ -104,7 +102,7 @@ export class TeamManagementComponent implements AfterViewInit, OnDestroy {
       }
 
       this.isLoading.set(false);
-    }, 800); // Increased delay to show loading state
+    }, 800);
   }
 
   private _hasLoadedAll(): boolean {
@@ -126,7 +124,6 @@ export class TeamManagementComponent implements AfterViewInit, OnDestroy {
       });
     }, options);
 
-    // Observe the sentinel element
     const sentinel =
       this.scrollContainer.nativeElement.querySelector('.scroll-sentinel');
     if (sentinel) {

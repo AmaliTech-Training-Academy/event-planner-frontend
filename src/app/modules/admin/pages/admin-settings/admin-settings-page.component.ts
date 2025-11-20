@@ -35,7 +35,6 @@ export class AdminSettingsPageComponent implements OnInit, OnDestroy {
     'general'
   );
 
-  // Data signals to pass down to child components
   protected readonly securitySettings = signal<SecuritySettings | null>(null);
   protected readonly notificationSettings = signal<NotificationSettings | null>(
     null
@@ -56,7 +55,6 @@ export class AdminSettingsPageComponent implements OnInit, OnDestroy {
     this.activeTab.set(tab);
   }
 
-  // Handle events from child components
   protected handleSecuritySettingsUpdate(
     payload: UpdateSecuritySettingsPayload
   ): void {
@@ -80,21 +78,18 @@ export class AdminSettingsPageComponent implements OnInit, OnDestroy {
   }
 
   private _subscribeToSettingsChanges(): void {
-    // Subscribe to security settings changes
     this._platformSettingsService.securitySettings$
       .pipe(takeUntil(this._destroy$))
       .subscribe((settings) => {
         this.securitySettings.set(settings);
       });
 
-    // Subscribe to notification settings changes
     this._platformSettingsService.notificationSettings$
       .pipe(takeUntil(this._destroy$))
       .subscribe((settings) => {
         this.notificationSettings.set(settings);
       });
 
-    // Subscribe to team members changes
     this._platformSettingsService.teamMembers$
       .pipe(takeUntil(this._destroy$))
       .subscribe((members) => {

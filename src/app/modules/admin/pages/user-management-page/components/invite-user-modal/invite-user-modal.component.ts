@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -35,50 +35,31 @@ export class InviteUserModalComponent implements OnInit {
   @Output() public readonly success = new EventEmitter<void>();
 
   private readonly _fb = inject(FormBuilder);
-  private readonly userManagementService = inject(UserManagementService);
+  private readonly _userManagementService = inject(UserManagementService);
 
-  public readonly inviteForm: FormGroup = this._fb.group({
+  protected readonly inviteForm: FormGroup = this._fb.group({
     title: this._fb.control('', [Validators.required]),
     users: this._fb.array([this._createUserFormGroup()]),
-    event: this._fb.control('', [Validators.required]), // Stored as string in form
+    event: this._fb.control('', [Validators.required]),
     message: this._fb.control(''),
   });
 
-  public readonly roles = [
+  protected readonly roles = [
     { label: 'Organizer', value: USER_ROLES.ORGANIZER },
     { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
     { label: 'Attendee', value: USER_ROLES.ATTENDEE },
     { label: 'Admin', value: USER_ROLES.ADMIN },
   ];
 
-  // ✅ Events with STRING values for the dropdown
-  public events: { label: string; value: string }[] = [];
-
-  public invitations: Invitation[] = [];
-  public isSubmitting = false;
+  protected events: { label: string; value: string }[] = [];
+  protected invitations: Invitation[] = [];
+  protected readonly isSubmitting = signal(false);
 
   ngOnInit(): void {
-    this.loadEvents();
+    this._loadEvents();
   }
 
-
-
-  private loadEvents(): void {
-    // TODO: Replace with your actual event service
-    // this.eventService.getAllEvents().subscribe({
-    //   next: (response) => {
-    //     this.events = response.data.map(event => ({
-    //       label: event.eventName,
-    //       value: event.eventId.toString() // Convert to string for dropdown
-    //     }));
-    //   },
-    //   error: (err) => {
-    //     console.error('❌ Failed to load events:', err);
-    //     this.events = [];
-    //   }
-    // });
-
-    // Temporary placeholder with STRING values for dropdown
+  private _loadEvents(): void {
     this.events = [
       { label: 'Tech Conference 2025', value: '12' },
       { label: 'Annual Meetup', value: '13' },
@@ -94,30 +75,27 @@ export class InviteUserModalComponent implements OnInit {
     });
   }
 
-  public get users(): FormArray {
+  protected get users(): FormArray {
     return this.inviteForm.get('users') as FormArray;
   }
 
-  public addUser(): void {
+  protected addUser(): void {
     this.users.push(this._createUserFormGroup());
   }
 
-  public removeUser(index: number): void {
+  protected removeUser(index: number): void {
     if (this.users.length > 1) {
       this.users.removeAt(index);
     }
   }
 
-  public onSubmit(): void {
+  protected onSubmit(): void {
     this.inviteForm.markAllAsTouched();
 
     if (this.inviteForm.invalid) {
-      console.warn('⚠️ Invalid invite form:', this.inviteForm.value);
-      alert('Please fill in all required fields');
       return;
     }
 
-    // ✅ Convert event from string to number for backend
     const payload: InviteUserPayload = {
       invitationTitle: this.inviteForm.value.title,
       invitees: this.users.value.map((user: any) => ({
@@ -125,20 +103,18 @@ export class InviteUserModalComponent implements OnInit {
         inviteeEmail: user.email,
         role: user.role,
       })),
-      event: parseInt(this.inviteForm.value.event, 10), // Convert string to number
+      event: parseInt(this.inviteForm.value.event, 10),
       status: 'SAVE',
       message: this.inviteForm.value.message || '',
     };
 
-    console.log('📤 Sending invitation payload:', payload);
+    this.isSubmitting.set(true);
 
-    this.isSubmitting = true;
-
-    this.userManagementService.inviteUsers(payload).subscribe({
+    this._userManagementService.inviteUsers(payload).subscribe({
       next: (response) => {
         this.success.emit();
         this.close.emit();
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
       },
       error: (err) => {
         const errorMessage =
@@ -147,30 +123,30 @@ export class InviteUserModalComponent implements OnInit {
           err?.message ||
           'Failed to send invitations. Please try again.';
         alert(errorMessage);
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
       },
     });
   }
 
-  public onSaveProgress(): void {
-    
+  protected onSaveProgress(): void {
+
   }
 
-  public onCancel(): void {
+  protected onCancel(): void {
     this.close.emit();
   }
 
-  public hasError(controlName: string): boolean {
+  protected hasError(controlName: string): boolean {
     const control = this.inviteForm.get(controlName);
     return !!(control?.invalid && control?.touched);
   }
 
-  public hasUserFieldError(userIndex: number, fieldName: string): boolean {
+  protected hasUserFieldError(userIndex: number, fieldName: string): boolean {
     const control = this.users.at(userIndex).get(fieldName);
     return !!(control?.invalid && control?.touched);
   }
 
-  public getErrorMessage(controlName: string): string {
+  protected getErrorMessage(controlName: string): string {
     const control = this.inviteForm.get(controlName);
     if (!control?.errors) return '';
 
@@ -179,7 +155,7 @@ export class InviteUserModalComponent implements OnInit {
     return 'Invalid input';
   }
 
-  public getUserFieldErrorMessage(
+  protected getUserFieldErrorMessage(
     userIndex: number,
     fieldName: string
   ): string {

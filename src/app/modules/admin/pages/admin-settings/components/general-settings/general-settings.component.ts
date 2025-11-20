@@ -42,8 +42,8 @@ interface SecuritySettingsForm {
   styleUrls: ['./general-settings.component.scss'],
 })
 export class GeneralSettingsComponent implements OnChanges {
-  @Input() settings: SecuritySettings | null = null;
-  @Output() save = new EventEmitter<UpdateSecuritySettingsPayload>();
+  @Input() public settings: SecuritySettings | null = null;
+  @Output() public save: EventEmitter<UpdateSecuritySettingsPayload> = new EventEmitter<UpdateSecuritySettingsPayload>();
 
   private readonly _fb = inject(NonNullableFormBuilder);
   private readonly _destroyRef = inject(DestroyRef);
@@ -80,7 +80,6 @@ export class GeneralSettingsComponent implements OnChanges {
 
     this.save.emit(payload);
 
-    // Reset submitting state after a short delay (parent should handle this ideally)
     setTimeout(() => this.isSubmitting.set(false), 500);
   }
 
@@ -139,14 +138,12 @@ export class GeneralSettingsComponent implements OnChanges {
       { emitEvent: false }
     );
 
-    // Reset validation state when new settings are loaded
     this.hasAttemptedSubmit.set(false);
     this.securityForm.markAsPristine();
     this.securityForm.markAsUntouched();
   }
 
   private _formatFieldName(fieldName: string): string {
-    // Convert camelCase to Title Case with spaces
     return fieldName
       .replace(/([A-Z])/g, ' $1')
       .replace(/^./, (str) => str.toUpperCase())

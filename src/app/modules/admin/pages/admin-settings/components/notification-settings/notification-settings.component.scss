@@ -167,7 +167,7 @@
     height: 0;
 
     &:checked + .toggle__slider {
-      background: $gray-400;
+      background: $gray-700;
 
       &::before {
         transform: translateX(24px);
