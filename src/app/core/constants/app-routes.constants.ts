@@ -23,11 +23,11 @@ export const APP_ROUTES = {
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   MY_EVENTS: '/app/my-events',
   MY_EVENT: (id: string) => `/app/my-events/${id}`,
+  MANAGE_EVENT: (id: string) => `/app/manage-event/${id}`,
   PAYMENT_SETTINGS: '/app/payment-settings',
   ADMIN_DASHBOARD: '/admin',
   EVENT_PAYMENT_SUCCESS: '/app/event-payment-success',
   PROFILE_PAGE: '/app/profile',
-  MANAGE_EVENT: '/app/manage-event',
 
   // Admin routes
   ADMIN_EVENTS: '/admin/events',

@@ -44,6 +44,12 @@ export const API_ENDPOINTS = {
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   SEARCH_EVENTS: `${BASE}/events/event-management/search`,
+
+  // My Events endpoints
+  MY_EVENT: `${BASE}/events/my-events`,
+  MY_EVENT_OVERVIEW: `${BASE}/events/my-events/overview`,
+
+  // Audit endpoints
   GET_AUDIT_LOGS: `${BASE}/auth/audit_logs`,
   GET_AUDIT_LOG_BY_ID: (logId: string) => `${BASE}/audit-logs/${logId}`,
 } as const;
@@ -63,10 +69,12 @@ export const EVENTS_API_ENDPOINTS = {
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   SEARCH_EVENTS: `${BASE}/events/search`,
+  MY_EVENT: `${BASE}/events/my-events`,
 } as const;
 
 export const PLATFORM_SETTINGS_ENDPOINTS = {
   SECURITY_SETTINGS: `${BASE}/auth/platform-settings/security`,
   NOTIFICATION_SETTINGS: `${BASE}/auth/platform-settings/notifications`,
   TEAM_MEMBERS: `${BASE}/auth/platform-settings/team-members`,
+  SEARCH_EVENTS: `${BASE}/events/search`,
 } as const;

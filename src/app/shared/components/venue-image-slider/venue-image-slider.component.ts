@@ -11,6 +11,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ButtonComponent } from '../../ui/button/button.component';
+import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
 
 @Component({
   selector: 'app-venue-image-slider',
@@ -75,4 +76,9 @@ export class VenueImageSliderComponent implements OnChanges {
       Math.min(prev + 1, this.totalSlides() - this.slidesPerView())
     );
   }
+
+   protected handleImageFallback(event: Event) {
+      const img = event.target as HTMLImageElement;
+      img.src = PLACEHOLDER_IMAGE;
+    }
 }

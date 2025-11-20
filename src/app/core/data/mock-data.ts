@@ -8,11 +8,11 @@ import {
   PopularLocation,
   TabToggle,
  EventSummary,
-  EventDetailsAdmin,
-  StatCardData,
+  EventTypeFilter,
   TicketStatus,
   EventHostAdmin,
-  EventTypeFilter,
+  StatCardData,
+  EventDetailsAdmin,
 } from '../models/event.model';
 
 
@@ -94,233 +94,7 @@ export const MOCK_TICKETS: TicketInfo[] = [
 
 export const MOCK_HELP_EMAIL: string = 'support@techevent.com';
 
-
-
-export const MOCK_EVENT_CARDS: EventCard[] = [
-
-  {
-    id: 'evt123',
-    title: 'Tech Innovation Summit 2025',
-    date: new Date('2025-04-15T00:00:00Z'),
-    location: 'Silicon Valley, CA',
-    imageUrl: 'images/event1.jpg',
-    isPaid: true,
-    attendees: 5000,
-  },
-  {
-    id: 'evt124',
-    title: 'AI World Conference',
-    date: new Date('2025-05-10T00:00:00Z'),
-    location: 'Austin, TX',
-    imageUrl: 'images/event2.jpg',
-    isPaid: true,
-    attendees: 2500,
-  },
-  {
-    id: 'evt125',
-    title: 'Cloud Computing Expo',
-    date: new Date('2025-06-20T00:00:00Z'),
-    location: 'New York, NY',
-    imageUrl: 'images/event3.jpg',
-    isPaid: true,
-    attendees: 3200,
-  },
-  {
-    id: 'evt126',
-    title: 'Blockchain Summit 2025',
-    date: new Date('2025-07-15T00:00:00Z'),
-    location: 'San Francisco, CA',
-    imageUrl: 'images/event1.jpg',
-    isPaid: true,
-    attendees: 1800,
-  },
-  {
-    id: 'evt127',
-    title: 'Cyber Security Conference',
-    date: new Date('2025-08-05T00:00:00Z'),
-    location: 'Seattle, WA',
-    imageUrl: 'images/event2.jpg',
-    isPaid: true,
-    attendees: 2100,
-  },
-  {
-    id: 'evt128',
-    title: 'Mobile Dev Conference',
-    date: new Date('2025-09-12T00:00:00Z'),
-    location: 'Toronto, Canada',
-    imageUrl: 'images/event3.jpg',
-    isPaid: true,
-    attendees: 2200,
-  },
-  {
-    id: 'evt128',
-    title: 'Mobile Dev Conference',
-    date: new Date('2025-09-12T00:00:00Z'),
-    location: 'Toronto, Canada',
-    imageUrl: 'images/event1.jpg',
-    isPaid: true,
-    attendees: 2200,
-  },
-  {
-    id: 'evt128',
-    title: 'Mobile Dev Conference',
-    date: new Date('2025-09-12T00:00:00Z'),
-    location: 'Toronto, Canada',
-    imageUrl: 'images/event2.jpg',
-    isPaid: true,
-    attendees: 2200,
-  },
-  {
-    id: 'evt128',
-    title: 'Mobile Dev Conference',
-    date: new Date('2025-09-12T00:00:00Z'),
-    location: 'Toronto, Canada',
-    imageUrl: 'images/event3.jpg',
-    isPaid: true,
-    attendees: 2200,
-  },
-  {
-    id: 'evt128',
-    title: 'Mobile Dev Conference',
-    date: new Date('2025-09-12T00:00:00Z'),
-    location: 'Toronto, Canada',
-    imageUrl: 'images/event1.jpg',
-    isPaid: true,
-    attendees: 2200,
-  },
-  {
-    id: 'evt128',
-    title: 'Mobile Dev Conference',
-    date: new Date('2025-09-12T00:00:00Z'),
-    location: 'Toronto, Canada',
-    imageUrl: 'images/event2.jpg',
-    isPaid: true,
-    attendees: 2200,
-  },
-  {
-    id: 'evt128',
-    title: 'Mobile Dev Conference',
-    date: new Date('2025-09-12T00:00:00Z'),
-    location: 'Toronto, Canada',
-    imageUrl: 'images/event3.jpg',
-    isPaid: true,
-    attendees: 2200,
-  },
-
-
-  {
-    id: 'evt134',
-    title: 'Cloud Computing Summit',
-    date: new Date('2024-05-22T00:00:00Z'),
-    location: 'Denver, CO',
-    imageUrl: 'images/event1.jpg',
-    isPaid: false,
-    attendees: 3000,
-  },
-
-
-  {
-    id: 'evt138',
-    title: 'IoT World Congress',
-    date: new Date('2024-04-15T00:00:00Z'),
-    location: 'Barcelona, Spain',
-    imageUrl: 'images/event3.jpg',
-    isPaid: false,
-    attendees: 5500,
-  },
-  {
-    id: 'evt139',
-    title: 'Robotics Expo 2024',
-    date: new Date('2024-03-08T00:00:00Z'),
-    location: 'Detroit, MI',
-    imageUrl: 'images/event2.jpg',
-    isPaid: false,
-    attendees: 2200,
-  },
-  {
-    id: 'evt140',
-    title: 'Quantum Computing Summit',
-    date: new Date('2024-02-12T00:00:00Z'),
-    location: 'Cambridge, MA',
-    imageUrl: 'images/event1.jpg',
-    isPaid: false,
-    attendees: 800,
-  },
-
-
-  {
-    id: 'evt141',
-    title: 'Community Code & Coffee',
-    date: new Date('2025-11-05T00:00:00Z'),
-    location: 'Austin, TX',
-    imageUrl: 'images/event2.jpg',
-    isPaid: false,
-    attendees: 150,
-  },
-  {
-    id: 'evt142',
-    title: 'Open Source Meetup',
-    date: new Date('2024-03-20T00:00:00Z'),
-    location: 'Portland, OR',
-    imageUrl: 'images/event1.jpg',
-    isPaid: false,
-    attendees: 85,
-  },
-  {
-    id: 'evt142',
-    title: 'Open Source Meetup',
-    date: new Date('2024-03-20T00:00:00Z'),
-    location: 'Portland, OR',
-    imageUrl: 'images/event1.jpg',
-    isPaid: false,
-    attendees: 85,
-  },
-  {
-    id: 'evt142',
-    title: 'Open Source Meetup',
-    date: new Date('2024-03-20T00:00:00Z'),
-    location: 'Portland, OR',
-    imageUrl: 'images/event2.jpg',
-    isPaid: false,
-    attendees: 85,
-  },
-  {
-    id: 'evt142',
-    title: 'Open Source Meetup',
-    date: new Date('2024-03-20T00:00:00Z'),
-    location: 'Portland, OR',
-    imageUrl: 'images/event3.jpg',
-    isPaid: false,
-    attendees: 85,
-  },
-  {
-    id: 'evt142',
-    title: 'Open Source Meetup',
-    date: new Date('2024-03-20T00:00:00Z'),
-    location: 'Portland, OR',
-    imageUrl: 'images/event1.jpg',
-    isPaid: false,
-    attendees: 85,
-  },
-  {
-    id: 'evt142',
-    title: 'Open Source Meetup',
-    date: new Date('2024-03-20T00:00:00Z'),
-    location: 'Portland, OR',
-    imageUrl: 'images/event2.jpg',
-    isPaid: false,
-    attendees: 85,
-  },
-  {
-    id: 'evt142',
-    title: 'Open Source Meetup',
-    date: new Date('2024-03-20T00:00:00Z'),
-    location: 'Portland, OR',
-    imageUrl: 'images/event3.jpg',
-    isPaid: false,
-    attendees: 85,
-  },
-];
+export const MOCK_EVENT_CARDS: EventCard[] = [];
 
 
 export const MOCK_EVENT_TOGGLES: TabToggle[] = [
@@ -361,9 +135,7 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
 ];
 
 
-export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [
-  
-] 
+export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [] 
   
 
 export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin  = {
@@ -402,15 +174,15 @@ export const MOCK_MANAGE_STATS: StatCardData[] = [
 ];
 
 export const MOCK_EVENT_SUMMARY: EventSummary = {
+  date:'',
+  organizer:"",
+  time:"",
   id:2,
   title: 'Tech Innovation Summit 2025',
   startTime: '2025-04-15T00:00:00Z',
   description:"",
   flyerUrl: 'images/flyer.jpg',
   ticketPrice:0,
-  organizer: 'William Pen (Senior UI/UX Designer)',
-  date: '3rd May, 2025',
-  time: '09:00am GMT',
   location: 'Virtual (Zoom Meeting)',
 };
 
@@ -463,28 +235,3 @@ export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
   },
 ];
 
-
-// export const MOCK_STAT_CARDS: UserCardData[] = [
-//   {
-   
-//     title: 'Total Events Organized',
-//     count: 3,
-//     icon: 'icons/user-icon-orange.png',
-//     bgColor: '#FFF7EC',
-//     percentageChange: 11.01,
-//   },
-//   {
-   
-//     title: 'Attendees',
-//     count: 387,
-//     icon: 'icons/user-icon-blue.png',
-//     bgColor: '#F0F9FF',
-//   },
-//   {
-  
-//     title: 'Total Tickets Sold',
-//     count: 565,
-//     icon: 'icons/user-icon-blue.png',
-//     bgColor: '#F0F9FF',
-//   },
-// ];
