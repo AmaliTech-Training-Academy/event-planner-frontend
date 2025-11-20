@@ -33,6 +33,58 @@
   }
 }
 
+// Error Banner
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-4;
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: $radius-2;
+  margin-bottom: $spacing-5;
+
+  .error-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .error-text {
+    color: #c00;
+    font-size: 0.875rem;
+    flex: 1;
+    line-height: 1.5;
+  }
+}
+
+// Upload Indicator
+.upload-indicator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-4;
+  background-color: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: $radius-2;
+  margin-bottom: $spacing-5;
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #2196f3;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
 .profile-header {
   display: flex;
   align-items: center;
@@ -55,13 +107,24 @@
       font-size: 0.875rem;
     }
   }
+
+  @include sm {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 
 .profile-avatar {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 128px;
+  height: 128px;
   flex-shrink: 0;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
 
   img {
     width: 100%;
@@ -72,10 +135,10 @@
 
   .avatar-edit-btn {
     position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 32px;
-    height: 32px;
+    bottom: 8px;
+    right: 8px;
+    width: 36px;
+    height: 36px;
     background: $orange-500;
     border: 3px solid white;
     border-radius: 50%;
@@ -99,6 +162,11 @@
 
     &:active {
       transform: scale(0.95);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
     }
   }
 }
@@ -134,17 +202,141 @@
   }
 }
 
+// Field Header with Remove Button
+.field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-2;
+
+  label {
+    @include body-2;
+    color: $header-dark;
+    font-weight: 500;
+    margin-bottom: 0;
+  }
+
+  .remove-field-btn {
+    background: none;
+    border: none;
+    color: #f44336;
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: $radius-1;
+    transition: background-color 0.2s ease;
+    font-weight: 500;
+
+    &:hover {
+      background-color: #ffebee;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+// Phone Input Group
+.phone-input-group {
+  display: flex;
+  gap: $spacing-3;
+  align-items: center;
+
+  .phone-code-select {
+    width: 120px;
+    padding: $spacing-3;
+    border: 1px solid $gray-300;
+    border-radius: $radius-2;
+    height: 48px;
+    font-size: 0.875rem;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: $text-primary;
+    margin-top: -1rem;
+
+    &:hover {
+      border-color: $gray-400;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $orange-500;
+      box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
+    }
+  }
+
+  app-input {
+    flex: 1;
+  }
+
+  @include sm {
+    flex-direction: column;
+
+    .phone-code-select {
+      width: 100%;
+    }
+  }
+}
+
+.formatted-phone {
+  margin-top: $spacing-2;
+
+  small {
+    font-size: 0.75rem;
+    color: $gray-400;
+    font-style: italic;
+  }
+}
+
+// Add Field Container
+.add-field-container {
+  margin-bottom: $spacing-4;
+
+  .btn-add-field {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .button-content {
+      display: flex;
+      align-items: center;
+      gap: $spacing-2;
+
+      .icon {
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1;
+      }
+    }
+  }
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: $spacing-3;
-  padding-top: $spacing-4;
+  padding-top: $spacing-6;
+  border-top: 1px solid $gray-200;
+  margin-top: $spacing-4;
+
+  app-button {
+    min-width: 140px;
+
+    &[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
 
   @include sm {
     flex-direction: column-reverse;
 
     app-button {
       width: 100%;
+      min-width: auto;
     }
   }
 }
@@ -169,8 +361,8 @@
     transform: scale(0.98) !important;
   }
 }
-// Additional styles for loading and error states
 
+// Loading and Error States
 .loading-container,
 .error-container {
   display: flex;
@@ -182,7 +374,7 @@
 
   p {
     margin-top: 1rem;
-    color: var(--text-secondary, #6b7280);
+    color: $gray-400;
     font-size: 0.875rem;
   }
 }
@@ -191,7 +383,7 @@
   width: 48px;
   height: 48px;
   border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: var(--primary-color, #6366f1);
+  border-left-color: $orange-500;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -206,34 +398,48 @@
   animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 .error-container {
   p {
-    color: var(--error-color, #ef4444);
+    color: #ef4444;
     font-weight: 500;
   }
 }
 
-.avatar-edit-btn {
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+// Responsive Adjustments
+@include md {
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
   }
 }
 
-.form-actions {
-  app-button {
-    &[disabled] {
-      opacity: 0.6;
-      cursor: not-allowed;
+@include sm {
+  .edit-profile {
+    padding: $spacing-4 0;
+  }
+
+  .profile-avatar {
+    width: 96px;
+    height: 96px;
+
+    .avatar-edit-btn {
+      width: 32px;
+      height: 32px;
+      bottom: 4px;
+      right: 4px;
+
+      img {
+        width: 14px;
+        height: 14px;
+      }
     }
+  }
+
+  .form-section {
+    gap: $spacing-4;
+  }
+
+  .add-field-container {
+    margin-bottom: $spacing-3;
   }
 }

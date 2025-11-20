@@ -27,8 +27,26 @@ export class ButtonComponent {
   // NEW: Add showLabel input for controlling label visibility
   public readonly showLabel = input<boolean>(false);
 
-  protected handleClick(): void {
-    if (this.disabled()) return;
+  // button.component.ts
+  protected handleClick(event?: Event): void {
+    console.log('🟡 Button handleClick:', {
+      disabled: this.disabled(),
+      buttonType: this.buttonType(),
+      type: this.type(),
+    });
+
+    if (this.disabled()) {
+      event?.preventDefault();
+      event?.stopPropagation();
+      return;
+    }
+
+    // For submit buttons, DON'T prevent default - let it submit the form
+    if (this.buttonType() === 'submit') {
+      console.log('✅ Submit button - allowing form submission');
+      return; // Don't emit, let native form submit
+    }
+
     this.onClick.emit();
   }
 

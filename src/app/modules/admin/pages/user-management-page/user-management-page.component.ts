@@ -25,11 +25,15 @@ import { EditUserProfileComponent } from './components/edit-user-profile/edit-us
 import { ViewUserProfileComponent } from './components/view-user-profile/view-user-profile.component';
 import { UpdateUserPayload } from '../../../../core/services/backend/user-backend.service';
 import { mapUserStatus, User } from '../../../../core/models';
+import { CommonModule } from '@angular/common';
+
+type TabType = 'user-list' | 'admin';
 
 @Component({
   selector: 'app-user-management-page',
   standalone: true,
   imports: [
+    CommonModule,
     AdminUserCardComponent,
     DataTableComponent,
     InviteUserModalComponent,
@@ -37,7 +41,107 @@ import { mapUserStatus, User } from '../../../../core/models';
     EditUserProfileComponent,
     ViewUserProfileComponent,
   ],
-  templateUrl: './user-management-page.component.html',
+  template: `
+    <div class="user-management-page">
+      <div class="user-management-page__cards">
+        @for (card of userCards(); track card.title) {
+        <app-admin-user-card [data]="card" />
+        }
+      </div>
+
+      <div class="user-management-page__tabs">
+        <button
+          class="user-management-page__tab"
+          [class.user-management-page__tab--active]="
+            activeTab() === 'user-list'
+          "
+          (click)="switchTab('user-list')"
+        >
+          User List
+        </button>
+        <button
+          class="user-management-page__tab"
+          [class.user-management-page__tab--active]="activeTab() === 'admin'"
+          (click)="switchTab('admin')"
+        >
+          Admin
+        </button>
+      </div>
+
+      @if (activeTab() === 'user-list') {
+      <div class="user-management-page__table">
+        <app-data-table
+          tableTitle="User List"
+          searchPlaceholder="Search users by name or email..."
+          [data]="users()"
+          [columns]="tableColumns"
+          [actions]="tableActions"
+          [filters]="tableFilters"
+          [loading]="loading()"
+          [primaryAction]="primaryAction"
+          [searchable]="true"
+          [showAvatar]="true"
+          [showCheckboxes]="true"
+          [showActionLabels]="false"
+          [itemsPerPage]="10"
+          [serverSidePagination]="true"
+          [totalItems]="totalElements()"
+          (pageChange)="onPageChange($event)"
+          (searchChange)="onSearchChange($event)"
+          (filterChange)="onFilterChange($event)"
+          (rowExpanded)="onRowExpanded($event)"
+        />
+      </div>
+      } @if (activeTab() === 'admin') {
+      <div class="user-management-page__table">
+        <app-data-table
+          tableTitle="Admin"
+          searchPlaceholder="Search admins by name or email..."
+          [data]="mockAdmins()"
+          [columns]="tableColumns"
+          [actions]="tableActions"
+          [filters]="adminTableFilters"
+          [loading]="adminLoading()"
+          [primaryAction]="primaryAction"
+          [searchable]="true"
+          [showAvatar]="true"
+          [showCheckboxes]="true"
+          [showActionLabels]="false"
+          [itemsPerPage]="10"
+          [serverSidePagination]="false"
+          [totalItems]="mockAdmins().length"
+          (pageChange)="onPageChange($event)"
+          (searchChange)="onSearchChange($event)"
+          (filterChange)="onFilterChange($event)"
+          (rowExpanded)="onRowExpanded($event)"
+        />
+      </div>
+      } @if (isInviteModalOpen()) {
+      <app-invite-user-modal
+        (close)="closeInviteModal()"
+        (success)="onInviteSuccess()"
+      />
+      } @if (isSuccessModalOpen()) {
+      <app-success-modal
+        (close)="closeSuccessModal()"
+        (action)="goToDashboard()"
+      />
+      } @if (isEditModalOpen() && selectedUser()) {
+      <app-edit-user-profile
+        [userData]="selectedUser()!"
+        (close)="closeEditModal()"
+        (save)="onSaveEdit($event)"
+      />
+      } @if (isViewModalOpen() && selectedUser()) {
+      <app-view-user-profile
+        [userData]="selectedUser()!"
+        (close)="closeViewModal()"
+        (toggleStatus)="onToggleUserStatus($event)"
+        (edit)="onEditFromView()"
+      />
+      }
+    </div>
+  `,
   styleUrls: ['./user-management-page.component.scss'],
 })
 export class UserManagementPageComponent implements OnInit {
@@ -45,6 +149,8 @@ export class UserManagementPageComponent implements OnInit {
   private readonly _userService = inject(UserManagementService);
   private readonly _router = inject(Router);
   private readonly _destroyRef = inject(DestroyRef);
+
+  protected readonly activeTab = signal<TabType>('user-list');
   protected readonly totalElements = toSignal(
     this._userService.totalElements$,
     {
@@ -75,8 +181,46 @@ export class UserManagementPageComponent implements OnInit {
     initialValue: 0,
   });
 
+  // Mock admin data
+  protected readonly mockAdmins = signal<User[]>([
+    {
+      userId: 101,
+      fullName: 'John Admin',
+      email: 'john.admin@example.com',
+      role: USER_ROLES.ADMIN,
+      status: 'Active' as const,
+      eventsOrganized: 15,
+      eventsAttended: 8,
+      profileImageUrl: 'https://i.pravatar.cc/150?img=12',
+    },
+    {
+      userId: 102,
+      fullName: 'Jane SuperAdmin',
+      email: 'jane.super@example.com',
+      role: USER_ROLES.ADMIN,
+      status: 'Active' as const,
+      eventsOrganized: 25,
+      eventsAttended: 12,
+      profileImageUrl: 'https://i.pravatar.cc/150?img=47',
+    },
+    {
+      userId: 103,
+      fullName: 'Bob Administrator',
+      email: 'bob.admin@example.com',
+      role: USER_ROLES.ADMIN,
+      status: 'Inactive' as const,
+      eventsOrganized: 5,
+      eventsAttended: 3,
+      profileImageUrl: 'https://i.pravatar.cc/150?img=33',
+    },
+  ]);
+
+  protected readonly adminLoading = signal<boolean>(false);
+  protected readonly adminCurrentPage = signal<number>(0);
+
   private readonly _currentSearch = signal<string>('');
   private readonly _currentFilters = signal<Map<string, string>>(new Map());
+
   protected readonly tableColumns: TableColumn<User>[] = [
     {
       key: 'fullName',
@@ -114,7 +258,7 @@ export class UserManagementPageComponent implements OnInit {
     {
       icon: 'icons/edit-icon.png',
       label: 'Edit User',
-      title: (user) => `Edit ${user.fullName || user.name || 'user'}`, // Dynamic title
+      title: (user) => `Edit ${user.fullName || user.name || 'user'}`,
       color: 'edit',
       handler: (user) => this._editUser(user),
     },
@@ -124,7 +268,7 @@ export class UserManagementPageComponent implements OnInit {
       title: (user) =>
         user.status === 'Active'
           ? `Deactivate ${user.fullName || user.name || 'user'}`
-          : `Activate ${user.fullName || user.name || 'user'}`, // Dynamic title
+          : `Activate ${user.fullName || user.name || 'user'}`,
       color: 'power',
       handler: (user) => this._toggleUserStatus(user),
       isLoading: (user) => this.togglingUserId() === user.userId,
@@ -152,6 +296,18 @@ export class UserManagementPageComponent implements OnInit {
     },
   ];
 
+  // Admin-specific filters (without role filter)
+  protected readonly adminTableFilters: TableFilter[] = [
+    {
+      key: 'status',
+      placeholder: 'All Status',
+      options: [
+        { label: 'Active', value: 'true' },
+        { label: 'Inactive', value: 'false' },
+      ],
+    },
+  ];
+
   protected readonly primaryAction = {
     label: 'Invite User',
     handler: () => this._openInviteModal(),
@@ -167,6 +323,14 @@ export class UserManagementPageComponent implements OnInit {
   ngOnInit(): void {
     this._layoutService.pageTitle.set('User Management');
     this._loadUsers();
+  }
+
+  protected switchTab(tab: TabType): void {
+    this.activeTab.set(tab);
+    if (tab === 'user-list') {
+      this._loadUsers();
+    }
+    // For admin tab, we're using mock data, so no API call needed
   }
 
   private _loadUsers(page: number = 0): void {
@@ -192,22 +356,35 @@ export class UserManagementPageComponent implements OnInit {
         .subscribe();
     }
   }
+
   private _normalizeStatus(value: string): boolean {
     return value.toLowerCase() === 'active' || value === 'true';
   }
+
   public onPageChange(page: number): void {
-    this._loadUsers(page - 1);
+    if (this.activeTab() === 'user-list') {
+      this._loadUsers(page - 1);
+    } else {
+      this.adminCurrentPage.set(page - 1);
+    }
   }
+
   public onSearchChange(query: string): void {
     this._currentSearch.set(query);
-    this._loadUsers(0);
+    if (this.activeTab() === 'user-list') {
+      this._loadUsers(0);
+    }
+    // For admin, you could filter the mock data here if needed
   }
 
   public onFilterChange(event: { key: string; value: string }): void {
     const filters = new Map(this._currentFilters());
     filters.set(event.key, event.value);
     this._currentFilters.set(filters);
-    this._loadUsers(0);
+    if (this.activeTab() === 'user-list') {
+      this._loadUsers(0);
+    }
+    // For admin, you could filter the mock data here if needed
   }
 
   protected openInviteModal(): void {
@@ -331,16 +508,35 @@ export class UserManagementPageComponent implements OnInit {
   private _toggleUserStatus(user: User): void {
     this.togglingUserId.set(user.userId);
 
-    this._userService
-      .toggleUserStatusWithBackend(user.userId)
-      .pipe(takeUntilDestroyed(this._destroyRef))
-      .subscribe({
-        next: () => {
-          this.togglingUserId.set(null);
-        },
-        error: (err) => {
-          this.togglingUserId.set(null);
-        },
-      });
+    if (this.activeTab() === 'admin') {
+      // Mock toggle for admin users
+      setTimeout(() => {
+        const admins = this.mockAdmins();
+        const updatedAdmins = admins.map((admin) =>
+          admin.userId === user.userId
+            ? {
+                ...admin,
+                status: (admin.status === 'Active' ? 'Inactive' : 'Active') as
+                  | 'Active'
+                  | 'Inactive',
+              }
+            : admin
+        );
+        this.mockAdmins.set(updatedAdmins);
+        this.togglingUserId.set(null);
+      }, 500);
+    } else {
+      this._userService
+        .toggleUserStatusWithBackend(user.userId)
+        .pipe(takeUntilDestroyed(this._destroyRef))
+        .subscribe({
+          next: () => {
+            this.togglingUserId.set(null);
+          },
+          error: (err) => {
+            this.togglingUserId.set(null);
+          },
+        });
+    }
   }
 }

@@ -35,9 +35,6 @@ export const API_ENDPOINTS = {
   INVITE_USER: `${BASE}/event-invitations`,
   GET_ALL_INVITATIONS: `${BASE}/event-invitations`,
 
-  // Event Management (legacy endpoints - consider using EVENTS_API_ENDPOINTS instead)
-  // Invitation endpoints
-
   // Event endpoints
   EVENT_MANAGEMENT: `${BASE}/events/event-management`,
   EVENT_DETAILS: (eventId: number) => `${BASE}/events/${eventId}`,
@@ -45,6 +42,9 @@ export const API_ENDPOINTS = {
   CREATE_EVENT: `${BASE}/events`,
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+  SEARCH_EVENTS: `${BASE}/events/event-management/search`,
+  GET_AUDIT_LOGS: `${BASE}/auth/audit_logs`,
+  GET_AUDIT_LOG_BY_ID: (logId: string) => `${BASE}/audit-logs/${logId}`,
 } as const;
 
 export const EVENTS_API_ENDPOINTS = {
