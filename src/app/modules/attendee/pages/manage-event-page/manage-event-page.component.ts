@@ -3,13 +3,16 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { tap } from 'rxjs/operators';
+
 import { LayoutService } from '../../../../core/services/layout.service';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { StatCardData, EventDetails } from '../../../../core/models/event.model';
 import { MOCK_EVENT_DETAILS } from '../../../../core/data/mock-data';
+
 import { UserBackendService } from '../../../../core/services/backend/user-backend.service';
 import { InviteUserPayload } from '../../../../core/models/index'; 
+import { NotificationService } from '../../../../core/services/notification.service';
+
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
 import { DataTableComponent, TableColumn, TableFilter } from '../../../../shared/admin-ui/data-table/data-table.component';
@@ -58,6 +61,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   private readonly _location = inject(Location);
   private readonly _layoutService = inject(LayoutService);
   private readonly _userBackendService = inject(UserBackendService);
+  private readonly _notificationService = inject(NotificationService);
 
   protected readonly APP_ROUTES = APP_ROUTES;
 
@@ -173,7 +177,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected onEdit(): void {
     const eventId = this.currentEventId();
     if (eventId) {
-      
       this._router.navigate([this.APP_ROUTES.CREATE_EVENT, eventId]);
     }
   }
@@ -188,7 +191,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     const eventId = this.currentEventId();
     
     if (!eventId) {
-      alert('Error: No Event ID found. Please refresh the page.');
+      this._notificationService.error('Error: No Event ID found. Please refresh the page.');
       return;
     }
 
@@ -239,6 +242,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
     if (!selectedEventId) {
       this.isSubmitting.set(false);
+      this._notificationService.error('Internal Error: Event ID is missing.');
       return;
     }
 
@@ -256,9 +260,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       message: formData.message || ''
     };
 
-    this._userBackendService.inviteUsers(payload).pipe(
     
-    ).subscribe({
+    this._userBackendService.inviteUsers(payload).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         this._handleSuccess(status);
@@ -267,9 +270,10 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         this.isSubmitting.set(false);
         
         if (err.status === 0) {
-           alert('Connection blocked (CORS). Please use the CORS extension temporarily.');
+           this._notificationService.error('Connection blocked (CORS). Please check your network or use the CORS extension.');
         } else {
-           alert(`Failed to send. Server says: ${err.statusText || 'Unknown error'}`); 
+           const errorMessage = err.error?.message || err.statusText || 'Unknown error occurred';
+           this._notificationService.error(`Failed to send: ${errorMessage}`); 
         }
       }
     });
@@ -285,12 +289,15 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     });
 
     if (status === 'SENT') {
+      this._notificationService.success('Invitation sent successfully!');
+      
       this.showSuccessModal.set(true);
       setTimeout(() => {
         this.showSuccessModal.set(false);
         this._toggleBodyScroll(false);
       }, 3000);
     } else {
+      this._notificationService.success('Invitation draft saved successfully.');
       this._toggleBodyScroll(false);
     }
   }
