@@ -9,6 +9,8 @@ export interface OtpBodyData {
   role: string;
   fullName: string;
   profilePicture: string | null;
+  phone?: string;
+  address?: string;
 }
 
 export interface RegisterBodyData {

@@ -12,11 +12,11 @@ import {
 } from '../../models/index';
 
 export interface UpdateUserPayload {
-  fullName: string;
-  email: string;
-  phone: string;
-  address: string;
-  status: boolean;
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  status?: boolean;
   profilePicture?: string;
 }
 
