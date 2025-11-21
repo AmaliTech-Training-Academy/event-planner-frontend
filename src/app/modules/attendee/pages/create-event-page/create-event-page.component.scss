@@ -74,9 +74,13 @@
       border: none;
       width: 100%;
       padding-bottom: 1rem;
-      border-bottom: 1px solid $paragraph-text;
+      border-bottom: 1.5px solid rgb(202, 202, 202);
       color: $paragraph-text;
-      border-bottom: 1px solid rgb(219, 219, 219);
+
+      &:focus::placeholder {
+        color: transparent;
+      }
+
       &::placeholder {
         color: $paragraph-text;
       }
@@ -214,7 +218,7 @@
             right: 0;
             background-color: white;
             border: 1px solid rgb(204, 204, 204);
-            
+
             img {
               height: 1.5rem;
               width: 1.5rem;
@@ -260,6 +264,10 @@
   }
 
   .virtual-details {
+    
+    app-input{
+      margin-top: 1rem;
+    }
     app-button {
       background-color: transparent;
       border: 1px solid $general-stroke-light;

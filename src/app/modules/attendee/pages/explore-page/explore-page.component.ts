@@ -313,8 +313,6 @@ export class ExplorePageComponent implements OnInit , OnDestroy {
     this.selectedDate.set(date);
     this.showDatePicker.set(false);
   }
-  
-
 
   protected onPageChange(number_:number){
    this.currentPage.set(number_ - 1)
