@@ -1,7 +1,7 @@
 <div class="dashboard-page">
   <div class="dashboard-page__cards">
     @for (card of dashboardCards(); track card.title) {
-      <app-admin-user-card [data]="card" />
+    <app-admin-user-card [data]="card" />
     }
   </div>
 
@@ -10,21 +10,17 @@
       <div class="chart-card chart-card--large">
         <div class="chart-card__header">
           <div class="chart-tabs">
-          <app-button
-  type="plain"
-  [extraClass]="['chart-tab', activeChartTab() === 'users' ? 'chart-tab--active' : '']"
-  (onClick)="switchChartTab('users')"
->
-  Total Users
-</app-button>
+            <app-button type="plain"
+              [extraClass]="['chart-tab', activeChartTab() === 'users' ? 'chart-tab--active' : '']"
+              (onClick)="switchChartTab('users')">
+              Total Users
+            </app-button>
 
-<app-button
-  type="plain"
-  [extraClass]="['chart-tab', activeChartTab() === 'events' ? 'chart-tab--active' : '']"
-  (onClick)="switchChartTab('events')"
->
-  Total Events
-</app-button>
+            <app-button type="plain"
+              [extraClass]="['chart-tab', activeChartTab() === 'events' ? 'chart-tab--active' : '']"
+              (onClick)="switchChartTab('events')">
+              Total Events
+            </app-button>
 
           </div>
           <div class="chart-legend">
@@ -40,15 +36,9 @@
         </div>
         <div class="chart-card__body">
           @if (activeChartTab() === 'users') {
-            <app-line-chart
-              [thisYearData]="totalUsersData"
-              [lastYearData]="totalEventsData"
-            />
+          <app-line-chart [thisYearData]="totalUsersData()" [lastYearData]="[]" />
           } @else {
-            <app-line-chart
-              [thisYearData]="totalEventsData"
-              [lastYearData]="totalUsersData"
-            />
+          <app-line-chart [thisYearData]="totalEventsData()" [lastYearData]="[]" />
           }
         </div>
       </div>

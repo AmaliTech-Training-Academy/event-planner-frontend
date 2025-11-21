@@ -23,6 +23,11 @@ import {
 import { TrafficListComponent } from './components/traffic-list/traffic-list.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { UserManagementService } from '../../../../core/services/user-management.service';
+import { DashboardStatsBackendService } from '../../../../core/services/backend/dashboard-stats-backend.service';
+import {
+  EventMonthlyDataPoint,
+  RegistrationMonthlyDataPoint,
+} from '../../../../core/models/dashboard/dashboard-stats-response.model';
 
 interface DashboardCard {
   readonly title: string;
@@ -57,33 +62,19 @@ interface TrafficByWebsite {
 export class DashboardPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   private readonly _userService = inject(UserManagementService);
+  private readonly _dashboardStatsService = inject(DashboardStatsBackendService);
 
   private readonly _staticCards: DashboardCard[] = [];
 
   protected readonly dashboardCards = signal<DashboardCard[]>([]);
 
   // ------------------------------------------------------------------------
-  // TIME SERIES DATA (unchanged)
+  // TIME SERIES DATA (from API)
   // ------------------------------------------------------------------------
-  protected readonly totalUsersData: TimeSeriesDataPoint[] = [
-    { month: 'Jan', value: 12000 },
-    { month: 'Feb', value: 8000 },
-    { month: 'Mar', value: 15000 },
-    { month: 'Apr', value: 25000 },
-    { month: 'May', value: 28000 },
-    { month: 'Jun', value: 22000 },
-    { month: 'Jul', value: 24000 },
-  ];
-
-  protected readonly totalEventsData: TimeSeriesDataPoint[] = [
-    { month: 'Jan', value: 5000 },
-    { month: 'Feb', value: 13000 },
-    { month: 'Mar', value: 12000 },
-    { month: 'Apr', value: 20000 },
-    { month: 'May', value: 7000 },
-    { month: 'Jun', value: 15000 },
-    { month: 'Jul', value: 30000 },
-  ];
+  protected readonly totalUsersData = signal<TimeSeriesDataPoint[]>([]);
+  protected readonly totalEventsData = signal<TimeSeriesDataPoint[]>([]);
+  protected readonly isLoadingUsers = signal(false);
+  protected readonly isLoadingEvents = signal(false);
 
   protected readonly trafficByDevice: TrafficByDevice[] = [
     { device: 'Linux', value: 17500, color: '#9CA3AF' },
@@ -164,6 +155,109 @@ export class DashboardPageComponent implements OnInit {
     });
 
     this._userService.fetchAllUsers(0, 10).subscribe();
+
+    // Fetch chart data from API
+    this._fetchRegistrationData();
+    this._fetchEventData();
+  }
+
+  /**
+   * Fetches user registration statistics from the API
+   */
+  private _fetchRegistrationData(): void {
+    this.isLoadingUsers.set(true);
+    this._dashboardStatsService.getRegistrationGraphData().subscribe({
+      next: (response) => {
+        if (response.data?.monthlyData) {
+          const transformedData = this._transformRegistrationData(
+            response.data.monthlyData
+          );
+          this.totalUsersData.set(transformedData);
+        }
+        this.isLoadingUsers.set(false);
+      },
+      error: (error) => {
+        console.error('Error fetching registration data:', error);
+        this.totalUsersData.set([]);
+        this.isLoadingUsers.set(false);
+      },
+    });
+  }
+
+  /**
+   * Fetches event creation statistics from the API
+   */
+  private _fetchEventData(): void {
+    this.isLoadingEvents.set(true);
+    this._dashboardStatsService.getEventGraphData().subscribe({
+      next: (response) => {
+        if (response.data?.monthlyData) {
+          const transformedData = this._transformEventData(
+            response.data.monthlyData
+          );
+          this.totalEventsData.set(transformedData);
+        }
+        this.isLoadingEvents.set(false);
+      },
+      error: (error) => {
+        console.error('Error fetching event data:', error);
+        this.totalEventsData.set([]);
+        this.isLoadingEvents.set(false);
+      },
+    });
+  }
+
+  /**
+   * Transforms registration API response to chart format
+   */
+  private _transformRegistrationData(
+    monthlyData: RegistrationMonthlyDataPoint[][]
+  ): TimeSeriesDataPoint[] {
+    if (!monthlyData || monthlyData.length === 0) return [];
+
+    // Flatten all years data and transform
+    const allData = monthlyData.flat();
+    return allData.map((item) => ({
+      month: this._getMonthName(item.month),
+      value: item.totalRegistrations,
+    }));
+  }
+
+  /**
+   * Transforms event API response to chart format
+   */
+  private _transformEventData(
+    monthlyData: EventMonthlyDataPoint[][]
+  ): TimeSeriesDataPoint[] {
+    if (!monthlyData || monthlyData.length === 0) return [];
+
+    // Flatten all years data and transform
+    const allData = monthlyData.flat();
+    return allData.map((item) => ({
+      month: this._getMonthName(item.month),
+      value: item.totalEventsCreated,
+    }));
+  }
+
+  /**
+   * Converts month number to abbreviated month name
+   */
+  private _getMonthName(month: number): string {
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return monthNames[month - 1] || '';
   }
 
   protected switchChartTab(tab: 'users' | 'events'): void {

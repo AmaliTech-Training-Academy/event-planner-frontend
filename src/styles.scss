@@ -3,26 +3,48 @@
 @import 'quill/dist/quill.core.css';
 @import 'quill/dist/quill.snow.css';
 
-*{
-    box-sizing: border-box;
-    margin: 0;  
-    padding: 0;
-    font-family: 'Lato', sans-serif;
-    font-weight: 400;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
 
 }
 
-html, body {
-    height: 100%;
-    scroll-behavior: smooth;
+html,
+body {
+  height: 100%;
+  scroll-behavior: smooth;
 }
+
 .container {
   width: 100%;
   max-width: 90%;
   margin: 0 auto;
   padding: auto 120px;
-  @media(max-width:991px){
+
+  @media(max-width:991px) {
     padding: auto 32px;
   }
 
+}
+
+// Hide browser's default password reveal icon to prevent duplicate toggles
+input[type="password"] {
+
+  // Hide Edge/IE password reveal icon
+  &::-ms-reveal,
+  &::-ms-clear {
+    display: none;
+  }
+
+  // Hide Chrome/Safari password reveal icon  
+  &::-webkit-contacts-auto-fill-button,
+  &::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+  }
 }
