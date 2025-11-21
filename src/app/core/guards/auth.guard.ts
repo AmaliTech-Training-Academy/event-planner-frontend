@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { catchError, map, switchMap, take } from 'rxjs/operators';
@@ -15,7 +15,10 @@ export class AuthGuard implements CanActivate {
     private readonly router: Router
   ) {}
 
-  canActivate(): Observable<boolean | UrlTree> {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> {
     return this.authService.isLoggedIn().pipe(
       take(1),
       switchMap((isLoggedIn) => {
@@ -26,13 +29,21 @@ export class AuthGuard implements CanActivate {
         return this.authService.currentUser$().pipe(
           take(1),
           map((user) => {
-            const context = this.authService.getCurrentAuthContext();
+            const requestedUrl = state.url; // Get the requested URL
 
             if (!user) {
               return this.router.createUrlTree([APP_ROUTES.LOGIN]);
             }
 
-            if (user.role === USER_ROLES.ADMIN || context === 'admin') {
+            // Allow admins to access /app routes
+            if (
+              user.role === USER_ROLES.ADMIN &&
+              requestedUrl.startsWith('/app/')
+            ) {
+              return true; // ✅ Allow access
+            }
+
+            if (user.role === USER_ROLES.ADMIN) {
               return this.router.createUrlTree([APP_ROUTES.ADMIN_DASHBOARD]);
             }
 

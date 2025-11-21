@@ -24,7 +24,6 @@ export const API_ENDPOINTS = {
   // USER MANAGEMENT ENDPOINTS
   // ============================================
 
-
   // User endpoints
   GET_USER: (userId: string): string => `${BASE}/users/${userId}`,
   GET_ALL_USERS: `${BASE}/users/management`,
@@ -34,8 +33,8 @@ export const API_ENDPOINTS = {
   UPDATE_PROFILE: (userId: string): string => `${BASE}/users/${userId}`,
   UPLOAD_AVATAR: (userId: string): string => `${BASE}/users/${userId}/avatar`,
   SEARCH_USERS: `${BASE}/users/search`,
-  DEACTIVATE_USER: (userId: string | number): string => `${BASE}/users/${userId}/deactivate`,
-
+  DEACTIVATE_USER: (userId: string | number): string =>
+    `${BASE}/users/${userId}/deactivate`,
 
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
@@ -62,7 +61,6 @@ export const API_ENDPOINTS = {
   EVENT_DETAILS: (eventId: number): string => `${BASE}/events/${eventId}`,
   UPDATE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
-
 
   SEARCH_EVENTS: `${BASE}/events/event-management/search`,
 
@@ -93,8 +91,7 @@ export const EVENTS_API_ENDPOINTS = {
   SEARCH_EVENTS: `${BASE}/events/search`,
   MY_EVENT: `${BASE}/events/my-events`,
   MY_EVENT_OVERVIEW: `${BASE}/events/my-events/overview`,
-  MANAGE_EVENT_DETAILS: (id: number) =>
-    `${BASE}/events/${id}`,
+  MANAGE_EVENT_DETAILS: (id: number) => `${BASE}/events/${id}`,
   MANAGE_EVENT_INVITEES: (id: number) =>
     `${BASE}/event-invitations/${id}/invitees`,
   MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) =>
@@ -110,7 +107,10 @@ export const PLATFORM_SETTINGS_ENDPOINTS = {
   MY_EVENT_OVERVIEW: `${BASE}/events/my-events/overview`,
   SEARCH_EVENTS: `${BASE}/events/search`,
   MANAGE_EVENT_DETAILS: (id: number) => `${BASE}/events/${id}`,
-  MANAGE_EVENT_INVITEES: (id: number) => `${BASE}/event-invitations/${id}/invitees`,
-  MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) => `${BASE}/events/${id}/registrations/overview`,
-  MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) => `${BASE}/events/${id}/registrations/search`,
+  MANAGE_EVENT_INVITEES: (id: number) =>
+    `${BASE}/event-invitations/${id}/invitees`,
+  MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) =>
+    `${BASE}/events/${id}/registrations/overview`,
+  MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) =>
+    `${BASE}/events/${id}/registrations/search`,
 } as const;

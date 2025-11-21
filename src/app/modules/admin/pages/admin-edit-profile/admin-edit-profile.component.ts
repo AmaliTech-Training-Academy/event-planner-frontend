@@ -70,22 +70,33 @@ export class EditProfileComponent implements OnInit {
   protected readonly currentProfileImage = computed(() => {
     if (this.isEditingTeamMember() && this._editingMember) {
       const name = this._editingMember.fullName || 'Team Member';
-      return (
-        this._editingMember.profilePicture ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(
-          name
-        )}&background=FF6B35&color=fff&size=128`
-      );
+      const profilePic = this._editingMember.profilePicture;
+
+      // If there's a profile picture and it's not empty
+      if (profilePic && profilePic.trim() !== '') {
+        return profilePic;
+      }
+
+      // Fallback to avatar with initials
+      return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        name
+      )}&background=FF6B35&color=fff&size=128`;
     }
 
+    // For current user
     const user = this._authService.currentUser();
     const name = user?.fullName || 'Admin';
-    return (
-      user?.profilePicture ||
-      `https://ui-avatars.com/api/?name=${encodeURIComponent(
-        name
-      )}&background=FF6B35&color=fff&size=128`
-    );
+    const profilePic = user?.profilePicture;
+
+    // If there's a profile picture and it's not empty
+    if (profilePic && profilePic.trim() !== '') {
+      return profilePic;
+    }
+
+    // Fallback to avatar with initials
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      name
+    )}&background=FF6B35&color=fff&size=128`;
   });
 
   protected readonly phoneCodes: readonly CountryOption[] = [
@@ -138,20 +149,39 @@ export class EditProfileComponent implements OnInit {
     this._route.params.subscribe((params) => {
       const userId = params['userId'];
       if (userId) {
+        // Editing a team member
         this.isEditingTeamMember.set(true);
         this._loadTeamMemberData(userId);
       } else {
+        // Editing current user
         this.isEditingTeamMember.set(false);
         const currentUser = this._authService.currentUser();
+
         if (currentUser?.id) {
           this._currentUserId = currentUser.id.toString();
-          this._authService.checkAuthUser(this._currentUserId).subscribe();
-        } else {
-          const user = this._authService.currentUser();
-          if (user) {
-            this._initializeForm(user);
-            this._initializeProfileImage();
-          }
+
+          // Check if we need to fetch updated user data
+          this._authService.checkAuthUser(this._currentUserId).subscribe({
+            next: () => {
+              // After checking auth, get the updated user data
+              const updatedUser = this._authService.currentUser();
+              if (updatedUser) {
+                this._initializeForm(updatedUser);
+                this._initializeProfileImage();
+              }
+            },
+            error: () => {
+              // If check fails, use cached user data
+              if (currentUser) {
+                this._initializeForm(currentUser);
+                this._initializeProfileImage();
+              }
+            },
+          });
+        } else if (currentUser) {
+          // No ID but we have user data
+          this._initializeForm(currentUser);
+          this._initializeProfileImage();
         }
       }
     });
@@ -176,8 +206,9 @@ export class EditProfileComponent implements OnInit {
           };
 
           this._initializeForm(userData);
-          this._initializeProfileImage();
+          this._initializeProfileImage(); // This should set the profile image
         } else {
+          // If not in cache, load from backend
           this._platformSettingsService.loadTeamMembers().subscribe({
             next: (response) => {
               if (response?.data) {
@@ -197,7 +228,7 @@ export class EditProfileComponent implements OnInit {
                   };
 
                   this._initializeForm(userData);
-                  this._initializeProfileImage();
+                  this._initializeProfileImage(); // This should set the profile image
                 } else {
                   this.error.set('Team member not found');
                   this._router.navigate(['/admin/settings']);
@@ -348,7 +379,7 @@ export class EditProfileComponent implements OnInit {
       if (phoneNumberObj && phoneNumberObj.isValid()) {
         return phoneNumberObj.formatInternational();
       }
-    } catch { }
+    } catch {}
 
     return phoneNumber;
   }
@@ -438,7 +469,7 @@ export class EditProfileComponent implements OnInit {
         if (phoneNumberObj?.isValid()) {
           formattedPhone = phoneNumberObj.number;
         }
-      } catch { }
+      } catch {}
     }
 
     let userRole = 'admin';
