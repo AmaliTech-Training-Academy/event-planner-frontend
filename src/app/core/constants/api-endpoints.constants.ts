@@ -43,11 +43,11 @@ export const API_ENDPOINTS = {
   // ============================================
   // USER INVITATION ENDPOINTS
   // ============================================
-  INVITE_USER: `${BASE}/user-invitations/invite-user`,
+  ADMIN_INVITE_USER: `${BASE}/user-invitations/invite-user`,
   VERIFY_INVITATION_TOKEN: `${BASE}/user-invitations/verify`,
   ACCEPT_INVITATION: `${BASE}/user-invitations/accept-invitation`,
   GET_ALL_INVITATIONS: `${BASE}/user-invitations`,
-
+   INVITE_USER: `${BASE}/event-invitations`,
   // ============================================
   // EVENT MANAGEMENT ENDPOINTS
   // ============================================

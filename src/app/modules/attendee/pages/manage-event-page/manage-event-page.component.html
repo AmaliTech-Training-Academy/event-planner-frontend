@@ -70,16 +70,13 @@
       </div>
 
       <div class="form-group">
-        <label>Select Event</label>
-        <div class="custom-select-wrapper">
-          <select formControlName="event" class="form-input form-select">
-            @for (event of availableEvents(); track event.id) {
-            <option [ngValue]="event.id">{{ event.title }}</option>
-            }
-          </select>
-          <img ngSrc="/icons/Vector.png" class="dropdown-icon" width="12" height="7" alt="▼">
-        </div>
-      </div>
+      <label>Event</label>
+      <input 
+        type="text" 
+        class="form-input" 
+        [value]="eventDetails()?.title"
+      >
+    </div>
 
       <div class="form-group">
         <label>Select Role</label>
