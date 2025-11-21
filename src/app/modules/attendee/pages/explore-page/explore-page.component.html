@@ -67,15 +67,15 @@
 
     <div class="app-tab-toggle-container">
       <app-tab-toggle [toggles]="eventToggles()" [activeToggle]="activeToggle()"
-      (tabChange)="onTabChange($event)"></app-tab-toggle>
+        (tabChange)="onTabChange($event)"></app-tab-toggle>
       @if(hasActiveFilters()){
-        <app-button (onClick)="clearSearchFilters()">Clear Filters</app-button>
+      <app-button (onClick)="clearSearchFilters()">Clear Filters</app-button>
       }
     </div>
 
     <section class="event-section">
       @if (!loading() && (allEvents()?.events?.length ?? 0) < 1) { <app-empty-list-message
-        (handleAction)="clearSearchFilters()" actionText="Clear Filters"
+        (handleAction)="clearSearchFilters()" [actionText]="hasActiveFilters() ? 'Clear Filters' : '' "
         descrition="No results found. You may want to clear your filters or return to the previous page."
         title="No Events Here"></app-empty-list-message>
         }
