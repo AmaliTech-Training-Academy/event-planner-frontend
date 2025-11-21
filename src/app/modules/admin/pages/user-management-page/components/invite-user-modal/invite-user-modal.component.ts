@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, inject, OnInit, signal } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -13,8 +13,8 @@ import { ButtonComponent } from '../../../../../../shared/ui/button/button.compo
 import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/modal-header.component';
 import { USER_ROLES } from '../../../../../../core/constants/user.constants';
 import { UserManagementService } from '../../../../../../core/services/user-management.service';
-import { Invitation, InviteUserPayload } from '../../../../../../core/models';
-
+import { InviteUserPayload } from '../../../../../../core/models';
+import { NotificationService } from '../../../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-invite-user-modal',
@@ -30,42 +30,26 @@ import { Invitation, InviteUserPayload } from '../../../../../../core/models';
   templateUrl: './invite-user-modal.component.html',
   styleUrls: ['./invite-user-modal.component.scss'],
 })
-export class InviteUserModalComponent implements OnInit {
+export class InviteUserModalComponent {
   @Output() public readonly close = new EventEmitter<void>();
   @Output() public readonly success = new EventEmitter<void>();
 
   private readonly _fb = inject(FormBuilder);
-  private readonly _userManagementService = inject(UserManagementService);
+  private readonly userManagementService = inject(UserManagementService);
+  private readonly notificationService = inject(NotificationService);
 
-  protected readonly inviteForm: FormGroup = this._fb.group({
-    title: this._fb.control('', [Validators.required]),
+  public readonly inviteForm: FormGroup = this._fb.group({
     users: this._fb.array([this._createUserFormGroup()]),
-    event: this._fb.control('', [Validators.required]),
     message: this._fb.control(''),
   });
 
   protected readonly roles = [
     { label: 'Organizer', value: USER_ROLES.ORGANIZER },
-    { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
-    { label: 'Attendee', value: USER_ROLES.ATTENDEE },
     { label: 'Admin', value: USER_ROLES.ADMIN },
   ];
 
-  protected events: { label: string; value: string }[] = [];
-  protected invitations: Invitation[] = [];
-  protected readonly isSubmitting = signal(false);
-
-  ngOnInit(): void {
-    this._loadEvents();
-  }
-
-  private _loadEvents(): void {
-    this.events = [
-      { label: 'Tech Conference 2025', value: '12' },
-      { label: 'Annual Meetup', value: '13' },
-      { label: 'Workshop Series', value: '14' },
-    ];
-  }
+  public isSubmitting = false;
+  public isSaving = false;
 
   private _createUserFormGroup(): FormGroup {
     return this._fb.group({
@@ -97,39 +81,68 @@ export class InviteUserModalComponent implements OnInit {
     }
 
     const payload: InviteUserPayload = {
-      invitationTitle: this.inviteForm.value.title,
       invitees: this.users.value.map((user: any) => ({
-        inviteeName: user.name,
-        inviteeEmail: user.email,
+        fullName: user.name,
+        email: user.email,
         role: user.role,
       })),
-      event: parseInt(this.inviteForm.value.event, 10),
-      status: 'SAVE',
       message: this.inviteForm.value.message || '',
+      status: 'SEND',
     };
-
-    this.isSubmitting.set(true);
 
     this._userManagementService.inviteUsers(payload).subscribe({
       next: (response) => {
+        console.log('✅ Success response:', response);
+        this.isSubmitting = false;
+        this.notificationService.success('Invitations sent successfully!');
         this.success.emit();
         this.close.emit();
-        this.isSubmitting.set(false);
       },
-      error: (err) => {
-        const errorMessage =
-          err?.error?.description ||
-          err?.error?.message ||
-          err?.message ||
-          'Failed to send invitations. Please try again.';
-        alert(errorMessage);
-        this.isSubmitting.set(false);
+      error: (error) => {
+        console.error('❌ Error:', error);
+        this.isSubmitting = false;
+        this.notificationService.error(
+          'Failed to send invitations. Please try again.'
+        );
       },
     });
   }
 
-  protected onSaveProgress(): void {
+  public onSaveProgress(): void {
+    this.inviteForm.markAllAsTouched();
 
+    if (this.inviteForm.invalid) {
+      return;
+    }
+
+    const payload: InviteUserPayload = {
+      invitees: this.users.value.map((user: any) => ({
+        fullName: user.name,
+        email: user.email,
+        role: user.role,
+      })),
+      message: this.inviteForm.value.message || '',
+      status: 'SAVE',
+    };
+
+    this.isSaving = true;
+
+    this.userManagementService.inviteUsers(payload).subscribe({
+      next: (response) => {
+        this.isSaving = false;
+        this.notificationService.success(
+          response?.message || 'Draft saved successfully!'
+        );
+        this.success.emit();
+        this.close.emit();
+      },
+      error: (error) => {
+        this.isSaving = false;
+        this.notificationService.error(
+          error?.error?.message || 'Failed to save draft. Please try again.'
+        );
+      },
+    });
   }
 
   protected onCancel(): void {

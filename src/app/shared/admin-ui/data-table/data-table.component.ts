@@ -251,6 +251,7 @@ export class DataTableComponent<T extends Record<string, any>> {
       urlParts[urlParts.length - 1] = encodedFileName;
       profileImageUrl = urlParts.join('/');
 
+     
       return profileImageUrl;
     }
 

@@ -3,7 +3,7 @@
 
   <div class="event-card__content">
 
-    @if (event()?.ticketPrice || event()?.isPaid) {
+    @if (event().ticketPrice || event().isPaid) {
     <span class="event-card__badge badge--paid">Paid</span>
     } @else {
     <span class="event-card__badge badge--free">Free</span>
@@ -25,7 +25,7 @@
       @if (event()) {
       <span class="event-card__icon-text">
         <img src="icons/users-icon.png" alt="Attendees" class="info-icon" />
-        {{ event()?.attendeesCount || event()?.attendees || 0}} attendees
+        {{ event().attendeesCount || event().attendees || 0}} attendees
       </span>
       }
     </div>

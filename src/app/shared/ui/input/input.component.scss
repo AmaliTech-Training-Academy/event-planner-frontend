@@ -38,6 +38,13 @@
       padding-left: $spacing-3;
     }
 
+    &.with-icon {
+      padding-left: $spacing-3;
+    }
+
+    &.no-icon {
+      padding-left: $spacing-4; 
+    }
     &.no-icon {
       padding-left: $spacing-4; 
     }
@@ -48,6 +55,13 @@
     }
 
     .input-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      margin-right: $spacing-3;
+      color: $gray-400;
+    }
+
       flex-shrink: 0;
       width: 24px;
       height: 24px;
@@ -156,10 +170,14 @@
       border-color: $orange-500;
       box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
     }
+
+    &.is-valid .input-wrapper {
+      border-color: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+    }
   }
 }
 
-// Form footer for Remember me and Forgot password
 .form-footer {
   display: flex;
   align-items: center;

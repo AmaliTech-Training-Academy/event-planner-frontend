@@ -2,6 +2,42 @@
 @use 'colors' as *;
 @use 'variables' as *;
 
+
+.empty-card{
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  .icon-container{
+    background-color: #dcf0ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 100%;
+  }
+  p{
+    color: $paragraph-text;
+  }
+}
+
+
+.no-host{
+  background-color: #e8f0ff85;
+  padding: 1rem;
+  border-radius: .5rem;
+  color: $paragraph-text;
+}
+.simple-card__value-count{
+  background-color: #F8F9FA;
+  @include h-4;
+  padding: 1rem 2rem;
+  border-radius: .5rem;
+}
+
 .event-details-page {
   padding: $spacing-6;
   max-width: 1400px;
@@ -190,6 +226,8 @@
 
 
 .simple-card {
+  display: flex;
+  flex-direction: column;
   background: white;
   border: 1px solid #E5E7EB;
   border-radius: 8px;

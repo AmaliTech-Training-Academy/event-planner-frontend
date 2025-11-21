@@ -6,17 +6,22 @@ import {
   finalize,
   Observable,
   of,
-  tap,
   take,
+  tap,
 } from 'rxjs';
 import { APP_ROUTES } from '../constants/app-routes.constants';
-import { User } from '../models/user.model';
-import { AuthBackendService } from './backend/auth-backend.service';
-import { ErrorHandlerService } from './error-handler.service';
 import { AUTH_STORAGE } from '../constants/storage.constants';
-import { AuthStorage } from '../models/auth.model';
 import { OtpBodyData } from '../models/auth-response.model';
+import { AuthStorage } from '../models/auth.model';
+import { AuthBackendService } from './backend/auth-backend.service';
+import {
+  UpdateUserPayload,
+  UserBackendService,
+} from './backend/user-backend.service';
+import { ErrorHandlerService } from './error-handler.service';
+
 import { USER_ROLES } from '../constants/user.constants';
+import { User } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -32,7 +37,8 @@ export class AuthService {
   constructor(
     private readonly authBackend: AuthBackendService,
     private readonly router: Router,
-    private readonly errorHandlerService: ErrorHandlerService
+    private readonly errorHandlerService: ErrorHandlerService,
+    private readonly userBackendService: UserBackendService
   ) {
     this.onload();
   }
@@ -138,6 +144,8 @@ export class AuthService {
           );
         }
         this.router.navigate([APP_ROUTES.EXPLORE]);
+        // Route to Explore page instead
+        this.router.navigate([APP_ROUTES.MY_EVENTS]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
@@ -238,6 +246,51 @@ export class AuthService {
     );
   }
 
+  public updateUser(userId: string, data: UpdateUserPayload) {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value as any);
+    });
+
+    this.setLoading(true);
+    return this.userBackendService
+      .updateUserWithFormData(userId, formData)
+      .pipe(
+        take(1),
+        tap((response) => {
+          let user_: User = response.data;
+          const data: OtpBodyData = {
+            email: user_.email,
+            fullName: user_.fullName,
+            role: user_.role,
+            profilePicture: user_.profileImageUrl as string,
+            id: user_.userId,
+            address: user_.address,
+            phone: user_.phone,
+          };
+          this._userInfo$.next(data);
+        }),
+        catchError((err) => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
+  }
+
+  public updateStoredUserInfo(userData: OtpBodyData): void {
+    this._userInfo$.next(userData);
+    const context =
+      this._currentAuthContext ||
+      (userData.role === USER_ROLES.ADMIN ? 'admin' : 'user');
+    this.saveAuthToStorage(
+      userData.id.toString(),
+      userData.fullName,
+      userData.profilePicture,
+      userData.email,
+      userData.role,
+      context
+    );
+  }
+
   public updateProfile(fullName: string, email: string) {
     const currentUser = this.currentUser();
     if (!currentUser) {
@@ -299,21 +352,6 @@ export class AuthService {
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
-    );
-  }
-
-  public updateStoredUserInfo(userData: OtpBodyData): void {
-    this._userInfo$.next(userData);
-    const context =
-      this._currentAuthContext ||
-      (userData.role === USER_ROLES.ADMIN ? 'admin' : 'user');
-    this.saveAuthToStorage(
-      userData.id.toString(),
-      userData.fullName,
-      userData.profilePicture,
-      userData.email,
-      userData.role,
-      context
     );
   }
 
@@ -415,7 +453,6 @@ export class AuthService {
     return this._otp;
   }
 
-
   public clearAdminSession(): void {
     this._loggedIn$.next(false);
     this._userInfo$.next(null);
@@ -423,11 +460,46 @@ export class AuthService {
     this.clearAuthStorage('admin');
   }
 
- 
   public clearUserSession(): void {
     this._loggedIn$.next(false);
     this._userInfo$.next(null);
     this._currentAuthContext = null;
     this.clearAuthStorage('user');
+  }
+  public acceptInvitation(
+    fullName: string,
+    password: string,
+    confirmPassword: string,
+    invitationToken: string
+  ) {
+    this.setLoading(true);
+
+    return this.authBackend
+      .acceptInvitation({
+        fullName,
+        password,
+        confirmPassword,
+        invitationToken,
+      })
+      .pipe(
+        take(1),
+        tap((response) => {
+          const userData = response?.data;
+
+          if (userData) {
+            if (userData.role === 'ADMIN') {
+              this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+            } else {
+              this.router.navigate([APP_ROUTES.LOGIN]);
+            }
+          }
+        }),
+        catchError((err) => {
+          return this.errorHandlerService.handle(err);
+        }),
+        finalize(() => {
+          this.setLoading(false);
+        })
+      );
   }
 }
