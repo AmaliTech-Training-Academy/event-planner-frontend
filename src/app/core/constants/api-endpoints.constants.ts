@@ -48,6 +48,8 @@ export const API_ENDPOINTS = {
   ACCEPT_INVITATION: `${BASE}/user-invitations/accept-invitation`,
   GET_ALL_INVITATIONS: `${BASE}/user-invitations`,
    INVITE_USER: `${BASE}/event-invitations`,
+  USER_ACCEPT_INVITATION: `${BASE}/event-invitations/accept-invitation`,
+
   // ============================================
   // EVENT MANAGEMENT ENDPOINTS
   // ============================================

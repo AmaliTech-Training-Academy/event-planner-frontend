@@ -5,6 +5,13 @@ import { AuthResponseBody, OtpBodyData, RegisterBodyData } from '../../models/au
 import { User } from '../../models/user.model';
 import { AcceptInvitationPayload } from '../../models/accept-invitation.model';
 
+
+export interface EventInvitationPayload {
+  fullName: string;
+  invitationCode: string;
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,6 +21,7 @@ export class AuthBackendService {
   public login(email: string, password: string) {
     return this.http.post(API_ENDPOINTS.AUTH_LOGIN, { email, password });
   }
+  
   public adminLogin(email: string, password: string) {
     return this.http.post(API_ENDPOINTS.AUTH_ADMIN_LOGIN, { email, password });
   }
@@ -29,18 +37,21 @@ export class AuthBackendService {
       { fullName, email, password, confirmPassword }
     );
   }
+  
   public verifyEmail(otp: string, email: string) {
     return this.http.post<AuthResponseBody<OtpBodyData>>(
       API_ENDPOINTS.AUTH_VERIFY_OTP,
       { otp, email }
     );
   }
+  
   public forgotPassword(email: string) {
     return this.http.post<AuthResponseBody<unknown>>(
       API_ENDPOINTS.AUTH_FORGOT_PASSWORD,
       { email }
     );
   }
+  
   public resendOtp(email: string) {
     return this.http.post(API_ENDPOINTS.AUTH_RESEND_OTP, { email });
   }
@@ -62,10 +73,11 @@ export class AuthBackendService {
     return this.http.post(API_ENDPOINTS.AUTH_REFRESH_TOKEN,{})
   }
 
+  
   public getAuthenticatedUser() {
     return this.http.get<AuthResponseBody<OtpBodyData>>(API_ENDPOINTS.AUTH_ME);
   }
-
+  
   public acceptInvitation(payload: AcceptInvitationPayload) {
     return this.http.post<AuthResponseBody<OtpBodyData>>(
       API_ENDPOINTS.ACCEPT_INVITATION,
@@ -73,4 +85,11 @@ export class AuthBackendService {
     );
   }
 
+ 
+ public acceptEventInvitation(payload: EventInvitationPayload) {
+    return this.http.post<void>(
+      API_ENDPOINTS.USER_ACCEPT_INVITATION,
+      payload
+    );
+  }
 }
