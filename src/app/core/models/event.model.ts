@@ -17,7 +17,7 @@ export interface EventDetails {
   isPaid: boolean;
   description: string;
   attendeesCount: string;
-  status: string;
+  status: 'pending' | 'completed' | 'cancelled' | 'upcoming';
   time: string;
   organizer: string;
 }
@@ -78,6 +78,7 @@ export interface TicketType {
   isActive: boolean;
   remainingTickets: number;
   isPaid: boolean;
+  
 }
 
 
@@ -393,6 +394,14 @@ export function mapEventManagementToEventCard(
   };
 }
 
+
+export interface EventFiltersCache {
+  isPaid: string | null;
+  past: boolean | null;
+  date: Date | null;
+  searchTerm: string;
+  locationTerm: string;
+}
 // --- Interfaces for Manage Event Page ---
 export interface StatCardData {
   title: string;

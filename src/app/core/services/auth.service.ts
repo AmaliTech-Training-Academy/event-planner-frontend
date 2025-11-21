@@ -15,6 +15,8 @@ import { OtpBodyData } from '../models/auth-response.model';
 import { AuthStorage } from '../models/auth.model';
 import { AuthBackendService } from './backend/auth-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
+import { UpdateUserPayload, UserBackendService } from './backend/user-backend.service';
+import { User } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -31,7 +33,8 @@ export class AuthService {
   constructor(
     private readonly authBackend: AuthBackendService,
     private readonly router: Router,
-    private readonly errorHandlerService: ErrorHandlerService
+    private readonly errorHandlerService: ErrorHandlerService,
+    private readonly userBackendService: UserBackendService
   ) {
     this.onload();
   }
@@ -50,6 +53,7 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public adminLogin(email: string, password: string) {
     this.setLoading(true);
     return this.authBackend.adminLogin(email, password).pipe(
@@ -142,6 +146,7 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public adminLogout() {
     this.setLoading(true);
     return this.authBackend.logout().pipe(
@@ -180,6 +185,7 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public resetPassword(otp: string, email: string, password: string) {
     this.setLoading(true);
     return this.authBackend.resetPassword(otp, email, password).pipe(
@@ -208,6 +214,36 @@ export class AuthService {
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );
+  }
+
+  public updateUser(userId: string, data: UpdateUserPayload) {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value as any);
+    });
+
+    this.setLoading(true);
+    return this.userBackendService
+      .updateUserWithFormData(userId, formData)
+      .pipe(
+        take(1),
+        tap((response) => {
+          let user_: User = response.data;
+          const data: OtpBodyData = {
+            email: user_.email,
+            fullName: user_.fullName,
+            role: user_.role,
+            profilePicture: user_.profileImageUrl as string,
+            id: user_.userId,
+            address: user_.address,
+            phone: user_.phone,
+          };
+          this._userInfo$.next(data);
+        }),
+        catchError((err) => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
   }
 
   private onload() {
@@ -337,6 +373,7 @@ export class AuthService {
     invitationToken: string
   ) {
     this.setLoading(true);
+
     return this.authBackend
       .acceptInvitation({
         fullName,
@@ -346,11 +383,23 @@ export class AuthService {
       })
       .pipe(
         take(1),
-        tap(() => {
-          this.router.navigate([APP_ROUTES.LOGIN]);
+        tap((response) => {
+          const userData = response?.data;
+
+          if (userData) {
+            if (userData.role === 'ADMIN') {
+              this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+            } else {
+              this.router.navigate([APP_ROUTES.LOGIN]);
+            }
+          }
         }),
-        catchError((err) => this.errorHandlerService.handle(err)),
-        finalize(() => this.setLoading(false))
+        catchError((err) => {
+          return this.errorHandlerService.handle(err);
+        }),
+        finalize(() => {
+          this.setLoading(false);
+        })
       );
   }
 }

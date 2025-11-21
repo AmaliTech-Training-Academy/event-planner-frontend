@@ -9,7 +9,7 @@ export const AUTH_ROUTES: Routes = [
       import('../auth/pages/login-page/login-page.component').then(
         (m) => m.LoginPageComponent
       ),
-    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
+    canActivate: [UnAuthenticatedUsersOnlyGuard],
   },
   {
     path: 'signup',
@@ -41,7 +41,6 @@ export const AUTH_ROUTES: Routes = [
       import('../auth/pages/admin-login-page/admin-login-page.component').then(
         (m) => m.AdminLoginPageComponent
       ),
-    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
   },
   {
     path: 'reset-password',

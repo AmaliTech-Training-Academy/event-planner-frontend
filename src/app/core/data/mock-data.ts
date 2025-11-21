@@ -27,7 +27,7 @@ export const MOCK_EVENT_DETAILS: EventDetails = {
   startDate: eventStartDate,
   location: 'Silicon Valley Convention Center',
   heroImageUrl: 'images/img.png',
-  status:'string',
+  status:'upcoming',
   time: '10:00 AM',
   description:
     'Join us for the most anticipated tech event of the year, bringing together industry leaders, innovators, and tech enthusiasts. The Tech Innovation Summit 2025 will showcase cutting-edge technologies, breakthrough innovations, and insights from world-renowned experts.',
@@ -91,6 +91,8 @@ export const MOCK_TICKETS: TicketInfo[] = [
 
 export const MOCK_HELP_EMAIL: string = 'support@techevent.com';
 
+export const MOCK_EVENT_CARDS: EventCard[] = [];
+
 
 export const MOCK_EVENT_TOGGLES: TabToggle[] = [
   { key: 'upcoming', label: 'Upcoming events', value: false },
@@ -127,12 +129,29 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
   { name: 'Berlin, Germany', meta: 'Europe' },
 ];
 
+export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [] 
+  
+
+export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin  = {
+  id: 'evt123',
+  name: 'Tech Innovation Summit 2025',
+  organizer: 'Tech Events Inc.',
+  date: '2025-04-15T00:00:00Z',
+  startDate: eventStartDate,
+  location: 'Silicon Valley Convention Center',
+  heroImageUrl: 'images/event-hero.png',
+  isPaid: true,
+  description: '...',
+  attendees: 5000,
+  status: 'Active',
+  time: '09:00am GMT',
+};
 
 
 export const MOCK_MANAGE_EVENT_TABS: TabToggle[] = [
-  { key: 'overview', label: 'Overview', value: null},
-  { key: 'guests', label: 'Guests',value: null },
-  { key: 'registrations', label: 'Registrations',value: null },
+  { key: 'overview', label: 'Overview', value: true },
+  { key: 'guests', label: 'Guests', value: false  },
+  { key: 'registrations', label: 'Registrations', value: false},
 ];
 
 export const MOCK_MANAGE_STATS: StatCardData[] = [

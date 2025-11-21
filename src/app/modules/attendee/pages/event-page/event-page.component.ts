@@ -2,20 +2,16 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import {
-  EventDetail,
-  TicketInfo,
-  TicketType,
-  VenueImage,
-  VenueSection
-} from '../../../../core/models/event.model';
-import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
+
+import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
+import { TicketType } from '@app/core/models/events';
+import { EventDetail, TicketInfo, VenueImage, VenueSection } from '../../../../core/models/event.model';
+import { EventsServiceService } from '../../../../core/services/events.service';
 import { HelpCardComponent } from '../../../../shared/components/help-card/help-card.component';
 import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
 import { TicketCardComponent } from '../../../../shared/components/ticket-card/ticket-card.component';
 import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
-import { EventsServiceService } from '../../../../core/services/events.service';
 
 @Component({
   selector: 'app-event-page',
@@ -107,9 +103,9 @@ export class EventPageComponent implements OnInit {
     }, 100);
   }
 
-  protected onImageError(event: Event) {
-    (event.target as HTMLImageElement).src = 'https://plus.unsplash.com/premium_photo-1673177667569-e3321a8d8256?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+  protected handleImageFallback(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = PLACEHOLDER_IMAGE;
   }
-
-
+  
 }
