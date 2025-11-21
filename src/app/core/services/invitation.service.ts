@@ -36,3 +36,9 @@ export class InvitationService {
     return this._http.post(this.API_URL, payload, { headers });
   }
 }
+
+export interface AcceptInvitationRequest {
+  fullName: string;
+  invitationCode: string; 
+  password: string;
+}
