@@ -78,7 +78,7 @@ export class ExplorePageComponent implements OnInit {
   public eventTypeOptions = signal<EventTypeFilter[]>([]);
   public recentSearches = signal<SearchLocation[]>([]);
   public popularLocations = signal<PopularLocation[]>([]);
-
+  private debounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   private lastFilters: EventFiltersCache = {
     isPaid: 'all',
@@ -118,9 +118,16 @@ export class ExplorePageComponent implements OnInit {
         locationTerm
       };
 
+      if (this.debounceTimeoutId) {
+        clearTimeout(this.debounceTimeoutId);
+      }
+
+      this.debounceTimeoutId = setTimeout(() => {
+        this.searchEvents(isPaid, past, date, searchTerm, locationTerm, currentPage);
+
+      }, 500);
 
 
-      this.searchEvents(isPaid, past, date, searchTerm, locationTerm, currentPage);
     });
 
     effect(() => {
