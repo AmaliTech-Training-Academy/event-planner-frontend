@@ -23,10 +23,12 @@ export class ModalContainerComponent {
     }
   }
 
-  @HostListener('document:keydown.escape', ['$event'])
-  protected handleEscapeKey(event: KeyboardEvent) {
-    event.preventDefault();
-    this.closeModal();
+  @HostListener('document:keydown', ['$event'])
+  handleEscapeKey(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.closeModal();
+    }
   }
+
 
 }
