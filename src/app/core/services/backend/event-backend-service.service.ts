@@ -50,8 +50,8 @@ export class EventBackendServiceService {
   public myEventOverview() {
     return this.http.get<MyEventStatsResponse>(`${EVENTS_API_ENDPOINTS.MY_EVENT_OVERVIEW}`);
   }
-  
-  public registerEvent(id: string, data: RegisterEventBody): Observable<RegisterEventResponse> {
+
+   public registerEvent(id: string, data: RegisterEventBody): Observable<RegisterEventResponse> {
     return this.http.post<RegisterEventResponse>(EVENTS_API_ENDPOINTS.REGISTER_EVENT(id), data)
   }
 

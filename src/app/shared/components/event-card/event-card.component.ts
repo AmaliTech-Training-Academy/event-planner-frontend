@@ -2,9 +2,9 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { MyEventItem } from '@app/core/models/myevent.model';
 import { EventSummary } from '../../../core/models/event.model';
 import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
+import { MyEventItem } from '@app/core/models/myevent.model';
 import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
 
 @Component({

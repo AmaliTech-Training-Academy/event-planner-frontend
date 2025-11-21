@@ -70,7 +70,7 @@ export class AuthBackendService {
     return this.http.post<AuthResponseBody<OtpBodyData>>(
       API_ENDPOINTS.ACCEPT_INVITATION,
       payload
-    )
+    );
   }
 
 }

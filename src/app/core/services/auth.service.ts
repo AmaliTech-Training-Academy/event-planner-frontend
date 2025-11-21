@@ -28,7 +28,7 @@ export class AuthService {
   private _otp: string = '';
   private _isResset: boolean = false;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
-  private TOKEN_REFRESH_INTERVAL:number = .5 as const;
+  private TOKEN_REFRESH_INTERVAL:number = 15 as const;
 
   constructor(
     private readonly authBackend: AuthBackendService,
@@ -260,6 +260,8 @@ export class AuthService {
           fullName: data[AUTH_STORAGE.FULL_NAME],
           profilePicture: data[AUTH_STORAGE.PROFILE_PICTURE],
           role: data[AUTH_STORAGE.ROLE],
+          address: data[AUTH_STORAGE.PHONE_NUMBER],
+          phone: data[AUTH_STORAGE.ADDRESS],
         };
         this._userInfo$.next(userData);
         const refreshedAt = data[AUTH_STORAGE.REFRESHED_AT]
@@ -276,7 +278,9 @@ export class AuthService {
     profilePicture: string | null,
     email: string,
     role: string,
-    refreshAt: Date = new Date()
+    refreshAt: Date = new Date(),
+    phone: string = "",
+    address:string = ""
   ) {
     localStorage.setItem(
       AUTH_STORAGE.AUTH,
@@ -288,6 +292,8 @@ export class AuthService {
         [AUTH_STORAGE.EMAIL]: email,
         [AUTH_STORAGE.ROLE]: role,
         [AUTH_STORAGE.REFRESHED_AT]: refreshAt.toISOString(),
+        [AUTH_STORAGE.PHONE_NUMBER]: phone,
+        [AUTH_STORAGE.ADDRESS]: address
       })
     );
   }

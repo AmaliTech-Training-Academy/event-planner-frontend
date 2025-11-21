@@ -316,4 +316,9 @@ export class ExplorePageComponent implements OnInit , OnDestroy {
   
 
 
+  protected onPageChange(number_:number){
+   this.currentPage.set(number_ - 1)
+  }
+
+
 }
