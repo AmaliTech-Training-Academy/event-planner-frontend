@@ -4,8 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
 import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
-import { TicketType } from '@app/core/models/events';
-import { EventDetail, TicketInfo, VenueImage, VenueSection } from '../../../../core/models/event.model';
+import { EventDetail, TicketInfo, TicketType, VenueImage, VenueSection } from '@app/core/models/event.model';
 import { EventsServiceService } from '../../../../core/services/events.service';
 import { HelpCardComponent } from '../../../../shared/components/help-card/help-card.component';
 import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
