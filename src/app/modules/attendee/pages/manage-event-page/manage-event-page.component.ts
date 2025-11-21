@@ -128,15 +128,15 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       const urlEventId = params['id'];
 
       if (!urlEventId) {
-        this._router.navigate([APP_ROUTES.MY_EVENTS])
-      }
-      else {
+        this._router.navigate([APP_ROUTES.MY_EVENTS]);
+      } else {
         const eventId = Number(urlEventId);
         this.currentEventId.set(eventId);
 
-        this.getOverview()
+        
+        this.getOverview();
 
-
+       
         const state = this._location.getState() as ManageEventPageState;
         if (state.eventData) {
           this._loadEventFromState(state.eventData, eventId);
@@ -147,22 +147,19 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     });
   }
 
-
   private getOverview() {
-    const eventId = this.currentEventId()
+    const eventId = this.currentEventId();
     if (!eventId) return;
-    this.loading.set(true)
+    this.loading.set(true);
     this._manageService.getOverview(eventId).subscribe({
       next: (response) => {
-        this.eventOverview.set(response)
+        this.eventOverview.set(response);
       },
-      complete : ()=>{
-        this.loading.set(false)
+      complete: () => {
+        this.loading.set(false);
       }
-    })
+    });
   }
-
-
 
   public ngOnDestroy(): void {
     this._toggleBodyScroll(false);
@@ -174,10 +171,12 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this._loadTicketsAndHosts(event);
     this._layoutService.pageTitle.set(event.title);
 
+    
     this.availableEvents.set([
-      { id: eventId, title: event.title || 'Event' }
+      { id: eventId, title: event.title || 'Current Event' }
     ]);
 
+   
     this.inviteForm.patchValue({
       event: eventId,
       role: 'ATTENDEE'
@@ -185,7 +184,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   }
 
   private _loadTicketsAndHosts(event: EventDetails): void {
-
+   
   }
 
   protected setActiveTab(tab: TabType): void {
@@ -196,30 +195,30 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this._router.navigate([APP_ROUTES.MY_EVENTS]);
   }
 
-
   protected onViewAllGuests(): void {
     this.setActiveTab('guests');
   }
 
-  protected onViewTickets(): void {}
+  protected onViewTickets(): void { }
 
   protected onInviteGuest(): void {
     const eventId = this.currentEventId();
-    
+
     if (!eventId) {
       this._notificationService.error('Error: No Event ID found. Please refresh the page.');
       return;
     }
 
+    
     this.inviteForm.reset({
       title: '',
       name: '',
       email: '',
       message: '',
-      event: eventId,
+      event: eventId, 
       role: 'ATTENDEE'
     });
-    
+
     this.showInviteModal.set(true);
     this._toggleBodyScroll(true);
   }
@@ -227,9 +226,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected onCloseInviteModal(): void {
     this.showInviteModal.set(false);
     const eventId = this.currentEventId();
-    this.inviteForm.reset({ 
+    this.inviteForm.reset({
       role: 'ATTENDEE',
-      event: eventId || null 
+      event: eventId || null
     });
     this._toggleBodyScroll(false);
   }
@@ -238,7 +237,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     if (this.inviteForm.valid) {
       this._submitInvitation('SEND');
     } else {
-      this._toggleBodyScroll(false);
+      
+      this.inviteForm.markAllAsTouched();
     }
   }
 
@@ -254,7 +254,12 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     const formData = this.inviteForm.value;
     this.isSubmitting.set(true);
 
-    const selectedEventId = Number(formData.event);
+    
+    let selectedEventId = Number(formData.event);
+    if (!selectedEventId || isNaN(selectedEventId)) {
+      console.warn('Form ID missing, using Signal ID fallback');
+      selectedEventId = this.currentEventId() || 0;
+    }
 
     if (!selectedEventId) {
       this.isSubmitting.set(false);
@@ -269,12 +274,14 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         {
           fullName: formData.name,
           email: formData.email,
-          role: formData.role 
+          role: formData.role
         }
       ],
-      status: status as any,
+      status: status as 'SEND' | 'SAVE',
       message: formData.message || ''
     };
+
+    console.log('Sending Invite Payload:', payload);
 
     this._userBackendService.inviteUsers(payload).subscribe({
       next: () => {
@@ -283,12 +290,14 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        
+        console.error('Invite Error:', err);
+
         if (err.status === 0) {
-           this._notificationService.error('Connection blocked (CORS). Please check your network or use the CORS extension.');
+          this._notificationService.error('Connection blocked (CORS). Please check your network or use the CORS extension.');
         } else {
-           const errorMessage = err.error?.description || err.error?.message || err.statusText || 'Unknown error occurred';
-           this._notificationService.error(`Failed to send: ${errorMessage}`); 
+          
+          const errorMessage = err.error?.description || err.error?.message || err.statusText || 'Unknown error occurred';
+          this._notificationService.error(`Failed to send: ${errorMessage}`);
         }
       }
     });
@@ -297,21 +306,23 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   private _handleSuccess(status: string): void {
     this.showInviteModal.set(false);
     const eventId = this.currentEventId();
-    
-    this.inviteForm.reset({ 
+
+    this.inviteForm.reset({
       role: 'ATTENDEE',
       event: eventId || null
     });
 
     if (status === 'SEND') {
-      this._notificationService.success('');
       
       this.showSuccessModal.set(true);
+      
+      
       setTimeout(() => {
         this.showSuccessModal.set(false);
         this._toggleBodyScroll(false);
       }, 3000);
     } else {
+      
       this._notificationService.success('Invitation draft saved successfully.');
       this._toggleBodyScroll(false);
     }
@@ -342,12 +353,12 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       year: 'numeric',
     });
   }
- protected onEdit(): void {
-    this._router.navigate([APP_ROUTES.CREATE_EVENT],{
-      state : {
-        eventId:this.currentEventId()
-      }
-    })
-  }
 
+  protected onEdit(): void {
+    this._router.navigate([APP_ROUTES.CREATE_EVENT], {
+      state: {
+        eventId: this.currentEventId()
+      }
+    });
+  }
 }

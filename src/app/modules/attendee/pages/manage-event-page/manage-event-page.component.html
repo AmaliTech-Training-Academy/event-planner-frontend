@@ -103,3 +103,19 @@
   </app-modal-wrapper>
   }
 }
+@if (showSuccessModal()) {
+  <div class="success-modal-container" (click)="onCloseSuccessModal()">
+    <div class="success-modal-content" (click)="$event.stopPropagation()">
+      <div class="success-icon-wrapper">
+        <img 
+          ngSrc="/icons/success-mark.png" 
+          width="60" 
+          height="60" 
+          alt="Success" 
+          class="success-icon-img"
+        />
+      </div>
+      <h3 class="success-text">Invite Successfully Sent</h3>
+    </div>
+  </div>
+  }
