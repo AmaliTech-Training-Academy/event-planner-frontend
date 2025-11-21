@@ -1,20 +1,19 @@
+@if (loading() && !showRegistrationModal()) {
+<app-loading-card></app-loading-card>
+}
+@else{
+
 <main class="event-page-content">
   <div class="container">
     <a [routerLink]="routes.EXPLORE" class="back-link">
-      <img  src="icons/Navigation1.png" alt="Back" class="back-icon" aria-hidden="true" />
+      <img src="icons/Navigation1.png" alt="Back" class="back-icon" aria-hidden="true" />
       <span>Back to event</span>
     </a>
 
     @if (eventDetails(); as event) {
     <section class="hero-section" #heroSection>
-      <img
-        (error)="handleImageFallback($event)"
-        [ngSrc]="eventDetails()?.flyerUrl || ''"
-        [alt]="event.title + ' cover image'"
-        class="hero-image"
-        fill
-        priority
-      />
+      <img (error)="handleImageFallback($event)" [ngSrc]="eventDetails()?.flyerUrl || ''"
+        [alt]="event.title + ' cover image'" class="hero-image" fill priority />
 
       @if (eventDetails()?.isPaid) {
       <span class="hero-badge">Paid</span>
@@ -33,12 +32,7 @@
             </button>
           </span>
           <span class="hero-detail-item">
-            <img
-              src="icons/room.png"
-              alt=""
-              class="hero-icon"
-              aria-hidden="true"
-            />
+            <img src="icons/room.png" alt="" class="hero-icon" aria-hidden="true" />
             {{ eventDetails()?.location || "N/A" }}
           </span>
         </div>
@@ -54,7 +48,7 @@
             <h2>About The Event</h2>
             <p>{{ eventDetails()?.description }}</p>
             <div class="attendees-info">
-              <img src="icons/Frame.png"  alt="Attendees" class="attendees-icon" />
+              <img src="icons/Frame.png" alt="Attendees" class="attendees-icon" />
               {{ eventDetails()?.totalAttendees }} Attendees
             </div>
           </section>
@@ -62,18 +56,14 @@
         </div>
 
         @if (eventDetails()?.eventImagesUrl?.length) {
-        <app-venue-image-slider
-          [images]="eventDetails()?.eventImagesUrl || []"
-          (imageClick)="onVenueImageClick($any($event))"
-        ></app-venue-image-slider>
+        <app-venue-image-slider [images]="eventDetails()?.eventImagesUrl || []"
+          (imageClick)="onVenueImageClick($any($event))"></app-venue-image-slider>
         } @if (venueSections().length > 0) {
         <section class="venue-sections">
           <h2>Venue Sections</h2>
           <div class="venue-grid">
             @for (section of venueSections(); track section.id) {
-            <app-venue-section-card
-              [section]="section"
-            ></app-venue-section-card>
+            <app-venue-section-card [section]="section"></app-venue-section-card>
             }
           </div>
         </section>
@@ -83,10 +73,7 @@
       <div class="right-column">
         <div class="ticket-options-container">
           @for (ticket of eventDetails()?.ticketTypes; track ticket.id) {
-          <app-ticket-card
-            [ticketInfo]="ticket"
-            (registerClick)="onRegister(ticket)"
-          ></app-ticket-card>
+          <app-ticket-card [ticketInfo]="ticket" (registerClick)="onRegister(ticket)"></app-ticket-card>
           }
         </div>
 
@@ -97,6 +84,7 @@
     </div>
   </div>
 </main>
+}
 
 @if (showRegistrationModal() && selectedTicket()) {
 <app-registration-modal [currentEvent]="eventDetails()" [selectedTicket]="selectedTicket()"

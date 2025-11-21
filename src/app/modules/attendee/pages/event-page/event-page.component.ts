@@ -1,5 +1,5 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
@@ -11,6 +11,8 @@ import { RegistrationModalComponent } from '../../../../shared/components/regist
 import { TicketCardComponent } from '../../../../shared/components/ticket-card/ticket-card.component';
 import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
+import { Subscription } from 'rxjs';
+import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
 
 @Component({
   selector: 'app-event-page',
@@ -24,14 +26,15 @@ import { VenueSectionCardComponent } from '../../../../shared/components/venue-s
     VenueImageSliderComponent,
     VenueSectionCardComponent,
     RegistrationModalComponent,
-  ],
+    LoadingCardComponent
+],
   templateUrl: './event-page.component.html',
   styleUrl: './event-page.component.scss',
 })
-export class EventPageComponent implements OnInit {
+export class EventPageComponent implements OnInit , OnDestroy {
 
   @ViewChild('heroSection') heroSection!: ElementRef;
-
+ protected loading = signal<boolean>(true)
   protected eventDetails = signal<EventDetail | null>(null);
   protected venueImages = signal<VenueImage[]>([]);
   protected venueSections = signal<VenueSection[]>([]);
@@ -39,6 +42,7 @@ export class EventPageComponent implements OnInit {
   protected helpEmail = signal<string>('support@eventhub.com');
   protected showRegistrationModal = signal(false);
   protected selectedTicket = signal<TicketType | null>(null);
+  protected subscription = new Subscription()
 
   protected selectedHeroImage = signal<string | null>(null);
   protected selectedHeroImageAlt = signal<string | null>(null);
@@ -49,12 +53,25 @@ export class EventPageComponent implements OnInit {
 
   constructor(private readonly eventService: EventsServiceService, private readonly route: ActivatedRoute, private readonly router: Router) { }
 
+
+
+
+  ngOnDestroy(): void {
+      this.subscription.unsubscribe()
+  }
+
   public ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.router.navigate([APP_ROUTES.EXPLORE])
       return
     }
+
+    this.subscription = this.eventService.loading$.subscribe({
+      next: (loading_) => {
+        this.loading.set(loading_)
+      }
+    })
 
     this.eventService.getEvent(id).subscribe({
       next: (value) => {
