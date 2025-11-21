@@ -11,8 +11,6 @@ import { LineSeriesConfig } from '../models/chart.model';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
 
-
-
 export const MOCK_EVENT_DETAILS: EventDetails = {
   id: 'evt123',
   title: 'Tech Innovation Summit 2025',
@@ -21,10 +19,14 @@ export const MOCK_EVENT_DETAILS: EventDetails = {
   startDate: eventStartDate,
   location: 'Silicon Valley Convention Center',
   heroImageUrl: 'images/img.png',
-
+  status:'upcoming',
+  time: '10:00 AM',
   description:
     'Join us for the most anticipated tech event of the year, bringing together industry leaders, innovators, and tech enthusiasts. The Tech Innovation Summit 2025 will showcase cutting-edge technologies, breakthrough innovations, and insights from world-renowned experts.',
   attendeesCount: '5000+',
+  attendees: 0,
+  organizer: 'Acme Corp',
+  
 };
 
 export const MOCK_VENUE_IMAGES: VenueImage[] = [
@@ -90,22 +92,22 @@ export const MOCK_EVENT_TOGGLES: TabToggle[] = [
 export const MOCK_EVENT_TYPE_OPTIONS: EventTypeFilter[] = [
   {
     label: 'All Events',
-    value: 'all'
+    value: 'all',
   },
   {
     label: 'Paid Events',
-    value: 'paid'
+    value: 'paid',
   },
   {
     label: 'Free Events',
-    value: 'free'
+    value: 'free',
   },
 ];
 
 export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
   {
     name: 'This year',
-    color: '#FF6B35', 
+    color: '#FF6B35',
     showArea: true,
     lineStyle: 'solid',
     areaGradient: {

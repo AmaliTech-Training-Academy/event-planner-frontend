@@ -11,6 +11,7 @@ import { NotificationService } from './notification.service';
   providedIn: 'root'
 })
 export class EventsServiceService {
+  
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
@@ -56,7 +57,6 @@ export class EventsServiceService {
       finalize(() => this.setLoading(false))
     )
   }
-
 
   public getEvents({
     sortBy,
@@ -124,9 +124,29 @@ export class EventsServiceService {
   }
 
 
+  public myEvents(page: number = 0) {
+    const params = new URLSearchParams();
+
+    params.append('page', page.toString())
+
+    this.setLoading(true)
+    return this.eventBackendService.getMyEvents(params).pipe(
+      take(1),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
+  public myEventOverview() {
+    this.setLoading(true)
+    return this.eventBackendService.myEventOverview().pipe(
+      take(1),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
 
   private setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);
   }
-
 }

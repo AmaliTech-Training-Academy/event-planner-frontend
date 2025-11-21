@@ -15,6 +15,7 @@ import { RegistrationModalComponent } from '../../../../shared/components/regist
 import { TicketCardComponent } from '../../../../shared/components/ticket-card/ticket-card.component';
 import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
+import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
 @Component({
   selector: 'app-event-page',
   standalone: true,
@@ -104,4 +105,10 @@ export class EventPageComponent implements OnInit {
       });
     }, 100);
   }
+
+  protected handleImageFallback(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = PLACEHOLDER_IMAGE;
+  }
+  
 }

@@ -1,0 +1,30 @@
+<div class="modal-backdrop" (click)="onCancel()"></div>
+
+<div class="modal" (click)="$event.stopPropagation()">
+  
+  <app-modal-header
+    [title]="title"
+    (close)="onCancel()"
+  ></app-modal-header>
+
+  <div class="modal-body-content">
+    <ng-content></ng-content>
+  </div>
+
+  <div class="modal__actions">
+    <app-button 
+        type="secondary" 
+        (onClick)="secondaryAction.emit()">
+      {{ secondaryBtnLabel }}
+    </app-button>
+
+    <app-button
+      type="primary"
+      [disabled]="isSubmitDisabled"
+      (onClick)="primaryAction.emit()"
+    >
+      {{ primaryBtnLabel }}
+    </app-button>
+  </div>
+
+</div>

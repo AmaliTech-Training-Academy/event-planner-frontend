@@ -24,5 +24,7 @@ export const APP_ROUTES = {
   ADMIN_EVENT_DETAILS: '/admin/events/:id',
   ADMIN_ORGANIZERS: '/admin/organizers',
   PAYMENT_SUCCESS: '/app/payment-success',
-  MANAGE_EVENT: '/app/manage-event',
+  ACCEPT_INVITE: '/auth/invitation/accept',
+  MANAGE_EVENT: (id: string) => `/app/manage-event/${id}`,
+
 };
