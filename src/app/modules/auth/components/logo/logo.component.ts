@@ -1,14 +1,13 @@
-import { Component, inject, Signal } from '@angular/core';
-import { PlatformSettingsService } from '@app/core/services/platform-settings.service';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-logo',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './logo.component.html',
-  styleUrl: './logo.component.scss'
+  styleUrls: ['./logo.component.scss'],
 })
 export class LogoComponent {
-  private readonly _platformSettingsService = inject(PlatformSettingsService);
-
-  public readonly platformName: Signal<string> = this._platformSettingsService.platformName;
+  public readonly platformName = 'EventHub';
 }

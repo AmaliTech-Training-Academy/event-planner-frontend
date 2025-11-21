@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { UnAuthenticatedUsersOnlyGuard } from '../../core/guards/unauthenticated-users-only.guard';
 
 export const AUTH_ROUTES: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -8,6 +9,7 @@ export const AUTH_ROUTES: Routes = [
       import('../auth/pages/login-page/login-page.component').then(
         (m) => m.LoginPageComponent
       ),
+    canActivate: [UnAuthenticatedUsersOnlyGuard],
   },
   {
     path: 'signup',
@@ -15,6 +17,7 @@ export const AUTH_ROUTES: Routes = [
       import('../auth/pages/signup-page/signup-page.component').then(
         (m) => m.SignupPageComponent
       ),
+    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
   },
   {
     path: 'verify-email',
@@ -22,6 +25,7 @@ export const AUTH_ROUTES: Routes = [
       import(
         '../auth/pages/verify-email-page/verify-email-page.component'
       ).then((m) => m.VerifyEmailPageComponent),
+    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
   },
   {
     path: 'forgot-password',
@@ -29,6 +33,7 @@ export const AUTH_ROUTES: Routes = [
       import(
         '../auth/pages/forgot-password-page/forgot-password-page.component'
       ).then((m) => m.ForgotPasswordComponent),
+    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
   },
   {
     path: 'admin',
@@ -43,5 +48,14 @@ export const AUTH_ROUTES: Routes = [
       import('../auth/pages/reset-password/reset-password.component').then(
         (m) => m.ResetPasswordComponent
       ),
+    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
+  },
+  {
+    path: 'invitation/accept',
+    loadComponent: () =>
+      import(
+        '../auth/pages/accept-invite-page/accept-invite-page.component'
+      ).then((m) => m.AcceptInvitePageComponent),
+    // NO GUARD - Allow anyone to access this route
   },
 ];

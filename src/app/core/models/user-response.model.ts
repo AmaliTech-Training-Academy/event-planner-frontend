@@ -42,3 +42,35 @@ export interface UserSearchResponse {
   description: string | null;
   data: PageableResponse<User>;
 }
+// In your models/index.ts or models/user.model.ts
+
+export interface UsersResponse {
+  success: boolean;
+  message: string;
+  data: {
+    users: {
+      content: User[];
+      totalPages: number;
+      totalElements: number;
+      number: number;
+    };
+    totalUsers?: number;
+    totalOrganizers?: number;
+    totalAttendees?: number;
+    totalDeactivatedUsers?: number;
+  };
+}
+
+export interface UserResponse {
+  success: boolean;
+  message: string;
+  data: User;
+}
+
+export interface InviteUsersResponse {
+  success: boolean;
+  message: string;
+  data: {
+    invitationsSent: number;
+  };
+}

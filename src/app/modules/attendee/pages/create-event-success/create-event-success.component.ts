@@ -38,7 +38,7 @@ export class CreateEventSuccessComponent {
 
   protected manageEvent() {
     const id = `${this.createdEvent?.id}`
-    this.router.navigate([APP_ROUTES.MY_EVENT(id)])
+    this.router.navigate([APP_ROUTES.MANAGE_EVENT(id)])
   }
 
 }

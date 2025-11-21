@@ -9,36 +9,44 @@
     <div class="charts-row charts-row--main">
       <div class="chart-card chart-card--large">
         <div class="chart-card__header">
-          <div class="chart-tabs">
-            <app-button type="plain"
-              [extraClass]="['chart-tab', activeChartTab() === 'users' ? 'chart-tab--active' : '']"
-              (onClick)="switchChartTab('users')">
-              Total Users
-            </app-button>
+          <div class="chart-controls">
+            <div class="chart-tabs">
+              <button [class]="['chart-tab', activeChartTab() === 'users' ? 'chart-tab--active' : '']"
+                (click)="switchChartTab('users')">
+                Total Users
+              </button>
 
-            <app-button type="plain"
-              [extraClass]="['chart-tab', activeChartTab() === 'events' ? 'chart-tab--active' : '']"
-              (onClick)="switchChartTab('events')">
-              Total Events
-            </app-button>
+              <button [class]="['chart-tab', activeChartTab() === 'events' ? 'chart-tab--active' : '']"
+                (click)="switchChartTab('events')">
+                Total Events
+              </button>
+            </div>
 
-          </div>
-          <div class="chart-legend">
-            <span class="legend-item">
-              <span class="legend-dot legend-dot--orange"></span>
-              This year
-            </span>
-            <span class="legend-item">
-              <span class="legend-dot legend-dot--gray"></span>
-              Last year
-            </span>
+            <div class="chart-separator"></div>
+
+            <div class="chart-legend">
+              <span class="legend-item">
+                <span class="legend-dot legend-dot--orange"></span>
+                This year
+              </span>
+              <span class="legend-item">
+                <span class="legend-dot legend-dot--gray"></span>
+                Last year
+              </span>
+            </div>
           </div>
         </div>
         <div class="chart-card__body">
           @if (activeChartTab() === 'users') {
-          <app-line-chart [thisYearData]="totalUsersData()" [lastYearData]="[]" />
+          <app-line-chart 
+            [thisYearData]="totalUsersThisYear()" 
+            [lastYearData]="totalUsersLastYear()" 
+            [showLegend]="false" />
           } @else {
-          <app-line-chart [thisYearData]="totalEventsData()" [lastYearData]="[]" />
+          <app-line-chart 
+            [thisYearData]="totalEventsThisYear()" 
+            [lastYearData]="totalEventsLastYear()" 
+            [showLegend]="false" />
           }
         </div>
       </div>

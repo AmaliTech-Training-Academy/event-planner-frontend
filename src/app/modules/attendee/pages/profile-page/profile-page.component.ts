@@ -1,127 +1,183 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-
-
-
+import { AuthService } from '@app/core/services/auth.service';
+import { NotificationService } from '@app/core/services/notification.service';
+import { OtpBodyData } from '@app/core/models/auth-response.model';
+import { UpdateUserPayload } from '@app/core/services/backend/user-backend.service';
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     RouterModule,
     NgOptimizedImage,
     InputComponent,
     ButtonComponent,
+    ReactiveFormsModule
   ],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
 })
 export class ProfilePageComponent implements OnInit {
   private readonly router = inject(Router);
-  private readonly http = inject(HttpClient);
-
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly notificationnService = inject(NotificationService)
+  private currentUser: OtpBodyData | null = null;
   protected readonly routes = APP_ROUTES;
-  protected fullName = signal('Andrew');
-  protected email = signal('user@eventhub.com');
-  protected phone = signal('+233 345 6785 423');
-  protected address = signal('123 Main Street, City, State, 12345');
-  protected avatarUrl = signal('images/profile.png'); 
+  protected isLoggingOut = signal(false);
+  protected avatarUrl = signal('icons/profile-avata.png');
+
+  protected profileForm!: FormGroup;
+
   protected isBasicInfoDisabled = signal(true);
   protected isContactInfoDisabled = signal(true);
 
   protected basicInfoButtonText = computed(() =>
     this.isBasicInfoDisabled() ? 'Edit' : 'Save'
   );
+
   protected contactInfoButtonText = computed(() =>
     this.isContactInfoDisabled() ? 'Edit' : 'Save'
   );
 
- 
-  protected isSavingBasicInfo = signal(false);
-  protected isSavingContactInfo = signal(false);
-  protected isLoggingOut = signal(false);
+  protected get basicInfoGroup() {
+    return this.profileForm.get('basicInfo');
+  }
+  protected get contactInfoGroup() {
+    return this.profileForm.get('contactInfo');
+  }
 
   public ngOnInit(): void {
-    this.loadUserProfile();
+    this.currentUser = this.authService.currentUser();
+
+    this.profileForm = this.fb.group({
+      basicInfo: this.fb.group({
+        fullName: [this.currentUser?.fullName, [Validators.required]],
+        email: [this.currentUser?.email, [Validators.email, Validators.required]],
+      }),
+      contactInfo: this.fb.group({
+        phone: ['', [Validators.required]],
+        address: ['', [Validators.required]],
+      }),
+    });
+
+    this.disableBasicInfo();
+    this.disableContactInfo();
   }
 
- 
-  private loadUserProfile(): void {
-    // TODO: Implement API call to fetch user profile
+  protected hasError(controlName: string, group: 'basicInfo' | 'contactInfo'): string {
+    const control = this.profileForm.get(`${group}.${controlName}`);
+    if (!control || !control.touched || !control.invalid) return '';
+
+    if (control.errors?.['required']) return 'This field is required';
+    if (control.errors?.['email']) return 'Enter a valid email';
+
+    return '';
   }
 
-  
+
+  private disableBasicInfo() {
+    this.basicInfoGroup?.disable();
+    this.isBasicInfoDisabled.set(true);
+  }
+  private disableContactInfo() {
+    this.contactInfoGroup?.disable();
+    this.isContactInfoDisabled.set(true);
+  }
+  private enableBasicInfo() {
+    this.basicInfoGroup?.enable();
+    this.isBasicInfoDisabled.set(false);
+  }
+  private enableContactInfo() {
+    this.contactInfoGroup?.enable();
+    this.isContactInfoDisabled.set(false);
+  }
+
   protected onEditBasicInfo(): void {
-    if (!this.isBasicInfoDisabled()) {
-    
+    if (this.basicInfoGroup?.disabled) {
+      this.enableBasicInfo();
+    } else {
       this.saveBasicInfo();
-    } else {
-    
-      this.isBasicInfoDisabled.set(false);
     }
   }
 
-  
-  private saveBasicInfo(): void {
-    this.isSavingBasicInfo.set(true);
-
-    // TODO: Implement API call to update basic info
-    
-    setTimeout(() => {
-      this.isBasicInfoDisabled.set(true);
-      this.isSavingBasicInfo.set(false);
-    }, 500);
-  }
-
-  
   protected onEditContactInfo(): void {
-    if (!this.isContactInfoDisabled()) {
-      
-      this.saveContactInfo();
+    if (this.contactInfoGroup?.disabled) {
+      this.enableContactInfo();
     } else {
-     
-      this.isContactInfoDisabled.set(false);
+      this.saveContactInfo();
     }
+  }
+
+  private saveBasicInfo(): void {
+    if (this.basicInfoGroup?.valid) {
+      const basicInfo = this.basicInfoGroup?.value;
+      this.updateProfile({ fullName: basicInfo?.fullName, email: basicInfo?.email })
+      this.disableBasicInfo();
+      return
+    }
+    this.notificationnService.error('Please fill in all required fields.');
+  }
+
+
+  private updateFormValues() {
+    const user = this.authService.currentUser();
+    if (!user) return;
+
+    this.profileForm.patchValue({
+      basicInfo: {
+        fullName: user.fullName,
+        email: user.email,
+      },
+      contactInfo: {
+        phone: user.phone || '',
+        address: user.address || '',
+      }
+    });
+  }
+
+
+  private updateProfile(data: UpdateUserPayload) {
+    this.authService.updateUser(`${this.currentUser?.id}`, data).subscribe({
+      next: () => {
+        this.notificationnService.success(`Profile updated successfully`)
+        this.updateFormValues()
+      },
+      error: () => {
+        this.updateFormValues()
+      }
+    })
   }
 
   private saveContactInfo(): void {
-    this.isSavingContactInfo.set(true);
-
-    // TODO: Implement API call to update contact info
-    
-    setTimeout(() => {
-      this.isContactInfoDisabled.set(true);
-      this.isSavingContactInfo.set(false);
-    }, 500);
+    if (this.contactInfoGroup?.valid) {
+      const contactInfo = this.contactInfoGroup?.value;
+      this.updateProfile({ fullName: contactInfo?.phone, email: contactInfo?.address })
+      this.disableContactInfo();
+      return
+    }
+    this.notificationnService.error('Please fill in all required fields.');
   }
 
- 
   protected onLogout(): void {
     this.isLoggingOut.set(true);
-
-    // TODO: Implement proper logout flow with AuthService
-    
-    
-
-    setTimeout(() => {
-      this.isLoggingOut.set(false);
-      this.router.navigate([this.routes.LOGIN]);
-    }, 300);
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate([this.routes.LOGIN]),
+      error: () => this.isLoggingOut.set(false)
+    });
   }
 
   protected onUploadAvatar(): void {
     // TODO: Implement file upload dialog
-   }
+  }
 
-  
   private uploadAvatarToAPI(file: File): void {
     // TODO: Implement avatar upload
   }

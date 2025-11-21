@@ -1,0 +1,190 @@
+<div class="event-details-page__content">
+  <div class="event-details-page__status-section">
+    <div [class]="getStatusClass(overview()?.eventSummary?.eventStatus || '')">
+      Event Status : {{ overview()?.eventSummary?.eventStatus || "N/A" }}
+    </div>
+  </div>
+
+  <div class="manage-event-layout">
+    <div class="main-content">
+      <div class="stat-cards-grid">
+        @for (card of statCards(); track card.title) {
+        <app-stat-card [data]="card" />
+        }
+      </div>
+
+      <div class="cards-grid">
+        <div class="simple-card">
+          <div class="simple-card__header">
+            <div class="simple-card__header-with-icon">
+              <div class="simple-card__label">Event Summary</div>
+            </div>
+            <!-- <app-button type="action" extraClass="icon-button-small">
+                <img ngSrc="icons/edit-icon.png" alt="Edit" width="16" height="16" />
+              </app-button> -->
+          </div>
+          <div class="event-summary-list">
+            <div class="summary-item">
+              <img
+                ngSrc="/icons/user-icon.png"
+                alt="Organizer"
+                class="summary-icon"
+                width="20"
+                height="20"
+              />
+              <span class="summary-label">Organizer:</span>
+              <span class="summary-value">{{
+                overview()?.eventSummary?.organizer
+              }}</span>
+            </div>
+            <div class="summary-item">
+              <img
+                ngSrc="/icons/calender-icon.png"
+                alt="Date"
+                class="summary-icon"
+                width="20"
+                height="20"
+              />
+              <span class="summary-label">Date:</span>
+              <span class="summary-value">{{
+                overview()?.eventSummary?.startTime | date
+              }}</span>
+            </div>
+            <div class="summary-item">
+              <img
+                ngSrc="/icons/clock.svg"
+                alt="Time"
+                class="summary-icon"
+                width="20"
+                height="20"
+              />
+              <span class="summary-label">Time:</span>
+              <span class="summary-value">{{
+                overview()?.eventSummary?.startTime | date : "hh:mm"
+              }}</span>
+            </div>
+            <div class="summary-item">
+              <img
+                ngSrc="/icons/map.png"
+                alt="Location"
+                class="summary-icon"
+                width="20"
+                height="20"
+              />
+              <span class="summary-label">Location:</span>
+              <span class="summary-value">{{
+                overview()?.eventSummary?.location
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="simple-card">
+          <div class="simple-card__label">Feedback</div>
+          <div class="simple-card__content simple-card__content--center">
+            <div class="simple-card__icon-large">
+              <img
+                ngSrc="/images/feedback.png"
+                alt="No feedback"
+                width="32"
+                height="32"
+              />
+            </div>
+            <div class="simple-card__text-center">
+              <div class="simple-card__value-small">
+                No Feedback Collected Yet
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="simple-card">
+          <div class="simple-card__label">Tickets</div>
+          <div class="tickets-table">
+            @for (ticket of overview()?.ticketTypes; track ticket.name) {
+            <div class="tickets-table__row">
+              <span class="tickets-table__cell-box">{{ ticket.name }}</span>
+              <span class="tickets-table__cell-box"
+                >{{ ticket.soldTickets }} Sold</span
+              >
+              <span class="tickets-table__cell-box"
+                >{{ ticket.remainingTickets }} left</span
+              >
+            </div>
+            }
+          </div>
+          @if ((overview()?.ticketTypes||[]).length < 1) {
+          <div class="empty-card">
+            <div class="icon-container">
+              <img src="icons/ticket.svg" alt="" />
+            </div>
+            <p>No tickets on sale</p>
+          </div>
+          }
+        </div>
+
+        <div class="simple-card">
+          <div class="simple-card__label">Guests</div>
+          <div class="simple-card__content simple-card__content--center">
+            <div class="simple-card__icon-large">
+              <img
+                ngSrc="/icons/users-icon.png"
+                alt="Guests"
+                width="32"
+                height="32"
+              />
+            </div>
+            <div class="simple-card__text-center">
+              @if (overview()?.totalInvitedGuests) {
+              <p class="simple-card__value-count">
+                {{ overview()?.totalInvitedGuests }} Guests
+              </p>
+              }@else {
+              <div class="simple-card__value-small">No Guest Added</div>
+              }
+              <a
+                href="#"
+                class="link-text"
+                (click)="onViewAllGuests(); $event.preventDefault()"
+              >
+                View all Guests
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hosts-section-below">
+      <h3 class="hosts-section-below__title">Hosts</h3>
+      <p class="hosts-section-below__subtitle">
+        Add co-hosts, attendees, and venue staffs
+      </p>
+
+      <div class="hosts-list">
+        @for (host of overview()?.eventHosts; track host.email) {
+        <div class="host-item">
+          <div class="host-item__avatar">
+            <div class="host-item__avatar-placeholder">
+              <img
+                ngSrc="/icons/user-icon.png"
+                alt="User"
+                width="20"
+                height="20"
+              />
+            </div>
+          </div>
+          <div class="host-item__info">
+            <p class="host-item__name">{{ host.fullName }}</p>
+            <div class="host-item__email-row">
+              <p class="host-item__email">{{ host.email }}</p>
+            </div>
+          </div>
+        </div>
+        } @if ((overview()?.eventHosts || []).length < 1) {
+        <p class="no-host">No available host found for the event</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

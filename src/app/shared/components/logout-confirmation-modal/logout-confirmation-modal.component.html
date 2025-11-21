@@ -1,0 +1,29 @@
+@if (isOpen()) {
+<div
+  class="modal-overlay"
+  (click)="onBackdropClick($event)"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="logout-modal-title"
+>
+  <div class="modal-content">
+    <app-modal-header
+      title="Are You Sure You Want to Logout?"
+      (close)="onCancel()"
+    ></app-modal-header>
+
+    <div class="modal-actions">
+      <app-button
+        type="secondary"
+        class="btn btn--secondary"
+        (click)="onCancel()"
+      >
+        Go Back
+      </app-button>
+      <app-button type="primary" class="btn btn--logout" (click)="onConfirm()">
+        Logout
+      </app-button>
+    </div>
+  </div>
+</div>
+}

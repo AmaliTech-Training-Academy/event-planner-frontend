@@ -4,7 +4,7 @@
             [flyerPreview]="flyerPreview"></app-upload-event-flyer>
         <div class="title-container">
             <section>
-                <input type="text" [formControlName]="EVENT_FORM_FIELDS.TITLE" placeholder="Add Event Title"
+                <input autofocus type="text" [formControlName]="EVENT_FORM_FIELDS.TITLE" placeholder="Add Event Title"
                     class="title">
                 <app-form-error [message]="getError(form.get(EVENT_FORM_FIELDS.TITLE))"></app-form-error>
             </section>

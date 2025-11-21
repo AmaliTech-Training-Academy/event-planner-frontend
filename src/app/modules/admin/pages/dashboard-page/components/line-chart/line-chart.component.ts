@@ -62,13 +62,13 @@ const DEFAULT_X_AXIS: Omit<XAXisComponentOption, 'data'> = {
 
 const DEFAULT_Y_AXIS: YAXisComponentOption = {
   type: 'value',
-  min: 0, 
-  max: 30000, 
+  min: 0,
+  max: 30000,
   interval: 10000,
   axisLine: { show: false },
   axisTick: { show: false },
   splitLine: {
-    lineStyle: { color: '#F3F4F6', type: 'solid' },
+    lineStyle: { color: '#F3F4F6', type: 'dashed' },
   },
   axisLabel: {
     color: '#6B7280',
@@ -141,18 +141,18 @@ export class LineChartComponent implements OnInit, OnChanges {
 
       title: this.chartTitle
         ? {
-            text: this.chartTitle,
-            left: 'left',
-            textStyle: { color: '#374151', fontSize: 16, fontWeight: 600 },
-          }
+          text: this.chartTitle,
+          left: 'left',
+          textStyle: { color: '#374151', fontSize: 16, fontWeight: 600 },
+        }
         : undefined,
       grid: GRID_CONFIG,
       legend: this.showLegend
         ? {
-            bottom: 0,
-            left: 'center',
-            textStyle: { color: '#6B7280' },
-          }
+          bottom: 0,
+          left: 'center',
+          textStyle: { color: '#6B7280' },
+        }
         : undefined,
       xAxis: {
         ...DEFAULT_X_AXIS,
@@ -177,12 +177,12 @@ export class LineChartComponent implements OnInit, OnChanges {
       legacySeries.push({
         name: 'This year',
         data: this.thisYearData,
-        color: '#FF6B35',
+        color: '#ff5a00',
         showArea: true,
         lineStyle: 'solid',
         areaGradient: {
-          start: 'rgba(255, 107, 53, 0.2)',
-          end: 'rgba(255, 107, 53, 0.05)',
+          start: 'rgba(255, 90, 0, 0.2)',
+          end: 'rgba(255, 90, 0, 0.05)',
         },
       });
     }
@@ -191,7 +191,7 @@ export class LineChartComponent implements OnInit, OnChanges {
       legacySeries.push({
         name: 'Last year',
         data: this.lastYearData,
-        color: '#6B7280',
+        color: '#7c7c7c',
         showArea: false,
         lineStyle: 'dashed',
       });

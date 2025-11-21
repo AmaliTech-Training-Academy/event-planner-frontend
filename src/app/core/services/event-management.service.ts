@@ -81,7 +81,7 @@ export class EventManagementService {
     );
   }
 
-  // FIXED: Properly implement searchEvents method
+  // FIXED: Search events without clearing dashboard context
   public searchEvents(
     keyword: string,
     page = 0,
@@ -116,7 +116,7 @@ export class EventManagementService {
           contentLength: data.content.length,
         });
         this._searchResults.next(data);
-        // Add to cache
+        // DO NOT clear _dashboardData here - keep dashboard context intact
         this._addToCache(cacheKey, data);
       }),
       catchError((err) => {
@@ -134,6 +134,8 @@ export class EventManagementService {
   public clearSearch(): void {
     console.log('🧹 Clearing search results');
     this._searchResults.next(null);
+    // Optionally reload dashboard data to refresh the events list
+    // this.loadDashboardData(0, 10).subscribe();
   }
 
   // Clear entire cache (useful for manual refresh)

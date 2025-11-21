@@ -43,6 +43,7 @@
       >
         <div class="image-wrapper">
           <img
+          (error)="handleImageFallback($event)"
             [ngSrc]="image"
             [alt]="'location image '+$index+1"
             class="venue-image"
@@ -52,12 +53,12 @@
           
           @if (image) {
           <div class="image-caption">
-            <span>{{ image }}</span>
+          
           </div>
           }
           
           <div class="click-overlay">
-            <span class="view-full-text">Click to view full size</span>
+            <span class="view-full-text">View full size</span>
           </div>
         </div>
       </div>

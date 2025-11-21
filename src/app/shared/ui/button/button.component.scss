@@ -238,6 +238,10 @@ button.app-button.back-button {
   align-items: center;
   gap: $spacing-1;
 
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+  
 }
 
 button.app-button--success {
@@ -306,4 +310,11 @@ button.app-button.tab {
   position: relative;
   z-index: 25;
 
+}
+button.app-button.admin-notifications{
+  padding:0 !important;
+  &:hover{
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
 }

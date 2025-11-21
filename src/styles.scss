@@ -30,21 +30,16 @@ body {
 
 }
 
-// Hide browser's default password reveal icon to prevent duplicate toggles
-input[type="password"] {
+// Hide default browser password reveal icons
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
 
-  // Hide Edge/IE password reveal icon
-  &::-ms-reveal,
-  &::-ms-clear {
-    display: none;
-  }
-
-  // Hide Chrome/Safari password reveal icon  
-  &::-webkit-contacts-auto-fill-button,
-  &::-webkit-credentials-auto-fill-button {
-    visibility: hidden;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-  }
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-contacts-auto-fill-button {
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
 }

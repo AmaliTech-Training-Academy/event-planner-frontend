@@ -65,14 +65,18 @@ export class DashboardPageComponent implements OnInit {
   private readonly _dashboardStatsService = inject(DashboardStatsBackendService);
 
   private readonly _staticCards: DashboardCard[] = [];
+  private readonly _monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   protected readonly dashboardCards = signal<DashboardCard[]>([]);
 
   // ------------------------------------------------------------------------
-  // TIME SERIES DATA (from API)
+  // TIME SERIES DATA (from API) - Separated by year
   // ------------------------------------------------------------------------
-  protected readonly totalUsersData = signal<TimeSeriesDataPoint[]>([]);
-  protected readonly totalEventsData = signal<TimeSeriesDataPoint[]>([]);
+  protected readonly totalUsersThisYear = signal<TimeSeriesDataPoint[]>([]);
+  protected readonly totalUsersLastYear = signal<TimeSeriesDataPoint[]>([]);
+  protected readonly totalEventsThisYear = signal<TimeSeriesDataPoint[]>([]);
+  protected readonly totalEventsLastYear = signal<TimeSeriesDataPoint[]>([]);
+  
   protected readonly isLoadingUsers = signal(false);
   protected readonly isLoadingEvents = signal(false);
 
@@ -110,13 +114,12 @@ export class DashboardPageComponent implements OnInit {
 
     const other = cards.find((c) => c.title === 'Other Users')?.count || 0;
 
-    // Total ACTIVE users only
     const totalActive = organizers + coOrganizers + attendees + other;
 
     if (totalActive === 0) return [];
 
     const pct = (value: number) =>
-      Number(((value / totalActive) * 100).toFixed(1)); // <-- one decimal place
+      Number(((value / totalActive) * 100).toFixed(1));
 
     return [
       {
@@ -169,16 +172,18 @@ export class DashboardPageComponent implements OnInit {
     this._dashboardStatsService.getRegistrationGraphData().subscribe({
       next: (response) => {
         if (response.data?.monthlyData) {
-          const transformedData = this._transformRegistrationData(
+          const { thisYear, lastYear } = this._transformRegistrationData(
             response.data.monthlyData
           );
-          this.totalUsersData.set(transformedData);
+          this.totalUsersThisYear.set(thisYear);
+          this.totalUsersLastYear.set(lastYear);
         }
         this.isLoadingUsers.set(false);
       },
       error: (error) => {
         console.error('Error fetching registration data:', error);
-        this.totalUsersData.set([]);
+        this.totalUsersThisYear.set(this._createEmptyMonthData());
+        this.totalUsersLastYear.set(this._createEmptyMonthData());
         this.isLoadingUsers.set(false);
       },
     });
@@ -192,16 +197,18 @@ export class DashboardPageComponent implements OnInit {
     this._dashboardStatsService.getEventGraphData().subscribe({
       next: (response) => {
         if (response.data?.monthlyData) {
-          const transformedData = this._transformEventData(
+          const { thisYear, lastYear } = this._transformEventData(
             response.data.monthlyData
           );
-          this.totalEventsData.set(transformedData);
+          this.totalEventsThisYear.set(thisYear);
+          this.totalEventsLastYear.set(lastYear);
         }
         this.isLoadingEvents.set(false);
       },
       error: (error) => {
         console.error('Error fetching event data:', error);
-        this.totalEventsData.set([]);
+        this.totalEventsThisYear.set(this._createEmptyMonthData());
+        this.totalEventsLastYear.set(this._createEmptyMonthData());
         this.isLoadingEvents.set(false);
       },
     });
@@ -209,55 +216,88 @@ export class DashboardPageComponent implements OnInit {
 
   /**
    * Transforms registration API response to chart format
+   * Separates this year and last year data with all 12 months
    */
   private _transformRegistrationData(
     monthlyData: RegistrationMonthlyDataPoint[][]
-  ): TimeSeriesDataPoint[] {
-    if (!monthlyData || monthlyData.length === 0) return [];
+  ): { thisYear: TimeSeriesDataPoint[]; lastYear: TimeSeriesDataPoint[] } {
+    // Initialize all 12 months with 0 values
+    const thisYearData = this._createEmptyMonthData();
+    const lastYearData = this._createEmptyMonthData();
 
-    // Flatten all years data and transform
-    const allData = monthlyData.flat();
-    return allData.map((item) => ({
-      month: this._getMonthName(item.month),
-      value: item.totalRegistrations,
-    }));
+    if (!monthlyData || monthlyData.length === 0) {
+      return { thisYear: thisYearData, lastYear: lastYearData };
+    }
+
+    // Process this year's data (monthlyData[0])
+    if (monthlyData[0] && Array.isArray(monthlyData[0])) {
+      monthlyData[0].forEach((item) => {
+        const monthIndex = item.month - 1; // Convert 1-12 to 0-11
+        if (monthIndex >= 0 && monthIndex < 12) {
+          thisYearData[monthIndex].value = item.totalRegistrations;
+        }
+      });
+    }
+
+    // Process last year's data (monthlyData[1]) if it exists
+    if (monthlyData[1] && Array.isArray(monthlyData[1])) {
+      monthlyData[1].forEach((item) => {
+        const monthIndex = item.month - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          lastYearData[monthIndex].value = item.totalRegistrations;
+        }
+      });
+    }
+
+    return { thisYear: thisYearData, lastYear: lastYearData };
   }
 
   /**
    * Transforms event API response to chart format
+   * Separates this year and last year data with all 12 months
    */
   private _transformEventData(
     monthlyData: EventMonthlyDataPoint[][]
-  ): TimeSeriesDataPoint[] {
-    if (!monthlyData || monthlyData.length === 0) return [];
+  ): { thisYear: TimeSeriesDataPoint[]; lastYear: TimeSeriesDataPoint[] } {
+    // Initialize all 12 months with 0 values
+    const thisYearData = this._createEmptyMonthData();
+    const lastYearData = this._createEmptyMonthData();
 
-    // Flatten all years data and transform
-    const allData = monthlyData.flat();
-    return allData.map((item) => ({
-      month: this._getMonthName(item.month),
-      value: item.totalEventsCreated,
-    }));
+    if (!monthlyData || monthlyData.length === 0) {
+      return { thisYear: thisYearData, lastYear: lastYearData };
+    }
+
+    // Process this year's data (monthlyData[0])
+    if (monthlyData[0] && Array.isArray(monthlyData[0])) {
+      monthlyData[0].forEach((item) => {
+        const monthIndex = item.month - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          thisYearData[monthIndex].value = item.totalEventsCreated;
+        }
+      });
+    }
+
+    // Process last year's data (monthlyData[1]) if it exists
+    if (monthlyData[1] && Array.isArray(monthlyData[1])) {
+      monthlyData[1].forEach((item) => {
+        const monthIndex = item.month - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          lastYearData[monthIndex].value = item.totalEventsCreated;
+        }
+      });
+    }
+
+    return { thisYear: thisYearData, lastYear: lastYearData };
   }
 
   /**
-   * Converts month number to abbreviated month name
+   * Creates an empty dataset with all 12 months initialized to 0
    */
-  private _getMonthName(month: number): string {
-    const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return monthNames[month - 1] || '';
+  private _createEmptyMonthData(): TimeSeriesDataPoint[] {
+    return this._monthNames.map((month) => ({
+      month,
+      value: 0,
+    }));
   }
 
   protected switchChartTab(tab: 'users' | 'events'): void {
