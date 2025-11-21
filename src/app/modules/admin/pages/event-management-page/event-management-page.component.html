@@ -1,38 +1,77 @@
 <!-- event-management-page.component.html -->
 <div class="event-management-page">
-  <app-event-statistics [statistics]="eventStatistics()" />
+  <!-- Statistics Section - only shows loading on initial load -->
+  @if (isLoadingDashboard()) {
+    <div class="event-management-page__statistics-skeleton">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+  } @else {
+    <app-event-statistics [statistics]="eventStatistics()" />
+  }
 
   <div class="event-management-page__grid">
-    <app-top-organizers
-      [organizers]="topOrganizers()"
-      (viewAllClicked)="onViewAllOrganizers()"
-      (organizerClicked)="onOrganizerClick($event)"
-    />
+    <!-- Top Organizers - only shows loading on initial load -->
+    @if (isLoadingDashboard()) {
+      <div class="event-management-page__organizers-skeleton">
+        <!-- skeleton content -->
+      </div>
+    } @else {
+      <app-top-organizers
+        [organizers]="topOrganizers()"
+        (viewAllClicked)="onViewAllOrganizers()"
+        (organizerClicked)="onOrganizerClick($event)"
+      />
+    }
 
-    <app-upcoming-events
-      [events]="upcomingEvents()"
-      (viewAllClicked)="onViewAllEvents()"
-      (eventClicked)="onEventClick($event)"
-    />
+    <!-- Upcoming Events - only shows loading on initial load -->
+    @if (isLoadingDashboard()) {
+      <div class="event-management-page__events-skeleton">
+        <!-- skeleton content -->
+      </div>
+    } @else {
+      <app-upcoming-events
+        [events]="upcomingEvents()"
+        (viewAllClicked)="onViewAllEvents()"
+        (eventClicked)="onEventClick($event)"
+      />
+    }
   </div>
 
-  <!-- Events Table Section -->
+  <!-- Events Table Section - uses separate loading state -->
   <section class="event-management-page__table">
     <app-data-table
-      title="Events"
+      tableTitle="Events"
       searchPlaceholder="Search events or organizers..."
       [data]="eventTableData()"
       [columns]="eventTableColumns"
       [actions]="eventTableActions"
       [filters]="eventTableFilters"
+      [loading]="isLoadingTable()"
       [searchable]="true"
       [expandable]="false"
       [showAvatar]="false"
       [showCheckboxes]="true"
       [showExport]="true"
       [showActionLabels]="true"
+      [showFilters]="true"
       [primaryAction]="eventTablePrimaryAction"
+      [serverSidePagination]="true"
       [itemsPerPage]="10"
+      [totalItems]="totalElements()"
+      (searchChange)="onSearch($event)"
+      (filterChange)="onFilterChange($event)"
+      (pageChange)="onPageChange($event)"
     />
   </section>
+
+  @if (error()) {
+    <div class="event-management-page__error">
+      {{ error() }}
+      <button (click)="refreshData()">Retry</button>
+    </div>
+  }
 </div>

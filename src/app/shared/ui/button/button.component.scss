@@ -239,9 +239,9 @@ button.app-button.filter-reset {
   height: 16px;
   min-width: 16px;
   min-height: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   border-radius: 30%;
   background-color: transparent !important;
   padding: 0;
@@ -266,7 +266,18 @@ button.app-button.logout-button {
  color:#dc2626 !important ;
 }
 
+button.app-button.view-action-btn {
+  display: flex;
+  align-items: center;
+  gap: .7em;
+  border: none;
+  padding: 0;
+  cursor: pointer;  
+}
 
-button.app-button.tab-button{
+button.app-button.tab{
+  padding: .5rem !important;
+  position: relative;
+  z-index: 25;
 
 }

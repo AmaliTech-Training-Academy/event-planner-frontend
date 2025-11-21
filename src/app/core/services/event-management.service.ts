@@ -8,148 +8,189 @@ import {
   tap,
   take,
   map,
+  throwError,
+  of,
 } from 'rxjs';
 import { ErrorHandlerService } from './error-handler.service';
+import { EventBackendService } from './backend/event-backend.service';
 import {
   DashboardData,
-  Event,
-  EventDetailResponse,
-  EventStats,
-  PaginatedResponse,
-} from '../models/event.model';
-import { EventBackendService } from './backend/event-backend.service';
+  EventDetails,
+  EventManagement,
+  mapEventDetailResponseToEventDetails,
+} from '../models/events';
+import { PaginatedResponse } from '../models/shared';
+
+interface SearchCache {
+  [key: string]: {
+    data: PaginatedResponse<EventManagement>;
+    timestamp: number;
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class EventManagementService {
-  private readonly _loadingStateSubject = new BehaviorSubject<boolean>(false);
-  private readonly _dashboardData$ = new BehaviorSubject<DashboardData | null>(
+  private readonly _loading = new BehaviorSubject(false);
+  private readonly _dashboardData = new BehaviorSubject<DashboardData | null>(
     null
   );
-  private readonly _currentEvent$ =
-    new BehaviorSubject<EventDetailResponse | null>(null);
-  private readonly _events$ = new BehaviorSubject<Event[]>([]);
+  private readonly _paginatedEvents =
+    new BehaviorSubject<PaginatedResponse<EventManagement> | null>(null);
+  private readonly _selectedEvent = new BehaviorSubject<EventDetails | null>(
+    null
+  );
+  private readonly _searchResults =
+    new BehaviorSubject<PaginatedResponse<EventManagement> | null>(null);
 
-  public readonly loading$ = this._loadingStateSubject.asObservable();
-  public readonly dashboardData$ = this._dashboardData$.asObservable();
-  public readonly currentEvent$ = this._currentEvent$.asObservable();
-  public readonly events$ = this._events$.asObservable();
+  // Cache configuration
+  private readonly _searchCache: SearchCache = {};
+  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+  public readonly selectedEvent$ = this._selectedEvent.asObservable();
+  public readonly loading$ = this._loading.asObservable();
+  public readonly dashboardData$ = this._dashboardData.asObservable();
+  public readonly paginatedEvents$ = this._paginatedEvents.asObservable();
+  public readonly searchResults$ = this._searchResults.asObservable();
 
   constructor(
-    private readonly _eventBackend: EventBackendService,
-    private readonly _router: Router,
-    private readonly _errorHandlerService: ErrorHandlerService
+    private readonly _backend: EventBackendService,
+    private readonly _errorHandler: ErrorHandlerService
   ) {}
 
-  public loadDashboardData(): Observable<DashboardData> {
-    this._setLoading(true);
-
-    return this._eventBackend.getEventManagement().pipe(
-      take(1),
-      map((response) => response.data),
-      tap((data) => {
-        this._dashboardData$.next(data);
-      }),
-      catchError((err) => this._errorHandlerService.handle(err)),
-      finalize(() => this._setLoading(false))
-    );
-  }
-
-  public loadEventDetails(eventId: number): Observable<EventDetailResponse> {
-    this._setLoading(true);
-
-    return this._eventBackend.getEventDetails(eventId).pipe(
-      take(1),
-      map((response) => response.data),
-      tap((event) => {
-        this._currentEvent$.next(event);
-      }),
-      catchError((err) => this._errorHandlerService.handle(err)),
-      finalize(() => this._setLoading(false))
-    );
-  }
-
-  public loadAllEvents(
-    page: number = 0,
-    size: number = 10,
+  public loadDashboardData(
+    page = 0,
+    size = 10,
     status?: string,
-    category?: string
-  ): Observable<PaginatedResponse<Event>> {
-    this._setLoading(true);
+    search?: string
+  ): Observable<DashboardData> {
+    this._loading.next(true);
+    // Clear search results when loading normal dashboard data
+    this._searchResults.next(null);
 
-    return this._eventBackend.getAllEvents(page, size, status, category).pipe(
-      take(1),
-      map((response) => response.data),
-      tap((paginatedData) => {
-        this._events$.next(paginatedData.content);
+    return this._backend.getDashboardData(page, size, status, search).pipe(
+      map((res) => res.data),
+      tap((data) => {
+        this._dashboardData.next(data);
+        this._paginatedEvents.next(data.eventManagement);
       }),
-      catchError((err) => this._errorHandlerService.handle(err)),
-      finalize(() => this._setLoading(false))
+      catchError((err) => {
+        this._errorHandler.handle(err);
+        return throwError(() => err);
+      }),
+      finalize(() => this._loading.next(false))
     );
   }
 
-  public createEvent(event: Partial<Event>): Observable<Event> {
-    this._setLoading(true);
+  // FIXED: Search events without clearing dashboard context
+  public searchEvents(
+    keyword: string,
+    page = 0,
+    size = 10,
+    status?: string
+  ): Observable<PaginatedResponse<EventManagement>> {
+    this._loading.next(true);
 
-    return this._eventBackend.createEvent(event).pipe(
-      take(1),
-      map((response) => response.data),
-      tap((newEvent) => {
-        this.loadDashboardData().subscribe();
+    // Check cache first
+    const cacheKey = this._createCacheKey(keyword, page, size, status);
+    const cachedData = this._getFromCache(cacheKey);
+
+    if (cachedData) {
+      console.log('📦 Using cached search results for:', cacheKey);
+      this._searchResults.next(cachedData);
+      this._loading.next(false);
+      return of(cachedData);
+    }
+
+    console.log('🔍 Fetching search results:', {
+      keyword,
+      page,
+      size,
+      status,
+    });
+
+    return this._backend.searchEvents(keyword, page, size, status).pipe(
+      map((res) => res.data),
+      tap((data) => {
+        console.log('📥 Search results received:', {
+          totalElements: data.totalElements,
+          contentLength: data.content.length,
+        });
+        this._searchResults.next(data);
+        // DO NOT clear _dashboardData here - keep dashboard context intact
+        this._addToCache(cacheKey, data);
       }),
-      catchError((err) => this._errorHandlerService.handle(err)),
-      finalize(() => this._setLoading(false))
+      catchError((err) => {
+        console.error('❌ Search error:', err);
+        this._errorHandler.handle(err);
+        // Clear search results on error
+        this._searchResults.next(null);
+        return throwError(() => err);
+      }),
+      finalize(() => this._loading.next(false))
     );
   }
 
-  public updateEvent(
-    eventId: number,
-    event: Partial<Event>
-  ): Observable<Event> {
-    this._setLoading(true);
+  // Method to clear search results and show normal dashboard data
+  public clearSearch(): void {
+    console.log('🧹 Clearing search results');
+    this._searchResults.next(null);
+    // Optionally reload dashboard data to refresh the events list
+    // this.loadDashboardData(0, 10).subscribe();
+  }
 
-    return this._eventBackend.updateEvent(eventId, event).pipe(
-      take(1),
-      map((response) => response.data),
-      tap((updatedEvent) => {
-        this._currentEvent$.next(updatedEvent as EventDetailResponse);
-        // Optionally reload dashboard
-        this.loadDashboardData().subscribe();
+  // Clear entire cache (useful for manual refresh)
+  public clearCache(): void {
+    console.log('🗑️ Clearing entire cache');
+    Object.keys(this._searchCache).forEach((key) => {
+      delete this._searchCache[key];
+    });
+  }
+
+  public loadEventDetails(eventId: number): Observable<EventDetails> {
+    this._loading.next(true);
+    return this._backend.getEventDetails(eventId).pipe(
+      map((res) => mapEventDetailResponseToEventDetails(res.data)),
+      tap((eventDetails) => this._selectedEvent.next(eventDetails)),
+      catchError((err) => {
+        this._errorHandler.handle(err);
+        return throwError(() => err);
       }),
-      catchError((err) => this._errorHandlerService.handle(err)),
-      finalize(() => this._setLoading(false))
+      finalize(() => this._loading.next(false))
     );
   }
 
-  public deleteEvent(eventId: number): Observable<void> {
-    this._setLoading(true);
-
-    return this._eventBackend.deleteEvent(eventId).pipe(
-      take(1),
-      map(() => void 0),
-      tap(() => {
-        this._currentEvent$.next(null);
-        // Optionally reload dashboard
-        this.loadDashboardData().subscribe();
-      }),
-      catchError((err) => this._errorHandlerService.handle(err)),
-      finalize(() => this._setLoading(false))
-    );
+  private _createCacheKey(
+    keyword: string,
+    page: number,
+    size: number,
+    status?: string
+  ): string {
+    return `${keyword.toLowerCase()}-${page}-${size}-${status || 'all'}`;
   }
 
-  public getEventStats(): EventStats | null {
-    const dashboardData = this._dashboardData$.getValue();
-    return dashboardData?.eventStats ?? null;
+  private _getFromCache(
+    key: string
+  ): PaginatedResponse<EventManagement> | null {
+    const cached = this._searchCache[key];
+    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
+      return cached.data;
+    }
+
+    // Remove expired cache entry
+    if (cached) {
+      delete this._searchCache[key];
+    }
+
+    return null;
   }
 
-  public getCurrentEvent(): EventDetailResponse | null {
-    return this._currentEvent$.getValue();
-  }
-
-  public getEvents(): Event[] {
-    return this._events$.getValue();
-  }
-
-  private _setLoading(isLoading: boolean): void {
-    this._loadingStateSubject.next(isLoading);
+  private _addToCache(
+    key: string,
+    data: PaginatedResponse<EventManagement>
+  ): void {
+    this._searchCache[key] = {
+      data,
+      timestamp: Date.now(),
+    };
   }
 }

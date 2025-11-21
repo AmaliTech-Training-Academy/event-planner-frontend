@@ -16,18 +16,46 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   }
 
+  // Empty state styles
+  &--empty {
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    background-color: $gray-100;
+    border-style: dashed;
+  }
+
+  &__empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-3;
+    text-align: center;
+  }
+
+  &__empty-icon {
+    width: 48px;
+    height: 48px;
+    opacity: 0.5;
+  }
+
+  &__empty-text {
+    @include body-2;
+    color: $gray-500;
+  }
+
   &__icon {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-2;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 
     img {
-      width: 1.75rem;
-      height: 1.75rem;
+      width: 24px;
+      height: 24px;
     }
   }
 
@@ -35,44 +63,93 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: $spacing-1;
+    gap: $spacing-2;
+    min-width: 0;
   }
 
   &__title {
     @include body-3;
     color: $gray-600;
-
+    line-height: 1.2;
   }
 
   &__stats {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: $spacing-2;
   }
 
   &__count {
     @include h-4;
     color: $gray-900;
+    line-height: 1;
   }
 
-  &__change {
-    // @include body-xs;
-    display: flex;
+  &__badge {
+    display: inline-flex;
     align-items: center;
     gap: $spacing-1;
-    font-weight: 500;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-left: auto;
 
     &--positive {
-      color: $green-600;
+      color: #10B981;
     }
 
     &--negative {
-      color: $red-600;
+      color: #EF4444;
     }
   }
 
-  &__arrow {
-    width: 0.875rem;
-    height: 0.875rem;
+  &__badge-text {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  &__badge-icon {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .user-card {
+    padding: $spacing-4;
+
+    &--empty {
+      min-height: 80px;
+    }
+
+    &__empty-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    &__icon {
+      width: 40px;
+      height: 40px;
+
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    &__count {
+      font-size: 1.25rem;
+    }
+
+    &__badge-text {
+      font-size: 0.6875rem;
+    }
+
+    &__badge-icon {
+      width: 8px;
+      height: 8px;
+    }
   }
 }

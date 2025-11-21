@@ -5,9 +5,11 @@ import {
   computed,
   ChangeDetectionStrategy,
   OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, debounceTime } from 'rxjs';
 import { LayoutService } from '../../../../core/services/layout.service';
 import { EventManagementService } from '../../../../core/services/event-management.service';
 import {
@@ -30,7 +32,12 @@ import {
   DataTableComponent,
 } from '../../../../shared/admin-ui/data-table/data-table.component';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import { DashboardData } from '../../../../core/models/event.model';
+import {
+  DashboardData,
+  EventManagement,
+  EventStatus,
+} from '../../../../core/models/events';
+import { PaginatedResponse } from '../../../../core/models/shared';
 
 interface EventTableData {
   id: number;
@@ -57,47 +64,57 @@ interface EventTableData {
   styleUrl: './event-management-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EventManagementPageComponent implements OnInit {
+export class EventManagementPageComponent implements OnInit, OnDestroy {
   private readonly _layoutService = inject(LayoutService);
   private readonly _router = inject(Router);
   private readonly _eventManagementService = inject(EventManagementService);
-  protected readonly APP_ROUTES = APP_ROUTES;
+  protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
 
-  // Backend data signal
   private readonly _dashboardData = signal<DashboardData | null>(null);
-  private readonly _isLoading = signal<boolean>(false);
+  private readonly _isLoadingDashboard = signal<boolean>(false); // Dashboard loading
+  private readonly _isLoadingTable = signal<boolean>(false); // Table-specific loading
   private readonly _error = signal<string | null>(null);
 
-  // This computed signal uses backend data
+  private readonly _currentPage = signal<number>(0);
+  private readonly _pageSize = signal<number>(10);
+  private readonly _selectedStatus = signal<EventStatus | 'all'>('all');
+  private readonly _searchQuery = signal<string>('');
+
+  private readonly _searchResults =
+    signal<PaginatedResponse<EventManagement> | null>(null);
+  private readonly _lastSearchQuery = signal<string>('');
+
+  private readonly _searchSubject = new Subject<string>();
+
   public readonly eventStatistics = computed<EventStatistic[]>(() => {
     const data = this._dashboardData();
     if (!data) return [];
 
-    const stats = data.eventStats; // ← From API!
+    const stats = data.eventStats;
     return [
       {
         label: 'Total Events',
-        count: stats.totalEvents, // ← Will be 10
+        count: stats.totalEvents,
         color: '#3DC0F3',
       },
       {
         label: 'Active Events',
-        count: stats.activeEvents, // ← Will be 1
+        count: stats.activeEvents,
         color: '#656565',
       },
       {
         label: 'Completed Events',
-        count: stats.completedEvents, // ← Will be 2
+        count: stats.completedEvents,
         color: '#292929',
       },
       {
         label: 'Cancelled Events',
-        count: stats.canceledEvents, // ← Will be 0
+        count: stats.canceledEvents,
         color: '#FF5A00',
       },
       {
         label: 'Draft Events',
-        count: stats.draftEvents, // ← Will be 7
+        count: stats.draftEvents,
         color: '#0787C2',
       },
     ];
@@ -132,10 +149,29 @@ export class EventManagementPageComponent implements OnInit {
   });
 
   public readonly eventTableData = computed<EventTableData[]>(() => {
-    const data = this._dashboardData();
-    if (!data) return [];
+    const searchResults = this._searchResults();
 
-    return data.eventManagement.map((event) => ({
+    if (searchResults) {
+      return searchResults.content.map((event: EventManagement) => ({
+        id: event.id,
+        name: event.title,
+        organizer: event.organizer,
+        date: new Date(event.startTime).toISOString().split('T')[0],
+        attendees: event.attendeeCount,
+        status: this._mapStatusToTableStatus(event.status),
+        time: new Date(event.startTime).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZoneName: 'short',
+        }),
+        location: 'N/A',
+      }));
+    }
+
+    const data = this._dashboardData();
+    if (!data || !data.eventManagement) return [];
+
+    return data.eventManagement.content.map((event: EventManagement) => ({
       id: event.id,
       name: event.title,
       organizer: event.organizer,
@@ -147,11 +183,37 @@ export class EventManagementPageComponent implements OnInit {
         minute: '2-digit',
         timeZoneName: 'short',
       }),
-      location: 'N/A', // Not provided in API
+      location: 'N/A',
     }));
   });
 
-  public readonly isLoading = computed(() => this._isLoading());
+  public readonly totalPages = computed(() => {
+    const searchResults = this._searchResults();
+    if (searchResults) return searchResults.totalPages;
+
+    const data = this._dashboardData();
+    return data?.eventManagement?.totalPages ?? 0;
+  });
+
+  public readonly totalElements = computed(() => {
+    const searchResults = this._searchResults();
+    if (searchResults) return searchResults.totalElements;
+
+    const data = this._dashboardData();
+    return data?.eventManagement?.totalElements ?? 0;
+  });
+
+  public readonly isSearchMode = computed(() => !!this._searchResults());
+  public readonly hasSearchResults = computed(() => {
+    const searchResults = this._searchResults();
+    return searchResults && searchResults.content.length > 0;
+  });
+
+  // Separate loading states for different sections
+  public readonly isLoadingDashboard = computed(() =>
+    this._isLoadingDashboard()
+  );
+  public readonly isLoadingTable = computed(() => this._isLoadingTable());
   public readonly error = computed(() => this._error());
 
   public readonly eventTableColumns: TableColumn<EventTableData>[] = [
@@ -162,18 +224,11 @@ export class EventManagementPageComponent implements OnInit {
     { key: 'status', header: 'Status', filterable: true },
   ];
 
-  public readonly exportOptions: ReadonlyArray<FilterOption> = [
-    { label: 'Export As', value: 'export' },
-    { label: 'CSV', value: 'csv' },
-    { label: 'JSON', value: 'json' },
-    { label: 'PDF', value: 'pdf' },
-  ];
-
   public readonly eventTableActions: TableAction<EventTableData>[] = [
     {
       icon: 'icons/eye-open.svg',
       label: 'View',
-      extraClass: 'plain-action',
+      extraClass: 'view-action-btn',
       handler: (event: EventTableData) => this._onViewEvent(event),
     },
   ];
@@ -184,11 +239,10 @@ export class EventManagementPageComponent implements OnInit {
       placeholder: 'All Status',
       options: [
         { label: 'All Status', value: 'all' },
-        { label: 'Active', value: 'Active' },
-        { label: 'Pending', value: 'Pending' },
-        { label: 'Completed', value: 'Completed' },
-        { label: 'Draft', value: 'Draft' },
-        { label: 'Cancelled', value: 'Cancelled' },
+        { label: 'Active', value: 'ACTIVE' },
+        { label: 'Draft', value: 'DRAFT' },
+        { label: 'Completed', value: 'COMPLETED' },
+        { label: 'Cancelled', value: 'CANCELED' },
       ],
     },
     {
@@ -209,10 +263,29 @@ export class EventManagementPageComponent implements OnInit {
   };
 
   constructor() {
+    this._searchSubject
+      .pipe(debounceTime(800), takeUntilDestroyed())
+      .subscribe((query) => {
+        const trimmedQuery = query.trim();
+        const currentSearch = this._searchQuery();
+
+        if (trimmedQuery !== currentSearch) {
+          this._searchQuery.set(trimmedQuery);
+          this._currentPage.set(0);
+          this._loadEventsData(); // Load only events data
+        }
+      });
+
+    // Subscribe to service loading states separately
     this._eventManagementService.loading$
       .pipe(takeUntilDestroyed())
       .subscribe((loading) => {
-        this._isLoading.set(loading);
+        // Only update table loading during search/filter operations
+        if (this._searchQuery() || this._selectedStatus() !== 'all') {
+          this._isLoadingTable.set(loading);
+        } else {
+          this._isLoadingDashboard.set(loading);
+        }
       });
 
     this._eventManagementService.dashboardData$
@@ -220,15 +293,95 @@ export class EventManagementPageComponent implements OnInit {
       .subscribe((data) => {
         this._dashboardData.set(data);
       });
+
+    this._eventManagementService.searchResults$
+      .pipe(takeUntilDestroyed())
+      .subscribe((results) => {
+        this._searchResults.set(results);
+        if (results) {
+          this._lastSearchQuery.set(this._searchQuery());
+        }
+      });
   }
 
   public ngOnInit(): void {
     this._layoutService.pageTitle.set('Event Management');
-    this._loadDashboardData();
+    this._loadInitialData();
+  }
+
+  public ngOnDestroy(): void {
+    this._searchSubject.complete();
+  }
+
+  // Load initial dashboard data (stats, organizers, upcoming events)
+  private _loadInitialData(): void {
+    this._isLoadingDashboard.set(true);
+    this._error.set(null);
+
+    this._eventManagementService
+      .loadDashboardData(0, this._pageSize())
+      .subscribe({
+        next: () => {
+          this._isLoadingDashboard.set(false);
+        },
+        error: (err) => {
+          this._error.set('Failed to load dashboard data');
+          this._isLoadingDashboard.set(false);
+        },
+      });
+  }
+
+  // Load only events data for search/filter/pagination
+  private _loadEventsData(): void {
+    this._isLoadingTable.set(true);
+    this._error.set(null);
+
+    const page = this._currentPage();
+    const size = this._pageSize();
+    const status =
+      this._selectedStatus() !== 'all' ? this._selectedStatus() : undefined;
+    const search = this._searchQuery().trim();
+
+    const hasSearch = search && search.length >= 2;
+    const hasStatusFilter = status && status !== 'all';
+
+    if (hasSearch || hasStatusFilter) {
+      const effectiveSearch = hasSearch ? search : '';
+
+      this._eventManagementService
+        .searchEvents(effectiveSearch, page, size, status)
+        .subscribe({
+          next: () => {
+            this._isLoadingTable.set(false);
+          },
+          error: (err) => {
+            this._error.set('Failed to load events');
+            this._isLoadingTable.set(false);
+          },
+        });
+    } else {
+      this._eventManagementService.clearSearch();
+
+      this._eventManagementService.loadDashboardData(page, size).subscribe({
+        next: () => {
+          this._isLoadingTable.set(false);
+        },
+        error: (err) => {
+          this._error.set('Failed to load dashboard data');
+          this._isLoadingTable.set(false);
+        },
+      });
+    }
   }
 
   public refreshData(): void {
-    this._loadDashboardData();
+    this._eventManagementService.clearCache();
+    this._loadInitialData();
+  }
+
+  public onPageChange(page: number): void {
+    this._currentPage.set(page);
+    this._loadEventsData(); // Only reload events table
   }
 
   public onViewAllOrganizers(): void {
@@ -247,31 +400,105 @@ export class EventManagementPageComponent implements OnInit {
     this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS, event.id]);
   }
 
-  private _loadDashboardData(): void {
-    this._error.set(null);
-    this._eventManagementService.loadDashboardData().subscribe({
-      error: (err) => {
-        this._error.set('Failed to load dashboard data');
-        console.error('Dashboard error:', err);
-      },
-    });
+  public onSearch(query: string): void {
+    this._searchSubject.next(query);
+  }
+
+  public onClearSearch(): void {
+    this._searchQuery.set('');
+    this._currentPage.set(0);
+    this._eventManagementService.clearSearch();
+    this._loadEventsData(); // Only reload events table
+  }
+
+  public onFilterChange(filterEvent: { key: string; value: string }): void {
+    console.log('🔧 Filter change:', filterEvent);
+
+    if (filterEvent.key === 'status') {
+      const newStatus = filterEvent.value as EventStatus | 'all';
+      const currentStatus = this._selectedStatus();
+
+      if (newStatus !== currentStatus) {
+        console.log(`📌 Status changed: ${currentStatus} → ${newStatus}`);
+        this._selectedStatus.set(newStatus);
+        this._currentPage.set(0);
+        this._loadEventsData(); // Only reload events table
+      }
+    }
+
+    if (filterEvent.key === 'export') {
+      this._handleExport(filterEvent.value);
+    }
   }
 
   private _onViewEvent(event: EventTableData): void {
-    this._router.navigate([this.APP_ROUTES.ADMIN_EVENT_DETAILS, event.id], {
-      state: { eventData: event },
-    });
+    this._router.navigate(['/admin/events', event.id]);
   }
 
   private _onCreateEvent(): void {
     this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
   }
 
+  private _handleExport(format: string): void {
+    if (!format) return;
+
+    const data = this.eventTableData();
+
+    switch (format) {
+      case 'csv':
+        this._exportAsCSV(data);
+        break;
+      case 'json':
+        this._exportAsJSON(data);
+        break;
+      case 'pdf':
+        this._exportAsPDF(data);
+        break;
+    }
+  }
+
+  private _exportAsCSV(data: EventTableData[]): void {
+    const headers = ['Event Name', 'Organizer', 'Date', 'Attendees', 'Status'];
+    const csvContent = [
+      headers.join(','),
+      ...data.map((event) =>
+        [
+          `"${event.name}"`,
+          `"${event.organizer}"`,
+          event.date,
+          event.attendees,
+          event.status,
+        ].join(',')
+      ),
+    ].join('\n');
+
+    this._downloadFile(csvContent, 'events.csv', 'text/csv');
+  }
+
+  private _exportAsJSON(data: EventTableData[]): void {
+    const jsonContent = JSON.stringify(data, null, 2);
+    this._downloadFile(jsonContent, 'events.json', 'application/json');
+  }
+
+  private _exportAsPDF(data: EventTableData[]): void {
+    alert('PDF export feature coming soon!');
+  }
+
+  private _downloadFile(content: string, filename: string, type: string): void {
+    const blob = new Blob([content], { type });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
   private _mapStatusToTableStatus(
-    status: string
+    status: EventStatus
   ): 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled' {
     const statusMap: Record<
-      string,
+      EventStatus,
       'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled'
     > = {
       ACTIVE: 'Active',

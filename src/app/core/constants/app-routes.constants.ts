@@ -15,12 +15,15 @@ export const APP_ROUTES = {
   CREATE_EVENT: '/app/create-event',
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   MY_EVENTS: '/app/my-events',
+  MY_EVENT: (id: string) => `/app/my-events/${id}`,
   PAYMENT_SETTINGS: '/app/payment-settings',
   ADMIN_DASHBOARD: '/admin',
+  EVENT_PAYMENT_SUCCESS: '/app/event-payment-success',
   PROFILE_PAGE: '/app/profile',
   ADMIN_EVENTS: '/admin/events',
   ADMIN_EVENT_DETAILS: '/admin/events/:id',
   ADMIN_ORGANIZERS: '/admin/organizers',
-  MANAGE_EVENT: '/app/manage-event/:id',
+  ACCEPT_INVITE: '/auth/invitation/accept',
+  MANAGE_EVENT: (id: string) => `/app/manage-event/${id}`,
 
 };

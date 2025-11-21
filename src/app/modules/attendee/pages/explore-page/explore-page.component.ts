@@ -1,30 +1,36 @@
-import { Component, OnInit, signal, computed, HostListener } from '@angular/core';
-import { CommonModule, NgOptimizedImage, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
+import { Component, effect, HostListener, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterModule, Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { Router, RouterModule } from '@angular/router';
+import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
+import { FilterDropdownComponent } from '../../../../shared/components/filter-dropdown/filter-dropdown.component';
+import { LocationDropdownComponent } from '../../../../shared/components/location-dropdown/location-dropdown.component';
+import { SearchInputComponent } from '../../../../shared/components/search-input/search-input.component';
 import { TabToggleComponent } from '../../../../shared/components/tab-toggle/tab-toggle.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { LocationDropdownComponent } from '../../../../shared/components/location-dropdown/location-dropdown.component';
-import { FilterDropdownComponent } from '../../../../shared/components/filter-dropdown/filter-dropdown.component';
-import { SearchInputComponent } from '../../../../shared/components/search-input/search-input.component';
-import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 
 import {
-  EventCard,
-  TabToggle,
-  SearchLocation,
+  EventFiltersCache,
+  EventTypeFilter,
+  GetEventProps,
+  GetEventsResponse,
   PopularLocation,
+  SearchLocation,
+  TabToggle
 } from '../../../../core/models/event.model';
 
 import {
-  MOCK_EVENT_CARDS,
   MOCK_EVENT_TOGGLES,
   MOCK_EVENT_TYPE_OPTIONS,
-  MOCK_RECENT_SEARCHES,
   MOCK_POPULAR_LOCATIONS,
+  MOCK_RECENT_SEARCHES
 } from '../../../../core/data/mock-data';
+import { EventsServiceService } from '../../../../core/services/events.service';
+import { LocationSearchComponent } from "../../../../shared/components/location-search/location-search.component";
+import { StoredRecentLocation } from '../../../../core/models/recent-location.model';
+import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagination.component";
+import { EmptyListMessageComponent } from "@app/shared/components/empty-list-message/empty-list-message.component";
 
 @Component({
   selector: 'app-explore-page',
@@ -33,7 +39,6 @@ import {
     CommonModule,
     FormsModule,
     RouterModule,
-    NgOptimizedImage,
     DatePipe,
     EventCardComponent,
     TabToggleComponent,
@@ -42,77 +47,102 @@ import {
     FilterDropdownComponent,
     SearchInputComponent,
     DatePickerComponent,
+    LocationSearchComponent,
+    CommonModule,
+    FormsModule,
+    PaginationComponent,
+    EmptyListMessageComponent
   ],
   templateUrl: './explore-page.component.html',
   styleUrl: './explore-page.component.scss',
 })
 export class ExplorePageComponent implements OnInit {
 
-  private allEvents = signal<EventCard[]>([]);
-  private freeEventsPage = signal(1);
-  private paidEventsPage = signal(1);
-  private upcomingEventsPage = signal(1);
-  private pastEventsPage = signal(1);
-  private readonly EVENTS_PER_PAGE = 6;
+  protected allEvents = signal<GetEventsResponse | null>(null);
+  protected currentPage = signal<number>(0);
+  private readonly EVENTS_PER_PAGE = 12;
+  protected loading = signal<boolean>(true)
 
 
-  public upcomingEvents = computed(() => {
-    if (this.activeToggle() !== 'upcoming') return [];
-    const now = new Date();
-    const filtered = this.getAllFilteredEvents().filter((event) => event.date >= now);
-    return filtered.slice(0, this.upcomingEventsPage() * this.EVENTS_PER_PAGE);
-  });
-
-  public pastEvents = computed(() => {
-    if (this.activeToggle() !== 'past') return [];
-    const now = new Date();
-    const filtered = this.getAllFilteredEvents().filter((event) => event.date < now);
-    return filtered.slice(0, this.pastEventsPage() * this.EVENTS_PER_PAGE);
-  });
-
-  public freeEvents = computed(() => {
-    if (this.activeToggle() !== 'all') return [];
-    const filtered = this.getAllFilteredEvents().filter((event) => !event.isPaid);
-    return filtered.slice(0, this.freeEventsPage() * this.EVENTS_PER_PAGE);
-  });
-
-  public paidEvents = computed(() => {
-    if (this.activeToggle() !== 'all') return [];
-    const filtered = this.getAllFilteredEvents().filter((event) => event.isPaid);
-    return filtered.slice(0, this.paidEventsPage() * this.EVENTS_PER_PAGE);
-  });
-
-
-  public showingAllFree = computed(() => !this.hasMoreFreeEvents());
-  public showingAllPaid = computed(() => !this.hasMorePaidEvents());
-  public showingAllUpcoming = computed(() => !this.hasMoreUpcomingEvents());
-  public showingAllPast = computed(() => !this.hasMorePastEvents());
+  protected locationTerm = signal<string>('');
+  protected locationInputFocused = signal<boolean>(false)
   public searchQuery = signal('');
   public selectedLocation = signal('Location');
-  public selectedEventType = signal('All Events');
+  public selectedEventType = signal(MOCK_EVENT_TYPE_OPTIONS[0]);
   public selectedDate = signal<Date | null>(null);
   public showLocationDropdown = signal(false);
   public showEventTypeDropdown = signal(false);
   public showDatePicker = signal(false);
-  public activeToggle = signal<string>('all');
+  public activeToggle = signal<boolean | null>(null);
   public eventToggles = signal<TabToggle[]>([]);
-  public eventTypeOptions = signal<string[]>([]);
+  public eventTypeOptions = signal<EventTypeFilter[]>([]);
   public recentSearches = signal<SearchLocation[]>([]);
   public popularLocations = signal<PopularLocation[]>([]);
 
-  constructor(private router: Router) {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      if (event.url.includes('/explore')) {
-        this.activeToggle.set('all');
-        this.resetPagination();
+
+  private lastFilters: EventFiltersCache = {
+    isPaid: 'all',
+    past: null,
+    date: null,
+    searchTerm: '',
+    locationTerm: ''
+  };
+
+  constructor(private readonly router: Router, private readonly eventService: EventsServiceService) {
+
+    effect(() => {
+      const isPaid = this.selectedEventType().value;
+      const past = this.activeToggle();
+      const date = this.selectedDate();
+      const searchTerm = this.searchQuery();
+      const locationTerm = this.locationTerm();
+      let currentPage = this.currentPage();
+
+      const filtersChanged =
+        isPaid !== this.lastFilters.isPaid ||
+        past !== this.lastFilters.past ||
+        date !== this.lastFilters.date ||
+        searchTerm !== this.lastFilters.searchTerm ||
+        locationTerm !== this.lastFilters.locationTerm;
+
+      if (filtersChanged) {
+        currentPage = 0;
+        this.currentPage.set(0);
+      }
+
+      this.lastFilters = {
+        isPaid,
+        past,
+        date,
+        searchTerm,
+        locationTerm
+      };
+
+
+
+      this.searchEvents(isPaid, past, date, searchTerm, locationTerm, currentPage);
+    });
+
+    effect(() => {
+      const term = this.locationTerm();
+      const isFocused = this.locationInputFocused();
+
+      if (!isFocused) {
+        this.closeLocationDropdown();
+        return;
+      }
+
+      if (term.trim() === "") {
+        this.openLocationDropdown();
+      } else {
+        this.closeLocationDropdown();
       }
     });
+
   }
 
   @HostListener('document:click', ['$event'])
-  public onDocumentClick(event: MouseEvent): void {
+  protected onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     const clickedInsideDropdown = target.closest('.filter-dropdown-wrapper');
 
@@ -123,15 +153,99 @@ export class ExplorePageComponent implements OnInit {
 
   public ngOnInit(): void {
     this.loadData();
+    this.eventService.loading$.subscribe({
+      next: (loading_) => {
+        this.loading.set(loading_)
+      }
+    })
   }
 
   private loadData(): void {
-    this.allEvents.set(MOCK_EVENT_CARDS);
+    this.eventService.getEvents({ pageSize: this.EVENTS_PER_PAGE }).subscribe({
+      next: (events) => {
+        this.allEvents.set(events)
+      },
+    })
     this.eventToggles.set(MOCK_EVENT_TOGGLES);
     this.eventTypeOptions.set(MOCK_EVENT_TYPE_OPTIONS);
     this.recentSearches.set(MOCK_RECENT_SEARCHES);
     this.popularLocations.set(MOCK_POPULAR_LOCATIONS);
   }
+
+  protected clearSearchFilters() {
+    this.selectedEventType.set(MOCK_EVENT_TYPE_OPTIONS[0]);
+    this.activeToggle.set(null);
+    this.selectedDate.set(null);
+    this.searchQuery.set('');
+    this.locationTerm.set('');
+  }
+
+  protected hasActiveFilters(): boolean {
+
+    return Object.entries(this.lastFilters).some(([key, value]) => {
+      switch (key) {
+        case 'isPaid':
+          return value !== null && value !== 'all';
+        case 'past':
+        case 'date':
+          return value !== null;
+        case 'searchTerm':
+        case 'locationTerm':
+          return value?.trim().length > 0;
+        default:
+          return false;
+      }
+    });
+  }
+
+
+  private searchEvents(isPaid: string, past: boolean | null, date: Date | null, searchTerm: string, locationTerm: string, currentPage: number) {
+    let props: GetEventProps = {};
+
+    if (isPaid !== '') {
+      props.priceFilter = isPaid
+    }
+
+    if (typeof past === 'boolean') {
+      props.past = past
+    }
+
+    if (date instanceof Date) {
+      props.date = this.formatDate(date);
+    }
+
+    if (searchTerm !== '') {
+      props.hasTitle = searchTerm;
+    }
+
+    if (locationTerm !== '') {
+      props.location = locationTerm;
+    }
+
+    if (currentPage) {
+      props.pageNumber = currentPage;
+    }
+
+    this.eventService.getEvents({ ...props, pageSize: this.EVENTS_PER_PAGE }).subscribe({
+      next: (events) => {
+        this.allEvents.set(events)
+      },
+    })
+  }
+
+  private formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  }
+
+  protected onFocusHandler() {
+    if (this.locationTerm() === '') {
+      this.openLocationDropdown();
+    }
+  }
+
 
   private closeAllDropdowns(): void {
     this.showLocationDropdown.set(false);
@@ -140,37 +254,25 @@ export class ExplorePageComponent implements OnInit {
   }
 
 
-  protected onTabChange(selectedTabKey: string): void {
+  protected onTabChange(selectedTabKey: boolean | null): void {
     this.activeToggle.set(selectedTabKey);
-    this.resetPagination();
   }
 
   protected onSearchChange(query: string): void {
     this.searchQuery.set(query);
-    this.resetPagination();
   }
 
-
-  protected toggleLocationDropdown(): void {
-    this.showLocationDropdown.update((v) => !v);
-    this.showEventTypeDropdown.set(false);
-    this.showDatePicker.set(false);
-  }
 
   protected closeLocationDropdown(): void {
     this.showLocationDropdown.set(false);
   }
-
-  protected onLocationSelected(location: SearchLocation): void {
-    this.selectedLocation.set(location.name);
-    this.showLocationDropdown.set(false);
-    this.resetPagination();
+  protected openLocationDropdown(): void {
+    this.showLocationDropdown.set(true);
   }
 
-  protected onUseCurrentLocation(): void {
-    this.selectedLocation.set('Current Location');
+  protected onLocationSelected(location: StoredRecentLocation): void {
+    this.locationTerm.update(() => location.address);
     this.showLocationDropdown.set(false);
-    this.resetPagination();
   }
 
 
@@ -184,12 +286,11 @@ export class ExplorePageComponent implements OnInit {
     this.showEventTypeDropdown.set(false);
   }
 
-  protected onEventTypeSelected(type: string): void {
+  protected onEventTypeSelected(type: EventTypeFilter): void {
     this.selectedEventType.set(type);
     this.showEventTypeDropdown.set(false);
-    this.resetPagination();
-  }
 
+  }
 
   protected toggleDatePicker(): void {
     this.showDatePicker.update((v) => !v);
@@ -200,104 +301,7 @@ export class ExplorePageComponent implements OnInit {
   protected onDateSelected(date: Date): void {
     this.selectedDate.set(date);
     this.showDatePicker.set(false);
-    this.resetPagination();
-  }
-
-  private resetPagination(): void {
-    this.freeEventsPage.set(1);
-    this.paidEventsPage.set(1);
-    this.upcomingEventsPage.set(1);
-    this.pastEventsPage.set(1);
   }
 
 
-  protected hasMoreFreeEvents(): boolean {
-    if (this.activeToggle() !== 'all') return false;
-    const allFree = this.getAllFilteredEvents().filter(e => !e.isPaid);
-    return this.freeEvents().length < allFree.length;
-  }
-
-  protected hasMorePaidEvents(): boolean {
-    if (this.activeToggle() !== 'all') return false;
-    const allPaid = this.getAllFilteredEvents().filter(e => e.isPaid);
-    return this.paidEvents().length < allPaid.length;
-  }
-
-  protected hasMoreUpcomingEvents(): boolean {
-    if (this.activeToggle() !== 'upcoming') return false;
-    const now = new Date();
-    const allUpcoming = this.getAllFilteredEvents().filter(e => e.date >= now);
-    return this.upcomingEvents().length < allUpcoming.length;
-  }
-
-  protected hasMorePastEvents(): boolean {
-    if (this.activeToggle() !== 'past') return false;
-    const now = new Date();
-    const allPast = this.getAllFilteredEvents().filter(e => e.date < now);
-    return this.pastEvents().length < allPast.length;
-  }
-
-
-  private getAllFilteredEvents(): EventCard[] {
-    let events = this.allEvents();
-
-    if (this.searchQuery()) {
-      events = events.filter((event) =>
-        event.title.toLowerCase().includes(this.searchQuery().toLowerCase())
-      );
-    }
-
-    if (this.selectedLocation() !== 'Location') {
-      events = events.filter((event) =>
-        event.location.toLowerCase().includes(this.selectedLocation().toLowerCase())
-      );
-    }
-
-    if (this.selectedEventType() !== 'All Events') {
-      const isPaid = this.selectedEventType() === 'Paid Events';
-      events = events.filter((event) => event.isPaid === isPaid);
-    }
-
-    if (this.selectedDate()) {
-      events = events.filter((event) =>
-        event.date.toDateString() === this.selectedDate()?.toDateString()
-      );
-    }
-
-    return events;
-  }
-
-
-  protected onLoadMoreUpcoming(): void {
-    this.upcomingEventsPage.update(page => page + 1);
-  }
-
-  protected onLoadMorePast(): void {
-    this.pastEventsPage.update(page => page + 1);
-  }
-
-  protected onLoadMoreFree(): void {
-    this.freeEventsPage.update(page => page + 1);
-  }
-
-  protected onLoadMorePaid(): void {
-    this.paidEventsPage.update(page => page + 1);
-  }
-
-
-  protected onShowLessUpcoming(): void {
-    this.upcomingEventsPage.set(1);
-  }
-
-  protected onShowLessPast(): void {
-    this.pastEventsPage.set(1);
-  }
-
-  protected onShowLessFree(): void {
-    this.freeEventsPage.set(1);
-  }
-
-  protected onShowLessPaid(): void {
-    this.paidEventsPage.set(1);
-  }
 }

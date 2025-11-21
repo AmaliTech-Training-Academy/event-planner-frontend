@@ -1,0 +1,193 @@
+@use "media_query" as *;
+@use "typography" as *;
+@use "variables" as *;
+
+.chevron {
+    transition: transform 0.3s ease;
+}
+.card-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+
+    @include sm {
+        grid-template-columns: repeat(1, 1fr);
+    }
+    @include md {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.modal-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    width: 40dvw;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    @include sm {
+        width: 90dvw;
+    }
+    
+    @include md {
+        width: 60dvw;
+    }
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 1rem;
+        gap: 0.5rem;
+
+        h3 {
+            display: flex;
+            flex-direction: column;
+            @include h-3;
+        }
+
+        p {
+            @include body-1;
+            color: $paragraph-text;
+        }
+    }
+}
+
+.container {
+    margin: 0 auto;
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-group {
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fafafa;
+    padding: 0.75rem 1rem;
+    h3 {
+        margin: 0;
+    }
+    .container-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    img {
+        width: 2rem;
+        height: 2rem;
+        transition: transform 0.3s ease;
+        transform: rotate(90deg);
+
+        &.open {
+            transform: rotate(-90deg);
+        }
+    }
+}
+
+.group-body {
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    background: #fafafa;
+    padding: 16px;
+    gap: 16px;
+
+    .field-container {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+
+        @include sm {
+            grid-template-columns: repeat(1, 1fr);
+        }
+        @include md {
+            grid-template-columns: repeat(1, 1fr);
+        }
+    }
+
+    .field-row {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .field {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        label {
+            font-size: 0.875rem;
+        }
+
+        .input-container {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            input {
+                flex: 1;
+            }
+            app-input {
+                flex: 1;
+            }
+            .select-container {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                padding-bottom: 0.9rem;
+            }
+            select {
+                flex: 1;
+                padding: 0.9rem;
+                border: 1px solid rgb(212, 212, 212);
+                border-radius: 0.5rem;
+            }
+        }
+    }
+
+    .save-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        app-button {
+            @include sm {
+                width: 50%;
+            }
+            @include md {
+                width: 50%;
+            }
+        }
+    }
+
+    &.close {
+        padding: 0rem;
+        height: 0rem;
+        overflow: hidden;
+    }
+}
+
+.request-payout {
+    display: flex;
+    app-button {
+        width: 20rem;
+    }
+}

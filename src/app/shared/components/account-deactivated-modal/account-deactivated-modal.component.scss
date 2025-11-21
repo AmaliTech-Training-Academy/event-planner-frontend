@@ -1,0 +1,86 @@
+.deactivated-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .deactivated-modal {
+      background: white;
+      border-radius: 8px;
+      padding: 32px;
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .close-button {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      color: #6B7280;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #111827;
+      }
+    }
+
+    .close-icon {
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 300;
+    }
+
+    .deactivated-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #111827;
+      margin: 0 0 16px 0;
+    }
+
+    .deactivated-message {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #4B5563;
+      margin: 0 0 32px 0;
+    }
+
+    .deactivated-actions {
+      display: flex;
+      gap: 12px;
+
+      app-button {
+        flex: 1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .deactivated-modal {
+        padding: 24px;
+      }
+
+      .deactivated-title {
+        font-size: 20px;
+      }
+
+      .deactivated-actions {
+        flex-direction: column;
+
+        app-button {
+          width: 100%;
+        }
+      }
+    }

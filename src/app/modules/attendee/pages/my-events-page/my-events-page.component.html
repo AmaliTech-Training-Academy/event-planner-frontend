@@ -1,16 +1,33 @@
 <main class="my-events-content">
+
   <div class="page-header">
     <h1 class="page-title">My Events</h1>
-    <a [routerLink]="[]" class="filter-link">Last Week</a>
+    <app-button (onClick)="navigateToCreateEvent()">Create Event</app-button>
   </div>
 
-  <section class="event-grid">
-    @for (event of myEvents(); track event.id) {
-    <app-event-card
-      [event]="event"
-      [variant]="'manage'"
-      (manageEvent)="handleManageEvent($event)"
-    ></app-event-card>
+
+  <div class="stat-card-grid">
+    @for (card of statCards(); track card.title) {
+    <app-admin-user-card [data]="card" />
     }
-  </section>
+  </div>
+
+  @if(loading()){
+    <app-loading-card></app-loading-card>
+  }
+
+  <div class="events-section">
+    @if(myEvents().length < 1 && !loading()){ <app-empty-list-message (handleSecondary)="navigateToExploreEvent()"
+      (handleAction)="navigateToCreateEvent()" [secondaryText]="'Explore Events'" [actionText]="'Create Event'">
+      </app-empty-list-message>
+      }
+
+      <div class="event-grid">
+        @for (event of myEvents(); track event.id;) {
+        <app-event-card [event]="event" [variant]="'manage'" (manageEvent)="onManageEvent(event.id.toString())" />
+        }
+      </div>
+      <app-pagination [totalItems]="totalaPages()" [(currentPage)]="page"></app-pagination>
+  </div>
+
 </main>

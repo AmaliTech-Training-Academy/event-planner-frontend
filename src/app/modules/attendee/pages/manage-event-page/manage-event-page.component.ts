@@ -1,30 +1,31 @@
-import { Component, inject, signal, OnInit, computed, OnDestroy } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule, Location, NgOptimizedImage } from '@angular/common';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import { LayoutService } from '../../../../core/services/layout.service';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import { StatCardData, EventDetails } from '../../../../core/models/event.model';
 import { MOCK_EVENT_DETAILS } from '../../../../core/data/mock-data';
+import { EventDetails, StatCardData } from '../../../../core/models/event.model';
+import { InvitationPayload, InvitationService } from '../../../../core/services/invitation.service';
+import { LayoutService } from '../../../../core/services/layout.service';
 
-import { UserBackendService } from '../../../../core/services/backend/user-backend.service';
-import { InviteUserPayload } from '../../../../core/models/index'; 
-import { NotificationService } from '../../../../core/services/notification.service';
-
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
-import { DataTableComponent, TableColumn, TableFilter } from '../../../../shared/admin-ui/data-table/data-table.component';
+import { MANAGE_EVENT_ANALYTIC } from '@app/core/constants/manage-event.contant';
+import { EventAnalyticsResponse } from '@app/core/models/manage-events';
+import { ManageEventService } from '@app/core/services/manage-event.service';
+import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
+import { take } from 'rxjs';
+import { DataTableComponent } from '../../../../shared/admin-ui/data-table/data-table.component';
 import { ModalWrapperComponent } from '../../../../shared/components/modal-wrapper/modal-wrapper.component';
-import { EventHost } from '../../../admin/pages/event-management-page/components/event-details/event-details.component';
+import { StatCardComponent } from '../../../../shared/components/stat-card/stat-card.component';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { GuestComponent } from "./components/guest/guest.component";
+import { OverviewComponent } from "./components/overview/overview.component";
+import { RegistrationComponent } from "./components/registration/registration.component";
+import { UserBackendService } from '@app/core/services/backend/user-backend.service';
+import { NotificationService } from '@app/core/services/notification.service';
+import { EventHost, TicketType } from '@app/core/models/events';
+import { InviteUserPayload } from '@app/core/models';
 
-export interface TicketType { 
-  name: string;
-  price: number;
-  sold: number;
-  total: number;
-}
 
 export interface Registration {
   fullName: string;
@@ -49,8 +50,12 @@ interface ManageEventPageState {
     ModalWrapperComponent,
     ButtonComponent,
     StatCardComponent,
-    DataTableComponent
-  ],
+    DataTableComponent,
+    OverviewComponent,
+    GuestComponent,
+    RegistrationComponent,
+    LoadingCardComponent
+],
   templateUrl: './manage-event-page.component.html',
   styleUrls: ['./manage-event-page.component.scss'],
 })
@@ -74,9 +79,17 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected readonly availableEvents = signal<{id: number, title: string}[]>([]);
   protected readonly currentEventId = signal<number | null>(null);
 
+  private readonly _invitationService = inject(InvitationService);
+  private readonly _manageService = inject(ManageEventService);
+
+  protected readonly eventOverview = signal<EventAnalyticsResponse | null>(null)
+
   protected readonly showInviteModal = signal<boolean>(false);
   protected readonly showSuccessModal = signal<boolean>(false);
   protected readonly isSubmitting = signal<boolean>(false);
+
+
+  protected loading = signal<boolean>(true)
 
   protected inviteForm: FormGroup = this._fb.group({
     title: ['', Validators.required],
@@ -86,44 +99,33 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     role: ['ATTENDEE', Validators.required],
     message: ['']
   });
-  
-  public readonly registrationColumns: TableColumn<Registration>[] = [
-    { key: 'fullName', header: 'Name', sortable: true },
-    { key: 'email', header: 'Email', sortable: true },
-    { key: 'numberOfTickets', header: 'Number of Tickets', sortable: true },
-    { key: 'ticketType', header: 'Ticket Type', sortable: true }
-  ];
 
-  public readonly registrationFilters: TableFilter[] = [
-    {
-      key: 'ticketType',
-      placeholder: 'Ticket Type',
-      options: [
-        { label: 'All', value: 'all' },
-        { label: 'VIP', value: 'vip' },
-        { label: 'Regular', value: 'regular' }
-      ]
-    }
-  ];
 
-  protected readonly statCards = computed<StatCardData[]>(() => {
-    const event = this.eventDetails();
-    if (!event) return [];
-    const totalRevenue = this.calculateTotalRevenue();
-    return [
-      { title: 'Attendees', value: event.attendees || 0, icon: '/icons/users-icon.png' },
-      { title: 'Total Tickets Sold', value: `$${totalRevenue.toFixed(2)}`, icon: '/icons/ticket.svg' }
-    ];
+
+  protected readonly statCards = computed<readonly StatCardData[]>(() => {
+    const eventoverview = this.eventOverview();
+    if (!eventoverview) return MANAGE_EVENT_ANALYTIC;
+
+    return MANAGE_EVENT_ANALYTIC.map(item => ({
+      ...item,
+      value: eventoverview.data.eventStats[item.backend_key]
+    }));
   });
 
   public ngOnInit(): void {
-    this._route.params.subscribe(params => {
-      const urlEventId = params['id']; 
-      
-      if (urlEventId) {
+    this._route.params.pipe(take(1)).subscribe(params => {
+      const urlEventId = params['id'];
+
+      if (!urlEventId) {
+        this._router.navigate([APP_ROUTES.MY_EVENTS])
+      }
+      else {
         const eventId = Number(urlEventId);
         this.currentEventId.set(eventId);
-        
+
+        this.getOverview()
+
+
         const state = this._location.getState() as ManageEventPageState;
         if (state.eventData) {
           this._loadEventFromState(state.eventData, eventId);
@@ -134,6 +136,23 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  private getOverview() {
+    const eventId = this.currentEventId()
+    if (!eventId) return;
+    this.loading.set(true)
+    this._manageService.getOverview(eventId).subscribe({
+      next: (response) => {
+        this.eventOverview.set(response)
+      },
+      complete : ()=>{
+        this.loading.set(false)
+      }
+    })
+  }
+
+
+
   public ngOnDestroy(): void {
     this._toggleBodyScroll(false);
   }
@@ -143,27 +162,19 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this.eventDetails.set(event);
     this._loadTicketsAndHosts(event);
     this._layoutService.pageTitle.set(event.title);
-    
+
     this.availableEvents.set([
-      { id: eventId, title: event.title || 'Current Event' }
+      { id: eventId, title: event.title || 'Event' }
     ]);
-    
-    this.inviteForm.patchValue({ event: eventId });
+
+    this.inviteForm.patchValue({
+      event: eventId,
+      role: 'ATTENDEE'
+    });
   }
 
   private _loadTicketsAndHosts(event: EventDetails): void {
-    this.ticketTypes.set([
-      { name: 'VIP', price: 100, sold: 20, total: 50 },
-      { name: 'Regular', price: 50, sold: 150, total: 300 }
-    ]);
-    this.hosts.set([
-      { name: 'Jane Doe', email: 'jane@example.com', avatar: '' },
-      { name: 'John Smith', email: 'john@example.com', avatar: '' }
-    ]);
-    this.registrations.set([
-      { fullName: 'Alice Johnson', email: 'alice@test.com', numberOfTickets: 2, ticketType: 'VIP' },
-      { fullName: 'Bob Brown', email: 'bob@test.com', numberOfTickets: 1, ticketType: 'Regular' }
-    ]);
+
   }
 
   protected setActiveTab(tab: TabType): void {
@@ -171,15 +182,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   }
 
   protected onBack(): void {
-    this._router.navigate([this.APP_ROUTES.MY_EVENTS]);
+    this._router.navigate([APP_ROUTES.MY_EVENTS]);
   }
 
-  protected onEdit(): void {
-    const eventId = this.currentEventId();
-    if (eventId) {
-      this._router.navigate([this.APP_ROUTES.CREATE_EVENT, eventId]);
-    }
-  }
 
   protected onViewAllGuests(): void {
     this.setActiveTab('guests');
@@ -222,7 +227,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     if (this.inviteForm.valid) {
       this._submitInvitation('SEND');
     } else {
-      this.inviteForm.markAllAsTouched(); 
+      this._toggleBodyScroll(false);
     }
   }
 
@@ -247,15 +252,15 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     }
 
     const payload: InviteUserPayload = {
-      invitationTitle: formData.title,
+      event: selectedEventId,
+      title: formData.title,
       invitees: [
         {
-          inviteeName: formData.name,
-          inviteeEmail: formData.email,
+          fullName: formData.name,
+          email: formData.email,
           role: formData.role 
         }
       ],
-      event: selectedEventId, 
       status: status as any,
       message: formData.message || ''
     };
@@ -326,10 +331,12 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       year: 'numeric',
     });
   }
-
-  protected calculateTotalRevenue(): number {
-    return this.ticketTypes().reduce((total, ticket) => {
-      return total + (ticket.price * ticket.sold);
-    }, 0);
+ protected onEdit(): void {
+    this._router.navigate([APP_ROUTES.CREATE_EVENT],{
+      state : {
+        eventId:this.currentEventId()
+      }
+    })
   }
+
 }

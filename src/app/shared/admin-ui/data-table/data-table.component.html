@@ -1,18 +1,18 @@
 <div class="data-table">
   <div class="data-table__header">
-    <h2 class="data-table__title">User List</h2>
+    <h2 class="data-table__title">{{tableTitle()}}</h2>
 
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-        <app-input
-          class="md"
-          placeholder="Search users..."
-          [value]="searchQuery()"
-          (valueChange)="updateSearch($event)"
-          iconSrc="icons/search-icon.png"
-          [disabled]="loading()"
-        />
+     <app-input
+  [class]="searchBoxClass() || 'md'"
+  [placeholder]="effectiveSearchPlaceholder()"
+  [value]="searchQuery()"
+  (valueChange)="updateSearch($event)"
+  iconSrc="icons/search-icon.png"
+  [disabled]="loading()"
+/>
       </div>
       }
       @for (filter of filters(); track filter.key) {
@@ -103,7 +103,7 @@
           @if (column.key === 'fullName') {
           <div class="data-table__user-cell">
             <img
-              [src]="getRandomAvatar(item)"
+            [src]="getUserAvatar(item)"
               [alt]="
                 (column.getValue ? column.getValue(item) : item[column.key]) +
                 ' avatar'
@@ -179,7 +179,14 @@
 
   @if (filteredData().length === 0) {
   <div class="data-table__no-data">
-    <img src="/images/table-empty.png" alt="No data found" />
+    <img
+      [src]="emptyState().imageSrc"
+      [alt]="emptyState().imageAlt"
+      class="data-table__no-data-image"
+    />
+    @if (emptyState().message) {
+    <p class="data-table__no-data-message">{{ emptyState().message }}</p>
+    }
   </div>
   } } @if (filteredData().length > 0 && !loading()) {
   <app-pagination

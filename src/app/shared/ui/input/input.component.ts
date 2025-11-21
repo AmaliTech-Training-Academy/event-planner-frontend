@@ -6,7 +6,6 @@ import {
   forwardRef,
   output,
   ChangeDetectionStrategy,
-  effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -34,9 +33,9 @@ import { FormErrorComponent } from '../form-error/form-error.component';
 })
 export class InputComponent implements ControlValueAccessor {
   // Inputs - reactive values from parent
-  public readonly type = input<'text' | 'email' | 'password' | 'number'>(
-    'text'
-  );
+  public readonly type = input<
+    'text' | 'email' | 'password' | 'number' | 'url' | 'tel' | 'search'
+  >('text');
   public readonly placeholder = input<string>('');
   public readonly label = input<string>('');
   public readonly formControlName = input<string>('');
@@ -45,6 +44,7 @@ export class InputComponent implements ControlValueAccessor {
   public readonly required = input<boolean>(false);
   public readonly disabled = input<boolean>(false);
   public readonly value = input<string>('');
+  public readonly showValidIcon = input<boolean>(false);
 
   // Outputs
   public readonly valueChange = output<string>();
@@ -101,15 +101,18 @@ export class InputComponent implements ControlValueAccessor {
   public currentValue(): string {
     return this._internalValue();
   }
+
   private _emitValue(value: string) {
     this.onChange(value);
     this.valueChange.emit(value);
   }
+
   public onValueChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this._internalValue.set(value);
     this._emitValue(value);
   }
+
   public readonly inputValue = computed(() => this._internalValue());
 
   public onFocus(): void {

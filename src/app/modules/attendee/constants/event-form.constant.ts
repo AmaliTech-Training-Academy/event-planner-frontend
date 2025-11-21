@@ -1,10 +1,11 @@
 export const EVENT_TYPE = {
-  SINGLE_DAY: 'day',
-  MULTI_DAY: 'multi-day',
+  SINGLE_DAY: 'DAY_EVENT',
+  MULTI_DAY: 'MULTI_DAY_EVENT',
 }
+
 export const MEETING_TYPE = {
-  VIRTUAL: 'virtual',
-  IN_PERSON: 'in-person',
+  VIRTUAL: 'VIRTUAL',
+  IN_PERSON: 'IN_PERSON',
 }
 
 export const PRICE_TYPE = {
@@ -13,22 +14,22 @@ export const PRICE_TYPE = {
 };
 
 export const EVENT_FORM_FIELDS = {
-  EVENT_TYPE: 'eventType',
+  EVENT_TYPE: 'event_type_id',
   DATES: 'dates',
-  MEETING_TYPE: 'meetingType',
-  FLYER: 'flyer',
+  MEETING_TYPE: 'event_meeting_type_id',
+  FLYER: 'image',
   TITLE: 'title',
   CAPACITY: 'capacity',
-  PRICE: 'price',
+  PRICE: 'ticketPrice',
   PERCS: 'percs',
-  REQUIRE_APPROVAL: 'requireApproval',
+  REQUIRE_APPROVAL: 'requiresApproval',
   PRICE_TYPE: 'priceType',
   VENUE_SECTIONS: 'venuSections',
 
   // VENUE GROUP
   VENUE_SECTION_NAME: "name",
   VENUE_SECTION_CAPACITY: "capacity",
-  VENUE_SECTION_PRICE: "price",
+  VENUE_SECTION_PRICE: "ticketPrice",
   VENUE_SECTION_COLOR: "color",
   VENUE_SECTION_DESCRIPTION: "description",
   VENUE_SECTION_IMAGE: "image",
@@ -40,14 +41,15 @@ export const EVENT_FORM_FIELDS = {
   // In-person details fields
   LOCATION: 'location',
   DESCRIPTION: 'description',
-  IMAGES: 'images',
+  IMAGES: 'eventImages',
 
   // Virtual details fields
-  MEETING_LINK: 'meetingLink',
+  MEETING_LINK: 'zoomUrl',
 
   // Dates group
   LABEL: 'label',
-  DATE: 'date',
-  TIME: 'time',
-  TIME_ZONE: 'timeZone',
+  DATE: 'event_date',
+  TIME: 'event_time',
+  TIME_ZONE: 'event_time_zone_id',
+
 } as const;

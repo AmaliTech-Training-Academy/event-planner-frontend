@@ -1,35 +1,28 @@
 <div class="dropdown-panel">
- 
-  <a class="dropdown-item use-location-btn" (click)="useCurrentLocation.emit()">
-    <img src="icons/room.png" alt="Use current location" class="dropdown-icon" />
-    Use current location
-  </a>
 
- 
+  @if (recentSearches.length) {
   <div class="dropdown-section">
     <h4 class="dropdown-header">Recent Searches</h4>
-    @for (search of recentSearches; track search.id) {
-      <div class="dropdown-item recent-item" (click)="selectLocation(search, true)">
-        <span>{{ search.name }}</span>
-        <button class="remove-btn" (click)="removeRecent($event, search.id)">
-          &times; 
-        </button>
-      </div>
+    @for (search of recentSearches; track search.address) {
+    <div role="button" class="dropdown-item recent-item" (click)="selectLocation(search, true)">
+      <span>{{ search.address }}</span>
+      <button class="remove-btn" (click)="removeRecent(search.address)">
+        &times;
+      </button>
+    </div>
     }
   </div>
-  
-
+  }@else {
   <div class="dropdown-section">
     <h4 class="dropdown-header">Popular Locations</h4>
-    @for (loc of popularLocations; track loc.name) {
-      <div class="dropdown-item popular-item" (click)="selectLocation(loc)">
-        <img src="icons/room.png" alt="Location" class="dropdown-icon" />
-        <div class="location-details">
-          <span class="location-name">{{ loc.name }}</span>
-          <span class="location-meta">{{ loc.meta }}</span>
-        </div>
+    @for (loc of popularSearch; track loc.address) {
+    <button class="dropdown-item popular-item" (click)="selectLocation(loc)">
+      <img src="icons/room.png" alt="Location" class="dropdown-icon" />
+      <div class="location-details">
+        <span class="location-name">{{ loc.address }}</span>
       </div>
+    </button>
     }
   </div>
+  }
 </div>
-
