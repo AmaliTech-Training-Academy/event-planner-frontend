@@ -24,7 +24,7 @@ import { RegistrationComponent } from "./components/registration/registration.co
 import { UserBackendService } from '@app/core/services/backend/user-backend.service';
 import { NotificationService } from '@app/core/services/notification.service';
 import { EventHost, TicketType } from '@app/core/models/events';
-import { InviteUserPayload } from '@app/core/models';
+
 
 
 export interface Registration {
@@ -32,6 +32,17 @@ export interface Registration {
   email: string;
   numberOfTickets: number;
   ticketType: string;
+}
+export interface InviteUserPayload {
+  title?: string;
+  event?: number;
+  invitees: Array<{
+    fullName: string;
+    email: string;
+    role: string;
+  }>;
+  message: string;
+  status: 'SEND' | 'SAVE';
 }
 
 type TabType = 'overview' | 'guests' | 'registration';
