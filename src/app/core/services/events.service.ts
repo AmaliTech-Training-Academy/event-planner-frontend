@@ -11,11 +11,11 @@ import { NotificationService } from './notification.service';
   providedIn: 'root'
 })
 export class EventsServiceService {
-  
+
   private _loadingStateSubject = new BehaviorSubject<boolean>(false);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
-  constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router: Router , private readonly notificationService:NotificationService) { }
+  constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router: Router, private readonly notificationService: NotificationService) { }
 
   public timeZones() {
     this.setLoading(true)
@@ -124,18 +124,21 @@ export class EventsServiceService {
   }
 
 
-  public myEvents(page: number = 0) {
+  public myEvents(page: number = 0, pageSize: number = 3) {
     const params = new URLSearchParams();
 
-    params.append('page', page.toString())
+    params.set('page', page.toString());
+    params.set('pageSize', pageSize.toString());
 
-    this.setLoading(true)
+    this.setLoading(true);
+
     return this.eventBackendService.getMyEvents(params).pipe(
       take(1),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
-    )
+    );
   }
+
 
   public myEventOverview() {
     this.setLoading(true)

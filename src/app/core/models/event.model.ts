@@ -155,6 +155,7 @@ export interface GetEventProps {
 export interface GetEventsResponse {
   pageNumber: number;
   pageSize: number;
+  totalPages:number;
   events: EventSummary[];
 }
 

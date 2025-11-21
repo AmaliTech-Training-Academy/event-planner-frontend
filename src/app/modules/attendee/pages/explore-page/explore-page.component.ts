@@ -300,4 +300,9 @@ export class ExplorePageComponent implements OnInit {
   }
 
 
+  protected onPageChange(number_:number){
+   this.currentPage.set(number_ - 1)
+  }
+
+
 }

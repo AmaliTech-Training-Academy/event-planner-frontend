@@ -11,14 +11,14 @@ export const API_ENDPOINTS = {
   AUTH_LOGIN: `${BASE}/auth/login`,
   AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
   AUTH_REGISTER: `${BASE}/auth/register`,
-  // Auth endpoints
   AUTH_LOGOUT: `${BASE}/auth/logout`,
   ADMIN_LOGOUT: `${BASE}/auth/admin-logout`,
-  AUTH_ME: `${BASE}/auth/me`,
   AUTH_VERIFY_OTP: `${BASE}/auth/verify-otp`,
-  AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_FORGOT_PASSWORD: `${BASE}/auth/forgot-password`,
+  AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
+  AUTH_REFRESH_TOKEN: `${BASE}/auth/refresh`,
+  AUTH_ME: `${BASE}/auth/me`,
 
   // ============================================
   // USER MANAGEMENT ENDPOINTS
