@@ -1,34 +1,19 @@
 <div class="admin-settings">
   <div class="tabs">
-    <app-button
-      type="plain"
-      [extraClass]="'tab'"
-      [class.tab--active]="activeTab() === 'general'"
-      (onClick)="switchTab('general')"
-      buttonType="button"
-    >
+    <app-button type="plain" [extraClass]="'tab'" [class.tab--active]="activeTab() === 'general'"
+      (onClick)="switchTab('general')" buttonType="button">
       <img src="icons/settings.png" alt="General" class="tab__icon" />
       <span>General</span>
     </app-button>
 
-    <app-button
-      type="plain"
-      [extraClass]="'tab'"
-      [class.tab--active]="activeTab() === 'notifications'"
-      (onClick)="switchTab('notifications')"
-      buttonType="button"
-    >
+    <app-button type="plain" [extraClass]="'tab'" [class.tab--active]="activeTab() === 'notifications'"
+      (onClick)="switchTab('notifications')" buttonType="button">
       <img src="icons/bell-icon.png" alt="Notifications" class="tab__icon" />
       <span>Notifications</span>
     </app-button>
 
-    <app-button
-      type="plain"
-      [extraClass]="'tab'"
-      [class.tab--active]="activeTab() === 'team'"
-      (onClick)="switchTab('team')"
-      buttonType="button"
-    >
+    <app-button type="plain" [extraClass]="'tab'" [class.tab--active]="activeTab() === 'team'"
+      (onClick)="switchTab('team')" buttonType="button">
       <img src="icons/notify.png" alt="Team" class="tab__icon" />
       <span>Team</span>
     </app-button>
@@ -42,103 +27,64 @@
           <h2>Security Settings</h2>
           <p>Manage security settings and access control</p>
         </div>
-        <img
-          src="icons/user-group.png"
-          alt="Security"
-          class="settings-section__icon"
-        />
+        <img src="icons/user-group.png" alt="Security" class="settings-section__icon" />
       </div>
 
       <form [formGroup]="securityForm" (ngSubmit)="saveSecuritySettings()">
         <div class="form-field">
           <label for="platformName">Platform Name</label>
-          <app-input
-            id="platformName"
-            formControlName="platformName"
-            placeholder="Event Hub"
-            [errorMessage]="
+          <app-input id="platformName" formControlName="platformName" placeholder="Event Hub" [errorMessage]="
               hasFieldError('platformName')
                 ? getFieldErrorMessage('platformName')
                 : ''
-            "
-          ></app-input>
+            "></app-input>
         </div>
 
         <div class="form-field">
           <label for="platformUrl">Platform URL</label>
-          <app-input
-            id="platformUrl"
-            type="url"
-            formControlName="platformUrl"
-            placeholder="https://eventhub.com"
+          <app-input id="platformUrl" type="url" formControlName="platformUrl" placeholder="https://eventhub.com"
             [errorMessage]="
               hasFieldError('platformUrl')
                 ? getFieldErrorMessage('platformUrl')
                 : ''
-            "
-          ></app-input>
+            "></app-input>
         </div>
 
         <div class="form-field">
           <label for="contactEmail">Contact Email</label>
-          <app-input
-            id="contactEmail"
-            type="email"
-            formControlName="contactEmail"
-            placeholder="support@eventhub.com"
+          <app-input id="contactEmail" type="email" formControlName="contactEmail" placeholder="support@eventhub.com"
             [errorMessage]="
               hasFieldError('contactEmail')
                 ? getFieldErrorMessage('contactEmail')
                 : ''
-            "
-          ></app-input>
+            "></app-input>
         </div>
 
         <div class="form-field">
           <label for="platformDescription">Platform Description</label>
-          <textarea
-            id="platformDescription"
-            formControlName="platformDescription"
-            placeholder="EventHub is a comprehensive event management platform for organizers and attendees."
-            rows="4"
-          ></textarea>
-        </div>
-
-        <div class="toggle-field">
-          <label class="toggle">
-            <input
-              type="checkbox"
-              formControlName="maintenanceMode"
-              class="toggle__input"
-            />
-            <span class="toggle__slider"></span>
-          </label>
-          <span class="toggle-field__label">Enable Maintenance Mode</span>
+          <app-input id="platformDescription" formControlName="platformDescription"
+            placeholder="Enter platform description" [errorMessage]="
+              hasFieldError('platformDescription')
+                ? getFieldErrorMessage('platformDescription')
+                : ''
+            "></app-input>
         </div>
 
         <div class="btn-box">
-          <app-button
-            type="primary"
-            buttonType="submit"
-            [disabled]="isSubmitting()"
-          >
-            {{ isSubmitting() ? "Saving..." : "Save Changes" }}
-          </app-button>
+          <app-button type="primary" buttonType="submit">Save Changes</app-button>
         </div>
       </form>
     </div>
-    } @if (activeTab() === 'notifications') {
+    }
+
+    @if (activeTab() === 'notifications') {
     <div class="settings-section">
       <div class="settings-section__header">
         <div class="settings-section__title">
           <h2>Notification Settings</h2>
           <p>Manage how notifications are received</p>
         </div>
-        <img
-          src="icons/bell.png"
-          alt="Notifications"
-          class="settings-section__icon"
-        />
+        <img src="icons/bell.png" alt="Notifications" class="settings-section__icon" />
       </div>
 
       <div class="notification-list">
@@ -149,12 +95,8 @@
             <p>{{ notification.description }}</p>
           </div>
           <label class="toggle">
-            <input
-              type="checkbox"
-              [checked]="notification.enabled"
-              (change)="toggleNotification(notification.id)"
-              class="toggle__input"
-            />
+            <input type="checkbox" [checked]="notification.enabled" (change)="toggleNotification(notification.id)"
+              class="toggle__input" />
             <span class="toggle__slider"></span>
           </label>
         </div>
@@ -167,18 +109,16 @@
         </app-button>
       </div>
     </div>
-    } @if (activeTab() === 'team') {
+    }
+
+    @if (activeTab() === 'team') {
     <div class="team-section">
       <div class="team-section__header">
         <div class="team-section__title">
           <h2>Team Management</h2>
           <p>Manage Admin team members and permissions</p>
         </div>
-        <app-button
-          type="plain"
-          (onClick)="addTeamMember()"
-          extraClass="btn-add-team-member"
-        >
+        <app-button type="plain" (onClick)="addTeamMember()" extraClass="btn-add-team-member">
           <span>+</span>
           <span>Add Team Member</span>
         </app-button>
@@ -188,11 +128,7 @@
         @for (member of teamMembers(); track member.id) {
         <div class="team-member">
           <div class="team-member__info">
-            <img
-              [src]="member.avatar"
-              [alt]="member.name"
-              class="team-member__avatar"
-            />
+            <img [src]="member.avatar" [alt]="member.name" class="team-member__avatar" />
             <div class="team-member__details">
               <h3>{{ member.name }}</h3>
               <p>{{ member.email }}</p>
@@ -205,25 +141,13 @@
             </span>
 
             <label class="toggle">
-              <input
-                type="checkbox"
-                [checked]="member.active"
-                (change)="toggleMemberStatus(member.id)"
-                class="toggle__input"
-              />
+              <input type="checkbox" [checked]="member.active" (change)="toggleMemberStatus(member.id)"
+                class="toggle__input" />
               <span class="toggle__slider"></span>
             </label>
 
-            <app-button
-              type="plain"
-              extraClass="btn-edit-member"
-              (onClick)="editTeamMember(member)"
-            >
-              <img
-                src="icons/edit-icon.png"
-                alt="Edit"
-                class="btn-edit-member__icon"
-              />
+            <app-button type="plain" extraClass="btn-edit-member" (onClick)="editTeamMember(member)">
+              <img src="icons/edit-icon.png" alt="Edit" class="btn-edit-member__icon" />
               <span class="btn-edit-member__label">Edit</span>
             </app-button>
           </div>
