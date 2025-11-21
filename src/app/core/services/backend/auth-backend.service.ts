@@ -59,7 +59,7 @@ export class AuthBackendService {
   }
 
   public refreshToken() {
-    return this.http.get(API_ENDPOINTS.AUTH_REFRESH_TOKEN)
+    return this.http.post(API_ENDPOINTS.AUTH_REFRESH_TOKEN,{})
   }
 
   public getAuthenticatedUser() {

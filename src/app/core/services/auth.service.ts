@@ -28,7 +28,7 @@ export class AuthService {
   private _otp: string = '';
   private _isResset: boolean = false;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
-
+  private TOKEN_REFRESH_INTERVAL:number = .5 as const;
 
   constructor(
     private readonly authBackend: AuthBackendService,
@@ -114,6 +114,8 @@ export class AuthService {
             userData.role
           );
         }
+        this.startAutomaticRefresh(new Date());
+
         // Route to Explore page instead
         this.router.navigate([APP_ROUTES.MY_EVENTS]);
       }),
@@ -169,7 +171,6 @@ export class AuthService {
       tap((response) => {
         const user = response?.data;
         if (user) {
-          // Map User to OtpBodyData
           const userData: OtpBodyData = {
             id: user.userId,
             email: user.email,
@@ -252,7 +253,6 @@ export class AuthService {
       const data = JSON.parse(stored) as AuthStorage;
       this._loggedIn$.next(data[AUTH_STORAGE.AUTHENTICATED]);
 
-      // Restore user info from storage
       if (data[AUTH_STORAGE.AUTHENTICATED]) {
         const userData: OtpBodyData = {
           id: parseInt(data[AUTH_STORAGE.USER_ID], 10),
@@ -263,7 +263,9 @@ export class AuthService {
         };
         this._userInfo$.next(userData);
         const refreshedAt = data[AUTH_STORAGE.REFRESHED_AT]
-        this.startAutomaticRefresh(refreshedAt)
+        this.refreshTimer = setTimeout(() => {
+          this.startAutomaticRefresh(refreshedAt);
+        }, 500);
       }
     }
   }
@@ -285,31 +287,35 @@ export class AuthService {
         [AUTH_STORAGE.PROFILE_PICTURE]: profilePicture,
         [AUTH_STORAGE.EMAIL]: email,
         [AUTH_STORAGE.ROLE]: role,
-        [AUTH_STORAGE.REFRESHED_AT]: refreshAt,
+        [AUTH_STORAGE.REFRESHED_AT]: refreshAt.toISOString(),
       })
     );
   }
 
   private startAutomaticRefresh(lastRefresh: Date | string) {
-
     if (this.refreshTimer) {
       clearTimeout(this.refreshTimer);
     }
 
+    const lastRefresh_ = new Date(lastRefresh);
 
-    const lastRefresh_ = new Date(lastRefresh)
+    if (!lastRefresh_ || isNaN(lastRefresh_.getTime())) {
+      return this.refreshToken();
+    }
+
     const now = new Date();
-    const refreshIntervalMs = 15 * 60 * 1000;
+    const refreshIntervalMs = this.TOKEN_REFRESH_INTERVAL * 60 * 1000;
     const nextRefreshTime = new Date(lastRefresh_.getTime() + refreshIntervalMs);
+
     const delay = nextRefreshTime.getTime() - now.getTime();
 
     if (delay <= 0) {
       this.refreshToken();
     } else {
-      setTimeout(() => this.refreshToken(), delay);
+      this.refreshTimer = setTimeout(() => this.refreshToken(), delay);
     }
-
   }
+
 
 
   private refreshToken() {
@@ -320,7 +326,8 @@ export class AuthService {
     const data = JSON.parse(stored) as AuthStorage;
 
     this.authBackend.refreshToken().pipe(take(1)).subscribe({
-      next: () => {
+      next: (response) => {
+        console.log(response, "token")
         this.saveAuthToStorage(
           data[AUTH_STORAGE.USER_ID],
           data[AUTH_STORAGE.FULL_NAME],
@@ -329,6 +336,8 @@ export class AuthService {
           data[AUTH_STORAGE.ROLE],
           newRefreshTime
         )
+
+        this.startAutomaticRefresh(newRefreshTime);
       },
       error: () => {
         this.logout()
