@@ -28,15 +28,15 @@ export const API_ENDPOINTS = {
   // User endpoints
   GET_USER: (userId: string): string => `${BASE}/users/${userId}`,
   GET_ALL_USERS: `${BASE}/users/management`,
-  
+
   CREATE_USER: `${BASE}/users`,
   UPDATE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   DELETE_USER: (userId: string): string => `${BASE}/users/${userId}`,
   DEACTIVATE_USER: (userId: string | number): string =>
     `${BASE}/users/${userId}/deactivate`,
   SEARCH_USERS: `${BASE}/users/search`,
-  
- 
+
+
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
 
@@ -47,7 +47,7 @@ export const API_ENDPOINTS = {
   VERIFY_INVITATION_TOKEN: `${BASE}/user-invitations/verify`,
   ACCEPT_INVITATION: `${BASE}/user-invitations/accept-invitation`,
   GET_ALL_INVITATIONS: `${BASE}/user-invitations`,
-  USER_ACCEPT_INVITATION: `${BASE}/event-invitations/accept-invitation`,
+  USER_ACCEPT_INVITATION:  `${BASE}/event-invitations/accept-invitation`,
 
   // ============================================
   // EVENT MANAGEMENT ENDPOINTS
@@ -61,8 +61,8 @@ export const API_ENDPOINTS = {
   EVENT_DETAILS: (eventId: number): string => `${BASE}/events/${eventId}`,
   UPDATE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
- 
- 
+
+
   SEARCH_EVENTS: `${BASE}/events/event-management/search`,
   GET_AUDIT_LOGS: `${BASE}/auth/audit_logs`,
   GET_AUDIT_LOG_BY_ID: (logId: string) => `${BASE}/audit-logs/${logId}`,
@@ -86,7 +86,7 @@ export const EVENTS_API_ENDPOINTS = {
   MY_EVENT_OVERVIEW: `${BASE}/events/my-events/overview`,
   SEARCH_EVENTS: `${BASE}/events/search`,
   MANAGE_EVENT_DETAILS: (id: number) => `${BASE}/events/my-events/details/${id}`,
-  MANAGE_EVENT_INVITEES:(id: number) => `${BASE}/event-invitations/${id}/invitees`,
+  MANAGE_EVENT_INVITEES: (id: number) => `${BASE}/event-invitations/${id}/invitees`,
   MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) => `${BASE}/events/${id}/registrations/overview`,
   MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) => `${BASE}/events/${id}/registrations/search`,
 } as const;
