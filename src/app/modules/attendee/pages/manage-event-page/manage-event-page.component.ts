@@ -21,6 +21,10 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { GuestComponent } from "./components/guest/guest.component";
 import { OverviewComponent } from "./components/overview/overview.component";
 import { RegistrationComponent } from "./components/registration/registration.component";
+import { UserBackendService } from '@app/core/services/backend/user-backend.service';
+import { NotificationService } from '@app/core/services/notification.service';
+import { EventHost, TicketType } from '@app/core/models/events';
+
 
 
 export interface Registration {
@@ -28,6 +32,17 @@ export interface Registration {
   email: string;
   numberOfTickets: number;
   ticketType: string;
+}
+export interface InviteUserPayload {
+  title?: string;
+  event?: number;
+  invitees: Array<{
+    fullName: string;
+    email: string;
+    role: string;
+  }>;
+  message: string;
+  status: 'SEND' | 'SAVE';
 }
 
 type TabType = 'overview' | 'guests' | 'registration';
@@ -40,11 +55,13 @@ interface ManageEventPageState {
   selector: 'app-manage-event-page',
   standalone: true,
   imports: [
-    CommonModule,
-    NgOptimizedImage,
+    CommonModule, 
+    NgOptimizedImage, 
     ReactiveFormsModule,
     ModalWrapperComponent,
     ButtonComponent,
+    StatCardComponent,
+    DataTableComponent,
     OverviewComponent,
     GuestComponent,
     RegistrationComponent,
@@ -59,19 +76,24 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   private readonly _route = inject(ActivatedRoute);
   private readonly _location = inject(Location);
   private readonly _layoutService = inject(LayoutService);
-  private readonly _invitationService = inject(InvitationService);
-  private readonly _manageService = inject(ManageEventService);
+  private readonly _userBackendService = inject(UserBackendService);
+  private readonly _notificationService = inject(NotificationService);
 
   protected readonly APP_ROUTES = APP_ROUTES;
 
-  protected readonly eventOverview = signal<EventAnalyticsResponse | null>(null)
-
   protected readonly eventDetails = signal<EventDetails | null>(null);
+  protected readonly ticketTypes = signal<TicketType[]>([]);
+  protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
-
-
-  protected readonly availableEvents = signal<{ id: number, title: string }[]>([]);
+  public readonly registrations = signal<Registration[]>([]);
+  
+  protected readonly availableEvents = signal<{id: number, title: string}[]>([]);
   protected readonly currentEventId = signal<number | null>(null);
+
+  private readonly _invitationService = inject(InvitationService);
+  private readonly _manageService = inject(ManageEventService);
+
+  protected readonly eventOverview = signal<EventAnalyticsResponse | null>(null)
 
   protected readonly showInviteModal = signal<boolean>(false);
   protected readonly showSuccessModal = signal<boolean>(false);
@@ -119,7 +141,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         if (state.eventData) {
           this._loadEventFromState(state.eventData, eventId);
         } else {
-
           this._loadEventFromState(MOCK_EVENT_DETAILS, eventId);
         }
       }
@@ -180,24 +201,25 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this.setActiveTab('guests');
   }
 
-  protected onViewTickets(): void { }
+  protected onViewTickets(): void {}
 
   protected onInviteGuest(): void {
     const eventId = this.currentEventId();
-    console.log('Opening invite modal with event ID:', eventId);
-
-    if (eventId) {
-      // Reset form and set the event ID
-      this.inviteForm.reset();
-      this.inviteForm.patchValue({
-        event: eventId,
-        role: 'ATTENDEE'
-      });
-      console.log('Form after patch:', this.inviteForm.value);
-    } else {
-      console.warn('No event ID available when opening invite modal');
+    
+    if (!eventId) {
+      this._notificationService.error('Error: No Event ID found. Please refresh the page.');
+      return;
     }
 
+    this.inviteForm.reset({
+      title: '',
+      name: '',
+      email: '',
+      message: '',
+      event: eventId,
+      role: 'ATTENDEE'
+    });
+    
     this.showInviteModal.set(true);
     this._toggleBodyScroll(true);
   }
@@ -205,9 +227,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected onCloseInviteModal(): void {
     this.showInviteModal.set(false);
     const eventId = this.currentEventId();
-    this.inviteForm.reset({
+    this.inviteForm.reset({ 
       role: 'ATTENDEE',
-      event: eventId || ''
+      event: eventId || null 
     });
     this._toggleBodyScroll(false);
   }
@@ -216,16 +238,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     if (this.inviteForm.valid) {
       this._submitInvitation('SEND');
     } else {
-      console.error('Form is invalid:', this.inviteForm.errors);
-      console.error('Form values:', this.inviteForm.value);
-      console.error('Form control errors:', {
-        title: this.inviteForm.get('title')?.errors,
-        name: this.inviteForm.get('name')?.errors,
-        email: this.inviteForm.get('email')?.errors,
-        event: this.inviteForm.get('event')?.errors,
-        role: this.inviteForm.get('role')?.errors,
-      });
-      this.inviteForm.markAllAsTouched();
+      this._toggleBodyScroll(false);
     }
   }
 
@@ -233,61 +246,49 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     if (this.inviteForm.valid) {
       this._submitInvitation('SAVE');
     } else {
-      console.error('Form is invalid:', this.inviteForm.errors);
-      console.error('Form values:', this.inviteForm.value);
-      console.error('Form control errors:', {
-        title: this.inviteForm.get('title')?.errors,
-        name: this.inviteForm.get('name')?.errors,
-        email: this.inviteForm.get('email')?.errors,
-        event: this.inviteForm.get('event')?.errors,
-        role: this.inviteForm.get('role')?.errors,
-      });
       this.inviteForm.markAllAsTouched();
     }
   }
 
-  private _submitInvitation(status: 'SAVE' | 'SEND'): void {
+  private _submitInvitation(status: string): void {
     const formData = this.inviteForm.value;
     this.isSubmitting.set(true);
 
     const selectedEventId = Number(formData.event);
 
-    const payload: InvitationPayload = {
-      invitationTitle: formData.title,
+    if (!selectedEventId) {
+      this.isSubmitting.set(false);
+      this._notificationService.error('Internal Error: Event ID is missing.');
+      return;
+    }
+
+    const payload: InviteUserPayload = {
+      event: selectedEventId,
+      title: formData.title,
       invitees: [
         {
-          inviteeName: formData.name,
-          inviteeEmail: formData.email,
-          role: formData.role
+          fullName: formData.name,
+          email: formData.email,
+          role: formData.role 
         }
       ],
-      event: selectedEventId,
-      status: status,
+      status: status as any,
       message: formData.message || ''
     };
 
-    console.log('Submitting Invitation Payload:', payload);
-    console.log('Event ID being sent:', payload.event);
-
-    this._invitationService.sendInvitation(payload).subscribe({
-      next: (res) => {
-        console.log('Invitation sent successfully:', res);
+    this._userBackendService.inviteUsers(payload).subscribe({
+      next: () => {
         this.isSubmitting.set(false);
         this._handleSuccess(status);
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        console.error('API Error:', err);
-        console.error('Error details:', {
-          status: err.status,
-          statusText: err.statusText,
-          error: err.error
-        });
-
+        
         if (err.status === 0) {
-          alert('Connection blocked by Browser (CORS). Please use a CORS extension or contact backend to whitelist your domain.');
+           this._notificationService.error('Connection blocked (CORS). Please check your network or use the CORS extension.');
         } else {
-          alert(`Failed to send invitation. Error: ${err.statusText || 'Unknown error'}`);
+           const errorMessage = err.error?.description || err.error?.message || err.statusText || 'Unknown error occurred';
+           this._notificationService.error(`Failed to send: ${errorMessage}`); 
         }
       }
     });
@@ -295,20 +296,23 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
   private _handleSuccess(status: string): void {
     this.showInviteModal.set(false);
-
     const eventId = this.currentEventId();
-    this.inviteForm.reset({
+    
+    this.inviteForm.reset({ 
       role: 'ATTENDEE',
-      event: eventId || ''
+      event: eventId || null
     });
 
     if (status === 'SEND') {
+      this._notificationService.success('');
+      
       this.showSuccessModal.set(true);
       setTimeout(() => {
         this.showSuccessModal.set(false);
         this._toggleBodyScroll(false);
       }, 3000);
     } else {
+      this._notificationService.success('Invitation draft saved successfully.');
       this._toggleBodyScroll(false);
     }
   }
