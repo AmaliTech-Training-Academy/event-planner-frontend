@@ -39,7 +39,6 @@ interface LoginForm {
     SecureTextComponent,
     InputComponent,
     SocialLoginComponent,
-    CheckboxComponent,
     AccountDeactivatedModalComponent, 
   ],
   templateUrl: './login-page.component.html',

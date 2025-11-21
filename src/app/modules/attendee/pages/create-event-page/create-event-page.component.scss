@@ -32,8 +32,9 @@
   margin: auto;
 
   @include md {
+    @include flex-col(1rem);
     gap: 1.25rem;
-    padding: 18px 2rem 134px;
+    padding: 51px 1.5rem 149px;
   }
 
   @include sm {
@@ -47,20 +48,23 @@
   max-width: 589px;
   width: 100%;
   overflow: hidden;
-
+  
+  @include md {
+    max-width: none;
+  }
   @include sm {
     max-width: none;
   }
   app-upload-event-flyer {
     display: none;
 
-    // @include sm{
-    //   display: block
-    // }
+    @include sm {
+      display: block;
+    }
 
-    // @include md{
-    //   display: block
-    // }
+    @include md {
+      display: block;
+    }
   }
 
   .title-container {
@@ -109,8 +113,18 @@
       }
 
       @include sm {
-        @include body-3;
+        display: grid;
+        grid-template-columns: 1fr 1fr; // 2 columns
         gap: $spacing-4;
+        @include body-2;
+
+        > * {
+          width: 100%;
+        }
+
+        > :first-child {
+          grid-column: 1 / -1;
+        }
       }
     }
 
@@ -121,6 +135,15 @@
         flex: 1;
         @include flex-row($spacing-3);
         align-items: center;
+
+        @include sm {
+          display: grid;
+          @include flex-col($spacing-2);
+          background-color: rgb(255, 255, 255);
+          > * {
+            width: 100%;
+          }
+        }
       }
     }
   }
@@ -299,21 +322,24 @@
   width: 100%;
   overflow: hidden;
 
+  @include md {
+    max-width: none;
+  }
   @include sm {
     max-width: none;
   }
 
-  // app-upload-event-flyer{
-  //   display: black;
+  app-upload-event-flyer {
+    display: black;
 
-  //   @include sm{
-  //     display: none;
-  //   }
+    @include sm {
+      display: none;
+    }
 
-  //   @include md{
-  //     display: none;
-  //   }
-  // }
+    @include md {
+      display: none;
+    }
+  }
 
   .event-options-container {
     @include flex-col(16px);
