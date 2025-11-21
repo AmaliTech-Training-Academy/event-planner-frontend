@@ -11,13 +11,14 @@ import { MyEventItem } from '@app/core/models/myevent.model';
 import { EventsServiceService } from '@app/core/services/events.service';
 import { PaginationComponent } from '@app/shared/admin-ui/pagination/pagination.component';
 import { EmptyListMessageComponent } from '@app/shared/components/empty-list-message/empty-list-message.component';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, single, Subject, takeUntil } from 'rxjs';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { UserCardData } from '../../../../core/models';
 import { EventCard } from '../../../../core/models/events';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
-import { ButtonComponent } from "@app/shared/ui/button/button.component";
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
 
 @Component({
   selector: 'app-my-events-page',
@@ -27,9 +28,11 @@ import { ButtonComponent } from "@app/shared/ui/button/button.component";
     RouterModule,
     EventCardComponent,
     AdminUserCardComponent,
+    ButtonComponent,
     PaginationComponent,
+    ButtonComponent,
     EmptyListMessageComponent,
-    ButtonComponent
+    LoadingCardComponent
 ],
   templateUrl: './my-events-page.component.html',
   styleUrl: './my-events-page.component.scss',
@@ -58,26 +61,30 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
       
     this.getMyEvents()
 
-
-    this.eventService.myEventOverview()
+      forkJoin({
+      events: this.eventService.myEvents(this.page()),
+      overview: this.eventService.myEventOverview()
+    })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: ({ events, overview }) => {
+ 
+          this.myEvents.set(events.data.content);
+          this.totalaPages.set(events.data.totalPages);
+
           this.statCards.update(prev => {
             const updated = [...prev];
-
-            Object.entries(response.data).forEach(([key, value]) => {
+            Object.entries(overview.data).forEach(([key, value]) => {
               const card = updated.find(c => c.backend_key === key);
               if (card) {
                 card.count = value;
               }
             });
-
             return updated;
           });
-
         }
       });
+
 
   }
 
@@ -102,7 +109,7 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
     this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
   }
 
-  protected onManageEvent(id: string): void {
+  protected onManageEvent(id:string): void {
     this.router.navigate([this.routes.MANAGE_EVENT(id)]);
   }
 
