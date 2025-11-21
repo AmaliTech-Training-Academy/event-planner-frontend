@@ -74,7 +74,6 @@ export class AuthBackendService {
   public getAuthenticatedUser() {
     return this.http.get<AuthResponseBody<OtpBodyData>>(API_ENDPOINTS.AUTH_ME);
   }
-<<<<<<< HEAD
 
   public updateProfile(userId: string, data: UpdateProfilePayload) {
     return this.http.put<AuthResponseBody<OtpBodyData>>(
@@ -89,12 +88,12 @@ export class AuthBackendService {
     return this.http.post<AuthResponseBody<{ profilePicture: string }>>(
       API_ENDPOINTS.UPLOAD_AVATAR(userId),
       formData
-=======
+    )
+  };
   public acceptInvitation(payload: AcceptInvitationPayload) {
     return this.http.post<AuthResponseBody<OtpBodyData>>(
       API_ENDPOINTS.ACCEPT_INVITATION,
       payload
->>>>>>> 168f6ca62960697568c6fbfd82371086f8c5b326
     );
   }
 }

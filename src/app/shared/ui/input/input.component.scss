@@ -2,7 +2,6 @@
 @use 'colors' as *;
 @use 'variables' as *;
 
-
 .input-field-group {
   margin-bottom: $spacing-4;
   position: relative;
@@ -38,13 +37,6 @@
       padding-left: $spacing-3;
     }
 
-    &.with-icon {
-      padding-left: $spacing-3;
-    }
-
-    &.no-icon {
-      padding-left: $spacing-4; 
-    }
     &.no-icon {
       padding-left: $spacing-4; 
     }
@@ -55,13 +47,6 @@
     }
 
     .input-icon {
-      flex-shrink: 0;
-      width: 24px;
-      height: 24px;
-      margin-right: $spacing-3;
-      color: $gray-400;
-    }
-
       flex-shrink: 0;
       width: 24px;
       height: 24px;
@@ -92,27 +77,17 @@
       &[type="password"] {
         letter-spacing: 0.125rem;
       }
+    }
 
-      // Hide browser's default password reveal button (Edge, Chrome, Safari)
-      &::-ms-reveal,
-      &::-ms-clear {
-        display: none;
-      }
-
-      // Hide Chrome/Edge password reveal button
-      &::-webkit-contacts-auto-fill-button,
-      &::-webkit-credentials-auto-fill-button {
-        visibility: hidden;
-        pointer-events: none;
-        position: absolute;
-        right: 0;
-      }
-
-      // Alternative method for Chromium browsers
-      &[type="password"]::-webkit-textfield-decoration-container {
-        visibility: hidden;
-        pointer-events: none;
-      }
+    .valid-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      margin-left: $spacing-2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeInScale 0.3s ease-out;
     }
 
     .toggle-password {
@@ -127,24 +102,27 @@
       color: $gray-400;
       transition: color 0.2s ease;
       margin-left: $spacing-2;
-      z-index: 10;
-      position: relative;
 
       &:hover {
         color: $gray-600;
-      }
-
-      &:focus {
-        outline: 2px solid $orange-500;
-        outline-offset: 2px;
-        border-radius: 4px;
       }
 
       img {
         width: 20px;
         height: 20px;
         display: block;
-        pointer-events: none;
+      }
+    }
+  }
+
+  &.is-valid {
+    .input-wrapper {
+      border-color: #22c55e;
+      background-color: rgba(34, 197, 94, 0.05);
+
+      &:focus-within {
+        border-color: #22c55e;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
       }
     }
   }
@@ -227,5 +205,16 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

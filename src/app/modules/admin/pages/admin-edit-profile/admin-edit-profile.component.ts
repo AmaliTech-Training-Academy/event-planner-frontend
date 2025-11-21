@@ -377,8 +377,8 @@ export class EditProfileComponent implements OnInit {
             const authData: OtpBodyData = {
               id: updatedUser.userId || parseInt(this._currentUserId!, 10),
               email: updatedUser.email,
-              fullName: updatedUser.fullName || updatedUser.name,
-              profilePicture: updatedUser.profileImageUrl || updatedUser.avatar,
+              fullName: updatedUser.fullName,
+              profilePicture: updatedUser.profileImageUrl as string,
               role: updatedUser.role,
             };
 

@@ -90,16 +90,14 @@ export class InviteUserModalComponent {
       status: 'SEND',
     };
 
-    this._userManagementService.inviteUsers(payload).subscribe({
+    this.userManagementService.inviteUsers(payload).subscribe({
       next: (response) => {
-        console.log('✅ Success response:', response);
         this.isSubmitting = false;
         this.notificationService.success('Invitations sent successfully!');
         this.success.emit();
         this.close.emit();
       },
       error: (error) => {
-        console.error('❌ Error:', error);
         this.isSubmitting = false;
         this.notificationService.error(
           'Failed to send invitations. Please try again.'
