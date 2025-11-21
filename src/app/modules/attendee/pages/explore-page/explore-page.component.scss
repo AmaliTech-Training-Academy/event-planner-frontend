@@ -20,6 +20,11 @@
 }
 
 
+app-location-search{
+  position: relative;
+  top: -.3rem;
+}
+
 .filter-bar {
   display: flex;
   flex-direction: column;
@@ -181,14 +186,18 @@ app-filter-dropdown,
   min-width: auto;
 }
 
+.app-tab-toggle-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 1.75rem 0rem 0;
 
+}
 app-tab-toggle {
   display: flex;
   justify-content: left;
-  padding: 1.75rem 0rem 0;
-  // max-width: 1280px;
   margin: 0 auto;
-  width: 100%;
+  flex:1;
 }
 
 app-tab-toggle ::ng-deep .tab-toggle-container {
@@ -262,25 +271,8 @@ app-tab-toggle ::ng-deep .tab-button {
 }
 
 
-.load-more-container {
-  padding: 2.5rem 0 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-.load-more-btn ::ng-deep button {
-  min-width: 380px;
-  padding: 0.75rem 1.25rem;
-  font-size: 1rem;
-}
 
-@media (max-width: 767px) {
-  .load-more-btn ::ng-deep button {
-    min-width: auto;
-    width: 100%;
-  }
-}
 
 
 .filter-content {

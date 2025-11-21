@@ -14,7 +14,9 @@ import { AUTH_STORAGE } from '../constants/storage.constants';
 import { OtpBodyData } from '../models/auth-response.model';
 import { AuthStorage } from '../models/auth.model';
 import { AuthBackendService } from './backend/auth-backend.service';
+import { UpdateUserPayload, UserBackendService } from './backend/user-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
+import { User } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -26,16 +28,16 @@ export class AuthService {
   private _otp: string = '';
   private _isResset: boolean = false;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
-  private TOKEN_REFRESH_INTERVAL:number = .5 as const;
+  private TOKEN_REFRESH_INTERVAL:number = 15 as const;
 
   constructor(
     private readonly authBackend: AuthBackendService,
     private readonly router: Router,
-    private readonly errorHandlerService: ErrorHandlerService
+    private readonly errorHandlerService: ErrorHandlerService,
+    private readonly userBackendService: UserBackendService
   ) {
     this.onload();
   }
-
 
   public login(email: string, password: string) {
     this.setLoading(true);
@@ -51,6 +53,7 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public adminLogin(email: string, password: string) {
     this.setLoading(true);
     return this.authBackend.adminLogin(email, password).pipe(
@@ -115,7 +118,7 @@ export class AuthService {
         this.startAutomaticRefresh(new Date());
 
         // Route to Explore page instead
-        this.router.navigate([APP_ROUTES.EXPLORE]);
+        this.router.navigate([APP_ROUTES.MY_EVENTS]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
@@ -183,6 +186,7 @@ export class AuthService {
       finalize(() => this.setLoading(false))
     );
   }
+
   public resetPassword(otp: string, email: string, password: string) {
     this.setLoading(true);
     return this.authBackend.resetPassword(otp, email, password).pipe(
@@ -213,6 +217,36 @@ export class AuthService {
     );
   }
 
+  public updateUser(userId: string, data: UpdateUserPayload) {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value as any);
+    });
+
+    this.setLoading(true);
+    return this.userBackendService
+      .updateUserWithFormData(userId, formData)
+      .pipe(
+        take(1),
+        tap((response) => {
+          let user_: User = response.data;
+          const data: OtpBodyData = {
+            email: user_.email,
+            fullName: user_.fullName,
+            role: user_.role,
+            profilePicture: user_.profileImageUrl as string,
+            id: user_.userId,
+            address: user_.address,
+            phone: user_.phone,
+          };
+          this._userInfo$.next(data);
+        }),
+        catchError((err) => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
+  }
+
   private onload() {
     const stored = localStorage.getItem(AUTH_STORAGE.AUTH);
 
@@ -227,6 +261,8 @@ export class AuthService {
           fullName: data[AUTH_STORAGE.FULL_NAME],
           profilePicture: data[AUTH_STORAGE.PROFILE_PICTURE],
           role: data[AUTH_STORAGE.ROLE],
+          address: data[AUTH_STORAGE.PHONE_NUMBER],
+          phone: data[AUTH_STORAGE.ADDRESS],
         };
         this._userInfo$.next(userData);
         const refreshedAt = data[AUTH_STORAGE.REFRESHED_AT]
@@ -243,7 +279,9 @@ export class AuthService {
     profilePicture: string | null,
     email: string,
     role: string,
-    refreshAt: Date = new Date()
+    refreshAt: Date = new Date(),
+    phone: string = "",
+    address:string = ""
   ) {
     localStorage.setItem(
       AUTH_STORAGE.AUTH,
@@ -255,6 +293,8 @@ export class AuthService {
         [AUTH_STORAGE.EMAIL]: email,
         [AUTH_STORAGE.ROLE]: role,
         [AUTH_STORAGE.REFRESHED_AT]: refreshAt.toISOString(),
+        [AUTH_STORAGE.PHONE_NUMBER]: phone,
+        [AUTH_STORAGE.ADDRESS]: address
       })
     );
   }
@@ -341,5 +381,41 @@ export class AuthService {
 
   public getOtp(): string {
     return this._otp;
+  }
+  public acceptInvitation(
+    fullName: string,
+    password: string,
+    confirmPassword: string,
+    invitationToken: string
+  ) {
+    this.setLoading(true);
+
+    return this.authBackend
+      .acceptInvitation({
+        fullName,
+        password,
+        confirmPassword,
+        invitationToken,
+      })
+      .pipe(
+        take(1),
+        tap((response) => {
+          const userData = response?.data;
+
+          if (userData) {
+            if (userData.role === 'ADMIN') {
+              this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+            } else {
+              this.router.navigate([APP_ROUTES.LOGIN]);
+            }
+          }
+        }),
+        catchError((err) => {
+          return this.errorHandlerService.handle(err);
+        }),
+        finalize(() => {
+          this.setLoading(false);
+        })
+      );
   }
 }

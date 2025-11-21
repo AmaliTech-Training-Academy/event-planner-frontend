@@ -12,15 +12,17 @@ import {
 import {
   FetchInvitationsResponse,
   InviteUserPayload,
+  InviteUserResponse,
   User,
   UserCardData,
   UserSearchResponse,
-  mapStatusToBoolean,
+  UserManagementResponse,
+  UserResponse,
   normalizeUserStatus,
 } from '../models/index';
 import {
-  UserBackendService,
   UpdateUserPayload,
+  UserBackendService,
 } from './backend/user-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
 
@@ -30,6 +32,13 @@ interface CachedSearchResult {
   totalElements: number;
   currentPage: number;
   timestamp: number;
+}
+
+interface UserStats {
+  totalUsers: number;
+  totalOrganizers: number;
+  totalAttendees: number;
+  totalDeactivatedUsers: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -66,12 +75,7 @@ export class UserManagementService {
   >();
   private readonly _cacheDuration: number = 5 * 60 * 1000;
 
-  private _userStats: {
-    totalUsers: number;
-    totalOrganizers: number;
-    totalAttendees: number;
-    totalDeactivatedUsers: number;
-  } = {
+  private _userStats: UserStats = {
     totalUsers: 0,
     totalOrganizers: 0,
     totalAttendees: 0,
@@ -87,19 +91,25 @@ export class UserManagementService {
     return this._totalElements$.getValue();
   }
 
-  public fetchAllUsers(page: number = 0, size: number = 10): Observable<any> {
+  public fetchAllUsers(
+    page: number = 0,
+    size: number = 10
+  ): Observable<UserManagementResponse> {
     this._setLoading(true);
 
     return this._userBackend.getAllUsers(page, size).pipe(
-      map((response) => {
-        const pagination = response.data?.users ?? response.data;
-        const users = pagination?.content ?? [];
-        const normalizedUsers: User[] = users.map(normalizeUserStatus);
+      map((response: UserManagementResponse): UserManagementResponse => {
+        const pagination = response.data.users;
+        const normalizedUsers: User[] =
+          pagination.content.map(normalizeUserStatus);
 
         return {
           ...response,
           data: {
-            ...response.data,
+            totalUsers: response.data.totalUsers,
+            totalOrganizers: response.data.totalOrganizers,
+            totalAttendees: response.data.totalAttendees,
+            totalDeactivatedUsers: response.data.totalDeactivatedUsers,
             users: {
               ...pagination,
               content: normalizedUsers,
@@ -108,25 +118,22 @@ export class UserManagementService {
         };
       }),
 
-      tap((response) => {
-        const pagination = response.data?.users ?? response.data;
-        const users = pagination?.content ?? [];
-        const normalizedUsers: User[] = users.map(normalizeUserStatus);
+      tap((response: UserManagementResponse) => {
+        const pagination = response.data.users;
+        const normalizedUsers = pagination.content;
 
-        if (pagination?.number === 0) {
+        if (pagination.number === 0) {
           this._usersCache = normalizedUsers;
         } else {
           this._usersCache = [...this._usersCache, ...normalizedUsers];
         }
 
         this._users$.next(normalizedUsers);
-        this._totalPages$.next(pagination?.totalPages ?? 1);
-        this._currentPage$.next(pagination?.number ?? 0);
-        this._totalElements$.next(
-          pagination?.totalElements ?? normalizedUsers.length
-        );
+        this._totalPages$.next(pagination.totalPages);
+        this._currentPage$.next(pagination.number);
+        this._totalElements$.next(pagination.totalElements);
 
-        this._updateUserCards(response.data ?? {});
+        this._updateUserCards(response.data);
       }),
 
       catchError((err) => {
@@ -205,13 +212,16 @@ export class UserManagementService {
     this._usersCache = [];
   }
 
-  public getUser(userId: string): Observable<any> {
+  public getUser(userId: string): Observable<UserResponse> {
     this._setLoading(true);
     return this._userBackend.getUserById(userId).pipe(
-      map((response) => ({
-        ...response,
-        data: normalizeUserStatus(response.data),
-      })),
+      map(
+        (response: { data: User }): UserResponse => ({
+          success: true,
+          message: 'User retrieved successfully',
+          data: normalizeUserStatus(response.data),
+        })
+      ),
       catchError((err) => {
         this._errorHandler.handle(err);
         return throwError(() => err);
@@ -219,19 +229,19 @@ export class UserManagementService {
       finalize(() => this._setLoading(false))
     );
   }
-
-  public createUser(user: Partial<User>): Observable<any> {
+  public createUser(user: Partial<User>): Observable<UserResponse> {
     this._setLoading(true);
     return this._userBackend.createUser(user).pipe(
-      map((response) => ({
-        ...response,
-        data: normalizeUserStatus(response.data),
-      })),
-      tap((response) => {
+      map(
+        (response: UserResponse): UserResponse => ({
+          ...response,
+          data: normalizeUserStatus(response.data),
+        })
+      ),
+      tap((response: UserResponse) => {
         const updatedUsers = [...this._users$.getValue(), response.data];
         this._users$.next(updatedUsers);
-        
-        // Update cards instantly based on the new user
+
         this._updateCardsFromUserList(updatedUsers);
         this.invalidateCache();
       }),
@@ -246,15 +256,17 @@ export class UserManagementService {
   public updateUser(
     userId: string,
     payload: UpdateUserPayload
-  ): Observable<any> {
+  ): Observable<UserResponse> {
     this._setLoading(true);
 
     return this._userBackend.updateUser(userId, payload).pipe(
-      map((response) => ({
-        ...response,
-        data: normalizeUserStatus(response.data),
-      })),
-      tap((response) => {
+      map(
+        (response: UserResponse): UserResponse => ({
+          ...response,
+          data: normalizeUserStatus(response.data),
+        })
+      ),
+      tap((response: UserResponse) => {
         const users = this._users$
           .getValue()
           .map((u) =>
@@ -262,7 +274,6 @@ export class UserManagementService {
           );
         this._users$.next(users);
 
-        // Update cards instantly based on updated user list
         this._updateCardsFromUserList(users);
         this.invalidateCache();
       }),
@@ -277,15 +288,17 @@ export class UserManagementService {
   public updateUserWithFormData(
     userId: string,
     formData: FormData
-  ): Observable<any> {
+  ): Observable<UserResponse> {
     this._setLoading(true);
 
     return this._userBackend.updateUserWithFormData(userId, formData).pipe(
-      map((response) => ({
-        ...response,
-        data: normalizeUserStatus(response.data),
-      })),
-      tap((response) => {
+      map(
+        (response: UserResponse): UserResponse => ({
+          ...response,
+          data: normalizeUserStatus(response.data),
+        })
+      ),
+      tap((response: UserResponse) => {
         const users = this._users$
           .getValue()
           .map((u) =>
@@ -293,7 +306,6 @@ export class UserManagementService {
           );
         this._users$.next(users);
 
-        // Update cards instantly based on updated user list
         this._updateCardsFromUserList(users);
         this.invalidateCache();
       }),
@@ -305,7 +317,9 @@ export class UserManagementService {
     );
   }
 
-  public toggleUserStatusWithBackend(userId: number | string): Observable<any> {
+  public toggleUserStatusWithBackend(
+    userId: number | string
+  ): Observable<void> {
     this._setLoading(true);
 
     return this._userBackend.toggleUserActivation(userId).pipe(
@@ -321,7 +335,6 @@ export class UserManagementService {
         });
         this._users$.next(updatedUsers);
 
-        // Update cards instantly based on the status change
         this._updateCardsFromUserList(updatedUsers);
         this.invalidateCache();
       }),
@@ -333,46 +346,17 @@ export class UserManagementService {
     );
   }
 
-  public inviteUsers(payload: InviteUserPayload): Observable<any> {
+  public inviteUsers(
+    payload: InviteUserPayload
+  ): Observable<InviteUserResponse> {
     this._setLoading(true);
     return this._userBackend.inviteUsers(payload).pipe(
-      tap((response) => {
-        if (response.data.invitationsSent > 0) {
-          this.invalidateCache();
-          // Refresh users to update cards
-          this.fetchAllUsers(this._currentPage$.getValue());
-        }
+      tap((response: InviteUserResponse) => {
+        console.log('🎯 Invite response:', response);
+        this.invalidateCache();
       }),
       catchError((err) => {
-        this._errorHandler.handle(err);
-        return throwError(() => err);
-      }),
-      finalize(() => this._setLoading(false))
-    );
-  }
-
-  public fetchInvitations(page?: number, size?: number): Observable<any[]> {
-    this._setLoading(true);
-    return this._userBackend.fetchInvitations(page, size).pipe(
-      map((response: FetchInvitationsResponse) => {
-        return response.data?.content ?? [];
-      }),
-      catchError((err) => {
-        this._errorHandler.handle(err);
-        return of([]);
-      }),
-      finalize(() => this._setLoading(false))
-    );
-  }
-
-  public fetchInvitationsWithPagination(
-    page: number = 0,
-    size: number = 10
-  ): Observable<any> {
-    this._setLoading(true);
-    return this._userBackend.fetchInvitations(page, size).pipe(
-      catchError((err) => {
-        this._errorHandler.handle(err);
+        console.error('🚨 Invite error:', err);
         return throwError(() => err);
       }),
       finalize(() => this._setLoading(false))
@@ -392,14 +376,12 @@ export class UserManagementService {
     this._searchCache.clear();
   }
 
-  /**
-   * Calculate and update user cards based on current user list
-   * This provides instant updates when users are modified
-   */
   private _updateCardsFromUserList(users: User[]): void {
     const totalUsers = users.length;
     const totalOrganizers = users.filter(
-      (u) => (u.role === 'ORGANISER' || u.role === 'CO_ORGANIZER') && u.status === 'Active'
+      (u) =>
+        (u.role === 'ORGANISER' || u.role === 'CO_ORGANIZER') &&
+        u.status === 'Active'
     ).length;
     const totalAttendees = users.filter(
       (u) => u.role === 'ATTENDEE' && u.status === 'Active'
@@ -418,16 +400,12 @@ export class UserManagementService {
     this._updateUserCards();
   }
 
-  private _updateUserCards(data?: any): void {
-    const stats = data?.totalUsers != null ? data : this._userStats;
+  private _updateUserCards(data?: Partial<UserStats>): void {
+    const stats: UserStats =
+      data?.totalUsers != null ? (data as UserStats) : this._userStats;
 
     if (data?.totalUsers != null) {
-      this._userStats = {
-        totalUsers: data.totalUsers,
-        totalOrganizers: data.totalOrganizers,
-        totalAttendees: data.totalAttendees,
-        totalDeactivatedUsers: data.totalDeactivatedUsers,
-      };
+      this._userStats = data as UserStats;
     }
 
     const cards: UserCardData[] = [

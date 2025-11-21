@@ -4,3 +4,6 @@ export const USER_ROLES = {
     ATTENDEE: 'ATTENDEE',
     ADMIN: 'ADMIN'
 } as const;
+
+
+export const PLACEHOLDER_IMAGE = "images/event_placeholder.webp"

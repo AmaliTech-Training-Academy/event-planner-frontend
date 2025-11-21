@@ -1,0 +1,17 @@
+@use "auth-forms-base" as *;
+
+.loading-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+
+  padding: 5rem 0;
+
+  .spinner-continaer{
+    height: 2rem;
+    width: 2rem;
+
+  }
+}

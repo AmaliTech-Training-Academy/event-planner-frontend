@@ -11,6 +11,7 @@ import { TabToggleComponent } from '../../../../shared/components/tab-toggle/tab
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 
 import {
+  EventFiltersCache,
   EventTypeFilter,
   GetEventProps,
   GetEventsResponse,
@@ -21,14 +22,13 @@ import {
 
 import {
   MOCK_EVENT_TOGGLES,
-  MOCK_EVENT_TYPE_OPTIONS,
-  MOCK_POPULAR_LOCATIONS,
-  MOCK_RECENT_SEARCHES
+  MOCK_EVENT_TYPE_OPTIONS
 } from '../../../../core/data/mock-data';
-import { EventsServiceService } from '../../../../core/services/events.service';
-import { LocationSearchComponent } from "../../../../shared/components/location-search/location-search.component";
 import { StoredRecentLocation } from '../../../../core/models/recent-location.model';
+import { EventsServiceService } from '../../../../core/services/events.service';
 import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagination.component";
+import { LocationSearchComponent } from "../../../../shared/components/location-search/location-search.component";
+import { EmptyListMessageComponent } from "@app/shared/components/empty-list-message/empty-list-message.component";
 
 @Component({
   selector: 'app-explore-page',
@@ -48,16 +48,18 @@ import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagi
     LocationSearchComponent,
     CommonModule,
     FormsModule,
-    PaginationComponent
-],
+    PaginationComponent,
+    EmptyListMessageComponent
+  ],
   templateUrl: './explore-page.component.html',
   styleUrl: './explore-page.component.scss',
 })
 export class ExplorePageComponent implements OnInit {
 
   protected allEvents = signal<GetEventsResponse | null>(null);
-  protected currentPage = signal<number>(1);
+  protected currentPage = signal<number>(0);
   private readonly EVENTS_PER_PAGE = 12;
+  protected loading = signal<boolean>(true)
 
 
   protected locationTerm = signal<string>('');
@@ -75,6 +77,15 @@ export class ExplorePageComponent implements OnInit {
   public recentSearches = signal<SearchLocation[]>([]);
   public popularLocations = signal<PopularLocation[]>([]);
 
+
+  private lastFilters: EventFiltersCache = {
+    isPaid: 'all',
+    past: null,
+    date: null,
+    searchTerm: '',
+    locationTerm: ''
+  };
+
   constructor(private readonly router: Router, private readonly eventService: EventsServiceService) {
 
     effect(() => {
@@ -83,7 +94,29 @@ export class ExplorePageComponent implements OnInit {
       const date = this.selectedDate();
       const searchTerm = this.searchQuery();
       const locationTerm = this.locationTerm();
-      const currentPage = this.currentPage();
+      let currentPage = this.currentPage();
+
+      const filtersChanged =
+        isPaid !== this.lastFilters.isPaid ||
+        past !== this.lastFilters.past ||
+        date !== this.lastFilters.date ||
+        searchTerm !== this.lastFilters.searchTerm ||
+        locationTerm !== this.lastFilters.locationTerm;
+
+      if (filtersChanged) {
+        currentPage = 0;
+        this.currentPage.set(0);
+      }
+
+      this.lastFilters = {
+        isPaid,
+        past,
+        date,
+        searchTerm,
+        locationTerm
+      };
+
+
 
       this.searchEvents(isPaid, past, date, searchTerm, locationTerm, currentPage);
     });
@@ -118,6 +151,11 @@ export class ExplorePageComponent implements OnInit {
 
   public ngOnInit(): void {
     this.loadData();
+    this.eventService.loading$.subscribe({
+      next: (loading_) => {
+        this.loading.set(loading_)
+      }
+    })
   }
 
   private loadData(): void {
@@ -128,9 +166,34 @@ export class ExplorePageComponent implements OnInit {
     })
     this.eventToggles.set(MOCK_EVENT_TOGGLES);
     this.eventTypeOptions.set(MOCK_EVENT_TYPE_OPTIONS);
-    this.recentSearches.set(MOCK_RECENT_SEARCHES);
-    this.popularLocations.set(MOCK_POPULAR_LOCATIONS);
   }
+
+  protected clearSearchFilters() {
+    this.selectedEventType.set(MOCK_EVENT_TYPE_OPTIONS[0]);
+    this.activeToggle.set(null);
+    this.selectedDate.set(null);
+    this.searchQuery.set('');
+    this.locationTerm.set('');
+  }
+
+  protected hasActiveFilters(): boolean {
+
+    return Object.entries(this.lastFilters).some(([key, value]) => {
+      switch (key) {
+        case 'isPaid':
+          return value !== null && value !== 'all';
+        case 'past':
+        case 'date':
+          return value !== null;
+        case 'searchTerm':
+        case 'locationTerm':
+          return value?.trim().length > 0;
+        default:
+          return false;
+      }
+    });
+  }
+
 
   private searchEvents(isPaid: string, past: boolean | null, date: Date | null, searchTerm: string, locationTerm: string, currentPage: number) {
     let props: GetEventProps = {};
@@ -234,6 +297,11 @@ export class ExplorePageComponent implements OnInit {
   protected onDateSelected(date: Date): void {
     this.selectedDate.set(date);
     this.showDatePicker.set(false);
+  }
+
+
+  protected onPageChange(number_:number){
+   this.currentPage.set(number_ - 1)
   }
 
 

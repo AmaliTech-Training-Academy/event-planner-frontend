@@ -1,0 +1,159 @@
+@use 'colors' as *;
+@use 'typography' as *;
+@use 'variables' as *;
+@use 'media_query' as *;
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: $radius-4;
+  padding: 0;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body-content {
+  padding: $spacing-6 $spacing-8;
+  overflow-y: auto;
+  flex: 1;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $gray-100;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $gray-300;
+    border-radius: 3px;
+  }
+
+
+  ::ng-deep {
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: $spacing-2;
+      margin-bottom: $spacing-2;
+
+      label {
+        @include body-2;
+        color: $header-dark;
+        font-weight: 500;
+      }
+
+      .form-input {
+        @include body-2;
+        width: 100%;
+        padding: $spacing-2 $spacing-3;
+        border: 1px solid $gray-300;
+        border-radius: $radius-3;
+        background: white;
+        color: $text-primary;
+        font-family: inherit;
+        outline: none;
+        transition: all 0.2s ease;
+
+        &::placeholder {
+          color: $gray-400;
+        }
+
+        &:focus {
+          border-color: $orange-500;
+          box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
+        }
+      }
+
+      .message-box {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .custom-select-wrapper {
+        position: relative;
+
+        .form-select {
+          appearance: none;
+          padding-right: 40px;
+          cursor: pointer;
+        }
+
+        .dropdown-icon {
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          pointer-events: none;
+        }
+      }
+    }
+  }
+}
+
+.modal__actions {
+  display: flex;
+  gap: $spacing-4;
+  justify-content: flex-end;
+  padding: $spacing-5 $spacing-8;
+  border-top: 1px solid $gray-200;
+  background: $gray-50;
+}
+
+@include md {
+  .modal {
+    width: 95%;
+    max-width: 95%;
+  }
+
+  .modal-body-content {
+    padding: $spacing-5 $spacing-6;
+  }
+
+  .modal__actions {
+    padding: $spacing-4 $spacing-6;
+    flex-direction: column;
+
+    app-button {
+      width: 100%;
+    }
+  }
+}
+
+@include sm {
+  .modal {
+    width: 100%;
+    border-radius: $radius-3;
+  }
+
+  .modal-body-content {
+    padding: $spacing-4 $spacing-5;
+  }
+
+  .modal__actions {
+    padding: $spacing-4 $spacing-5;
+  }
+}
