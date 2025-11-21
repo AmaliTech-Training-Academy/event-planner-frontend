@@ -150,6 +150,7 @@ export class EventFormService {
         } else if (type === MEETING_TYPE.VIRTUAL) {
           this.form.addControl(F.VIRTUAL_DETAILS, this.createVirtualDetailGroup());
         }
+       
       });
 
     this.form.get(F.PRICE_TYPE)?.valueChanges
