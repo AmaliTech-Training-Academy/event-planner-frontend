@@ -57,7 +57,6 @@ export class EventsServiceService {
     )
   }
 
-
   public getEvents({
     sortBy,
     pageNumber,
@@ -123,6 +122,4 @@ export class EventsServiceService {
   private setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);
   }
-
-
 }
