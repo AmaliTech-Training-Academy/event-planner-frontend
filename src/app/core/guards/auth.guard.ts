@@ -6,7 +6,6 @@ import { catchError, map, switchMap, take } from 'rxjs/operators';
 import { APP_ROUTES } from '../constants/app-routes.constants';
 import { USER_ROLES } from '../constants/user.constants';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -21,7 +20,6 @@ export class AuthGuard implements CanActivate {
       take(1),
       switchMap((isLoggedIn) => {
         if (!isLoggedIn) {
-         
           return of(this.router.createUrlTree([APP_ROUTES.LOGIN]));
         }
 
@@ -30,17 +28,14 @@ export class AuthGuard implements CanActivate {
           map((user) => {
             const context = this.authService.getCurrentAuthContext();
 
-
             if (!user) {
               return this.router.createUrlTree([APP_ROUTES.LOGIN]);
             }
 
             if (user.role === USER_ROLES.ADMIN || context === 'admin') {
-            
               return this.router.createUrlTree([APP_ROUTES.ADMIN_DASHBOARD]);
             }
 
-        
             return true;
           })
         );

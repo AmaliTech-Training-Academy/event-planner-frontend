@@ -8,6 +8,7 @@ export const APP_ROUTES = {
   VERIFY_EMAIL: '/auth/verify-email',
   RESET_PASSWORD: '/auth/reset-password',
   ADMIN_LOGIN: '/auth/admin',
+  ACCEPT_INVITE: '/auth/invitation/accept',
 
   // Public routes
   LANDING_PAGE: '/',
@@ -15,6 +16,7 @@ export const APP_ROUTES = {
   // App routes
   EXPLORE: '/app/explore',
   PROFILE: '/app/profile',
+  PROFILE_PAGE: '/app/profile',
   ABOUT: '/app/about',
   EVENT_DETAILS: (id: string) => `/app/event/${id}`,
   VENUE_SECTION: '/app/define-venue-sections',
@@ -25,26 +27,20 @@ export const APP_ROUTES = {
   MY_EVENT: (id: string) => `/app/my-events/${id}`,
   MANAGE_EVENT: (id: string) => `/app/manage-event/${id}`,
   PAYMENT_SETTINGS: '/app/payment-settings',
-  ADMIN_DASHBOARD: '/admin',
   EVENT_PAYMENT_SUCCESS: '/app/event-payment-success',
-  PROFILE_PAGE: '/app/profile',
-  ADMIN_EVENTS: '/admin/events',
-  ADMIN_EVENT_DETAILS: '/admin/events/:id',
-  ADMIN_ORGANIZERS: '/admin/organizers',
   PAYMENT_SUCCESS: '/app/payment-success',
-  ACCEPT_INVITE: '/auth/invitation/accept',
-  MANAGE_EVENT: (id: string) => `/app/manage-event/${id}`,
 
   // Admin routes
+  ADMIN_DASHBOARD: '/admin',
   EVENT_MANAGEMENT: '/admin/events',
   ADMIN_EVENTS: '/admin/events',
   ADMIN_EVENT_DETAILS: (id: string) => `/admin/events/${id}`,
   ADMIN_ORGANIZERS: '/admin/organizers',
   ADMIN_PROFILE: '/admin/profile',
+  ADMIN_EDIT_PROFILE: '/admin/profile',
   ADMIN_SETTINGS: '/admin/settings',
   ADMIN_SETTINGS_SECURITY: '/admin/settings/security',
   ADMIN_SETTINGS_NOTIFICATIONS: '/admin/settings/notifications',
   ADMIN_SETTINGS_TEAM: '/admin/settings/team',
   ADMIN_LOGOUT: '/admin/logout',
-  ADMIN_EDIT_PROFILE: '/admin/profile',
 } as const;
