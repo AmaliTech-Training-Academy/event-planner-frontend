@@ -35,8 +35,8 @@ export const API_ENDPOINTS = {
   UPLOAD_AVATAR: (userId: string): string => `${BASE}/users/${userId}/avatar`,
   SEARCH_USERS: `${BASE}/users/search`,
   DEACTIVATE_USER: (userId: string | number): string => `${BASE}/users/${userId}/deactivate`,
-  
- 
+
+
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
 
@@ -62,8 +62,8 @@ export const API_ENDPOINTS = {
   EVENT_DETAILS: (eventId: number): string => `${BASE}/events/${eventId}`,
   UPDATE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number): string => `${BASE}/events/${eventId}`,
- 
- 
+
+
   SEARCH_EVENTS: `${BASE}/events/event-management/search`,
 
   // My Events endpoints
@@ -94,7 +94,7 @@ export const EVENTS_API_ENDPOINTS = {
   MY_EVENT_OVERVIEW: `${BASE}/events/my-events/overview`,
   SEARCH_EVENTS: `${BASE}/events/search`,
   MANAGE_EVENT_DETAILS: (id: number) =>
-    `${BASE}/events/my-events/details/${id}`,
+    `${BASE}/events/${id}`,
   MANAGE_EVENT_INVITEES: (id: number) =>
     `${BASE}/event-invitations/${id}/invitees`,
   MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) =>
@@ -109,8 +109,8 @@ export const PLATFORM_SETTINGS_ENDPOINTS = {
   MY_EVENT: `${BASE}/events/my-events`,
   MY_EVENT_OVERVIEW: `${BASE}/events/my-events/overview`,
   SEARCH_EVENTS: `${BASE}/events/search`,
-  MANAGE_EVENT_DETAILS: (id: number) => `${BASE}/events/my-events/details/${id}`,
-  MANAGE_EVENT_INVITEES:(id: number) => `${BASE}/event-invitations/${id}/invitees`,
+  MANAGE_EVENT_DETAILS: (id: number) => `${BASE}/events/${id}`,
+  MANAGE_EVENT_INVITEES: (id: number) => `${BASE}/event-invitations/${id}/invitees`,
   MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) => `${BASE}/events/${id}/registrations/overview`,
   MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) => `${BASE}/events/${id}/registrations/search`,
 } as const;

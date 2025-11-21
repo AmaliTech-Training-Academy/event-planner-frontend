@@ -30,6 +30,7 @@ export const APP_ROUTES = {
   PROFILE_PAGE: '/app/profile',
 
   // Admin routes
+  EVENT_MANAGEMENT: '/admin/events',
   ADMIN_EVENTS: '/admin/events',
   ADMIN_EVENT_DETAILS: (id: string) => `/admin/events/${id}`,
   ADMIN_ORGANIZERS: '/admin/organizers',

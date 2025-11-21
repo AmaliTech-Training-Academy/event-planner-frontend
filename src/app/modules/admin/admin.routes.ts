@@ -31,8 +31,8 @@ export const ADMIN_ROUTES: Routes = [
     path: 'events/:id',
     loadComponent: () =>
       import(
-        './pages/event-management-page/components/event-details-page/event-details-page.component'
-      ).then((m) => m.EventDetailsPageComponent),
+        '../attendee/pages/manage-event-page/manage-event-page.component'
+      ).then((m) => m.ManageEventPageComponent),
   },
 
   {
@@ -79,5 +79,5 @@ export const ADMIN_ROUTES: Routes = [
       import('./pages/admin-edit-profile/admin-edit-profile.component').then(
         (m) => m.EditProfileComponent
       ),
-  }
+  },
 ];

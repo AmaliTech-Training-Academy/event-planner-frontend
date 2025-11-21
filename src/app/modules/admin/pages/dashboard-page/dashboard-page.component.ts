@@ -121,7 +121,6 @@ export class DashboardPageComponent implements OnInit {
       this.dashboardCards.set([...cards, ...this._staticCards]);
     });
 
-    // Initial fetch
     this._userService.fetchAllUsers(0, 10).subscribe();
   }
 
