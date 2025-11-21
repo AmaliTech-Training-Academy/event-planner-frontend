@@ -34,15 +34,15 @@ export interface Registration {
   ticketType: string;
 }
 export interface InviteUserPayload {
-  title?: string;
-  event?: number;
+  invitationTitle: string; 
+  event: number;
   invitees: Array<{
-    fullName: string;
-    email: string;
+    inviteeName: string;   
+    inviteeEmail: string;  
     role: string;
   }>;
   message: string;
-  status: 'SEND' | 'SAVE';
+  status: string; 
 }
 
 type TabType = 'overview' | 'guests' | 'registration';
@@ -262,21 +262,23 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const payload: InviteUserPayload = {
-      event: selectedEventId,
-      title: formData.title,
+    
+      const payload: InviteUserPayload = {
+      invitationTitle: formData.title, 
+      event: selectedEventId, 
       invitees: [
         {
-          fullName: formData.name,
-          email: formData.email,
+          inviteeName: formData.name,   
+          inviteeEmail: formData.email, 
           role: formData.role 
         }
       ],
-      status: status as any,
+      status: status,
       message: formData.message || ''
     };
 
-    this._userBackendService.inviteUsers(payload).subscribe({
+
+    this._userBackendService.inviteUsers(payload as any).subscribe({
       next: () => {
         this.isSubmitting.set(false);
         this._handleSuccess(status);
