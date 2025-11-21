@@ -1,18 +1,29 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_ENDPOINTS, EVENTS_API_ENDPOINTS } from '../../constants/api-endpoints.constants';
-import { BaseType, EventDetail, EventResponse, EventSummary, EventType, GetEventsResponse, TimeZone } from '../../models/event.model';
+import {
+  BaseType,
+  EventDetail,
+  EventResponse,
+  EventType,
+  GetEventsResponse,
+  RegisterEventBody,
+  RegisterEventResponse,
+  TimeZone
+} from '../../models/event.model';
 import { CacheHttpService } from '../util/CacheHttpClient';
 import { MyEventResponse, MyEventStatsResponse } from '@app/core/models/myevent.model';
-
 
 @Injectable({
   providedIn: 'root',
 })
 export class EventBackendServiceService {
 
-  constructor(private readonly http: HttpClient, private readonly cacheHttp: CacheHttpService) { }
+  constructor(
+    private readonly http: HttpClient,
+    private readonly cacheHttp: CacheHttpService
+  ) { }
 
   public getEventTypes(): Observable<EventType[]> {
     return this.cacheHttp.get<EventType[]>(EVENTS_API_ENDPOINTS.GET_EVENT_TYPES);
@@ -37,18 +48,22 @@ export class EventBackendServiceService {
   public getEvent(id: string): Observable<EventDetail> {
     return this.http.get<EventDetail>(EVENTS_API_ENDPOINTS.GET_EVENT(id));
   }
+
   public getEvents(params: URLSearchParams): Observable<GetEventsResponse> {
     const queryParam_ = `?${params.toString()}`;
     return this.http.get<GetEventsResponse>(`${EVENTS_API_ENDPOINTS.GET_EVENTS}${queryParam_}`);
   }
 
-  public getMyEvents(params: URLSearchParams) {
+  public getMyEvents(params: URLSearchParams): Observable<MyEventResponse> {
     const queryParam_ = `?${params.toString()}`;
     return this.http.get<MyEventResponse>(`${EVENTS_API_ENDPOINTS.MY_EVENT}${queryParam_}`);
   }
 
-  public myEventOverview() {
+  public myEventOverview(): Observable<MyEventStatsResponse> {
     return this.http.get<MyEventStatsResponse>(`${API_ENDPOINTS.MY_EVENT_OVERVIEW}`);
   }
 
+  public registerEvent(id: string, data: RegisterEventBody): Observable<RegisterEventResponse> {
+    return this.http.post<RegisterEventResponse>(EVENTS_API_ENDPOINTS.REGISTER_EVENT(id), data);
+  }
 }

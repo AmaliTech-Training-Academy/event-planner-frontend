@@ -1,20 +1,11 @@
 import {
   EventDetails,
-  VenueImage,
-  VenueSection,
-  TicketInfo,
-  EventCard,
-  SearchLocation,
-  PopularLocation,
-  TabToggle,
- EventSummary,
   EventTypeFilter,
-  TicketStatus,
-  EventHostAdmin,
-  StatCardData,
-  EventDetailsAdmin,
+  TabToggle,
+  TicketInfo,
+  VenueImage,
+  VenueSection
 } from '../models/event.model';
-
 
 import { LineSeriesConfig } from '../models/chart.model';
 
@@ -92,8 +83,6 @@ export const MOCK_TICKETS: TicketInfo[] = [
 
 export const MOCK_HELP_EMAIL: string = 'support@techevent.com';
 
-export const MOCK_EVENT_CARDS: EventCard[] = [];
-
 
 export const MOCK_EVENT_TOGGLES: TabToggle[] = [
   { key: 'upcoming', label: 'Upcoming events', value: false },
@@ -114,84 +103,6 @@ export const MOCK_EVENT_TYPE_OPTIONS: EventTypeFilter[] = [
     value: 'free',
   },
 ];
-
-export const MOCK_RECENT_SEARCHES: SearchLocation[] = [
-  { name: 'New York, USA', id: 'ny' },
-  { name: 'London, UK', id: 'ldn' },
-  { name: 'San Francisco, USA', id: 'sf' },
-  { name: 'Toronto, Canada', id: 'tor' },
-];
-
-export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
-  { name: 'San Francisco, USA', meta: 'California' },
-  { name: 'Toronto, Canada', meta: 'Ontario' },
-  { name: 'Sydney, Australia', meta: 'New South Wales' },
-  { name: 'London, UK', meta: 'England' },
-  { name: 'Berlin, Germany', meta: 'Europe' },
-];
-
-export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [] 
-  
-
-export const MOCK_ADMIN_EVENT_DETAILS: EventDetailsAdmin  = {
-  id: 'evt123',
-  name: 'Tech Innovation Summit 2025',
-  organizer: 'Tech Events Inc.',
-  date: '2025-04-15T00:00:00Z',
-  startDate: eventStartDate,
-  location: 'Silicon Valley Convention Center',
-  heroImageUrl: 'images/event-hero.png',
-  isPaid: true,
-  description: '...',
-  attendees: 5000,
-  status: 'Active',
-  time: '09:00am GMT',
-};
-
-
-export const MOCK_MANAGE_EVENT_TABS: TabToggle[] = [
-  { key: 'overview', label: 'Overview', value: true },
-  { key: 'guests', label: 'Guests', value: false  },
-  { key: 'registrations', label: 'Registrations', value: false},
-];
-
-export const MOCK_MANAGE_STATS: StatCardData[] = [
-  {
-    title: 'Attendees',
-    value: 387,
-    icon: 'icons/users.svg',
-  },
-  {
-    title: 'Total Tickets Sold',
-    value: '$565.00',
-    icon: 'icons/ticket.svg',
-  },
-];
-
-export const MOCK_EVENT_SUMMARY: EventSummary = {
-  date:'',
-  organizer:"",
-  time:"",
-  id:2,
-  title: 'Tech Innovation Summit 2025',
-  startTime: '2025-04-15T00:00:00Z',
-  description:"",
-  flyerUrl: 'images/flyer.jpg',
-  ticketPrice:0,
-  location: 'Virtual (Zoom Meeting)',
-};
-
-export const MOCK_TICKET_STATUS: TicketStatus[] = [
-  { name: 'Regular', sold: 6, left: 21 },
-  { name: 'VIP', sold: 14, left: 12 },
-  { name: 'VVIP', sold: 19, left: 43 },
-];
-
-export const MOCK_HOSTS: EventHostAdmin[] = [
-  { name: 'William Pen', email: 'william.pen@example.com' },
-];
-
-
 
 export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
   {

@@ -15,7 +15,7 @@
   @if(loading()){
     <app-loading-card></app-loading-card>
   }
-
+@else {
   <div class="events-section">
     @if(myEvents().length < 1 && !loading()){ <app-empty-list-message (handleSecondary)="navigateToExploreEvent()"
       (handleAction)="navigateToCreateEvent()" [secondaryText]="'Explore Events'" [actionText]="'Create Event'">
@@ -27,7 +27,8 @@
         <app-event-card [event]="event" [variant]="'manage'" (manageEvent)="onManageEvent(event.id.toString())" />
         }
       </div>
-      <app-pagination [totalItems]="totalaPages()" [(currentPage)]="page"></app-pagination>
-  </div>
+    </div>
+  }
+      <app-pagination [totalItems]="totalaItems()" (pageChange)="onPageChange($event)" [maxVisiblePages]="3"  [currentPage]="page()"></app-pagination>
 
 </main>

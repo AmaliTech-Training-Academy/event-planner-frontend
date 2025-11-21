@@ -11,14 +11,14 @@ export const API_ENDPOINTS = {
   AUTH_LOGIN: `${BASE}/auth/login`,
   AUTH_ADMIN_LOGIN: `${BASE}/auth/admin-login`,
   AUTH_REGISTER: `${BASE}/auth/register`,
-  // Auth endpoints
   AUTH_LOGOUT: `${BASE}/auth/logout`,
   ADMIN_LOGOUT: `${BASE}/auth/admin-logout`,
-  AUTH_ME: `${BASE}/auth/me`,
   AUTH_VERIFY_OTP: `${BASE}/auth/verify-otp`,
-  AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_FORGOT_PASSWORD: `${BASE}/auth/forgot-password`,
+  AUTH_RESEND_OTP: `${BASE}/auth/resend-otp`,
   AUTH_RESET_PASSWORD: `${BASE}/auth/reset-password`,
+  AUTH_REFRESH_TOKEN: `${BASE}/auth/refresh`,
+  AUTH_ME: `${BASE}/auth/me`,
 
   // ============================================
   // USER MANAGEMENT ENDPOINTS
@@ -90,9 +90,9 @@ export const EVENTS_API_ENDPOINTS = {
   GET_ALL_EVENTS: `${BASE}/events`,
   UPDATE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
   DELETE_EVENT: (eventId: number) => `${BASE}/events/${eventId}`,
+  SEARCH_EVENTS: `${BASE}/events/search`,
   MY_EVENT: `${BASE}/events/my-events`,
   MY_EVENT_OVERVIEW: `${BASE}/events/my-events/overview`,
-  SEARCH_EVENTS: `${BASE}/events/search`,
   MANAGE_EVENT_DETAILS: (id: number) =>
     `${BASE}/events/${id}`,
   MANAGE_EVENT_INVITEES: (id: number) =>

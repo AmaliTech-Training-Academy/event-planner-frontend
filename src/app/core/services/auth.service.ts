@@ -19,7 +19,6 @@ import {
   UserBackendService,
 } from './backend/user-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
-
 import { USER_ROLES } from '../constants/user.constants';
 import { User } from '../models';
 
@@ -33,6 +32,8 @@ export class AuthService {
   private _otp: string = '';
   private _isResset: boolean = false;
   private _currentAuthContext: 'user' | 'admin' | null = null;
+  private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private TOKEN_REFRESH_INTERVAL: number = 15 as const;
 
   constructor(
     private readonly authBackend: AuthBackendService,
@@ -77,10 +78,12 @@ export class AuthService {
             userData.profilePicture,
             userData.email,
             userData.role,
-            'admin'
+            'admin',
+            new Date()
           );
         }
 
+        this.startAutomaticRefresh(new Date());
         this.router.navigate([APP_ROUTES.ADMIN_DASHBOARD]);
       }),
       catchError((err) => {
@@ -140,11 +143,13 @@ export class AuthService {
             userData.profilePicture,
             userData.email,
             userData.role,
-            'user'
+            'user',
+            new Date(),
+            userData.phone || '',
+            userData.address || ''
           );
         }
-        this.router.navigate([APP_ROUTES.EXPLORE]);
-        // Route to Explore page instead
+        this.startAutomaticRefresh(new Date());
         this.router.navigate([APP_ROUTES.MY_EVENTS]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
@@ -387,11 +392,19 @@ export class AuthService {
             fullName: data[AUTH_STORAGE.FULL_NAME],
             profilePicture: data[AUTH_STORAGE.PROFILE_PICTURE],
             role: data[AUTH_STORAGE.ROLE],
+            address: data[AUTH_STORAGE.ADDRESS],
+            phone: data[AUTH_STORAGE.PHONE_NUMBER],
           };
-
           this._userInfo$.next(userData);
+
+          const refreshedAt = data[AUTH_STORAGE.REFRESHED_AT];
+          this.refreshTimer = setTimeout(() => {
+            this.startAutomaticRefresh(refreshedAt);
+          }, 500);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error('Error loading auth data:', error);
+      }
     }
   }
 
@@ -401,7 +414,10 @@ export class AuthService {
     profilePicture: string | null,
     email: string,
     role: string,
-    context: 'user' | 'admin'
+    context: 'user' | 'admin',
+    refreshAt: Date = new Date(),
+    phone: string = '',
+    address: string = ''
   ) {
     const authData = {
       [AUTH_STORAGE.AUTHENTICATED]: true,
@@ -410,6 +426,9 @@ export class AuthService {
       [AUTH_STORAGE.PROFILE_PICTURE]: profilePicture,
       [AUTH_STORAGE.EMAIL]: email,
       [AUTH_STORAGE.ROLE]: role,
+      [AUTH_STORAGE.REFRESHED_AT]: refreshAt.toISOString(),
+      [AUTH_STORAGE.PHONE_NUMBER]: phone,
+      [AUTH_STORAGE.ADDRESS]: address,
     };
 
     const storageKey =
@@ -418,11 +437,83 @@ export class AuthService {
     localStorage.setItem(storageKey, JSON.stringify(authData));
   }
 
-  public clearAuthStorage(context: 'user' | 'admin') {
+  private startAutomaticRefresh(lastRefresh: Date | string) {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+    }
+
+    const lastRefresh_ = new Date(lastRefresh);
+
+    if (!lastRefresh_ || isNaN(lastRefresh_.getTime())) {
+      return this.refreshToken();
+    }
+
+    const now = new Date();
+    const refreshIntervalMs = this.TOKEN_REFRESH_INTERVAL * 60 * 1000;
+    const nextRefreshTime = new Date(
+      lastRefresh_.getTime() + refreshIntervalMs
+    );
+
+    const delay = nextRefreshTime.getTime() - now.getTime();
+
+    if (delay <= 0) {
+      this.refreshToken();
+    } else {
+      this.refreshTimer = setTimeout(() => this.refreshToken(), delay);
+    }
+  }
+
+  private refreshToken() {
+    const newRefreshTime = new Date();
+    const context = this._currentAuthContext || 'user';
+    const storageKey =
+      context === 'admin' ? AUTH_STORAGE.AUTH + '_admin' : AUTH_STORAGE.AUTH;
+    const stored = localStorage.getItem(storageKey);
+
+    if (!stored) return;
+
+    const data = JSON.parse(stored) as AuthStorage;
+
+    this.authBackend
+      .refreshToken()
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => {
+          console.log(response, 'token');
+          this.saveAuthToStorage(
+            data[AUTH_STORAGE.USER_ID],
+            data[AUTH_STORAGE.FULL_NAME],
+            data[AUTH_STORAGE.PROFILE_PICTURE],
+            data[AUTH_STORAGE.EMAIL],
+            data[AUTH_STORAGE.ROLE],
+            context,
+            newRefreshTime,
+            data[AUTH_STORAGE.PHONE_NUMBER],
+            data[AUTH_STORAGE.ADDRESS]
+          );
+
+          this.startAutomaticRefresh(newRefreshTime);
+        },
+        error: () => {
+          if (context === 'admin') {
+            this.adminLogout();
+          } else {
+            this.logout();
+          }
+        },
+      });
+  }
+
+  private clearAuthStorage(context: 'user' | 'admin') {
     const storageKey =
       context === 'admin' ? AUTH_STORAGE.AUTH + '_admin' : AUTH_STORAGE.AUTH;
 
     localStorage.removeItem(storageKey);
+
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   }
 
   public isLoggedIn(): Observable<boolean> {
@@ -466,6 +557,7 @@ export class AuthService {
     this._currentAuthContext = null;
     this.clearAuthStorage('user');
   }
+
   public acceptInvitation(
     fullName: string,
     password: string,
