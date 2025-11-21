@@ -223,9 +223,8 @@ export class UserManagementPageComponent implements OnInit {
   }
 
   protected onInviteSuccess(): void {
-    this.closeInviteModal();
-    this._loadUsers(this.currentPage() || 0);
-    setTimeout(() => this.isSuccessModalOpen.set(true), 200);
+    this.isSuccessModalOpen.set(true); // ✅ This was missing!
+    this._loadUsers();
   }
 
   protected goToDashboard(): void {

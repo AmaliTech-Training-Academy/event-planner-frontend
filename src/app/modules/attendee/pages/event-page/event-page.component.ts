@@ -2,13 +2,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
-import {
-  EventDetail,
-  TicketInfo,
-  TicketType,
-  VenueImage,
-  VenueSection
-} from '../../../../core/models/event.model';
+
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
 import { HelpCardComponent } from '../../../../shared/components/help-card/help-card.component';
 import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
@@ -18,6 +12,16 @@ import { VenueSectionCardComponent } from '../../../../shared/components/venue-s
 import { EventsServiceService } from '../../../../core/services/events.service';
 import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
 
+import {
+  MOCK_EVENT_DETAILS,
+  MOCK_TICKETS,
+  MOCK_VENUE_IMAGES,
+  MOCK_VENUE_SECTIONS,
+  MOCK_HELP_EMAIL,
+} from '../../../../core/data/mock-data';
+// In event-page.component.ts
+import { EventDetail, EventDetails, TicketInfo, VenueImage, VenueSection } from '../../../../core/models/event.model';
+import { TicketType } from '@app/core/models/events';
 
 @Component({
   selector: 'app-event-page',

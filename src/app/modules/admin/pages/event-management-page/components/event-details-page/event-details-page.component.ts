@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { LayoutService } from '../../../../../../core/services/layout.service';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 import { APP_ROUTES } from '../../../../../../core/constants/app-routes.constants';
@@ -16,14 +17,24 @@ export interface EventDetails {
   organizer: string;
   date: string;
   attendees: number;
-  status: 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled';
+  totalTicketsSold: number;
+  ticketRevenue: number;
+  status:
+    | 'Pending'
+    | 'Completed'
+    | 'Draft'
+    | 'Active'
+    | 'Cancelled'
+    | 'Upcoming';
   time?: string;
   location?: string;
   description?: string;
 }
 
-interface EventDetailsPageState {
-  eventData?: EventDetails;
+export interface TicketType {
+  name: string;
+  sold: number;
+  remaining: number;
 }
 
 export interface EventHost {
@@ -32,14 +43,29 @@ export interface EventHost {
   avatar?: string;
 }
 
+export interface Guest {
+  id: number;
+  name: string;
+  email: string;
+  status: 'pending' | 'confirmed' | 'declined';
+  dateSent?: string;
+  avatar?: string;
+}
+
+interface EventDetailsPageState {
+  eventData?: EventDetails;
+}
+
 type TabType = 'overview' | 'guests' | 'registration';
+type GuestFilter = 'all' | 'confirmed' | 'pending' | 'declined';
+type GuestSortBy = 'date' | 'name' | 'status';
 
 @Component({
   selector: 'app-event-details-page',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage, ButtonComponent],
-  templateUrl: './event-details.component-page.html',
-  styleUrls: ['./event-details.component-page.scss'],
+  imports: [CommonModule, NgOptimizedImage, ButtonComponent, FormsModule],
+  templateUrl: './event-details-page.component.html',
+  styleUrls: ['./event-details-page.component.scss'],
 })
 export class EventDetailsPageComponent implements OnInit {
   private readonly _destroyRef = inject(DestroyRef);
@@ -51,10 +77,18 @@ export class EventDetailsPageComponent implements OnInit {
   protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
 
   protected readonly eventDetails = signal<EventDetails | null>(null);
+  protected readonly ticketTypes = signal<TicketType[]>([]);
   protected readonly hosts = signal<EventHost[]>([]);
+  protected readonly guests = signal<Guest[]>([]);
+  protected readonly filteredGuests = signal<Guest[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
   protected readonly isLoading = signal<boolean>(false);
   protected readonly error = signal<string | null>(null);
+
+  // Guest tab specific
+  protected readonly guestSearchQuery = signal<string>('');
+  protected readonly guestFilter = signal<GuestFilter>('all');
+  protected readonly guestSortBy = signal<GuestSortBy>('date');
 
   private readonly _eventIdFromRoute$: Observable<ParamMap> =
     this._route.paramMap.pipe(takeUntilDestroyed(this._destroyRef));
@@ -83,6 +117,9 @@ export class EventDetailsPageComponent implements OnInit {
       time: eventData.time ?? '09:00am GMT',
       location: eventData.location ?? 'Virtual (Zoom meeting)',
       description: eventData.description ?? 'Event description coming soon.',
+      totalTicketsSold: eventData.totalTicketsSold ?? 565.0,
+      ticketRevenue: eventData.ticketRevenue ?? 565.0,
+      status: eventData.status || 'Upcoming',
     };
 
     const host: EventHost = {
@@ -92,7 +129,14 @@ export class EventDetailsPageComponent implements OnInit {
         .replace(/\s+/g, '.')}@example.com`,
     };
 
+    const tickets: TicketType[] = [
+      { name: 'Regular', sold: 6, remaining: 2 },
+      { name: 'VIP', sold: 14, remaining: 12 },
+      { name: 'VVIP', sold: 19, remaining: 43 },
+    ];
+
     this.eventDetails.set(event);
+    this.ticketTypes.set(tickets);
     this.hosts.set([host]);
     this._layoutService.pageTitle.set(event.name);
   }
@@ -128,7 +172,9 @@ export class EventDetailsPageComponent implements OnInit {
           date: apiEvent.startTime
             ? new Date(apiEvent.startTime).toISOString().split('T')[0]
             : 'N/A',
-          attendees: apiEvent.attendeeCount || 0,
+          attendees: apiEvent.attendeeCount || 387,
+          totalTicketsSold: 565.0,
+          ticketRevenue: 565.0,
           status: this._mapStatusToTableStatus(apiEvent.status),
           time: apiEvent.startTime
             ? new Date(apiEvent.startTime).toLocaleTimeString('en-US', {
@@ -148,7 +194,14 @@ export class EventDetailsPageComponent implements OnInit {
             .replace(/\s+/g, '.')}@example.com`,
         };
 
+        const tickets: TicketType[] = [
+          { name: 'Regular', sold: 6, remaining: 2 },
+          { name: 'VIP', sold: 14, remaining: 12 },
+          { name: 'VVIP', sold: 19, remaining: 43 },
+        ];
+
         this.eventDetails.set(event);
+        this.ticketTypes.set(tickets);
         this.hosts.set([host]);
         this._layoutService.pageTitle.set(event.name);
         this.isLoading.set(false);
@@ -162,15 +215,16 @@ export class EventDetailsPageComponent implements OnInit {
 
   private _mapStatusToTableStatus(
     status: string
-  ): 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled' {
+  ): 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled' | 'Upcoming' {
     const statusMap: Record<
       string,
-      'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled'
+      'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled' | 'Upcoming'
     > = {
       ACTIVE: 'Active',
       DRAFT: 'Draft',
       COMPLETED: 'Completed',
       CANCELED: 'Cancelled',
+      UPCOMING: 'Upcoming',
     };
     return statusMap[status] || 'Pending';
   }
@@ -199,14 +253,7 @@ export class EventDetailsPageComponent implements OnInit {
   }
 
   protected onSendInvites(): void {
-    const event = this.eventDetails();
-    if (!event) {
-      return;
-    }
-  }
-
-  protected onViewAllGuests(): void {
-    this.setActiveTab('guests');
+    console.log('Send invites clicked');
   }
 
   protected onScheduleFeedback(): void {
@@ -214,6 +261,11 @@ export class EventDetailsPageComponent implements OnInit {
     if (!event) {
       return;
     }
+    console.log('Schedule feedback clicked');
+  }
+
+  protected onViewAllGuests(): void {
+    this.setActiveTab('guests');
   }
 
   protected getStatusClass(status: string): string {
@@ -224,9 +276,13 @@ export class EventDetailsPageComponent implements OnInit {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
+      month: 'short',
+      day: 'numeric',
     });
+  }
+
+  protected formatCurrency(amount: number): string {
+    return `$${amount.toFixed(2)}`;
   }
 
   protected getInitials(name: string): string {
@@ -236,5 +292,53 @@ export class EventDetailsPageComponent implements OnInit {
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  }
+
+  protected onGuestSearch(query: string): void {
+    this.guestSearchQuery.set(query);
+    this._applyGuestFilters();
+  }
+
+  protected onGuestFilterChange(filter: GuestFilter): void {
+    this.guestFilter.set(filter);
+    this._applyGuestFilters();
+  }
+
+  protected onGuestSortChange(sortBy: GuestSortBy): void {
+    this.guestSortBy.set(sortBy);
+    this._applyGuestFilters();
+  }
+
+  private _applyGuestFilters(): void {
+    let filtered = [...this.guests()];
+
+    const query = this.guestSearchQuery().toLowerCase();
+    if (query) {
+      filtered = filtered.filter(
+        (guest) =>
+          guest.name.toLowerCase().includes(query) ||
+          guest.email.toLowerCase().includes(query)
+      );
+    }
+
+    const filter = this.guestFilter();
+    if (filter !== 'all') {
+      filtered = filtered.filter((guest) => guest.status === filter);
+    }
+
+    const sortBy = this.guestSortBy();
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'status':
+          return a.status.localeCompare(b.status);
+        case 'date':
+        default:
+          return (a.dateSent || '').localeCompare(b.dateSent || '');
+      }
+    });
+
+    this.filteredGuests.set(filtered);
   }
 }

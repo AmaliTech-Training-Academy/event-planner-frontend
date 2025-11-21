@@ -45,8 +45,6 @@ interface ManageEventPageState {
     ReactiveFormsModule,
     ModalWrapperComponent,
     ButtonComponent,
-    StatCardComponent,
-    DataTableComponent,
     OverviewComponent,
     GuestComponent,
     RegistrationComponent,

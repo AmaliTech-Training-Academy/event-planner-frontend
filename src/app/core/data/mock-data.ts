@@ -20,8 +20,6 @@ import { LineSeriesConfig } from '../models/chart.model';
 
 const eventStartDate = new Date('2025-04-15T00:00:00Z');
 
-
-
 export const MOCK_EVENT_DETAILS: EventDetails = {
   id: 'evt123',
   title: 'Tech Innovation Summit 2025',
@@ -102,20 +100,18 @@ export const MOCK_EVENT_TOGGLES: TabToggle[] = [
   { key: 'past', label: 'Past events', value: true },
 ];
 
-
-
 export const MOCK_EVENT_TYPE_OPTIONS: EventTypeFilter[] = [
   {
     label: 'All Events',
-    value: 'all'
+    value: 'all',
   },
   {
     label: 'Paid Events',
-    value: 'paid'
+    value: 'paid',
   },
   {
     label: 'Free Events',
-    value: 'free'
+    value: 'free',
   },
 ];
 
@@ -133,7 +129,6 @@ export const MOCK_POPULAR_LOCATIONS: PopularLocation[] = [
   { name: 'London, UK', meta: 'England' },
   { name: 'Berlin, Germany', meta: 'Europe' },
 ];
-
 
 export const MOCK_MY_EVENTS_CARDS: EventSummary[] = [] 
   
@@ -201,7 +196,7 @@ export const MOCK_HOSTS: EventHostAdmin[] = [
 export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
   {
     name: 'This year',
-    color: '#FF6B35', 
+    color: '#FF6B35',
     showArea: true,
     lineStyle: 'solid',
     areaGradient: {
@@ -234,4 +229,3 @@ export const MOCK_CHART_SERIES: LineSeriesConfig[] = [
     ],
   },
 ];
-
