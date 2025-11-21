@@ -24,23 +24,40 @@ export class GuestComponent implements OnInit {
 
   constructor(private readonly _manageService: ManageEventService) {
 
-  effect(() => {
-    const term = this.search();
-    const role = this.selectedRole();
+    effect(() => {
+      const term = this.search();
+      const role = this.selectedRole();
 
-    if (this.debounceTimeoutId) {
-      clearTimeout(this.debounceTimeoutId);
-    }
+      if (this.debounceTimeoutId) {
+        clearTimeout(this.debounceTimeoutId);
+      }
 
-    this.debounceTimeoutId = setTimeout(() => {
-      this.getInvitees(term, 0, role);
-    }, 300);
-  });
+      this.debounceTimeoutId = setTimeout(() => {
+        this.getInvitees(term, 0, role);
+      }, 300);
+    });
 
-}
+  }
 
   ngOnInit(): void {
-   
+
+  }
+  public addInvitee(invitees_: ManageEventInvitee) {
+    this.invitees.update(response => {
+      if (!response) return null;
+
+      const content_ = [...(response.data.content || []), invitees_];
+
+      return {
+        ...response,
+        data: {
+          ...response.data,
+          content: content_,
+        },
+        description: response.description || ''
+      };
+    });
+
   }
 
   protected onInviteGuest() {
@@ -48,7 +65,7 @@ export class GuestComponent implements OnInit {
   }
 
 
-  private getInvitees(search: string="", page: number=0, role: string = '') {
+  private getInvitees(search: string = "", page: number = 0, role: string = '') {
     const eventId = this.currentEventId()
     if (!eventId) return;
     this.loading.set(true)
@@ -56,7 +73,7 @@ export class GuestComponent implements OnInit {
       next: (response) => {
         this.invitees.set(response)
       },
-      complete:()=>{
+      complete: () => {
         this.loading.set(false)
       }
     })
