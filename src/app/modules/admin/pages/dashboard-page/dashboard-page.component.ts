@@ -115,7 +115,7 @@ export class DashboardPageComponent implements OnInit {
     const coOrganizers =
       cards.find((c) => c.title === 'Active Co-organizers')?.count || 0;
 
-    const attendees = cards.find((c) => c.title === 'Attendees')?.count || 0;
+    const attendees = cards.find((c) => c.title === 'Admin')?.count || 0;
 
     const other = cards.find((c) => c.title === 'Other Users')?.count || 0;
 
