@@ -1,0 +1,56 @@
+<div class="admin-settings">
+  <div class="tabs">
+    <app-button
+      type="plain"
+      [extraClass]="'tab'"
+      [class.tab--active]="activeTab() === 'general'"
+      (onClick)="switchTab('general')"
+      buttonType="button"
+    >
+      <img src="icons/settings.png" alt="General" class="tab__icon" />
+      <span>General</span>
+    </app-button>
+
+    <app-button
+      type="plain"
+      [extraClass]="'tab'"
+      [class.tab--active]="activeTab() === 'notifications'"
+      (onClick)="switchTab('notifications')"
+      buttonType="button"
+    >
+      <img src="icons/bell-icon.png" alt="Notifications" class="tab__icon" />
+      <span>Notifications</span>
+    </app-button>
+
+    <app-button
+      type="plain"
+      [extraClass]="'tab'"
+      [class.tab--active]="activeTab() === 'team'"
+      (onClick)="switchTab('team')"
+      buttonType="button"
+    >
+      <img src="icons/notify.png" alt="Team" class="tab__icon" />
+      <span>Team</span>
+    </app-button>
+  </div>
+
+  <div class="tab-content">
+    @if (activeTab() === 'general') {
+      <app-general-settings 
+        [settings]="securitySettings()"
+        (save)="handleSecuritySettingsUpdate($event)"
+      />
+    }
+    @if (activeTab() === 'notifications') {
+      <app-notification-settings 
+        [settings]="notificationSettings()"
+        (save)="handleNotificationSettingsUpdate($event)"
+      />
+    }
+    @if (activeTab() === 'team') {
+      <app-team-management 
+        [teamMembers]="teamMembers()"
+      />
+    }
+  </div>
+</div>

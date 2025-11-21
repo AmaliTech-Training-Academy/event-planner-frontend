@@ -422,10 +422,11 @@ export interface StatCardData {
   title: string;
   value: string | number;
   icon: string;
-  backend_key?:string;
-  currency?:boolean;
+  backend_key?: string;
+  currency?: boolean;
+  trend?: 'up' | 'down' | 'neutral';  // Add this
+  trendValue?: string;                 // Add this
 }
-
 export interface EventSummary {
   organizer: string;
   date: string;

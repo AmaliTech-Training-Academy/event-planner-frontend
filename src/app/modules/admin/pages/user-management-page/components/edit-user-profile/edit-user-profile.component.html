@@ -32,32 +32,41 @@
         (change)="onImageSelect($event)"
       />
 
-     <div class="profile-section">
-      <div class="profile-avatar" (click)="triggerFileInput()" style="cursor: pointer;">
-        <img
-          [ngSrc]="profileImage()"
-          alt="Profile picture"
-          width="128"
-          height="128"
-          priority
-        />
-        <app-button
-          type="plain"
-          [extraClass]="'status-button'"
-          size="small"
-          class="status-button"
-          (click)="triggerFileInput(); $event.stopPropagation()"
+      <div class="profile-section">
+        <div
+          class="profile-avatar"
+          (click)="triggerFileInput()"
+          style="cursor: pointer"
         >
-          <span class="button-content">
-            <img [src]="statusIcon" alt="Change photo" width="16" height="16" />
-          </span>
-        </app-button>
+          <img
+            [ngSrc]="profileImage()"
+            alt="Profile picture"
+            width="128"
+            height="128"
+            priority
+          />
+          <app-button
+            type="plain"
+            [extraClass]="'status-button'"
+            size="small"
+            class="status-button"
+            (click)="triggerFileInput(); $event.stopPropagation()"
+          >
+            <span class="button-content">
+              <img
+                [src]="statusIcon"
+                alt="Change photo"
+                width="16"
+                height="16"
+              />
+            </span>
+          </app-button>
+        </div>
+        <div class="profile-info">
+          <h3>Edit Profile</h3>
+          <p class="user-role">Update Your personal information</p>
+        </div>
       </div>
-      <div class="profile-info">
-        <h3>Edit Profile</h3>
-        <p class="user-role">Update Your personal information</p>
-      </div>
-    </div>
       <div class="form-section">
         <h4 class="section-title">Basic Information</h4>
 

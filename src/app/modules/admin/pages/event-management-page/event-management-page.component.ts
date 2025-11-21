@@ -412,17 +412,15 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   }
 
   public onFilterChange(filterEvent: { key: string; value: string }): void {
-    console.log('🔧 Filter change:', filterEvent);
 
     if (filterEvent.key === 'status') {
       const newStatus = filterEvent.value as EventStatus | 'all';
       const currentStatus = this._selectedStatus();
 
       if (newStatus !== currentStatus) {
-        console.log(`📌 Status changed: ${currentStatus} → ${newStatus}`);
         this._selectedStatus.set(newStatus);
         this._currentPage.set(0);
-        this._loadEventsData(); // Only reload events table
+        this._loadEventsData(); 
       }
     }
 
@@ -436,7 +434,13 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   }
 
   private _onCreateEvent(): void {
-    this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
+
+    this._router.navigate(['/app/create-event']).then(
+      (success) => {
+      },
+      (error) => {
+      }
+    );
   }
 
   private _handleExport(format: string): void {

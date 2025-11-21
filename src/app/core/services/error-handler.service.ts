@@ -12,7 +12,7 @@ export class ErrorHandlerService {
 
 
   handle(error: HttpErrorResponse) {
-    let message = 'An unknown error occurred';
+let message = "Please try again later.";
 
     if (error.error instanceof ErrorEvent) {
       message = `Network error: ${error.error.message}`;

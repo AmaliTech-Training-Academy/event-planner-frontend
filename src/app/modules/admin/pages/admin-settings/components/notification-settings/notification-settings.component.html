@@ -1,0 +1,39 @@
+<div class="settings-section">
+  <div class="settings-section__header">
+    <div class="settings-section__title">
+      <h2>Notification Settings</h2>
+      <p>Manage how notifications are received</p>
+    </div>
+    <img
+      src="icons/bell.png"
+      alt="Notifications"
+      class="settings-section__icon"
+    />
+  </div>
+
+  <div class="notification-list">
+    @for (notification of notifications(); track notification.id) {
+    <div class="notification-item">
+      <div class="notification-item__content">
+        <h3>{{ notification.title }}</h3>
+        <p>{{ notification.description }}</p>
+      </div>
+      <label class="toggle">
+        <input
+          type="checkbox"
+          [checked]="notification.enabled"
+          (change)="toggleNotification(notification.id)"
+          class="toggle__input"
+        />
+        <span class="toggle__slider"></span>
+      </label>
+    </div>
+    }
+  </div>
+
+  <div class="btn-box">
+    <app-button type="primary" (onClick)="saveSettings()">
+      Save Notification Settings
+    </app-button>
+  </div>
+</div>
