@@ -11,14 +11,14 @@ import { MyEventItem } from '@app/core/models/myevent.model';
 import { EventsServiceService } from '@app/core/services/events.service';
 import { PaginationComponent } from '@app/shared/admin-ui/pagination/pagination.component';
 import { EmptyListMessageComponent } from '@app/shared/components/empty-list-message/empty-list-message.component';
-import { Subject, takeUntil } from 'rxjs';
+import { forkJoin, single, Subject, takeUntil } from 'rxjs';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { UserCardData } from '../../../../core/models';
 import { EventCard } from '../../../../core/models/events';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import { EventCardComponent } from '../../../../shared/components/event-card/event-card.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { LineChartComponent } from '../../../admin/pages/dashboard-page/components/line-chart/line-chart.component';
+import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
 
 @Component({
   selector: 'app-my-events-page',
@@ -28,12 +28,12 @@ import { LineChartComponent } from '../../../admin/pages/dashboard-page/componen
     RouterModule,
     EventCardComponent,
     AdminUserCardComponent,
-    LineChartComponent,
     ButtonComponent,
     PaginationComponent,
     ButtonComponent,
-    EmptyListMessageComponent
-  ],
+    EmptyListMessageComponent,
+    LoadingCardComponent
+],
   templateUrl: './my-events-page.component.html',
   styleUrl: './my-events-page.component.scss',
 })
@@ -59,34 +59,30 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
         }
       })
 
-    this.eventService.myEvents(this.page())
+      forkJoin({
+      events: this.eventService.myEvents(this.page()),
+      overview: this.eventService.myEventOverview()
+    })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          this.myEvents.set(response.data.content);
-          this.totalaPages.set(response.data.totalPages)
-        }
-      })
+        next: ({ events, overview }) => {
+ 
+          this.myEvents.set(events.data.content);
+          this.totalaPages.set(events.data.totalPages);
 
-    this.eventService.myEventOverview()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
           this.statCards.update(prev => {
             const updated = [...prev];
-
-            Object.entries(response.data).forEach(([key, value]) => {
+            Object.entries(overview.data).forEach(([key, value]) => {
               const card = updated.find(c => c.backend_key === key);
               if (card) {
                 card.count = value;
               }
             });
-
             return updated;
           });
-
         }
       });
+
 
   }
 
@@ -99,8 +95,8 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
     this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
   }
 
-  protected onManageEvent(): void {
-    this.router.navigate([this.routes.MANAGE_EVENT]);
+  protected onManageEvent(id:string): void {
+    this.router.navigate([this.routes.MANAGE_EVENT(id)]);
   }
 
   protected navigateToCreateEvent() {

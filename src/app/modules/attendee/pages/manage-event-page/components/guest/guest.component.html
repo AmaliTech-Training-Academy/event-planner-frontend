@@ -1,0 +1,67 @@
+<div class="event-details-page__content">
+
+  <div class="guests-section-unified">
+    <div class="guests-section__header">
+      <h2 class="guests-section__title">Guests</h2>
+      <p class="guests-section__subtitle">No Guests Added</p>
+    </div>
+
+    <button class="guests-section__invite-button" (click)="onInviteGuest()">
+      <img ngSrc="icons/mail.png" alt="Add" width="16" height="16" />
+      Invite Guest
+    </button>
+
+    <div class="guest-list-header-bar">
+      <h3 class="guest-list-title">Guest List</h3>
+
+      <div class="guest-list-controls">
+        <div class="search-input-wrapper">
+          <img ngSrc="icons/search-icon.png" alt="Search" class="search-input-icon" width="16" height="16" />
+          <input [(ngModel)]="search" type="text" class="search-input" placeholder="Search guest by name or email" />
+        </div>
+
+        <!-- <div class="dropdown-wrapper">
+          <select class="guest-dropdown">
+            <option value="all">All Guest</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="pending">Pending</option>
+          </select>
+          <img ngSrc="icons/Vector.png" alt="Dropdown" class="dropdown-icon" width="16" height="16" />
+        </div> -->
+
+        <div class="dropdown-wrapper">
+          <select [(ngModel)]="selectedRole" class="guest-dropdown">
+            <option  value="">All Roles</option>
+            @for (role of guestRole; track $index) {
+              <option [value]="role">{{role}}</option>
+            }
+          </select>
+          <img ngSrc="icons/Vector.png" alt="Dropdown" class="dropdown-icon" width="16" height="16" />
+        </div>
+      </div>
+    </div>
+    <div class="table-data-list">
+      @for (invitee of invitees()?.data?.content; track $index) {
+      <div class="table-row ">
+        <p>{{invitee.inviteeName}}</p>
+        <p>{{invitee.inviteeEmail}}</p>
+        <p>{{invitee.role}}</p>
+      </div>
+      }
+    </div>
+
+    @if(loading()){
+     <app-loading-card></app-loading-card>
+    }
+
+    @if(!invitees()?.data?.content?.length && !loading()){
+    <div class="guest-list-empty">
+      <div class="guest-list-empty__icon">
+        <img ngSrc="/icons/search-big.png" alt="No results" width="120" height="120" />
+      </div>
+      <p class="guest-list-empty__text">No Guest found</p>
+    </div>
+    }
+
+  </div>
+</div>

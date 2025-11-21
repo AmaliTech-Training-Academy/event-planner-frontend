@@ -1,6 +1,20 @@
 export interface MyEventResponse {
     description: string;
-    data: MyEventData;
+    data: PaginatedResponseData<MyEventItem[]>;
+}
+
+export interface PaginatedResponseData<T> {
+    totalElements: number;
+    totalPages: number;
+    numberOfElements: number;
+    pageable: Pageable;
+    size: number;
+    content: T;
+    number: number;
+    sort: Sort;
+    first: boolean;
+    last: boolean;
+    empty: boolean;
 }
 
 export interface MyEventData {

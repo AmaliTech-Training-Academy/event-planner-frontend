@@ -77,6 +77,7 @@ export interface TicketType {
   price: number;
   isActive: boolean;
   remainingTickets: number;
+  soldTickets?:number;
   isPaid: boolean;
 }
 
@@ -405,6 +406,8 @@ export interface StatCardData {
   title: string;
   value: string | number;
   icon: string;
+  backend_key?:string;
+  currency?:boolean;
 }
 
 export interface EventSummary {

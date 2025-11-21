@@ -1,6 +1,7 @@
 @use 'typography' as *;
 @use 'colors' as *;
 @use 'variables' as *;
+@use 'media_query' as *;
 
 
 .empty-card{
@@ -1162,3 +1163,82 @@
   }
 }
 
+
+/* registrations.component.css */
+
+.registrations-container {
+  padding: 20px 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  @include sm{
+    flex-direction: column;
+    align-items: start;
+  }
+
+  h2{
+    @include h-6;
+    font-weight: bold;
+  }
+}
+
+.controls {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+  width: 100%;
+  justify-content: end;
+}
+
+.search-input, .ticket-type-select {
+  padding: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-input, app-input{
+  width: 40%;
+
+  @include sm {
+    width: 100%;
+  }
+}
+
+/* Table Styling */
+.registrations-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.registrations-table th, .registrations-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee; /* Light line separation */
+}
+
+.registrations-table th {
+  @include body-1;
+  color: $paragraph-text;
+  color: #333;
+  background-color: #F8F9FA; 
+}
+
+
+.registrations-table td{
+  @include body-2;
+  color: #656565;
+
+  &:first-child{
+    @include body-1;
+    color: #292929;
+  }
+}
+
+.registrations-table tbody tr:hover {
+  background-color: #F8F9FA; 
+}

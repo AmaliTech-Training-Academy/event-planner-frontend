@@ -112,7 +112,7 @@ export class AuthService {
           );
         }
         // Route to Explore page instead
-        this.router.navigate([APP_ROUTES.MY_EVENT]);
+        this.router.navigate([APP_ROUTES.MY_EVENTS]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
