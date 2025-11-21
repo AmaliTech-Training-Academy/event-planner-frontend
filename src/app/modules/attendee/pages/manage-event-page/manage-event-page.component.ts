@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { MOCK_EVENT_DETAILS } from '../../../../core/data/mock-data';
-import { EventDetails, StatCardData } from '../../../../core/models/event.model';
+import { EventDetails, StatCardData, TicketType } from '../../../../core/models/event.model';
 import { InvitationPayload, InvitationService } from '../../../../core/services/invitation.service';
 import { LayoutService } from '../../../../core/services/layout.service';
 
@@ -23,7 +23,7 @@ import { OverviewComponent } from "./components/overview/overview.component";
 import { RegistrationComponent } from "./components/registration/registration.component";
 import { UserBackendService } from '@app/core/services/backend/user-backend.service';
 import { NotificationService } from '@app/core/services/notification.service';
-import { EventHost, TicketType } from '@app/core/models/events';
+import { EventHost } from '@app/core/models/events';
 
 
 

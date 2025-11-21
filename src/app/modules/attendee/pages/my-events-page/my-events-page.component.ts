@@ -109,7 +109,7 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.myEvents.set(response.data.content);
-          this.totalaPages.set(response.data.totalPages)
+          this.totalaItems.set(response.data.totalPages)
         }
       })
   }
