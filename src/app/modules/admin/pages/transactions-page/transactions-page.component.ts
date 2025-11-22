@@ -42,6 +42,15 @@ interface PrimaryAction {
   readonly handler: () => void;
 }
 
+interface TransactionDisplay extends TransactionManagement {
+  readonly formattedDate: string;
+  readonly formattedAmount: string;
+  readonly displayPaymentMethod: string;
+  readonly truncatedEmail: string;
+  readonly truncatedEventName: string;
+  readonly truncatedTransactionId: string;
+}
+
 @Component({
   selector: 'app-transactions-page',
   standalone: true,
@@ -58,30 +67,21 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   protected readonly isLoading = signal<boolean>(false);
   private readonly _transactionsSignal = toSignal(
     this._transactionsService.transactions$,
-    { initialValue: [] }
+    { initialValue: [] as TransactionManagement[] }
   );
-  // Update your transactions computed signal in TransactionsPageComponent
 
-  protected readonly transactions = computed(() => {
+  protected readonly transactions = computed<TransactionDisplay[]>(() => {
     const apiTransactions = this._transactionsSignal();
     return apiTransactions.map((transaction) => ({
       ...transaction,
-      // Format the date WITHOUT time (just the date part)
       formattedDate: this._formatDate(transaction.transactionTime),
-      // Format amount with GHS currency
       formattedAmount: this._formatAmount(transaction.amount),
-      // Display '-' for null payment methods
       displayPaymentMethod: transaction.paymentMethod || '-',
-      // Truncate attendee email to 10 characters with ellipsis
       truncatedEmail: this._truncateText(transaction.attendeeEmail, 10),
-      // Truncate event name for display (will be styled for 2 lines in CSS)
       truncatedEventName: transaction.eventName,
-      // Truncate transaction ID to 5 characters
       truncatedTransactionId: this._truncateText(transaction.transactionId, 5),
     }));
   });
-
-  // Update the _formatDate method to only show the date (no time)
 
   protected readonly chartTabs: readonly ChartTab[] = [
     { key: 'Total', label: 'Total' },
@@ -299,9 +299,7 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       return chartDataMap[this.activeTab()];
     });
 
-  // Transform API data to table format
-
-  protected readonly tableColumns: readonly TableColumn<any>[] = [
+  protected readonly tableColumns: readonly TableColumn<TransactionDisplay>[] = [
     { key: 'truncatedTransactionId', header: 'Transaction ID', sortable: true },
     { key: 'formattedDate', header: 'Date', sortable: true },
     { key: 'truncatedEventName', header: 'Event Name', sortable: true },
@@ -405,6 +403,7 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     }
     return `$${amount.toFixed(2)}`;
   }
+
   private _truncateText(text: string, maxLength: number): string {
     if (!text) return '-';
     if (text.length <= maxLength) return text;
