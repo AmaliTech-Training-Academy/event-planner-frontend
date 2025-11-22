@@ -1,6 +1,7 @@
 <div
   class="input-field-group"
   [class.has-error]="hasError()"
+  [class.is-valid]="showValidIcon() && !hasError()"
   [class.focused]="isFocused()"
   style="text-align: left;"
 >
@@ -19,29 +20,38 @@
     [class.no-icon]="!iconSrc()"
   >
     @if (iconSrc()) {
-    <img [src]="iconSrc()" alt="icon" class="input-icon" />
+      <img [src]="iconSrc()" alt="icon" class="input-icon" />
     }
 
-    <input
-      [type]="inputType()"
-      [placeholder]="placeholder()"
-      [value]="currentValue()"
-      (input)="onValueChange($event)"
-      (focus)="onFocus()"
-      (blur)="onBlur()"
-      [disabled]="isDisabled()"
-      [class.error]="hasError()"
-      class="form-input"
-    />
+   <input
+  [type]="inputType()"
+  [placeholder]="placeholder()"
+  [value]="currentValue()"
+  (input)="onValueChange($event)"
+  (focus)="onFocus()"
+  (blur)="onBlur()"
+  [disabled]="isDisabled()"
+  [class.error]="hasError()"
+  [attr.autocomplete]="autocompleteValue()"
+  class="form-input"
+/>
 
+    <!-- Valid icon (checkmark image) -->
+    @if (showValidIcon() && !hasError()) {
+      <img 
+        src="icons/valid-icon.png"
+        alt="Valid" 
+        class="valid-icon"
+      />
+    }
 
-  @if (type() === 'password') {
-    <button
+    @if (type() === 'password') {
+      <button
         type="button"
         class="toggle-password"
         (click)="togglePasswordVisibility()"
         [attr.aria-pressed]="showPassword()"
-    >
+      >
         <img
           [src]="
             showPassword()

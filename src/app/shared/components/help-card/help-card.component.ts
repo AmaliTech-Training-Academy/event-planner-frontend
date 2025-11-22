@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, Input } from '@angular/core';
 
 @Component({
   selector: 'app-help-card',
@@ -8,7 +8,6 @@ import { Component, Input } from '@angular/core';
   styleUrl: './help-card.component.scss'
 })
 export class HelpCardComponent {
-  
-  @Input() public email: string = '';
+public email = input<string>('');
 }
 

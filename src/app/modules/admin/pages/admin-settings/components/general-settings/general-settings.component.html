@@ -1,0 +1,91 @@
+<div class="settings-section">
+  <div class="settings-section__header">
+    <div class="settings-section__title">
+      <h2>Security Settings</h2>
+      <p>Manage security settings and access control</p>
+    </div>
+    <img
+      src="icons/user-group.png"
+      alt="Security"
+      class="settings-section__icon"
+    />
+  </div>
+
+  <form [formGroup]="securityForm" (ngSubmit)="saveSettings()">
+    <div class="form-field">
+      <label for="platformName">Platform Name</label>
+      <app-input
+        id="platformName"
+        formControlName="platformName"
+        placeholder="Event Hub"
+        [errorMessage]="
+          hasFieldError('platformName')
+            ? getFieldErrorMessage('platformName')
+            : ''
+        "
+      ></app-input>
+    </div>
+
+    <div class="form-field">
+      <label for="platformUrl">Platform URL</label>
+      <app-input
+        id="platformUrl"
+        type="url"
+        formControlName="platformUrl"
+        placeholder="https://eventhub.com"
+        [errorMessage]="
+          hasFieldError('platformUrl')
+            ? getFieldErrorMessage('platformUrl')
+            : ''
+        "
+      ></app-input>
+    </div>
+
+    <div class="form-field">
+      <label for="contactEmail">Contact Email</label>
+      <app-input
+        id="contactEmail"
+        type="email"
+        formControlName="contactEmail"
+        placeholder="support@eventhub.com"
+        [errorMessage]="
+          hasFieldError('contactEmail')
+            ? getFieldErrorMessage('contactEmail')
+            : ''
+        "
+      ></app-input>
+    </div>
+
+    <div class="form-field">
+      <label for="platformDescription">Platform Description</label>
+      <textarea
+        id="platformDescription"
+        formControlName="platformDescription"
+        placeholder="EventHub is a comprehensive event management platform for organizers and attendees."
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="toggle-field">
+      <label class="toggle">
+        <input
+          type="checkbox"
+          formControlName="maintenanceMode"
+          class="toggle__input"
+        />
+        <span class="toggle__slider"></span>
+      </label>
+      <span class="toggle-field__label">Enable Maintenance Mode</span>
+    </div>
+
+    <div class="btn-box">
+      <app-button
+        type="primary"
+        buttonType="submit"
+        [disabled]="isSubmitting()"
+      >
+        {{ isSubmitting() ? "Saving..." : "Save Changes" }}
+      </app-button>
+    </div>
+  </form>
+</div>

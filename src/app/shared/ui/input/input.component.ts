@@ -44,6 +44,7 @@ export class InputComponent implements ControlValueAccessor {
   public readonly required = input<boolean>(false);
   public readonly disabled = input<boolean>(false);
   public readonly value = input<string>('');
+  public readonly showValidIcon = input<boolean>(false);
 
   // Outputs
   public readonly valueChange = output<string>();
@@ -122,7 +123,26 @@ export class InputComponent implements ControlValueAccessor {
     this._isFocused.set(false);
     this.onTouched();
   }
+  public readonly autocomplete = input<string | undefined>();
 
+  // Then update the computed inputType to include autocomplete logic
+  public readonly autocompleteValue = computed(() => {
+    if (this.autocomplete()) {
+      return this.autocomplete();
+    }
+
+    // Set sensible defaults based on type
+    switch (this.type()) {
+      case 'password':
+        return 'current-password'; // or 'new-password' for registration forms
+      case 'email':
+        return 'email';
+      case 'tel':
+        return 'tel';
+      default:
+        return undefined;
+    }
+  });
   public togglePasswordVisibility(): void {
     this._showPassword.update((current) => !current);
   }

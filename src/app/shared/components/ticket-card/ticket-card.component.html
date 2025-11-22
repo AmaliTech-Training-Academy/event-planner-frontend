@@ -1,20 +1,20 @@
 @if (ticketInfo(); as ticket) {
 <div class="ticket-card">
   <h3 class="card-title">
-    @if (ticket.title.includes('Free')) {
+    @if (!ticket.price) {
     <span>Get Your <span class="blue-text">Free</span> Ticket</span>
     } @else {
-    <span>{{ ticket.title }}</span>
+    <span>{{ ticket.type}}</span>
     }
   </h3>
 
-  @if (!isFree()) {
-  <div class="price">{{ ticket.currency }}{{ ticket.price }}</div>
+  @if (ticket.price) {
+  <div class="price">{{ ticket.price | currency}}</div>
   }
 
   
   <ul class="features-list">
-    @for (feature of ticket.features; track $index) {
+    @for (feature of ticket.description.split('\n'); track $index) {
     <li class="feature-item">
     
       <img
@@ -29,7 +29,7 @@
   </ul>
 
   <app-button type="primary" (click)="registerClick.emit()">
-    {{ ticket.buttonText }}
+   Buy {{ ticket.type }} Ticket
   </app-button>
 </div>
 }

@@ -7,20 +7,9 @@
   ></app-modal-header>
 
   <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()">
-    <div class="form-field">
-      <label for="title">Invitation Title</label>
-      <app-input
-        id="title"
-        formControlName="title"
-        placeholder="Early Bird Registration Offer"
-        [errorMessage]="hasError('title') ? getErrorMessage('title') : ''"
-      ></app-input>
-    </div>
-
     <div class="users-section">
       <label>Users</label>
-      
-      <!-- Table Header -->
+
       <div class="users-header">
         <span class="header-name">Name</span>
         <span class="header-email">Email</span>
@@ -30,68 +19,64 @@
 
       <div class="users-list" formArrayName="users">
         @for (user of users.controls; track $index) {
-          <div class="user-row" [formGroupName]="$index">
-            <div class="user-field user-field--name">
-              <app-input
-                formControlName="name"
-                placeholder="Kofi Manu"
-                [errorMessage]="hasUserFieldError($index, 'name') ? getUserFieldErrorMessage($index, 'name') : ''"
-              ></app-input>
-            </div>
-            
-            <div class="user-field user-field--email">
-              <app-input
-                type="email"
-                formControlName="email"
-                placeholder="kofimanu@gmail.com"
-                [errorMessage]="hasUserFieldError($index, 'email') ? getUserFieldErrorMessage($index, 'email') : ''"
-              ></app-input>
-            </div>
-            
-            <div class="user-field user-field--role">
-              <app-filter-select
-                formControlName="role"
-                [options]="roles"
-                placeholder="Select Role"
-                size="md"
-                [errorMessage]="hasUserFieldError($index, 'role') ? getUserFieldErrorMessage($index, 'role') : ''"
-              ></app-filter-select>
-            </div>
-
-            @if (users.length > 1) {
-              <button
-                type="button"
-                class="btn-delete"
-                (click)="removeUser($index)"
-                aria-label="Delete user"
-              >
-                <img src="icons/delete-user.png" alt="Delete" />
-              </button>
-            }
+        <div class="user-row" [formGroupName]="$index">
+          <div class="user-field user-field--name">
+            <app-input
+              formControlName="name"
+              placeholder="Kofi Manu"
+              [errorMessage]="
+                hasUserFieldError($index, 'name')
+                  ? getUserFieldErrorMessage($index, 'name')
+                  : ''
+              "
+            ></app-input>
           </div>
+
+          <div class="user-field user-field--email">
+            <app-input
+              type="email"
+              formControlName="email"
+              placeholder="kofimanu@gmail.com"
+              [errorMessage]="
+                hasUserFieldError($index, 'email')
+                  ? getUserFieldErrorMessage($index, 'email')
+                  : ''
+              "
+            ></app-input>
+          </div>
+
+          <div class="user-field user-field--role">
+            <app-filter-select
+              formControlName="role"
+              [options]="roles"
+              placeholder="Select Role"
+              extraClass="full-width-select"
+              [errorMessage]="
+                hasUserFieldError($index, 'role')
+                  ? getUserFieldErrorMessage($index, 'role')
+                  : ''
+              "
+            ></app-filter-select>
+          </div>
+
+          @if (users.length > 1) {
+          <button
+            type="button"
+            class="btn-delete"
+            (click)="removeUser($index)"
+            aria-label="Delete user"
+          >
+            <img src="icons/delete-user.png" alt="Delete" />
+          </button>
+          }
+        </div>
         }
       </div>
 
-      <app-button
-        type="social"
-        (onClick)="addUser()"
-        extraClass="btn-add-user"
-      >
+      <app-button type="social" (onClick)="addUser()" extraClass="btn-add-user">
         <img src="icons/add-icon.png" alt="Add icon" />
         <span>Add User</span>
       </app-button>
-    </div>
-
-    <div class="form-field">
-      <label for="event">Select Event</label>
-      <app-filter-select
-        id="event"
-        formControlName="event"
-        [options]="events"
-        placeholder="Select Event"
-        size="lg"
-        [errorMessage]="hasError('event') ? getErrorMessage('event') : ''"
-      ></app-filter-select>
     </div>
 
     <div class="form-field">
@@ -111,9 +96,9 @@
       <app-button
         type="primary"
         buttonType="submit"
-        [disabled]="inviteForm.invalid"
+        [disabled]="inviteForm.invalid || isSubmitting"
       >
-        Send Invite
+        {{ isSubmitting ? "Sending..." : "Send Invite" }}
       </app-button>
     </div>
   </form>
