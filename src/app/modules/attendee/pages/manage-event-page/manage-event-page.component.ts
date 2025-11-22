@@ -55,8 +55,8 @@ interface ManageEventPageState {
   selector: 'app-manage-event-page',
   standalone: true,
   imports: [
-    CommonModule, 
-    NgOptimizedImage, 
+    CommonModule,
+    NgOptimizedImage,
     ReactiveFormsModule,
     ModalWrapperComponent,
     ButtonComponent,
@@ -66,7 +66,7 @@ interface ManageEventPageState {
     GuestComponent,
     RegistrationComponent,
     LoadingCardComponent
-],
+  ],
   templateUrl: './manage-event-page.component.html',
   styleUrls: ['./manage-event-page.component.scss'],
 })
@@ -86,8 +86,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
   public readonly registrations = signal<Registration[]>([]);
-  
-  protected readonly availableEvents = signal<{id: number, title: string}[]>([]);
+
+  protected readonly availableEvents = signal<{ id: number, title: string }[]>([]);
   protected readonly currentEventId = signal<number | null>(null);
 
   private readonly _invitationService = inject(InvitationService);
@@ -156,7 +156,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.eventOverview.set(response)
       },
-      complete : ()=>{
+      complete: () => {
         this.loading.set(false)
       }
     })
@@ -201,11 +201,11 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this.setActiveTab('guests');
   }
 
-  protected onViewTickets(): void {}
+  protected onViewTickets(): void { }
 
   protected onInviteGuest(): void {
     const eventId = this.currentEventId();
-    
+
     if (!eventId) {
       this._notificationService.error('Error: No Event ID found. Please refresh the page.');
       return;
@@ -219,7 +219,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       event: eventId,
       role: 'ATTENDEE'
     });
-    
+
     this.showInviteModal.set(true);
     this._toggleBodyScroll(true);
   }
@@ -227,9 +227,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected onCloseInviteModal(): void {
     this.showInviteModal.set(false);
     const eventId = this.currentEventId();
-    this.inviteForm.reset({ 
+    this.inviteForm.reset({
       role: 'ATTENDEE',
-      event: eventId || null 
+      event: eventId || null
     });
     this._toggleBodyScroll(false);
   }
@@ -269,7 +269,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         {
           fullName: formData.name,
           email: formData.email,
-          role: formData.role 
+          role: formData.role
         }
       ],
       status: status as any,
@@ -283,12 +283,12 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        
+
         if (err.status === 0) {
-           this._notificationService.error('Connection blocked (CORS). Please check your network or use the CORS extension.');
+          this._notificationService.error('Connection blocked (CORS). Please check your network or use the CORS extension.');
         } else {
-           const errorMessage = err.error?.description || err.error?.message || err.statusText || 'Unknown error occurred';
-           this._notificationService.error(`Failed to send: ${errorMessage}`); 
+          const errorMessage = err.error?.description || err.error?.message || err.statusText || 'Unknown error occurred';
+          this._notificationService.error(`Failed to send: ${errorMessage}`);
         }
       }
     });
@@ -297,15 +297,15 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   private _handleSuccess(status: string): void {
     this.showInviteModal.set(false);
     const eventId = this.currentEventId();
-    
-    this.inviteForm.reset({ 
+
+    this.inviteForm.reset({
       role: 'ATTENDEE',
       event: eventId || null
     });
 
     if (status === 'SEND') {
       this._notificationService.success('');
-      
+
       this.showSuccessModal.set(true);
       setTimeout(() => {
         this.showSuccessModal.set(false);
@@ -342,12 +342,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       year: 'numeric',
     });
   }
- protected onEdit(): void {
-    this._router.navigate([APP_ROUTES.CREATE_EVENT],{
-      state : {
-        eventId:this.currentEventId()
-      }
-    })
+  protected onEdit(): void {
+    this._router.navigate([APP_ROUTES.EDIT_EVENT(this.currentEventId()?.toString() || '')])
   }
 
 }
