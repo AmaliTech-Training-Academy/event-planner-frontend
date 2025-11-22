@@ -72,6 +72,12 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       formattedAmount: this._formatAmount(transaction.amount),
       // Display '-' for null payment methods
       displayPaymentMethod: transaction.paymentMethod || '-',
+      // Truncate attendee email to 10 characters with ellipsis
+      truncatedEmail: this._truncateText(transaction.attendeeEmail, 10),
+      // Truncate event name for display (will be styled for 2 lines in CSS)
+      truncatedEventName: transaction.eventName,
+      // Truncate transaction ID to 5 characters
+      truncatedTransactionId: this._truncateText(transaction.transactionId, 5),
     }));
   });
 
@@ -296,11 +302,11 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   // Transform API data to table format
 
   protected readonly tableColumns: readonly TableColumn<any>[] = [
-    { key: 'transactionId', header: 'Transaction ID', sortable: true },
+    { key: 'truncatedTransactionId', header: 'Transaction ID', sortable: true },
     { key: 'formattedDate', header: 'Date', sortable: true },
-    { key: 'eventName', header: 'Event Name', sortable: true },
+    { key: 'truncatedEventName', header: 'Event Name', sortable: true },
     { key: 'eventOrganizer', header: 'Organizer', filterable: true },
-    { key: 'attendeeEmail', header: 'Attendee', filterable: true },
+    { key: 'truncatedEmail', header: 'Attendee', filterable: true },
     { key: 'formattedAmount', header: 'Amount', sortable: true },
     { key: 'displayPaymentMethod', header: 'Payment Method', filterable: true },
     { key: 'status', header: 'Status', filterable: true },
@@ -385,24 +391,24 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   private _formatDate(isoString: string): string {
     const date = new Date(isoString);
 
-    // Format: Nov 21, 2025 at 11:31 PM
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-    };
+    // Format: 2023-10-15 (YYYY-MM-DD format)
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
 
-    return date.toLocaleString('en-US', options).replace(',', ' at');
+    return `${year}-${month}-${day}`;
   }
 
   private _formatAmount(amount: number | null): string {
     if (amount === null || amount === 0) {
-      return 'GHS 0.00';
+      return 'Free';
     }
-    return `GHS ${amount.toFixed(2)}`;
+    return `$${amount.toFixed(2)}`;
+  }
+  private _truncateText(text: string, maxLength: number): string {
+    if (!text) return '-';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
   }
 
   private _viewTransaction(transaction: TransactionManagement): void {
