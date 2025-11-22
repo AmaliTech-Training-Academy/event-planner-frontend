@@ -159,7 +159,7 @@ export class ProfilePageComponent implements OnInit {
   private saveContactInfo(): void {
     if (this.contactInfoGroup?.valid) {
       const contactInfo = this.contactInfoGroup?.value;
-      this.updateProfile({ fullName: contactInfo?.phone, email: contactInfo?.address })
+      this.updateProfile({ phone: contactInfo?.phone, address: contactInfo?.address })
       this.disableContactInfo();
       return
     }
@@ -172,13 +172,5 @@ export class ProfilePageComponent implements OnInit {
       next: () => this.router.navigate([this.routes.LOGIN]),
       error: () => this.isLoggingOut.set(false)
     });
-  }
-
-  protected onUploadAvatar(): void {
-    // TODO: Implement file upload dialog
-  }
-
-  private uploadAvatarToAPI(file: File): void {
-    // TODO: Implement avatar upload
   }
 }

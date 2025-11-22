@@ -119,6 +119,19 @@
         flex: 1;
         @include flex-row($spacing-3);
         align-items: center;
+
+        @include sm {
+          border-bottom: 2px solid gray;
+          padding-bottom: .5rem;
+          display: grid;
+          @include flex-col($spacing-2);
+          background-color: rgb(255, 255, 255);
+
+          & > * {
+            width: 100%;
+          }
+
+        }
       }
     }
   }
