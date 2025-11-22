@@ -27,4 +27,6 @@ export const APP_ROUTES = {
   ACCEPT_INVITE: '/auth/invitation/accept',
   MANAGE_EVENT: (id:string)=> `/app/manage-event/${id}`,
   DEACTIVATED_MODAL: '/app/account-deactivated',
+  USER_ACCEPT_INVITATION: '/auth/event-invitations/accept',
+
 };
