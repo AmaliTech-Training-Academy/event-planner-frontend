@@ -32,8 +32,9 @@
   margin: auto;
 
   @include md {
+     @include flex-col(1rem);
     gap: 1.25rem;
-    padding: 18px 2rem 134px;
+    // padding: 18px 2rem 134px;
   }
 
   @include sm {
@@ -51,16 +52,21 @@
   @include sm {
     max-width: none;
   }
+
+  @include md{
+      max-width: none;
+    }
+
   app-upload-event-flyer {
     display: none;
 
-    // @include sm{
-    //   display: block
-    // }
+    @include sm{
+      display: block
+    }
 
-    // @include md{
-    //   display: block
-    // }
+    @include md{
+      display: block
+    }
   }
 
   .title-container {
@@ -314,17 +320,21 @@
     max-width: none;
   }
 
-  // app-upload-event-flyer{
-  //   display: black;
+   @include md{
+      max-width: none;
+    }
 
-  //   @include sm{
-  //     display: none;
-  //   }
+  app-upload-event-flyer{
+    display: black;
 
-  //   @include md{
-  //     display: none;
-  //   }
-  // }
+    @include sm{
+      display: none;
+    }
+
+    @include md{
+      display: none;
+    }
+  }
 
   .event-options-container {
     @include flex-col(16px);
