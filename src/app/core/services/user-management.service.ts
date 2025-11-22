@@ -20,6 +20,7 @@ import {
   UserResponse,
   normalizeUserStatus,
 } from '../models/index';
+import { USER_ROLES } from '../constants/user.constants';
 import {
   UpdateUserPayload,
   UserBackendService,
@@ -385,19 +386,19 @@ export class UserManagementService {
     const totalUsers = users.length;
 
     const totalOrganizers = users.filter(
-      (u) => u.role === 'ORGANISER' && u.status === 'Active'
+      (u) => u.role === USER_ROLES.ORGANIZER && u.status === 'Active'
     ).length;
 
     const totalCoOrganizers = users.filter(
-      (u) => u.role === 'CO_ORGANIZER' && u.status === 'Active'
+      (u) => u.role === USER_ROLES.CO_ORGANIZER && u.status === 'Active'
     ).length;
 
     const totalAdmin = users.filter(
-      (u) => u.role === 'ADMIN' && u.status === 'Active'
+      (u) => u.role === USER_ROLES.ADMIN && u.status === 'Active'
     ).length;
 
     const totalAttendees = users.filter(
-      (u) => u.role === 'ATTENDEE' && u.status === 'Active'
+      (u) => u.role === USER_ROLES.ATTENDEE && u.status === 'Active'
     ).length;
 
     const totalDeactivated = users.filter(
@@ -435,6 +436,8 @@ export class UserManagementService {
       this._userStats = data as UserStats;
     }
 
+    // Calculate Admin count as: Total Users - Active Organizers
+    const calculatedAdmin = Math.max(0, stats.totalUsers - stats.totalOrganizers);
 
     const cards: UserCardData[] = [
       {
@@ -452,8 +455,8 @@ export class UserManagementService {
         iconColor: '#4CAF50',
       },
       {
-        title: 'Attendees',
-        count: stats.totalAttendees,
+        title: 'Admin',
+        count: calculatedAdmin,
         icon: 'icons/user-icon-blue.png',
         bgColor: '#E3F2FD',
         iconColor: '#2196F3',
@@ -474,8 +477,8 @@ export class UserManagementService {
         iconColor: '',
       },
       {
-        title: 'Admin',
-        count: stats.totalAdmin,
+        title: 'Attendees',
+        count: stats.totalAttendees,
         icon: '',
         bgColor: '',
         iconColor: '',

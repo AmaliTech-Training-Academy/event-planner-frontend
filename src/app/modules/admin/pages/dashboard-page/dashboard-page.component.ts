@@ -84,6 +84,11 @@ export class DashboardPageComponent implements OnInit {
 
   protected readonly dashboardCards = signal<DashboardCard[]>([]);
 
+  protected readonly visibleDashboardCards = computed(() => {
+    const allowed = ['Total Users', 'Active Organizers', 'Admin', 'Deactivated'];
+    return this.dashboardCards().filter((c) => allowed.includes(c.title));
+  });
+
   // ------------------------------------------------------------------------
   // TIME SERIES DATA (from API) - Separated by year
   // ------------------------------------------------------------------------
@@ -122,14 +127,15 @@ export class DashboardPageComponent implements OnInit {
     const organizers =
       cards.find((c) => c.title === 'Active Organizers')?.count || 0;
 
-    const coOrganizers =
-      cards.find((c) => c.title === 'Active Co-organizers')?.count || 0;
+    const totalUsers = cards.find((c) => c.title === 'Total Users')?.count || 0;
+    const deactivated = cards.find((c) => c.title === 'Deactivated')?.count || 0;
+    const activeUsers = Math.max(0, totalUsers - deactivated);
 
     const admin = cards.find((c) => c.title === 'Admin')?.count || 0;
 
     const other = cards.find((c) => c.title === 'Other Users')?.count || 0;
 
-    const totalActive = organizers + coOrganizers + admin + other;
+    const totalActive = organizers + activeUsers + admin + other;
 
     if (totalActive === 0) return [];
 
@@ -148,8 +154,8 @@ export class DashboardPageComponent implements OnInit {
         color: '#3B3B3B', // Darkest gray from design
       },
       {
-        category: 'Co-organizers',
-        percentage: pct(coOrganizers),
+        category: 'Active Users',
+        percentage: pct(activeUsers),
         color: '#6B6B6B', // Medium gray from design
       },
       {
