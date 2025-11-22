@@ -37,10 +37,12 @@ interface CachedSearchResult {
 interface UserStats {
   totalUsers: number;
   totalOrganizers: number;
+  totalCoOrganizers: number;
+  totalAdmin: number;
   totalAttendees: number;
+  totalOthers: number;
   totalDeactivatedUsers: number;
 }
-
 @Injectable({ providedIn: 'root' })
 export class UserManagementService {
   private readonly _users$: BehaviorSubject<User[]> = new BehaviorSubject<
@@ -78,14 +80,16 @@ export class UserManagementService {
   private _userStats: UserStats = {
     totalUsers: 0,
     totalOrganizers: 0,
+    totalCoOrganizers: 0,
+    totalAdmin: 0,
     totalAttendees: 0,
+    totalOthers: 0,
     totalDeactivatedUsers: 0,
   };
-
   constructor(
     private readonly _userBackend: UserBackendService,
     private readonly _errorHandler: ErrorHandlerService
-  ) {}
+  ) { }
 
   public get totalElements(): number {
     return this._totalElements$.getValue();
@@ -376,29 +380,52 @@ export class UserManagementService {
     this._searchCache.clear();
   }
 
+
   private _updateCardsFromUserList(users: User[]): void {
     const totalUsers = users.length;
+
     const totalOrganizers = users.filter(
-      (u) =>
-        (u.role === 'ORGANISER' || u.role === 'CO_ORGANIZER') &&
-        u.status === 'Active'
+      (u) => u.role === 'ORGANISER' && u.status === 'Active'
     ).length;
+
+    const totalCoOrganizers = users.filter(
+      (u) => u.role === 'CO_ORGANIZER' && u.status === 'Active'
+    ).length;
+
+    const totalAdmin = users.filter(
+      (u) => u.role === 'ADMIN' && u.status === 'Active'
+    ).length;
+
     const totalAttendees = users.filter(
       (u) => u.role === 'ATTENDEE' && u.status === 'Active'
     ).length;
-    const totalDeactivatedUsers = users.filter(
+
+    const totalDeactivated = users.filter(
       (u) => u.status === 'Inactive'
     ).length;
+
+
+    const accountedFor =
+      totalOrganizers + totalCoOrganizers + totalAdmin + totalAttendees;
+    const totalOthers = Math.max(
+      0,
+      totalUsers - totalDeactivated - accountedFor
+    );
 
     this._userStats = {
       totalUsers,
       totalOrganizers,
+      totalCoOrganizers,
+      totalAdmin,
       totalAttendees,
-      totalDeactivatedUsers,
+      totalOthers,
+      totalDeactivatedUsers: totalDeactivated,
     };
 
     this._updateUserCards();
   }
+
+
 
   private _updateUserCards(data?: Partial<UserStats>): void {
     const stats: UserStats =
@@ -407,6 +434,7 @@ export class UserManagementService {
     if (data?.totalUsers != null) {
       this._userStats = data as UserStats;
     }
+
 
     const cards: UserCardData[] = [
       {
@@ -436,6 +464,28 @@ export class UserManagementService {
         icon: 'icons/user-icon-red.png',
         bgColor: '#FFEBEE',
         iconColor: '#F44336',
+      },
+
+      {
+        title: 'Active Co-organizers',
+        count: stats.totalCoOrganizers,
+        icon: '',
+        bgColor: '',
+        iconColor: '',
+      },
+      {
+        title: 'Admin',
+        count: stats.totalAdmin,
+        icon: '',
+        bgColor: '',
+        iconColor: '',
+      },
+      {
+        title: 'Other Users',
+        count: stats.totalOthers,
+        icon: '',
+        bgColor: '',
+        iconColor: '',
       },
     ];
 

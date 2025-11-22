@@ -62,10 +62,25 @@ interface TrafficByWebsite {
 export class DashboardPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   private readonly _userService = inject(UserManagementService);
-  private readonly _dashboardStatsService = inject(DashboardStatsBackendService);
+  private readonly _dashboardStatsService = inject(
+    DashboardStatsBackendService
+  );
 
   private readonly _staticCards: DashboardCard[] = [];
-  private readonly _monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  private readonly _monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   protected readonly dashboardCards = signal<DashboardCard[]>([]);
 
@@ -76,7 +91,7 @@ export class DashboardPageComponent implements OnInit {
   protected readonly totalUsersLastYear = signal<TimeSeriesDataPoint[]>([]);
   protected readonly totalEventsThisYear = signal<TimeSeriesDataPoint[]>([]);
   protected readonly totalEventsLastYear = signal<TimeSeriesDataPoint[]>([]);
-  
+
   protected readonly isLoadingUsers = signal(false);
   protected readonly isLoadingEvents = signal(false);
 
@@ -110,11 +125,11 @@ export class DashboardPageComponent implements OnInit {
     const coOrganizers =
       cards.find((c) => c.title === 'Active Co-organizers')?.count || 0;
 
-    const attendees = cards.find((c) => c.title === 'Admin')?.count || 0;
+    const admin = cards.find((c) => c.title === 'Admin')?.count || 0;
 
     const other = cards.find((c) => c.title === 'Other Users')?.count || 0;
 
-    const totalActive = organizers + coOrganizers + attendees + other;
+    const totalActive = organizers + coOrganizers + admin + other;
 
     if (totalActive === 0) return [];
 
@@ -123,24 +138,24 @@ export class DashboardPageComponent implements OnInit {
 
     return [
       {
-        category: 'Attendees',
-        percentage: pct(attendees),
-        color: '#FF6B35',
+        category: 'Admin',
+        percentage: pct(admin),
+        color: '#D97543', // Burnt orange from design
       },
       {
         category: 'Organizers',
         percentage: pct(organizers),
-        color: '#374151',
+        color: '#3B3B3B', // Darkest gray from design
       },
       {
         category: 'Co-organizers',
         percentage: pct(coOrganizers),
-        color: '#9CA3AF',
+        color: '#6B6B6B', // Medium gray from design
       },
       {
         category: 'Other',
         percentage: pct(other),
-        color: '#6B7280',
+        color: '#5C5C5C', // Dark gray from design
       },
     ];
   });
@@ -157,16 +172,15 @@ export class DashboardPageComponent implements OnInit {
       this.dashboardCards.set([...cards, ...this._staticCards]);
     });
 
-    this._userService.fetchAllUsers(0, 10).subscribe();
+    // Fetch more users to get better statistics (fetch first 100 users)
+    this._userService.fetchAllUsers(0, 100).subscribe();
 
     // Fetch chart data from API
     this._fetchRegistrationData();
     this._fetchEventData();
   }
 
-  /**
-   * Fetches user registration statistics from the API
-   */
+
   private _fetchRegistrationData(): void {
     this.isLoadingUsers.set(true);
     this._dashboardStatsService.getRegistrationGraphData().subscribe({
@@ -256,9 +270,10 @@ export class DashboardPageComponent implements OnInit {
    * Transforms event API response to chart format
    * Separates this year and last year data with all 12 months
    */
-  private _transformEventData(
-    monthlyData: EventMonthlyDataPoint[][]
-  ): { thisYear: TimeSeriesDataPoint[]; lastYear: TimeSeriesDataPoint[] } {
+  private _transformEventData(monthlyData: EventMonthlyDataPoint[][]): {
+    thisYear: TimeSeriesDataPoint[];
+    lastYear: TimeSeriesDataPoint[];
+  } {
     // Initialize all 12 months with 0 values
     const thisYearData = this._createEmptyMonthData();
     const lastYearData = this._createEmptyMonthData();

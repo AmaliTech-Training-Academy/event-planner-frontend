@@ -161,7 +161,7 @@ export class AuthService {
     this.setLoading(true);
     return this.authBackend.resendOtp(email).pipe(
       take(1),
-      tap(() => {}),
+      tap(() => { }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );
@@ -579,10 +579,16 @@ export class AuthService {
           const userData = response?.data;
 
           if (userData) {
-            if (userData.role === 'ADMIN') {
-              this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+            const role = String(userData.role).trim().toUpperCase();
+
+            if (role === 'ADMIN') {
+              setTimeout(() => {
+                this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+              }, 100);
             } else {
-              this.router.navigate([APP_ROUTES.LOGIN]);
+              setTimeout(() => {
+                this.router.navigate([APP_ROUTES.LOGIN]);
+              }, 100);
             }
           }
         }),

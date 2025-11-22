@@ -64,12 +64,12 @@
     flex: 1;
     min-height: 350px;
     width: 100%;
-    min-width: 0; // Allow shrinking
-    max-width: 100%; // Prevent expansion
-    overflow: hidden; // Clip overflowing chart
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
     position: relative;
 
-    // Ensure all child elements respect width
+
     >* {
       max-width: 100%;
       width: 100%;
