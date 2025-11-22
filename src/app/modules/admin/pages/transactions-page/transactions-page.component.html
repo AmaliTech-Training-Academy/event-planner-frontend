@@ -1,4 +1,14 @@
 <div class="transactions-page">
+  <!-- Loading Spinner Overlay -->
+  @if (isLoading()) {
+    <div class="transactions-page__loading-overlay">
+      <div class="transactions-page__spinner">
+        <div class="spinner"></div>
+        <p class="transactions-page__loading-text">Loading transactions...</p>
+      </div>
+    </div>
+  }
+
   <div class="transactions-page__header">
     <div class="transactions-page__header-content">
       <h1 class="transactions-page__title">Transaction History</h1>
@@ -19,6 +29,7 @@
         class="transactions-page__tab"
         [class.transactions-page__tab--active]="activeTab() === tab.key"
         (click)="onTabChange(tab.key)"
+        [disabled]="isLoading()"
       >
         {{ tab.label }}
       </button>
@@ -39,6 +50,7 @@
     <app-data-table
       [data]="transactions()"
       [columns]="tableColumns"
+      [actions]="tableActions"
       [filters]="tableFilters"
       [searchable]="true"
       [expandable]="false"
