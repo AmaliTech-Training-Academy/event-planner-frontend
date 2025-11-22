@@ -102,6 +102,7 @@ export class LineChartComponent implements OnInit, OnChanges {
   @Input() public height: string = '400px';
   @Input() public animationDuration: number = 800;
   @Input() public smooth: boolean = true;
+  @Input() public maxValue?: number;
 
   public readonly isLoading = signal(false);
   public readonly chartOptions = signal<EChartsOption>({});
@@ -158,12 +159,30 @@ export class LineChartComponent implements OnInit, OnChanges {
         ...DEFAULT_X_AXIS,
         data: months,
       } as XAXisComponentOption,
-      yAxis: DEFAULT_Y_AXIS,
+      yAxis: this._createYAxisConfig(),
       series: chartSeries,
       tooltip: this._createTooltipConfig(),
     };
 
     this.chartOptions.set(options);
+  }
+
+  private _createYAxisConfig(): YAXisComponentOption {
+    if (this.maxValue !== undefined && this.maxValue > 0) {
+      // Calculate nice interval and max based on maxValue
+      const roundedMax = Math.ceil(this.maxValue * 1.2 / 100) * 100; // Add 20% padding and round to nearest 100
+      const interval = Math.ceil(roundedMax / 3 / 100) * 100; // Divide into ~3 intervals, round to 100
+
+      return {
+        ...DEFAULT_Y_AXIS,
+        min: 0,
+        max: roundedMax,
+        interval: interval,
+      };
+    }
+
+    // Fallback to default configuration
+    return DEFAULT_Y_AXIS;
   }
 
   private _getSeriesData(): LineSeriesConfig[] {

@@ -43,10 +43,10 @@
         <div class="chart-card__body">
           @if (activeChartTab() === 'users') {
           <app-line-chart [thisYearData]="totalUsersThisYear()" [lastYearData]="totalUsersLastYear()"
-            [showLegend]="false" />
+            [showLegend]="false" [maxValue]="usersMaxValue()" />
           } @else {
           <app-line-chart [thisYearData]="totalEventsThisYear()" [lastYearData]="totalEventsLastYear()"
-            [showLegend]="false" />
+            [showLegend]="false" [maxValue]="eventsMaxValue()" />
           }
         </div>
       </div>

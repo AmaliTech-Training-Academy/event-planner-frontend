@@ -97,6 +97,9 @@ export class DashboardPageComponent implements OnInit {
   protected readonly totalEventsThisYear = signal<TimeSeriesDataPoint[]>([]);
   protected readonly totalEventsLastYear = signal<TimeSeriesDataPoint[]>([]);
 
+  protected readonly usersMaxValue = signal<number | undefined>(undefined);
+  protected readonly eventsMaxValue = signal<number | undefined>(undefined);
+
   protected readonly isLoadingUsers = signal(false);
   protected readonly isLoadingEvents = signal(false);
 
@@ -197,6 +200,11 @@ export class DashboardPageComponent implements OnInit {
           );
           this.totalUsersThisYear.set(thisYear);
           this.totalUsersLastYear.set(lastYear);
+
+          // Set maxValue from metadata
+          if (response.data.metadata?.maxValue !== undefined) {
+            this.usersMaxValue.set(response.data.metadata.maxValue);
+          }
         }
         this.isLoadingUsers.set(false);
       },
@@ -204,6 +212,7 @@ export class DashboardPageComponent implements OnInit {
         console.error('Error fetching registration data:', error);
         this.totalUsersThisYear.set(this._createEmptyMonthData());
         this.totalUsersLastYear.set(this._createEmptyMonthData());
+        this.usersMaxValue.set(undefined);
         this.isLoadingUsers.set(false);
       },
     });
@@ -222,6 +231,11 @@ export class DashboardPageComponent implements OnInit {
           );
           this.totalEventsThisYear.set(thisYear);
           this.totalEventsLastYear.set(lastYear);
+
+          // Set maxValue from metadata
+          if (response.data.metadata?.maxValue !== undefined) {
+            this.eventsMaxValue.set(response.data.metadata.maxValue);
+          }
         }
         this.isLoadingEvents.set(false);
       },
@@ -229,6 +243,7 @@ export class DashboardPageComponent implements OnInit {
         console.error('Error fetching event data:', error);
         this.totalEventsThisYear.set(this._createEmptyMonthData());
         this.totalEventsLastYear.set(this._createEmptyMonthData());
+        this.eventsMaxValue.set(undefined);
         this.isLoadingEvents.set(false);
       },
     });
