@@ -115,7 +115,8 @@ export class LineChartComponent implements OnInit, OnChanges {
     if (
       changes['seriesConfig'] ||
       changes['thisYearData'] ||
-      changes['lastYearData']
+      changes['lastYearData'] ||
+      changes['maxValue']
     ) {
       this._updateChartOptions();
     }
@@ -169,9 +170,27 @@ export class LineChartComponent implements OnInit, OnChanges {
 
   private _createYAxisConfig(): YAXisComponentOption {
     if (this.maxValue !== undefined && this.maxValue > 0) {
-      // Calculate nice interval and max based on maxValue
-      const roundedMax = Math.ceil(this.maxValue * 1.2 / 100) * 100; // Add 20% padding and round to nearest 100
-      const interval = Math.ceil(roundedMax / 3 / 100) * 100; // Divide into ~3 intervals, round to 100
+      const paddedMax = this.maxValue * 1.2;
+
+      let roundedMax: number;
+      let interval: number;
+
+      if (paddedMax <= 10) {
+        roundedMax = Math.ceil(paddedMax / 2) * 2;
+        interval = Math.max(1, Math.ceil(roundedMax / 4));
+      } else if (paddedMax <= 50) {
+        roundedMax = Math.ceil(paddedMax / 10) * 10;
+        interval = Math.max(5, Math.ceil(roundedMax / 4 / 5) * 5);
+      } else if (paddedMax <= 100) {
+        roundedMax = Math.ceil(paddedMax / 20) * 20;
+        interval = Math.max(10, Math.ceil(roundedMax / 4 / 10) * 10);
+      } else if (paddedMax <= 500) {
+        roundedMax = Math.ceil(paddedMax / 100) * 100;
+        interval = Math.max(50, Math.ceil(roundedMax / 4 / 50) * 50);
+      } else {
+        roundedMax = Math.ceil(paddedMax / 1000) * 1000;
+        interval = Math.max(100, Math.ceil(roundedMax / 4 / 100) * 100);
+      }
 
       return {
         ...DEFAULT_Y_AXIS,
@@ -181,7 +200,6 @@ export class LineChartComponent implements OnInit, OnChanges {
       };
     }
 
-    // Fallback to default configuration
     return DEFAULT_Y_AXIS;
   }
 
