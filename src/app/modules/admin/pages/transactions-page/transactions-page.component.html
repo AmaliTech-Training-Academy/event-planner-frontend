@@ -1,4 +1,13 @@
 <div class="transactions-page">
+  @if (isLoading()) {
+  <div class="transactions-page__loading-overlay">
+    <div class="transactions-page__spinner">
+      <div class="spinner"></div>
+      <p class="transactions-page__loading-text">Loading transactions...</p>
+    </div>
+  </div>
+  }
+
   <div class="transactions-page__header">
     <div class="transactions-page__header-content">
       <h1 class="transactions-page__title">Transaction History</h1>
@@ -11,7 +20,7 @@
     </div>
   </div>
 
-  <!-- Chart Section -->
+
   <div class="transactions-page__chart-container">
     <div class="transactions-page__chart-tabs">
       @for (tab of chartTabs; track tab.key) {
@@ -31,6 +40,6 @@
   <div class="transactions-page__content">
     <app-data-table [data]="transactions()" [columns]="tableColumns" [actions]="tableActions" [filters]="tableFilters"
       [searchable]="true" [expandable]="false" [primaryAction]="primaryAction" [itemsPerPage]="10"
-      [loading]="isLoading()" [emptyState]="transactionsEmptyState" />
+      [emptyState]="transactionsEmptyState" />
   </div>
 </div>

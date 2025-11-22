@@ -6,7 +6,7 @@ export interface TransactionManagement {
   amount: number | null;
   paymentMethod: string | null;
   status: TransactionManagementStatus;
-  transactionTime: string; // ISO 8601 format
+  transactionTime: string;
 }
 
 export type TransactionManagementStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';

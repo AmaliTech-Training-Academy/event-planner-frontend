@@ -45,11 +45,8 @@ export class TransactionsManagementService {
   constructor(
     private readonly transactionsBackend: TransactionsBackendService,
     private readonly errorHandlerService: ErrorHandlerService
-  ) {}
+  ) { }
 
-  /**
-   * Load transactions with optional filters
-   */
   public loadTransactions(
     filters?: TransactionManagementFilterParams
   ): Observable<TransactionManagementResponse> {
@@ -76,9 +73,6 @@ export class TransactionsManagementService {
     );
   }
 
-  /**
-   * Load transaction by ID
-   */
   public loadTransactionById(
     transactionId: string
   ): Observable<TransactionManagement> {
@@ -91,9 +85,6 @@ export class TransactionsManagementService {
     );
   }
 
-  /**
-   * Load transactions for a specific event
-   */
   public loadEventTransactions(
     eventId: string,
     filters?: TransactionManagementFilterParams
@@ -118,9 +109,6 @@ export class TransactionsManagementService {
     );
   }
 
-  /**
-   * Load user's transaction history
-   */
   public loadUserTransactions(
     filters?: TransactionManagementFilterParams
   ): Observable<TransactionManagementResponse> {
@@ -144,21 +132,15 @@ export class TransactionsManagementService {
     );
   }
 
-  /**
-   * Search transactions
-   */
   public searchTransactions(searchTerm: string): void {
     const currentFilters = this._currentFiltersSubject.getValue();
     this.loadTransactions({
       ...currentFilters,
       transactionId: searchTerm,
-      page: 0, // Reset to first page on search
+      page: 0,
     }).subscribe();
   }
 
-  /**
-   * Filter by status
-   */
   public filterByStatus(status: string): void {
     const currentFilters = this._currentFiltersSubject.getValue();
     this.loadTransactions({
@@ -168,9 +150,6 @@ export class TransactionsManagementService {
     }).subscribe();
   }
 
-  /**
-   * Go to next page
-   */
   public nextPage(): void {
     const pagination = this._paginationInfoSubject.getValue();
     if (pagination && !pagination.last) {
@@ -182,9 +161,6 @@ export class TransactionsManagementService {
     }
   }
 
-  /**
-   * Go to previous page
-   */
   public previousPage(): void {
     const pagination = this._paginationInfoSubject.getValue();
     if (pagination && !pagination.first) {
@@ -196,9 +172,6 @@ export class TransactionsManagementService {
     }
   }
 
-  /**
-   * Go to specific page
-   */
   public goToPage(page: number): void {
     const currentFilters = this._currentFiltersSubject.getValue();
     this.loadTransactions({
@@ -207,21 +180,15 @@ export class TransactionsManagementService {
     }).subscribe();
   }
 
-  /**
-   * Change page size
-   */
   public changePageSize(size: number): void {
     const currentFilters = this._currentFiltersSubject.getValue();
     this.loadTransactions({
       ...currentFilters,
       size,
-      page: 0, // Reset to first page
+      page: 0,
     }).subscribe();
   }
 
-  /**
-   * Reset filters
-   */
   public resetFilters(): void {
     this.loadTransactions({
       page: 0,
@@ -230,16 +197,10 @@ export class TransactionsManagementService {
     }).subscribe();
   }
 
-  /**
-   * Get current transactions value (synchronous)
-   */
   public getCurrentTransactions(): TransactionManagement[] {
     return this._transactionsSubject.getValue();
   }
 
-  /**
-   * Get current pagination info (synchronous)
-   */
   public getCurrentPaginationInfo(): PaginationInfo | null {
     return this._paginationInfoSubject.getValue();
   }

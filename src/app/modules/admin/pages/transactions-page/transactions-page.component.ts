@@ -1,12 +1,7 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  inject,
-  signal,
-  computed,
-  Signal,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, Signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { LayoutService } from '../../../../core/services/layout.service';
 import { TransactionsManagementService } from '../../../../core/services/transactions-management.service';
@@ -22,8 +17,7 @@ import {
   LineChartComponent,
   LineSeriesConfig,
 } from '../../pages/dashboard-page/components/line-chart/line-chart.component';
-import { CommonModule } from '@angular/common';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { APP_ROUTES } from '@app/core/constants/app-routes.constants';
 
 type TransactionFilter =
   | 'Total'
@@ -61,6 +55,7 @@ interface TransactionDisplay extends TransactionManagement {
 export class TransactionsPageComponent implements OnInit, OnDestroy {
   private readonly _layoutService = inject(LayoutService);
   private readonly _transactionsService = inject(TransactionsManagementService);
+  private readonly _router = inject(Router);
   private readonly _destroy$ = new Subject<void>();
 
   protected readonly activeTab = signal<TransactionFilter>('Total');
@@ -82,6 +77,9 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       truncatedTransactionId: this._truncateText(transaction.transactionId, 5),
     }));
   });
+
+    protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
+  
 
   protected readonly chartTabs: readonly ChartTab[] = [
     { key: 'Total', label: 'Total' },
@@ -354,14 +352,12 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     this._layoutService.logoSrc.set('icons/transaction-icon.png');
     this._layoutService.logoAlt.set('Transaction History');
 
-    // Subscribe to loading state
     this._transactionsService.loading$
       .pipe(takeUntil(this._destroy$))
       .subscribe((loading) => {
         this.isLoading.set(loading);
       });
 
-    // Load initial transactions
     this._loadTransactions();
   }
 
@@ -389,7 +385,6 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   private _formatDate(isoString: string): string {
     const date = new Date(isoString);
 
-    // Format: 2023-10-15 (YYYY-MM-DD format)
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
@@ -412,16 +407,14 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
 
   private _viewTransaction(transaction: TransactionManagement): void {
     console.log('View transaction:', transaction);
-    // TODO: Implement view transaction modal/page
   }
 
   private _downloadReceipt(transaction: TransactionManagement): void {
     console.log('Download receipt for:', transaction);
-    // TODO: Implement receipt download
   }
 
   private _openCreateEventModal(): void {
-    console.log('Open create event modal');
-    // TODO: Implement create event modal
+    this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
+
   }
 }

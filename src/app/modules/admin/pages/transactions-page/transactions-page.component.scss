@@ -10,6 +10,43 @@
   min-height: 100vh;
   position: relative;
 
+  &__loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+  }
+
+  &__spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-4;
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid $gray-200;
+      border-top-color: $orange-700;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+
+  &__loading-text {
+    @include body-1;
+    color: $gray-700;
+    font-weight: 500;
+    margin: 0;
+  }
+
   &__header {
     display: flex;
     justify-content: space-between;
@@ -135,17 +172,14 @@
         }
       }
 
-      // Transaction ID cell
       &__cell:nth-child(2) {
-        width: 100px; // Fixed smaller width
+        width: 100px;
         max-width: 100px;
-
-        .data-table__cell-content {
-          text-overflow: clip; // Prevent ellipsis
-        }
+        text-overflow: clip;
+        white-space: nowrap;
+        overflow: hidden;
       }
 
-      // Event Name cell - 2 line truncation
       &__cell:has([data-column="truncatedEventName"]),
       &__cell:nth-child(3) {
         max-width: 200px;
@@ -153,6 +187,7 @@
         .data-table__cell-content {
           display: -webkit-box;
           -webkit-line-clamp: 2;
+          line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -161,7 +196,6 @@
         }
       }
 
-      // Attendee email cell - already truncated in TypeScript
       &__cell:has([data-column="truncatedEmail"]),
       &__cell:nth-child(5) {
         max-width: 150px;
@@ -206,10 +240,23 @@
   }
 }
 
-// Responsive design
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @include md {
   .transactions-page {
     padding: $spacing-4;
+
+    &__spinner {
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border-width: 3px;
+      }
+    }
 
     &__header {
       flex-direction: column;
@@ -258,6 +305,18 @@
 @include sm {
   .transactions-page {
     padding: $spacing-3;
+
+    &__spinner {
+      .spinner {
+        width: 36px;
+        height: 36px;
+        border-width: 3px;
+      }
+    }
+
+    &__loading-text {
+      font-size: 0.875rem;
+    }
 
     &__header {
       padding-bottom: $spacing-3;
