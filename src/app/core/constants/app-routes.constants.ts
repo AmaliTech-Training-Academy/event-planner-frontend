@@ -13,6 +13,7 @@ export const APP_ROUTES = {
   MANAGE_EVENT_ROLES: '/app/manage-event-roles',
   RESET_PASSWORD: '/auth/reset-password',
   CREATE_EVENT: '/app/create-event',
+  EDIT_EVENT: (id: string) => `/app/edit-event/${id}`,
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   MY_EVENTS: '/app/my-events',
   MY_EVENT: (id: string) => `/app/my-event/${id}`,

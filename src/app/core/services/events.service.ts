@@ -98,6 +98,16 @@ export class EventsServiceService {
     )
   }
 
+  public updateEvent(id: string, formData: FormData) {
+    this.setLoading(true)
+    return this.eventBackendService.updateEvent(id, formData).pipe(
+      take(1),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
+
   public myEvents(page: number = 0, pageSize: number = 3) {
     const params = new URLSearchParams();
 

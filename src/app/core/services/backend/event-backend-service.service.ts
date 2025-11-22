@@ -37,6 +37,11 @@ export class EventBackendServiceService {
   public getEvent(id: string): Observable<EventDetail> {
     return this.http.get<EventDetail>(EVENTS_API_ENDPOINTS.GET_EVENT(id));
   }
+
+  public updateEvent(id: string, formData: FormData): Observable<EventDetail> {
+    return this.http.post<EventDetail>(EVENTS_API_ENDPOINTS.GET_EVENT(id), formData);
+  }
+
   public getEvents(params: URLSearchParams): Observable<GetEventsResponse> {
     const queryParam_ = `?${params.toString()}`;
     return this.http.get<GetEventsResponse>(`${EVENTS_API_ENDPOINTS.GET_EVENTS}${queryParam_}`);
@@ -51,7 +56,7 @@ export class EventBackendServiceService {
     return this.http.get<MyEventStatsResponse>(`${EVENTS_API_ENDPOINTS.MY_EVENT_OVERVIEW}`);
   }
 
-   public registerEvent(id: string, data: RegisterEventBody): Observable<RegisterEventResponse> {
+  public registerEvent(id: string, data: RegisterEventBody): Observable<RegisterEventResponse> {
     return this.http.post<RegisterEventResponse>(EVENTS_API_ENDPOINTS.REGISTER_EVENT(id), data)
   }
 

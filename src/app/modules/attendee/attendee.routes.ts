@@ -87,6 +87,14 @@ export const ATTENDEE_ROUTES: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'edit-event/:id',
+    loadComponent: () =>
+      import('../attendee/pages/edit-event-page/edit-event-page.component').then(
+        (m) => m.EditEventPageComponent
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'payment-settings',
     loadComponent: () =>
       import('../attendee/pages/payment-settings/payment-settings.component').then(

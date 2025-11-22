@@ -13,6 +13,7 @@ import { NgOptimizedImage } from '@angular/common';
 export class UploadEventFlyerComponent {
 
   public readonly flyerPreview = input<string | null>();
+  public readonly title = input<string|null>()
 
   public selectedFlyer = output<Event>()
 

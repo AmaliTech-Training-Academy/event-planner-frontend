@@ -1,0 +1,47 @@
+@if (mode() == 'view') {
+<div class="ticket-card" @slideView>
+  <h4>{{ticketGroup().get('type')?.value || 'N/A'}}</h4>
+  <p>{{ticketGroup().get('price')?.value ? (ticketGroup().get('price')?.value |currency) : 'Free'}}</p>
+
+  <ul class="features-list">
+    @for (feature of ticketGroup().get('description')?.value.split('\n'); track $index) {
+    <li class="feature-item">
+      <img src="icons/checkmark.png" class="check-icon" />
+      <span>{{ feature }}</span>
+    </li>
+    }
+  </ul>
+
+  <div class="row actions">
+    <app-button type="secondary" (onClick)="switchToEdit()">Edit</app-button>
+
+  </div>
+</div>
+} @else {
+<div [formGroup]="ticketGroup()" class="edit-ticket" @slideView>
+  <app-input [errorMessage]="getError('type')" formControlName="type" label="Ticket Name"></app-input>
+
+  <div class="row price">
+    <app-input [errorMessage]="getError('price')" formControlName="price" [type]="'number'"
+      label="Ticket Price"></app-input>
+    <app-input [errorMessage]="getError('remainingTickets')" formControlName="remainingTickets" [type]="'number'"
+      label="Ticket Capacity"></app-input>
+  </div>
+
+  <div class="field">
+    <label for="description">Benefit description</label>
+    <textarea formControlName="description" placeholder="Type description here"></textarea>
+    <app-form-error [message]="getError('description')"></app-form-error>
+  </div>
+  <div class="row actions">
+    @if(!this.ticketGroup().invalid || !deletable()){
+    <app-button type="secondary" (click)="switchToView()">Save</app-button>
+    }
+    @if(deletable()){
+    <app-button (onClick)="removeGroup.emit()" type="secondary">Remove</app-button>
+    }
+  </div>
+
+
+</div>
+}
