@@ -42,7 +42,7 @@ export class EventDatePickerComponent implements OnInit {
   }
 
   protected get parseSelectedDate(): string {
-    if (!this.currentSelectedDate) return 'Date';
+    if (!this.currentSelectedDate) return "Date";
     const day = String(this.currentSelectedDate.getDate()).padStart(2, '0');
     const month = String(this.currentSelectedDate.getMonth() + 1).padStart(2, '0');
     const year = this.currentSelectedDate.getFullYear();

@@ -1,7 +1,7 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { EventsServiceService } from '../../../../core/services/events.service';
 import { LocationSearchComponent } from '../../../../shared/components/location-search/location-search.component';
@@ -49,7 +49,14 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   protected loading: boolean = false;
   private subscription: Subscription = new Subscription();
 
-  constructor(private readonly eventFormService: EventFormService, private readonly eventService: EventsServiceService, private readonly notificationService: NotificationService) {
+  private eventId: number = 0
+
+  constructor(private readonly eventFormService: EventFormService, private readonly eventService: EventsServiceService, private readonly notificationService: NotificationService, private readonly router: Router) {
+
+    this.eventId = this.router.getCurrentNavigation()?.extras.state?.['eventId'];
+    console.log(this.eventId);
+
+    
     this.form = this.eventFormService.getForm();
     this.checked = this.eventFormService.requireApproval?.value;
 
@@ -69,6 +76,8 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    
+
     this.eventFormService.registerValueChangeHandlers();
 
     if (this.eventFormService.flyer?.value) {

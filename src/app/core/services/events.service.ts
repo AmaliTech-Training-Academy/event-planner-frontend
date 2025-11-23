@@ -12,7 +12,7 @@ import { NotificationService } from './notification.service';
 })
 export class EventsServiceService {
 
-  private _loadingStateSubject = new BehaviorSubject<boolean>(false);
+  private _loadingStateSubject = new BehaviorSubject<boolean>(true);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
   constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router: Router, private readonly notificationService: NotificationService) { }
@@ -92,6 +92,15 @@ export class EventsServiceService {
   public getEvent(id: string) {
     this.setLoading(true)
     return this.eventBackendService.getEvent(id).pipe(
+      take(1),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
+  public updateEvent(id: string, formData: FormData) {
+    this.setLoading(true)
+    return this.eventBackendService.updateEvent(id, formData).pipe(
       take(1),
       catchError(err => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
