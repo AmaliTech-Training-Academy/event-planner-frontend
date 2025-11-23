@@ -1,13 +1,13 @@
 export interface AuditLog {
-  id: string;
-  first_name?: string;
-  last_name?: string;
+  id: number;
+  fullName: string;
   email: string;
+  profileImageUrl: string;
   ipAddress: string;
   timestamp: string;
   createdAt: string;
   updatedAt: string;
-  status?: string;
+  auditStatus: 'SUCCESS' | 'FAILED';
 }
 
 export interface AuditLogsResponse {
@@ -15,7 +15,7 @@ export interface AuditLogsResponse {
   pageSize: number;
   totalElements: number;
   totalPages: number;
-  auditListResponse: AuditLog[];
+  data: AuditLog[];
 }
 
 export interface AuditLogTableData {
@@ -42,7 +42,7 @@ export function mapAuditLogToTableData(
       firstName: '',
       lastName: '',
       email: '',
-      avatar: `https://i.pravatar.cc/150?img=1`,
+      avatar: '',
       ipAddress: '',
       timestamp: '',
       formattedTimestamp: 'Invalid Date',
@@ -51,15 +51,10 @@ export function mapAuditLogToTableData(
     } as AuditLogTableData;
   }
 
-  let fullName = '';
-  const firstName = log.first_name || '';
-  const lastName = log.last_name || '';
-
-  if (firstName || lastName) {
-    fullName = `${firstName} ${lastName}`.trim();
-  } else if (log.email) {
-    fullName = log.email.split('@')[0];
-  }
+  const fullName = log.fullName || '';
+  const nameParts = fullName.split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
 
   let formattedTimestamp = 'Invalid Date';
   const dateString = log.timestamp || log.createdAt;
@@ -77,28 +72,21 @@ export function mapAuditLogToTableData(
         const seconds = String(date.getSeconds()).padStart(2, '0');
 
         formattedTimestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      } else {
-        console.warn('Invalid timestamp:', dateString);
       }
     } catch (error) {
-      console.warn('Error parsing timestamp:', dateString, error);
+      // Silent error handling
     }
   }
 
-  const status =
-    log.status?.toLowerCase() === 'failed' ? 'Failed' : 'Successful';
-
-  const avatarSeed = log.id || log.email || 'default';
-  const avatarIndex = Math.floor(Math.random() * 70) + 1;
+  const status = log.auditStatus === 'SUCCESS' ? 'Successful' : 'Failed';
 
   return {
-    id: log.id || '',
+    id: String(log.id) || '',
     fullName,
     firstName,
     lastName,
     email: log.email || '',
-    avatar: `https://i.pravatar.cc/150?img=${avatarIndex}`,
-
+    avatar: log.profileImageUrl || '',
     ipAddress: log.ipAddress || 'N/A',
     timestamp: dateString || '',
     formattedTimestamp,
