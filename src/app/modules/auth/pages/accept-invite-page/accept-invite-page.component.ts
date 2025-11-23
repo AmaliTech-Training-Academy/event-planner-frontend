@@ -101,13 +101,14 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
             this.notificationService.success(
               'Invitation accepted successfully! You can now log in.'
             );
-            this.router.navigate([APP_ROUTES.LOGIN]);
+
+
           },
           error: (error) => {
             this.isSubmitting.set(false);
             this.notificationService.error(
               error?.error?.message ||
-                'Failed to accept invitation. Please try again.'
+              'Failed to accept invitation. Please try again.'
             );
           },
         })

@@ -1,4 +1,8 @@
-<header class="admin-top-nav" role="banner"  [class.admin-top-nav--collapsed]="isCollapsed">
+<header
+  class="admin-top-nav"
+  role="banner"
+  [class.admin-top-nav--collapsed]="isNavCollapsed()"
+>
   <div class="admin-top-nav__left">
     <img
       ngSrc="{{ logoSrc }}"
@@ -14,7 +18,7 @@
     <app-button
       [buttonType]="'button'"
       type="social"
-      [extraClass]="'admin-top-nav__notifications'"
+      [extraClass]="'admin-notifications'"
       aria-label="Notifications"
     >
       <img
@@ -30,14 +34,99 @@
       }
     </app-button>
 
-    <div class="admin-top-nav__user" [attr.aria-label]="userName">
-      <img
-        ngSrc="{{ avatarSrc }}"
-        width="32"
-        height="32"
-        [alt]="userName"
-        class="admin-top-nav__avatar"
-      />
+    <div class="admin-top-nav__user-wrapper">
+      <app-button
+        type="plain"
+        [buttonType]="'button'"
+        [extraClass]="'admin-top-nav__user'"
+        [attr.aria-label]="displayName()"
+        (onClick)="toggleDropdown()"
+      >
+        <img
+          [ngSrc]="displayAvatar()"
+          width="32"
+          height="32"
+          [alt]="displayName()"
+          class="admin-top-nav__avatar"
+        />
+        <img
+          ngSrc="icons/drop-down.png"
+          width="16"
+          height="16"
+          alt="Menu"
+          class="admin-top-nav__chevron"
+          [class.admin-top-nav__chevron--open]="isDropdownOpen()"
+        />
+      </app-button>
+
+      @if (isDropdownOpen()) {
+      <div class="admin-top-nav__dropdown">
+        <div class="admin-top-nav__dropdown-header">
+          <img
+            [ngSrc]="displayAvatar()"
+            width="40"
+            height="40"
+            [alt]="displayName()"
+            class="admin-top-nav__dropdown-avatar"
+          />
+          <div class="admin-top-nav__dropdown-info">
+            <p class="admin-top-nav__dropdown-name">{{ displayName() }}</p>
+            <p class="admin-top-nav__dropdown-role">Administrator</p>
+          </div>
+        </div>
+
+        <div class="admin-top-nav__dropdown-divider"></div>
+
+        <a
+          [routerLink]="APP_ROUTES.ADMIN_EDIT_PROFILE"
+          class="admin-top-nav__dropdown-item"
+          (click)="closeDropdown()"
+        >
+          <img
+            ngSrc="icons/user-icon.png"
+            width="20"
+            height="20"
+            alt="Profile"
+          />
+          <span>Edit Profile</span>
+        </a>
+
+        <a
+          [routerLink]="APP_ROUTES.ADMIN_SETTINGS"
+          class="admin-top-nav__dropdown-item"
+          (click)="closeDropdown()"
+        >
+          <img
+            ngSrc="icons/settings-icon.png"
+            width="20"
+            height="20"
+            alt="Settings"
+          />
+          <span>Settings</span>
+        </a>
+
+        <div class="admin-top-nav__dropdown-divider"></div>
+
+        <a
+          type="social"
+          class="admin-top-nav__dropdown-item admin-top-nav__dropdown-item--danger"
+          (click)="logout($event)"
+          [routerLink]="APP_ROUTES.ADMIN_LOGOUT"
+        >
+          <img ngSrc="icons/logout.png" width="20" height="20" alt="Logout" />
+          <span>Logout</span>
+        </a>
+      </div>
+      }
     </div>
   </div>
 </header>
+
+@if (isDropdownOpen()) {
+<div class="admin-top-nav__overlay" (click)="closeDropdown()"></div>
+}
+<app-logout-confirmation-modal
+  [isOpen]="showLogoutModal()"
+  (confirm)="onLogoutConfirm()"
+  (cancel)="onLogoutCancel()"
+/>

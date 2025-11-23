@@ -155,6 +155,7 @@ export interface GetEventProps {
 export interface GetEventsResponse {
   pageNumber: number;
   pageSize: number;
+  totalPages:number;
   events: EventSummary[];
 }
 
@@ -172,7 +173,6 @@ export interface EventSummary {
 }
 
 export interface EventTypeFilter { label: string, value: string }
-// event.model.ts
 
 
 export interface EventDetails {
@@ -393,6 +393,22 @@ export function mapEventManagementToEventCard(
   };
 }
 
+export interface RegisterEventBody {
+  ticketTypeId: number,
+  numberOfTickets: number,
+  fullName: string,
+  email: string
+}
+
+
+export interface RegisterEventResponse {
+  id: number;
+  eventTitle: string | null;
+  location: string | null;
+  organizer: string | null;
+  startDate: string | null;
+  authorizationUrl: string | null;
+}
 
 export interface EventFiltersCache {
   isPaid: string | null;
@@ -406,10 +422,11 @@ export interface StatCardData {
   title: string;
   value: string | number;
   icon: string;
-  backend_key?:string;
-  currency?:boolean;
+  backend_key?: string;
+  currency?: boolean;
+  trend?: 'up' | 'down' | 'neutral';  // Add this
+  trendValue?: string;                 // Add this
 }
-
 export interface EventSummary {
   organizer: string;
   date: string;

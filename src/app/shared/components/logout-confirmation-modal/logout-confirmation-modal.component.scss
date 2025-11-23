@@ -1,0 +1,79 @@
+@use 'colors' as *;
+@use 'variables' as *;
+@use 'typography' as *;
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-content {
+  background: $gray-50;
+  border-radius: $radius-2;
+  max-width: 400px;
+  width: 90%;
+  padding-bottom: $spacing-6;
+  position: relative;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: slideUp 0.3s ease-out;
+}
+
+
+.modal-title {
+  @include h-6;
+  color: $gray-950;
+  margin: 0 0 $spacing-6 0;
+  text-align: center;
+  padding-right: $spacing-6;
+}
+
+.modal-actions {
+  display: flex;
+  gap: $spacing-3;
+  justify-content: space-between;
+}
+
+.btn {
+  @include body-2;
+  padding: $spacing-3 $spacing-5;
+  border-radius: $radius-1;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 120px;
+
+  &:focus-visible {
+    outline: 2px solid $orange-600;
+    outline-offset: 2px;
+  }
+
+
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

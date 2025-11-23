@@ -74,17 +74,23 @@
     </div>
 
     <section class="event-section">
-      @if (!loading() && (allEvents()?.events?.length ?? 0) < 1) { <app-empty-list-message
+      @if (loading()) {
+        <app-loading-card></app-loading-card>
+      }
+      @else if (!loading() && (allEvents()?.events?.length ?? 0) < 1) { 
+        <app-empty-list-message
         (handleAction)="clearSearchFilters()" actionText="Clear Filters"
         descrition="No results found. You may want to clear your filters or return to the previous page."
         title="No Events Here"></app-empty-list-message>
         }
-        <div class="event-grid">
-          @for (event of allEvents()?.events || []; track $index) {
-          <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
-          }
-        </div>
+        @else {
+          <div class="event-grid">
+            @for (event of allEvents()?.events || []; track $index) {
+            <app-event-card [event]="event" [variant]="'explore'"></app-event-card>
+            }
+          </div>
+        }
     </section>
-    <app-pagination [totalItems]="allEvents()?.pageSize||1" [(currentPage)]="currentPage"></app-pagination>
+    <app-pagination [totalItems]="(allEvents()?.pageSize||0)*(allEvents()?.totalPages|| 0)" (pageChange)="onPageChange($event)" [maxVisiblePages]="12" [currentPage]="currentPage()+1"></app-pagination>
   </div>
 </section>
