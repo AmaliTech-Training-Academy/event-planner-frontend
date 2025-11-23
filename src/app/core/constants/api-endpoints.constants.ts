@@ -98,6 +98,7 @@ export const EVENTS_API_ENDPOINTS = {
   SEARCH_EVENTS: `${BASE}/events/search`,
   MY_EVENT: `${BASE}/events/my-events`,
   MY_EVENT_OVERVIEW: `${BASE}/events/my-events/overview`,
+  MY_EVENT_DETAILS: (id: number) => `${BASE}/events/my-events/details/${id}`,
   MANAGE_EVENT_DETAILS: (id: number) => `${BASE}/events/${id}`,
   MANAGE_EVENT_INVITEES: (id: number) =>
     `${BASE}/event-invitations/${id}/invitees`,

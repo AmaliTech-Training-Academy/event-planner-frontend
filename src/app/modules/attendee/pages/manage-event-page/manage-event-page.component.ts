@@ -103,10 +103,15 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   private readonly _userBackendService = inject(UserBackendService);
   private readonly _notificationService = inject(NotificationService);
 
+
   protected readonly APP_ROUTES = APP_ROUTES;
-  protected readonly isAdminView = computed(
-    () => this._authService.getCurrentAuthContext() === 'admin'
-  );
+  protected readonly isAdminView = computed(() => {
+    const authContext = this._authService.getCurrentAuthContext();
+    const isAdminPath = window.location.pathname.includes('/admin');
+    const isAdmin = authContext === 'admin' || isAdminPath;
+    console.log('🔍 isAdminView check:', { authContext, isAdminPath, isAdmin, pathname: window.location.pathname });
+    return isAdmin;
+  });
   protected readonly breadcrumbText = computed(() =>
     this.isAdminView() ? 'Event Management' : 'My Events'
   );

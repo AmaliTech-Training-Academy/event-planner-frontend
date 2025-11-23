@@ -21,7 +21,7 @@ export class ManageEventService {
   constructor(
     private readonly manageEventBackend: ManageEventBackendService,
     private readonly errorService: ErrorHandlerService
-  ) {}
+  ) { }
 
   public getOverview(id: number) {
     this.setLoading(true);
@@ -66,7 +66,7 @@ export class ManageEventService {
   /**
    * Gets overview data based on user role
    * @param isAdmin - Whether the current user is an admin
-   * @param eventId - Event ID (only used for non-admin users)
+   * @param eventId - Event ID (required for admin users, optional for attendees)
    * @returns Observable with event analytics data
    */
   public getOverviewForUser(
@@ -76,21 +76,20 @@ export class ManageEventService {
     console.log('getOverviewForUser called with:', { isAdmin, eventId });
 
     if (isAdmin) {
-      // Admin view – use MY_EVENT_OVERVIEW for aggregated data across all events
-      console.log('Using admin overview endpoint');
+      // Admin view – use MY_EVENT_DETAILS for event-specific admin data
+      if (!eventId) {
+        throw new Error('Event ID is required for admin users');
+      }
+      console.log('Using admin event details endpoint for event:', eventId);
       return this.manageEventBackend
-        .getMyEventsOverview()
+        .getMyEventsOverview(eventId)
         .pipe(catchError((err) => this.errorService.handle(err)));
     }
 
-    // Attendee/Host view – get data for specific event
-    if (!eventId) {
-      throw new Error('Event ID is required for non-admin users');
-    }
-
-    console.log('Using event-specific endpoint for event:', eventId);
+    // Attendee/Host view – use MY_EVENT_OVERVIEW for all their events overview
+    console.log('Using my-events overview endpoint for attendee');
     return this.manageEventBackend
-      .getEventOverview(eventId)
+      .getAttendeeOverview()
       .pipe(catchError((err) => this.errorService.handle(err)));
   }
 

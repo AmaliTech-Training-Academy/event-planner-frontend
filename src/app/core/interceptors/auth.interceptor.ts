@@ -12,7 +12,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   let authReq = req;
 
   if (authService.isLoggedIn()) {
-    // If you need to attach token, you could clone with headers here.
     authReq = req.clone({
       withCredentials: true,
     });
@@ -20,7 +19,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 || error.status === 403) {
+      // Only handle 401 (Unauthorized/Authentication failed)
+      // Don't handle 403 (Forbidden/Authorization failed) - user is authenticated but lacks permission
+      if (error.status === 401) {
         const authContext = authService.getCurrentAuthContext();
         const currentPath = window.location.pathname;
         const isAdminRoute = currentPath.includes('/admin');
