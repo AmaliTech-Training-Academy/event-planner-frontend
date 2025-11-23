@@ -33,7 +33,9 @@
           <select [(ngModel)]="selectedRole" class="guest-dropdown">
             <option value="">All Roles</option>
             @for (role of guestRole; track $index) {
-            <option [value]="role">{{role}}</option>
+              @if(role !== 'ADMIN'){
+                <option [value]="role">{{role}}</option>
+              }
             }
           </select>
           <img ngSrc="icons/Vector.png" alt="Dropdown" class="dropdown-icon" width="16" height="16" />

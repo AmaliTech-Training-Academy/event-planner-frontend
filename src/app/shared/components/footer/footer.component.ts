@@ -1,6 +1,8 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { PlatformSettingsService } from '@app/core/services/platform-settings.service';
+import { LogoComponent } from '@app/modules/auth/components/logo/logo.component';
 
 interface FooterLinkGroup {
   title: string;
@@ -17,12 +19,15 @@ interface SocialLink {
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, RouterLink, NgOptimizedImage],
+  imports: [CommonModule, RouterLink, NgOptimizedImage, LogoComponent],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent {
+  private readonly _platformSettingsService = inject(PlatformSettingsService);
+
+  protected readonly platformName: Signal<string> = this._platformSettingsService.platformName;
   protected readonly footerLinks: readonly FooterLinkGroup[] = [
     {
       title: 'Platform',

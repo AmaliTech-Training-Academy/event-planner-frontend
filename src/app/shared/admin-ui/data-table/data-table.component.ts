@@ -23,7 +23,7 @@ export interface TableColumn<T> {
   readonly header: string;
   readonly sortable?: boolean;
   readonly filterable?: boolean;
-    cell?: (row: T) => any; // Add this line
+  cell?: (row: T) => any; // Add this line
 
   readonly getValue?: (item: T) => string | number | boolean | null;
 }
@@ -307,18 +307,15 @@ export class DataTableComponent<T extends Record<string, any>> {
     this._searchSubject.next(query);
   }
   public updateFilter(filterKey: string, value: string): void {
-    console.log('DataTable: Filter updated', { filterKey, value }); // Debug log
-
     if (filterKey === 'export' && value) {
       this._handleExport(value);
-      return; // Don't add to filters
+      return;
     }
 
     const filters = new Map(this._activeFilters());
 
-    // Update the filter value
     if (value === 'all' || value === '') {
-      filters.delete(filterKey); // Remove filter if it's "all" or empty
+      filters.delete(filterKey);
     } else {
       filters.set(filterKey, value);
     }
@@ -326,15 +323,12 @@ export class DataTableComponent<T extends Record<string, any>> {
     this._activeFilters.set(filters);
     this._currentPage.set(1);
 
-    // For server-side pagination, emit the filter change
     if (this.serverSidePagination()) {
-      // Emit the filter change with the current filter state
       const filterObj: Record<string, string> = {};
       filters.forEach((val, key) => {
         filterObj[key] = val;
       });
 
-      // Emit individual filter change
       this.filterChange.emit({ key: filterKey, value });
     } else {
       this._performBackendSearch(0);

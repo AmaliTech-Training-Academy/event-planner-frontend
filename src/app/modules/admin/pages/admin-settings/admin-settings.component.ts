@@ -97,7 +97,6 @@ export class AdminSettingsComponent implements OnInit {
       platformUrl: this.securityForm.value.platformUrl ?? '',
       contactEmail: this.securityForm.value.contactEmail ?? '',
       platformDescription: this.securityForm.value.platformDescription ?? '',
-      maintenanceMode: this.securityForm.value.maintenanceMode ?? false,
     };
 
     setTimeout(() => {
@@ -204,10 +203,6 @@ export class AdminSettingsComponent implements OnInit {
       platformDescription: this._fb.control(
         DEFAULT_SECURITY_SETTINGS.platformDescription,
         [Validators.required]
-      ),
-      maintenanceMode: this._fb.control(
-        DEFAULT_SECURITY_SETTINGS.maintenanceMode,
-        { nonNullable: true }
       ),
     }) as unknown as FormGroup<SecurityForm>;
   }

@@ -1,0 +1,80 @@
+<div class="team-section">
+  <div class="team-section__header">
+    <div class="team-section__title">
+      <h2>Team Management</h2>
+      <p>Manage Admin team members and permissions</p>
+    </div>
+    <app-button
+      type="plain"
+      (onClick)="openInviteModal()"
+      extraClass="btn-add-team-member"
+    >
+      <span>+</span>
+      <span>Add Team Member</span>
+    </app-button>
+  </div>
+
+  <div class="team-list-container" #scrollContainer>
+    <div class="team-list">
+      @for (member of displayedMembers(); track member.id) {
+        <div class="team-member">
+          <div class="team-member__info">
+            <img
+              [src]="member.profilePicture"
+              [alt]="member.fullName + ' avatar'"
+              class="team-member__avatar"
+            />
+            <div class="team-member__details">
+              <h3>{{ member.fullName }}</h3>
+              <p>{{ member.email }}</p>
+            </div>
+          </div>
+
+          <div class="team-member__actions">
+            <span class="badge" [ngClass]="getRoleBadgeClass(member.role)">
+              {{ member.role }}
+            </span>
+
+            <app-button
+              type="plain"
+              extraClass="btn-edit-member"
+              (onClick)="editTeamMember(member)"
+            >
+              <img
+                src="icons/edit-icon.png"
+                alt="Edit"
+                class="btn-edit-member__icon"
+              />
+              <span class="btn-edit-member__label">Edit</span>
+            </app-button>
+          </div>
+        </div>
+      }
+
+      <!-- Loading indicator -->
+      @if (isLoading()) {
+        <div class="loading-indicator">
+          <div class="spinner"></div>
+          <p>Loading more members...</p>
+        </div>
+      }
+
+      <!-- End of list message -->
+      @if (!isLoading() && displayedMembers().length >= teamMembers.length && teamMembers.length > 0) {
+        <div class="end-of-list">
+          <p>You've reached the end of the list</p>
+        </div>
+      }
+
+      <!-- Sentinel element for infinite scroll -->
+      <div class="scroll-sentinel"></div>
+    </div>
+  </div>
+</div>
+
+@if (showInviteModal()) {
+  <app-invite-user-modal
+    (close)="closeInviteModal()"
+    (success)="handleInviteSuccess()"
+  />
+}

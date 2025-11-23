@@ -83,7 +83,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
   public readonly registrations = signal<Registration[]>([]);
-
   protected readonly availableEvents = signal<{ id: number, title: string }[]>([]);
   protected readonly currentEventId = signal<number | null>(null);
   private readonly _manageService = inject(ManageEventService);
@@ -127,7 +126,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       } else {
         const eventId = Number(urlEventId);
         this.currentEventId.set(eventId);
-
 
         this.getOverview();
 
@@ -173,11 +171,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this._loadTicketsAndHosts(event);
     this._layoutService.pageTitle.set(event.title);
 
-
     this.availableEvents.set([
       { id: eventId, title: event.title || 'Current Event' }
     ]);
-
 
     this.inviteForm.patchValue({
       event: eventId,
@@ -211,7 +207,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-
     this.inviteForm.reset({
       title: '',
       name: '',
@@ -239,7 +234,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     if (this.inviteForm.valid) {
       this._submitInvitation('SEND');
     } else {
-
       this.inviteForm.markAllAsTouched();
     }
   }
@@ -255,7 +249,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   private _submitInvitation(status: string): void {
     const formData = this.inviteForm.value;
     this.isSubmitting.set(true);
-
 
     let selectedEventId = Number(formData.event);
     if (!selectedEventId || isNaN(selectedEventId)) {
@@ -330,8 +323,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         this._toggleBodyScroll(false);
       }, 3000);
     } else {
-
-      this._notificationService.success('Invitation draft saved successfully.');
       this._toggleBodyScroll(false);
     }
   }
@@ -362,10 +353,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     });
   }
   protected onEdit(): void {
-    this._router.navigate([APP_ROUTES.EDIT_EVENT((this.currentEventId()||0).toString())], {
-      state: {
-        eventId: this.currentEventId()
-      }
-    })
+    this._router.navigate([APP_ROUTES.EDIT_EVENT(this.currentEventId()?.toString() || '')])
   }
 }

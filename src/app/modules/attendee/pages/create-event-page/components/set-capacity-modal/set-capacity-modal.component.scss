@@ -15,9 +15,9 @@
     gap: 40px;
 
     @include sm{
-        width: 90%;
-        margin: auto;
-    }
+            width: 90%;
+            margin: auto;
+        }
 
     .content {
         display: flex;

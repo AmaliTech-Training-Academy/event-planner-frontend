@@ -23,17 +23,18 @@
       <img [src]="iconSrc()" alt="icon" class="input-icon" />
     }
 
-    <input
-      [type]="inputType()"
-      [placeholder]="placeholder()"
-      [value]="currentValue()"
-      (input)="onValueChange($event)"
-      (focus)="onFocus()"
-      (blur)="onBlur()"
-      [disabled]="isDisabled()"
-      [class.error]="hasError()"
-      class="form-input"
-    />
+   <input
+  [type]="inputType()"
+  [placeholder]="placeholder()"
+  [value]="currentValue()"
+  (input)="onValueChange($event)"
+  (focus)="onFocus()"
+  (blur)="onBlur()"
+  [disabled]="isDisabled()"
+  [class.error]="hasError()"
+  [attr.autocomplete]="autocompleteValue()"
+  class="form-input"
+/>
 
     <!-- Valid icon (checkmark image) -->
     @if (showValidIcon() && !hasError()) {

@@ -33,12 +33,22 @@
               {
                 "glob": "**/*",
                 "input": "src/assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets/icons",
+                "output": "/icons"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets/images",
+                "output": "/images"
               }
             ],
             "styles": [
               "src/styles.scss"
             ],
-             "stylePreprocessorOptions": {
+            "stylePreprocessorOptions": {
               "includePaths": [
                 "src/styles"
               ]
@@ -47,19 +57,18 @@
           },
           "configurations": {
             "production": {
-           "budgets": [
-  {
-    "type": "initial",
-    "maximumWarning": "500kB",
-    "maximumError": "1MB"
-  },
-  {
-    "type": "anyComponentStyle",
-    "maximumWarning": "12kB",
-    "maximumError": "16kB"
-  }
-]
-,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "12kB",
+                  "maximumError": "16kB"
+                }
+              ],
               "outputHashing": "all"
             },
             "development": {
@@ -100,29 +109,12 @@
               "zone.js",
               "zone.js/testing"
             ],
-            "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              },
-               {
-                "glob": "**/*",
-                "input": "src/assets"
-              }
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/styles"
-              ]
-            },
-            "scripts": [],
-            "builderMode": "browser"
-          }
+            "includePaths": [
+              "src/styles"
+            ]
+          },
+          "scripts": [],
+          "builderMode": "browser"
         }
       }
     }

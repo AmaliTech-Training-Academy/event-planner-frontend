@@ -31,8 +31,8 @@ export const ADMIN_ROUTES: Routes = [
     path: 'events/:id',
     loadComponent: () =>
       import(
-        './pages/event-management-page/components/event-details-page/event-details-page.component'
-      ).then((m) => m.EventDetailsPageComponent),
+        '../attendee/pages/manage-event-page/manage-event-page.component'
+      ).then((m) => m.ManageEventPageComponent),
   },
 
   {
@@ -53,8 +53,8 @@ export const ADMIN_ROUTES: Routes = [
   {
     path: 'settings',
     loadComponent: () =>
-      import('./pages/admin-settings/admin-settings.component').then(
-        (m) => m.AdminSettingsComponent
+      import('./pages/admin-settings/admin-settings-page.component').then(
+        (m) => m.AdminSettingsPageComponent
       ),
   },
   {
@@ -64,5 +64,20 @@ export const ADMIN_ROUTES: Routes = [
         (m) => m.TransactionsPageComponent
       ),
     // canActivate: [AdminGuard],
+  },
+
+  {
+    path: 'profile',
+    loadComponent: () =>
+      import('./pages/admin-edit-profile/admin-edit-profile.component').then(
+        (m) => m.EditProfileComponent
+      ),
+  },
+  {
+    path: 'profile/:userId',
+    loadComponent: () =>
+      import('./pages/admin-edit-profile/admin-edit-profile.component').then(
+        (m) => m.EditProfileComponent
+      ),
   },
 ];

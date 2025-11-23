@@ -12,7 +12,7 @@ import { NotificationService } from './notification.service';
 })
 export class EventsServiceService {
 
-  private _loadingStateSubject = new BehaviorSubject<boolean>(false);
+  private _loadingStateSubject = new BehaviorSubject<boolean>(true);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
   constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router: Router, private readonly notificationService: NotificationService) { }

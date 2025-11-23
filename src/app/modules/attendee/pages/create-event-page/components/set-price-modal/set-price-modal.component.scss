@@ -12,15 +12,10 @@
     border-radius: 16px;
     padding: 24px;
 
-      @include sm{
-        width: 90%;
-        margin: auto;
-    }
-
-     @include md{
-        width: 90%;
-        margin: auto;
-    }
+    @include sm{
+            width: 90%;
+            margin: auto;
+        }
 
 
     img.icon {

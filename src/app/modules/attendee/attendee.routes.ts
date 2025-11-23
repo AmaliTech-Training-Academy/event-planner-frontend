@@ -108,7 +108,6 @@ export const ATTENDEE_ROUTES: Routes = [
       import('../attendee/pages/event-payment-success/event-payment-success.component').then(
         (m) => m.EventPaymentSuccessComponent
       ),
-    canActivate: [AuthGuard],
   },
   {
     path: 'manage-event/:id',

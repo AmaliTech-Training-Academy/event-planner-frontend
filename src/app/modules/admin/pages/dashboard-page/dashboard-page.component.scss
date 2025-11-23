@@ -34,6 +34,7 @@
   }
 
   @include lg {
+
     &--main,
     &--split {
       grid-template-columns: 1fr;
@@ -48,21 +49,28 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  min-width: 0; 
+  min-width: 0;
   width: 100%;
-  overflow: hidden; 
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: $spacing-4;
+  }
 
   &__body {
     flex: 1;
     min-height: 350px;
     width: 100%;
-    min-width: 0; // Allow shrinking
-    max-width: 100%; // Prevent expansion
-    overflow: hidden; // Clip overflowing chart
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
     position: relative;
-    
-    // Ensure all child elements respect width
-    > * {
+
+
+    >* {
       max-width: 100%;
       width: 100%;
     }
@@ -80,32 +88,42 @@
     }
   }
 }
+
+.chart-controls {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+}
+
 .chart-tabs {
   display: flex;
-  gap: $spacing-2;
+  gap: $spacing-4;
 }
 
 .chart-tab {
-  @include body-2;
-  padding: $spacing-2 $spacing-4;
+  @include body-1;
+  padding: 0;
   border: none;
   background: transparent;
-  color: $gray-600;
-  font-weight: 500;
+  color: $gray-400;
+  font-weight: 400;
   cursor: pointer;
-  border-radius: $radius-2;
   transition: all 0.2s ease;
 
   &:hover {
-    background: $gray-100;
-    color: $header-dark;
+    color: $gray-600;
   }
 
   &--active {
-    background: $gray-100;
     color: $header-dark;
-    font-weight: 600;
+    font-weight: 700;
   }
+}
+
+.chart-separator {
+  width: 1px;
+  height: 24px;
+  background-color: $gray-200;
 }
 
 .chart-legend {
@@ -119,12 +137,12 @@
   display: flex;
   align-items: center;
   gap: $spacing-2;
-  color: $gray-700;
+  color: $gray-500;
 }
 
 .legend-dot {
-  width: 12px;
-  height: 12px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
 
   &--orange {
@@ -132,8 +150,7 @@
   }
 
   &--gray {
-    background: transparent;
-    border: 2px dashed $gray-500;
+    background: $gray-500;
   }
 }
 

@@ -43,8 +43,8 @@ export class InviteUserModalComponent {
     message: this._fb.control(''),
   });
 
-  public readonly roles = [
-    { label: 'Organiser', value: USER_ROLES.ORGANIZER },
+  protected readonly roles = [
+    { label: 'Organizer', value: USER_ROLES.ORGANIZER },
     { label: 'Admin', value: USER_ROLES.ADMIN },
   ];
 
@@ -59,21 +59,21 @@ export class InviteUserModalComponent {
     });
   }
 
-  public get users(): FormArray {
+  protected get users(): FormArray {
     return this.inviteForm.get('users') as FormArray;
   }
 
-  public addUser(): void {
+  protected addUser(): void {
     this.users.push(this._createUserFormGroup());
   }
 
-  public removeUser(index: number): void {
+  protected removeUser(index: number): void {
     if (this.users.length > 1) {
       this.users.removeAt(index);
     }
   }
 
-  public onSubmit(): void {
+  protected onSubmit(): void {
     this.inviteForm.markAllAsTouched();
 
     if (this.inviteForm.invalid) {
@@ -90,18 +90,14 @@ export class InviteUserModalComponent {
       status: 'SEND',
     };
 
-    this.isSubmitting = true;
-
     this.userManagementService.inviteUsers(payload).subscribe({
       next: (response) => {
-        console.log('✅ Success response:', response);
         this.isSubmitting = false;
         this.notificationService.success('Invitations sent successfully!');
         this.success.emit();
         this.close.emit();
       },
       error: (error) => {
-        console.error('❌ Error:', error);
         this.isSubmitting = false;
         this.notificationService.error(
           'Failed to send invitations. Please try again.'
@@ -147,21 +143,21 @@ export class InviteUserModalComponent {
     });
   }
 
-  public onCancel(): void {
+  protected onCancel(): void {
     this.close.emit();
   }
 
-  public hasError(controlName: string): boolean {
+  protected hasError(controlName: string): boolean {
     const control = this.inviteForm.get(controlName);
     return !!(control?.invalid && control?.touched);
   }
 
-  public hasUserFieldError(userIndex: number, fieldName: string): boolean {
+  protected hasUserFieldError(userIndex: number, fieldName: string): boolean {
     const control = this.users.at(userIndex).get(fieldName);
     return !!(control?.invalid && control?.touched);
   }
 
-  public getErrorMessage(controlName: string): string {
+  protected getErrorMessage(controlName: string): string {
     const control = this.inviteForm.get(controlName);
     if (!control?.errors) return '';
 
@@ -170,7 +166,7 @@ export class InviteUserModalComponent {
     return 'Invalid input';
   }
 
-  public getUserFieldErrorMessage(
+  protected getUserFieldErrorMessage(
     userIndex: number,
     fieldName: string
   ): string {
