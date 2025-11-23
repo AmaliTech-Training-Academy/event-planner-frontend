@@ -30,13 +30,20 @@
 
   font-src 'self' https://fonts.gstatic.com;
 
-  img-src 'self' data: blob:
+  img-src 
+      'self'
+      data:
+      blob:
       https://maps.googleapis.com
       https://maps.gstatic.com
       https://event-planner-backend-dev-files-904570587823.s3.eu-west-1.amazonaws.com
       https://plus.unsplash.com;
 
-  connect-src 'self' https://maps.googleapis.com https://api.sankofagrid.com data:;
+  connect-src 
+      'self'
+      https://maps.googleapis.com 
+      https://api.sankofagrid.com 
+      data:;
 ">
 
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
