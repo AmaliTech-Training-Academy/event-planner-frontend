@@ -78,8 +78,8 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     }));
   });
 
-    protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
-  
+  protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
+
 
   protected readonly chartTabs: readonly ChartTab[] = [
     { key: 'Total', label: 'Total' },
@@ -337,7 +337,6 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
         { label: 'Completed', value: 'COMPLETED' },
         { label: 'Pending', value: 'PENDING' },
         { label: 'Failed', value: 'FAILED' },
-        { label: 'Cancelled', value: 'CANCELLED' },
       ],
     },
   ];
@@ -406,15 +405,12 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   }
 
   private _viewTransaction(transaction: TransactionManagement): void {
-    console.log('View transaction:', transaction);
   }
 
   private _downloadReceipt(transaction: TransactionManagement): void {
-    console.log('Download receipt for:', transaction);
   }
 
   private _openCreateEventModal(): void {
     this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
-
   }
 }
