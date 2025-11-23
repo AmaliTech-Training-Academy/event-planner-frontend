@@ -362,7 +362,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     });
   }
   protected onEdit(): void {
-    this._router.navigate([APP_ROUTES.CREATE_EVENT], {
+    this._router.navigate([APP_ROUTES.EDIT_EVENT(this.currentEventId.toString())], {
       state: {
         eventId: this.currentEventId()
       }
