@@ -73,21 +73,17 @@ export class ManageEventService {
     isAdmin: boolean,
     eventId?: number
   ): Observable<EventAnalyticsResponse> {
-    console.log('getOverviewForUser called with:', { isAdmin, eventId });
-
     if (isAdmin) {
       // Admin view – use MY_EVENT_DETAILS for event-specific admin data
       if (!eventId) {
         throw new Error('Event ID is required for admin users');
       }
-      console.log('Using admin event details endpoint for event:', eventId);
       return this.manageEventBackend
         .getMyEventsOverview(eventId)
         .pipe(catchError((err) => this.errorService.handle(err)));
     }
 
-    // Attendee/Host view – use MY_EVENT_OVERVIEW for all their events overview
-    console.log('Using my-events overview endpoint for attendee');
+
     return this.manageEventBackend
       .getAttendeeOverview()
       .pipe(catchError((err) => this.errorService.handle(err)));

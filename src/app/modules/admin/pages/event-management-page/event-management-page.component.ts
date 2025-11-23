@@ -122,48 +122,17 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
 
   public readonly topOrganizers = computed<Organizer[]>(() => {
     const data = this._dashboardData();
-    if (!data || !data.eventManagement) return [];
+    if (!data) return [];
 
-    // Calculate total attendees per organizer from event management data
-    const organizerStats = new Map<string, { name: string; email: string; totalAttendees: number }>();
-
-    // Group events by organizer and sum attendees
-    data.eventManagement.content.forEach((event) => {
-      const organizerKey = event.organizer.toLowerCase();
-
-      if (!organizerStats.has(organizerKey)) {
-        organizerStats.set(organizerKey, {
-          name: event.organizer,
-          email: '', // Email not available in event data
-          totalAttendees: 0,
-        });
-      }
-
-      const stats = organizerStats.get(organizerKey)!;
-      stats.totalAttendees += event.attendeeCount;
-    });
-
-    // Convert to array and sort by total attendees (descending)
-    const sortedOrganizers = Array.from(organizerStats.values())
-      .sort((a, b) => b.totalAttendees - a.totalAttendees)
-      .slice(0, 5); // Take top 5
-
-    // Try to match with API topOrganizers data for email if available
-    return sortedOrganizers.map((org, index) => {
-      const apiOrg = data.topOrganizers?.find(
-        (o) => o.name.toLowerCase() === org.name.toLowerCase()
-      );
-
-      return {
-        id: index + 1,
-        name: org.name,
-        email: apiOrg?.email || org.email || 'N/A',
-        avatar: undefined,
-        eventCount: org.totalAttendees, // Display total attendees as event count
-        growthPercentage: apiOrg?.growthPercentage || 0,
-        trendData: this._generateTrendData(apiOrg?.growthPercentage || 0),
-      };
-    });
+    return data.topOrganizers.map((org, index) => ({
+      id: index + 1,
+      name: org.name,
+      email: org.email,
+      avatar: undefined,
+      eventCount: org.eventCount,
+      growthPercentage: org.growthPercentage,
+      trendData: this._generateTrendData(org.growthPercentage),
+    }));
   });
 
   public readonly upcomingEvents = computed<UpcomingEvent[]>(() => {

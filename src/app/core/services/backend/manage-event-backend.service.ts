@@ -17,7 +17,6 @@ export class ManageEventBackendService {
 
   public getEventOverview(id: number): Observable<EventAnalyticsResponse> {
     const url = EVENTS_API_ENDPOINTS.MANAGE_EVENT_DETAILS(id);
-    console.log('🟢 Event Overview - Calling URL:', url);
     return this.http.get<EventAnalyticsResponse>(url);
   }
 
@@ -79,23 +78,15 @@ export class ManageEventBackendService {
     );
   }
 
-  /**
-   * Gets the overview for admin users for a specific event
-   * Uses MY_EVENT_DETAILS endpoint which provides event-specific data for admins
-   */
+
   public getMyEventsOverview(eventId: number): Observable<EventAnalyticsResponse> {
-    const url = EVENTS_API_ENDPOINTS.MY_EVENT_DETAILS(eventId);
-    console.log('🔵 Admin Overview - Calling URL:', url);
+    const url = EVENTS_API_ENDPOINTS.MANAGE_EVENT_DETAILS(eventId);
     return this.http.get<EventAnalyticsResponse>(url);
   }
 
-  /**
-   * Gets the overview for attendee/host users
-   * Uses MY_EVENT_OVERVIEW endpoint which provides overview of all their events
-   */
+
   public getAttendeeOverview(): Observable<EventAnalyticsResponse> {
     const url = EVENTS_API_ENDPOINTS.MY_EVENT_OVERVIEW;
-    console.log('🟢 Attendee Overview - Calling URL:', url);
     return this.http.get<EventAnalyticsResponse>(url);
   }
 }

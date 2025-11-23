@@ -335,7 +335,7 @@
     }
 
     &--completed {
-      background: transparent;
+      background: $gray-100;
       color: #6B7280; // Gray text, no background
       border: none;
       font-size: 0.75rem;
