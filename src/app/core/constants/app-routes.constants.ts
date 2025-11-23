@@ -1,7 +1,4 @@
-// src/app/constants/app-routes.constants.ts
-
 export const APP_ROUTES = {
-  // Auth routes
   LOGIN: '/auth/login',
   SIGNUP: '/auth/signup',
   FORGOT_PASSWORD: '/auth/forgot-password',
@@ -9,11 +6,7 @@ export const APP_ROUTES = {
   RESET_PASSWORD: '/auth/reset-password',
   ADMIN_LOGIN: '/auth/admin',
   ACCEPT_INVITE: '/auth/invitation/accept',
-
-  // Public routes
   LANDING_PAGE: '/',
-
-  // App routes
   EXPLORE: '/app/explore',
   PROFILE: '/app/profile',
   PROFILE_PAGE: '/app/profile',
@@ -22,15 +15,15 @@ export const APP_ROUTES = {
   VENUE_SECTION: '/app/define-venue-sections',
   MANAGE_EVENT_ROLES: '/app/manage-event-roles',
   CREATE_EVENT: '/app/create-event',
+  EDIT_EVENT: (id: string) => `/app/edit-event/${id}`,
   CREATE_EVENT_SUCCESS: '/app/create-event-success',
   MY_EVENTS: '/app/my-events',
   MY_EVENT: (id: string) => `/app/my-events/${id}`,
   MANAGE_EVENT: (id: string) => `/app/manage-event/${id}`,
+  USER_ACCEPT_INVITATION: '/auth/event-invitations/accept',
   PAYMENT_SETTINGS: '/app/payment-settings',
   EVENT_PAYMENT_SUCCESS: '/app/event-payment-success',
   PAYMENT_SUCCESS: '/app/payment-success',
-
-  // Admin routes
   ADMIN_DASHBOARD: '/admin',
   EVENT_MANAGEMENT: '/admin/events',
   ADMIN_EVENTS: '/admin/events',

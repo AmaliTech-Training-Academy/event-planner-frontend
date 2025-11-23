@@ -1,4 +1,4 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { Component, effect, input, OnInit, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { USER_ROLES } from '@app/core/constants/user.constants';
@@ -42,6 +42,23 @@ export class GuestComponent implements OnInit {
   ngOnInit(): void {
 
   }
+  public addInvitee(invitees_: ManageEventInvitee) {
+    this.invitees.update(response => {
+      if (!response) return null;
+
+      const content_ = [...(response.data.content || []), invitees_];
+
+      return {
+        ...response,
+        data: {
+          ...response.data,
+          content: content_,
+        },
+        description: response.description || ''
+      };
+    });
+
+  }
 
   protected onInviteGuest() {
     this.inviteGuest.emit()
@@ -55,11 +72,6 @@ export class GuestComponent implements OnInit {
     this._manageService.invitees(eventId, search, page, role).subscribe({
       next: (response) => {
         this.invitees.set(response)
-      },
-      error: (err) => {
-        console.error('Failed to load invitees:', err);
-        this.invitees.set(null);
-        this.loading.set(false);
       },
       complete: () => {
         this.loading.set(false)

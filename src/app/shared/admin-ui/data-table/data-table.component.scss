@@ -26,7 +26,7 @@
     line-height: 50px;
     justify-content: flex-end;
     flex: 0 0 70%;
-    
+
     &--expanded {
       flex: 1;
     }
@@ -121,7 +121,7 @@
 
   &__th {
     @include label-1;
-    padding: $spacing-4 $spacing-5; 
+    padding: $spacing-4 $spacing-5;
 
     text-align: left;
     font-weight: 600;
@@ -234,7 +234,7 @@
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      
+
       &:hover {
         transform: none;
         box-shadow: none;
@@ -313,12 +313,42 @@
       font-size: 0.75rem;
     }
 
-  &--inactive {
-    background: $red-50;
-    color: $red-600;
-    border: 1px solid $red-300;
+    &--inactive {
+      background: $red-50;
+      color: $red-600;
+      border: 1px solid $red-300;
+    }
+
+    // Event status badges
+    &--pending {
+      background: #FEF3C7; // Yellow/Gold
+      color: #92400E;
+      border: 1px solid #FDE68A;
+      font-size: 0.75rem;
+    }
+
+    &--draft {
+      background: #FED7AA; // Orange
+      color: #9A3412;
+      border: 1px solid #FDBA74;
+      font-size: 0.75rem;
+    }
+
+    &--completed {
+      background: transparent;
+      color: #6B7280; // Gray text, no background
+      border: none;
+      font-size: 0.75rem;
+    }
+
+    &--cancelled {
+      background: #FEE2E2; // Light red/pink
+      color: #991B1B;
+      border: 1px solid #FCA5A5;
+      font-size: 0.75rem;
+    }
   }
-}
+
   &__user-cell {
     display: flex;
     align-items: center;
@@ -376,12 +406,10 @@
 
   &__skeleton-cell {
     height: 20px;
-    background: linear-gradient(
-      90deg,
-      $gray-200 0%,
-      $gray-300 50%,
-      $gray-200 100%
-    );
+    background: linear-gradient(90deg,
+        $gray-200 0%,
+        $gray-300 50%,
+        $gray-200 100%);
     background-size: 200% 100%;
     border-radius: $radius-2;
     animation: shimmer 1.5s infinite;
@@ -402,12 +430,10 @@
         content: '';
         width: 32px;
         height: 32px;
-        background: linear-gradient(
-          90deg,
-          $gray-200 0%,
-          $gray-300 50%,
-          $gray-200 100%
-        );
+        background: linear-gradient(90deg,
+            $gray-200 0%,
+            $gray-300 50%,
+            $gray-200 100%);
         background-size: 200% 100%;
         border-radius: $radius-2;
         animation: shimmer 1.5s infinite;
@@ -417,9 +443,12 @@
 }
 
 @keyframes pulse-bg {
-  0%, 100% {
+
+  0%,
+  100% {
     background-color: lighten($gray-50, 2%);
   }
+
   50% {
     background-color: lighten($gray-100, 5%);
   }
@@ -429,6 +458,7 @@
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -438,6 +468,7 @@
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
+
   100% {
     transform: translate(-50%, -50%) rotate(360deg);
   }
@@ -456,7 +487,7 @@
       width: 100%;
       flex: 1;
 
-      > * {
+      >* {
         width: 100%;
       }
     }

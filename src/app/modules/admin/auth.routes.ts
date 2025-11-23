@@ -17,7 +17,7 @@ export const AUTH_ROUTES: Routes = [
       import('../auth/pages/signup-page/signup-page.component').then(
         (m) => m.SignupPageComponent
       ),
-    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
+    canActivate: [UnAuthenticatedUsersOnlyGuard], 
   },
   {
     path: 'verify-email',
@@ -25,7 +25,7 @@ export const AUTH_ROUTES: Routes = [
       import(
         '../auth/pages/verify-email-page/verify-email-page.component'
       ).then((m) => m.VerifyEmailPageComponent),
-    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
+    canActivate: [UnAuthenticatedUsersOnlyGuard], 
   },
   {
     path: 'forgot-password',
@@ -33,7 +33,7 @@ export const AUTH_ROUTES: Routes = [
       import(
         '../auth/pages/forgot-password-page/forgot-password-page.component'
       ).then((m) => m.ForgotPasswordComponent),
-    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
+    canActivate: [UnAuthenticatedUsersOnlyGuard], 
   },
   {
     path: 'admin',
@@ -48,7 +48,7 @@ export const AUTH_ROUTES: Routes = [
       import('../auth/pages/reset-password/reset-password.component').then(
         (m) => m.ResetPasswordComponent
       ),
-    canActivate: [UnAuthenticatedUsersOnlyGuard], // Add here
+    canActivate: [UnAuthenticatedUsersOnlyGuard], 
   },
   {
     path: 'invitation/accept',
@@ -56,6 +56,15 @@ export const AUTH_ROUTES: Routes = [
       import(
         '../auth/pages/accept-invite-page/accept-invite-page.component'
       ).then((m) => m.AcceptInvitePageComponent),
-    // NO GUARD - Allow anyone to access this route
+    
   },
+  {
+    path: 'event-invitations/accept',
+    loadComponent: () =>
+      import(
+        '../attendee/pages/user-accept-invite/user-accept-invite.component'
+      ).then((m) => m.UserAcceptInviteComponent),
+   
+  },
+
 ];

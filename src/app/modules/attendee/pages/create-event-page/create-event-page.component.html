@@ -105,7 +105,8 @@
                         [message]="getError(virtualDetails.get(EVENT_FORM_FIELDS.DESCRIPTION))"></app-form-error>
                 </div>
                 <p>Choose Virtual Option</p>
-                <app-button (click)="toggleConnectZoomModal()" type="plain">
+                <app-input [formControlName]="EVENT_FORM_FIELDS.MEETING_LINK" label="Meeting Link" placeholder="https://meet.google.com/xvhyee"></app-input>
+                <!-- <app-button (click)="toggleConnectZoomModal()" type="plain">
                     <div class="button-content">
                         <img width="20" height="20" ngSrc="icons/cam_corder.svg" />
                         <p>Create Zoom Meeting</p>
@@ -116,7 +117,7 @@
                         <img width="20" height="20" ngSrc="icons/cam_corder.svg" />
                         <p>Use Existing Meeting</p>
                     </div>
-                </app-button>
+                </app-button> -->
             </div>
             }
         </div>

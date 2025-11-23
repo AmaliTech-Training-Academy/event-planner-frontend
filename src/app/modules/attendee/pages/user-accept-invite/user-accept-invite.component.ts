@@ -12,6 +12,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
+// Ensure these paths match your project structure
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
@@ -26,8 +27,8 @@ interface AcceptInviteForm {
 }
 
 @Component({
-  selector: 'app-accept-invite-page',
-  standalone: true,
+  selector: 'app-user-accept-invite',
+  standalone: true, // Explicitly marking as standalone since you use imports
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -35,10 +36,10 @@ interface AcceptInviteForm {
     SecureTextComponent,
     InputComponent,
   ],
-  templateUrl: './accept-invite-page.component.html',
-  styleUrls: ['./accept-invite-page.component.scss'],
+  templateUrl: './user-accept-invite.component.html',
+  styleUrl: './user-accept-invite.component.scss',
 })
-export class AcceptInvitePageComponent implements OnInit, OnDestroy {
+export class UserAcceptInviteComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -54,6 +55,7 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
   protected loading = false;
 
   private readonly subscription = new Subscription();
+  // Password regex: At least 8 chars, 1 number, 1 special char
   private readonly passwordRegex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
@@ -62,6 +64,7 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Extract token from URL query params (e.g., ?token=...)
     this.subscription.add(
       this.route.queryParams.subscribe((params) => {
         this.inviteToken.set(params['token'] || '');
@@ -80,40 +83,38 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
   }
 
   protected handleSubmit(): void {
-    this.hasAttemptedSubmit.set(true);
-    this.form.markAllAsTouched();
+  this.hasAttemptedSubmit.set(true);
+  this.form.markAllAsTouched();
 
-    if (this.form.invalid || this.isSubmitting()) return;
+  if (this.form.invalid || this.isSubmitting()) return;
 
-    this.isSubmitting.set(true);
+  this.isSubmitting.set(true);
 
-    const fullName = this.form.value?.fullName ?? '';
-    const password = this.form.value?.password ?? '';
-    const confirmPassword = this.form.value?.confirmPassword ?? '';
-    const invitationToken = this.inviteToken();
+  const fullName = this.form.value.fullName ?? '';
+  const invitationCode = this.inviteToken();
+  const password = this.form.value.password ?? '';
 
-    this.subscription.add(
-      this.authService
-        .acceptInvitation(fullName, password, confirmPassword, invitationToken)
-        .subscribe({
-          next: () => {
-            this.isSubmitting.set(false);
-            this.notificationService.success(
-              'Invitation accepted successfully! You can now log in.'
-            );
-
-
-          },
-          error: (error) => {
-            this.isSubmitting.set(false);
-            this.notificationService.error(
-              error?.error?.message ||
+  this.subscription.add(
+    this.authService
+      .acceptEventInvitation(fullName, invitationCode, password) // Changed this line
+      .subscribe({
+        next: () => {
+          this.isSubmitting.set(false);
+          this.notificationService.success(
+            'Invitation accepted successfully! You can now log in.'
+          );
+          this.router.navigate([APP_ROUTES.LOGIN]);
+        },
+        error: (error) => {
+          this.isSubmitting.set(false);
+          this.notificationService.error(
+            error?.error?.message ||
               'Failed to accept invitation. Please try again.'
-            );
-          },
-        })
-    );
-  }
+          );
+        },
+      })
+  );
+}
 
   protected hasFieldError(fieldName: keyof AcceptInviteForm): boolean {
     const field = this.form?.get(fieldName);

@@ -30,7 +30,11 @@ body {
 
 }
 
-// Hide default browser password reveal icons
+input,
+textarea {
+  font-size: 16px;
+}
+
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;

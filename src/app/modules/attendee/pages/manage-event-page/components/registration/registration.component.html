@@ -38,6 +38,9 @@
                             placeholder="Search attendees..." iconSrc="icons/search-icon.png"></app-input>
                         <select [(ngModel)]="currentTicketType" (change)="onFilter($event)" class="ticket-type-select">
                             <option value="">All Tickets</option>
+                            @for (ticket of registrationFilters(); track $index) {
+                                 <option [value]="ticket.type">{{ticket.type}}</option>
+                            }
                         </select>
                     </div>
                 </div>

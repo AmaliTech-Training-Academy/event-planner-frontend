@@ -251,7 +251,7 @@ export class DataTableComponent<T extends Record<string, any>> {
       urlParts[urlParts.length - 1] = encodedFileName;
       profileImageUrl = urlParts.join('/');
 
-     
+
       return profileImageUrl;
     }
 
@@ -415,9 +415,8 @@ export class DataTableComponent<T extends Record<string, any>> {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${this.tableTitle()}-${
-      new Date().toISOString().split('T')[0]
-    }.html`;
+    link.download = `${this.tableTitle()}-${new Date().toISOString().split('T')[0]
+      }.html`;
     link.click();
     window.URL.revokeObjectURL(url);
   }
@@ -431,9 +430,8 @@ export class DataTableComponent<T extends Record<string, any>> {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${this.tableTitle()}-${
-      new Date().toISOString().split('T')[0]
-    }.${extension}`;
+    link.download = `${this.tableTitle()}-${new Date().toISOString().split('T')[0]
+      }.${extension}`;
     link.click();
     window.URL.revokeObjectURL(url);
   }
@@ -511,6 +509,12 @@ export class DataTableComponent<T extends Record<string, any>> {
       inactive: 'inactive',
       successful: 'successful',
       failed: 'failed',
+      // Event statuses
+      pending: 'pending',
+      draft: 'draft',
+      completed: 'completed',
+      canceled: 'cancelled',
+      cancelled: 'cancelled',
     };
 
     const badgeClass = roleMap[normalized] || normalized;
