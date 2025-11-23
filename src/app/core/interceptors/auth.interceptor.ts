@@ -12,31 +12,31 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   let authReq = req;
 
   if (authService.isLoggedIn()) {
+    // If you need to attach token, you could clone with headers here.
     authReq = req.clone({
       withCredentials: true,
     });
   }
 
- return next(authReq).pipe(
-   catchError((error: HttpErrorResponse) => {
-     if (error.status === 401 || error.status === 403) {
-       const authContext = authService.getCurrentAuthContext();
-       const currentPath = window.location.pathname;
-       const isAdminRoute = currentPath.includes('/admin');
+  return next(authReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401 || error.status === 403) {
+        const authContext = authService.getCurrentAuthContext();
+        const currentPath = window.location.pathname;
+        const isAdminRoute = currentPath.includes('/admin');
 
-       if (authContext === 'admin' || isAdminRoute) {
-         authService.clearAdminSession();
-         router.navigate([APP_ROUTES.ADMIN_LOGIN]);
-       } else {
-         authService.clearUserSession();
-         router.navigate([APP_ROUTES.LOGIN]);
-       }
+        if (authContext === 'admin' || isAdminRoute) {
+          authService.clearAdminSession();
+          router.navigate([APP_ROUTES.ADMIN_LOGIN]);
+        } else {
+          authService.clearUserSession();
+          router.navigate([APP_ROUTES.LOGIN]);
+        }
 
-       return EMPTY;
-     }
+        return EMPTY;
+      }
 
-     return throwError(() => error);
-   })
- );
-
+      return throwError(() => error);
+    })
+  );
 };

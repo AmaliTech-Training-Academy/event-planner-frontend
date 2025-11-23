@@ -167,20 +167,40 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     if (!eventId) return;
 
     this.loading.set(true);
-    this._manageService.getOverview(eventId).subscribe({
-      next: (response) => {
-        this.eventOverview.set(response);
-        // Transform the response data for the overview component
-        this._prepareOverviewData(response);
-      },
-      complete: () => {
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Failed to load overview:', err);
-        this.loading.set(false);
-      },
-    });
+
+    // Check if admin view
+    const isAdmin = this.isAdminView() || window.location.pathname.includes('/admin');
+
+    if (isAdmin) {
+      // Admin: use MY_EVENT_OVERVIEW endpoint
+      this._manageService.getOverviewForUser(true, eventId).subscribe({
+        next: (response) => {
+          this.eventOverview.set(response);
+          this._prepareOverviewData(response);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Failed to load admin overview:', err);
+          this.loading.set(false);
+          this._notificationService.error('Failed to load overview');
+        },
+      });
+    } else {
+      // Attendee: use event-specific endpoint
+      this._manageService.getOverview(eventId).subscribe({
+        next: (response) => {
+          this.eventOverview.set(response);
+          this._prepareOverviewData(response);
+        },
+        complete: () => {
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Failed to load overview:', err);
+          this.loading.set(false);
+        },
+      });
+    }
   }
 
   // Transform API response to match OverviewComponent's expected format
