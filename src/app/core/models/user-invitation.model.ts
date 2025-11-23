@@ -1,4 +1,6 @@
 export interface InviteUserPayload {
+  title?: string;
+  event?: number;
   invitees: Array<{
     fullName: string;
     email: string;
@@ -56,3 +58,5 @@ export interface FetchInvitationsResponse {
     empty: boolean;
   };
 }
+
+

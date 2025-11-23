@@ -91,6 +91,6 @@
           </div>
         }
     </section>
-    <app-pagination [totalItems]="allEvents()?.pageSize||1" [(currentPage)]="currentPage"></app-pagination>
+    <app-pagination [totalItems]="(allEvents()?.pageSize||0)*(allEvents()?.totalPages|| 0)" (pageChange)="onPageChange($event)" [maxVisiblePages]="12" [currentPage]="currentPage()+1"></app-pagination>
   </div>
 </section>

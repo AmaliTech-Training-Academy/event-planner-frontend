@@ -120,3 +120,8 @@
     </button>
   </div>
 </aside>
+<app-logout-confirmation-modal
+  [isOpen]="showLogoutModal()"
+  (confirm)="onLogoutConfirm()"
+  (cancel)="onLogoutCancel()"
+/>

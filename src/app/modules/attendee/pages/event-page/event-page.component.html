@@ -23,7 +23,6 @@
 
       <div class="hero-overlay">
         <h1 class="hero-title">{{ eventDetails()?.title }}</h1>
-
         <div class="hero-details">
           <span class="hero-detail-item">
             <img src="icons/Mixed.png" alt="" class="hero-icon" aria-hidden="true" />
@@ -87,12 +86,6 @@
 }
 
 @if (showRegistrationModal() && selectedTicket()) {
-<app-registration-modal
-  [registrationInfo]="{
-    eventName: eventDetails()?.title || 'Registration',
-    ticketName: selectedTicket()?.type || '',
-    ticketPrice: selectedTicket()!.price
-  }"
-  (cancelRegistration)="onCancelRegistration()"
-></app-registration-modal>
+<app-registration-modal [currentEvent]="eventDetails()" [selectedTicket]="selectedTicket()"
+  (cancelRegistration)="onCancelRegistration()"></app-registration-modal>
 }

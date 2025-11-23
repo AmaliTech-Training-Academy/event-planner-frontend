@@ -53,9 +53,7 @@ export class EventPageComponent implements OnInit , OnDestroy {
 
   constructor(private readonly eventService: EventsServiceService, private readonly route: ActivatedRoute, private readonly router: Router) { }
 
-
-
-
+  
   ngOnDestroy(): void {
       this.subscription.unsubscribe()
   }

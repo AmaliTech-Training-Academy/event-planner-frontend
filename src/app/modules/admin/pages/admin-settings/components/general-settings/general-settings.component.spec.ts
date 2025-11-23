@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EditTeamMemberComponent } from './edit-team-member.component';
+import { GeneralSettingsComponent } from './general-settings.component';
 
-describe('EditTeamMemberComponent', () => {
-  let component: EditTeamMemberComponent;
-  let fixture: ComponentFixture<EditTeamMemberComponent>;
+describe('GeneralSettingsComponent', () => {
+  let component: GeneralSettingsComponent;
+  let fixture: ComponentFixture<GeneralSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditTeamMemberComponent]
+      imports: [GeneralSettingsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(EditTeamMemberComponent);
+    fixture = TestBed.createComponent(GeneralSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
