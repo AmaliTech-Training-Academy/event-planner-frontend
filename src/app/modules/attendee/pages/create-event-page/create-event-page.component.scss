@@ -32,9 +32,9 @@
   margin: auto;
 
   @include md {
-    @include flex-col(1rem);
+     @include flex-col(1rem);
     gap: 1.25rem;
-    padding: 51px 1.5rem 149px;
+    // padding: 18px 2rem 134px;
   }
 
   @include sm {
@@ -55,15 +55,20 @@
   @include sm {
     max-width: none;
   }
+
+  @include md{
+      max-width: none;
+    }
+
   app-upload-event-flyer {
     display: none;
 
-    @include sm {
-      display: block;
+    @include sm{
+      display: block
     }
 
-    @include md {
-      display: block;
+    @include md{
+      display: block
     }
   }
 
@@ -76,8 +81,12 @@
       border: none;
       width: 100%;
       padding-bottom: 1rem;
-      border-bottom: 1px solid $paragraph-text;
+      border-bottom: 1.5px solid rgb(202, 202, 202);
       color: $paragraph-text;
+
+      &:focus::placeholder {
+        color: transparent;
+      }
 
       &::placeholder {
         color: $paragraph-text;
@@ -131,12 +140,16 @@
         align-items: center;
 
         @include sm {
+          border-bottom: 2px solid gray;
+          padding-bottom: .5rem;
           display: grid;
           @include flex-col($spacing-2);
           background-color: rgb(255, 255, 255);
-          > * {
+
+          & > * {
             width: 100%;
           }
+
         }
       }
     }
@@ -281,6 +294,10 @@
   }
 
   .virtual-details {
+    
+    app-input{
+      margin-top: 1rem;
+    }
     app-button {
       background-color: transparent;
       border: 1px solid $general-stroke-light;
@@ -319,14 +336,18 @@
     max-width: none;
   }
 
-  app-upload-event-flyer {
+   @include md{
+      max-width: none;
+    }
+
+  app-upload-event-flyer{
     display: black;
 
-    @include sm {
+    @include sm{
       display: none;
     }
 
-    @include md {
+    @include md{
       display: none;
     }
   }

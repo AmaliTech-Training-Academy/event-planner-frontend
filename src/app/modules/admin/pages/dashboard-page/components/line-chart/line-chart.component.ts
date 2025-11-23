@@ -62,13 +62,13 @@ const DEFAULT_X_AXIS: Omit<XAXisComponentOption, 'data'> = {
 
 const DEFAULT_Y_AXIS: YAXisComponentOption = {
   type: 'value',
-  min: 0, 
-  max: 30000, 
+  min: 0,
+  max: 30000,
   interval: 10000,
   axisLine: { show: false },
   axisTick: { show: false },
   splitLine: {
-    lineStyle: { color: '#F3F4F6', type: 'solid' },
+    lineStyle: { color: '#F3F4F6', type: 'dashed' },
   },
   axisLabel: {
     color: '#6B7280',
@@ -102,6 +102,7 @@ export class LineChartComponent implements OnInit, OnChanges {
   @Input() public height: string = '400px';
   @Input() public animationDuration: number = 800;
   @Input() public smooth: boolean = true;
+  @Input() public maxValue?: number;
 
   public readonly isLoading = signal(false);
   public readonly chartOptions = signal<EChartsOption>({});
@@ -114,7 +115,8 @@ export class LineChartComponent implements OnInit, OnChanges {
     if (
       changes['seriesConfig'] ||
       changes['thisYearData'] ||
-      changes['lastYearData']
+      changes['lastYearData'] ||
+      changes['maxValue']
     ) {
       this._updateChartOptions();
     }
@@ -141,29 +143,64 @@ export class LineChartComponent implements OnInit, OnChanges {
 
       title: this.chartTitle
         ? {
-            text: this.chartTitle,
-            left: 'left',
-            textStyle: { color: '#374151', fontSize: 16, fontWeight: 600 },
-          }
+          text: this.chartTitle,
+          left: 'left',
+          textStyle: { color: '#374151', fontSize: 16, fontWeight: 600 },
+        }
         : undefined,
       grid: GRID_CONFIG,
       legend: this.showLegend
         ? {
-            bottom: 0,
-            left: 'center',
-            textStyle: { color: '#6B7280' },
-          }
+          bottom: 0,
+          left: 'center',
+          textStyle: { color: '#6B7280' },
+        }
         : undefined,
       xAxis: {
         ...DEFAULT_X_AXIS,
         data: months,
       } as XAXisComponentOption,
-      yAxis: DEFAULT_Y_AXIS,
+      yAxis: this._createYAxisConfig(),
       series: chartSeries,
       tooltip: this._createTooltipConfig(),
     };
 
     this.chartOptions.set(options);
+  }
+
+  private _createYAxisConfig(): YAXisComponentOption {
+    if (this.maxValue !== undefined && this.maxValue > 0) {
+      const paddedMax = this.maxValue * 1.2;
+
+      let roundedMax: number;
+      let interval: number;
+
+      if (paddedMax <= 10) {
+        roundedMax = Math.ceil(paddedMax / 2) * 2;
+        interval = Math.max(1, Math.ceil(roundedMax / 4));
+      } else if (paddedMax <= 50) {
+        roundedMax = Math.ceil(paddedMax / 10) * 10;
+        interval = Math.max(5, Math.ceil(roundedMax / 4 / 5) * 5);
+      } else if (paddedMax <= 100) {
+        roundedMax = Math.ceil(paddedMax / 20) * 20;
+        interval = Math.max(10, Math.ceil(roundedMax / 4 / 10) * 10);
+      } else if (paddedMax <= 500) {
+        roundedMax = Math.ceil(paddedMax / 100) * 100;
+        interval = Math.max(50, Math.ceil(roundedMax / 4 / 50) * 50);
+      } else {
+        roundedMax = Math.ceil(paddedMax / 1000) * 1000;
+        interval = Math.max(100, Math.ceil(roundedMax / 4 / 100) * 100);
+      }
+
+      return {
+        ...DEFAULT_Y_AXIS,
+        min: 0,
+        max: roundedMax,
+        interval: interval,
+      };
+    }
+
+    return DEFAULT_Y_AXIS;
   }
 
   private _getSeriesData(): LineSeriesConfig[] {
@@ -177,12 +214,12 @@ export class LineChartComponent implements OnInit, OnChanges {
       legacySeries.push({
         name: 'This year',
         data: this.thisYearData,
-        color: '#FF6B35',
+        color: '#ff5a00',
         showArea: true,
         lineStyle: 'solid',
         areaGradient: {
-          start: 'rgba(255, 107, 53, 0.2)',
-          end: 'rgba(255, 107, 53, 0.05)',
+          start: 'rgba(255, 90, 0, 0.2)',
+          end: 'rgba(255, 90, 0, 0.05)',
         },
       });
     }
@@ -191,7 +228,7 @@ export class LineChartComponent implements OnInit, OnChanges {
       legacySeries.push({
         name: 'Last year',
         data: this.lastYearData,
-        color: '#6B7280',
+        color: '#7c7c7c',
         showArea: false,
         lineStyle: 'dashed',
       });

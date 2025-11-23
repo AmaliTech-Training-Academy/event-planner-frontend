@@ -31,9 +31,11 @@
 
         <div class="dropdown-wrapper">
           <select [(ngModel)]="selectedRole" class="guest-dropdown">
-            <option  value="">All Roles</option>
+            <option value="">All Roles</option>
             @for (role of guestRole; track $index) {
-              <option [value]="role">{{role}}</option>
+              @if(role !== 'ADMIN'){
+                <option [value]="role">{{role}}</option>
+              }
             }
           </select>
           <img ngSrc="icons/Vector.png" alt="Dropdown" class="dropdown-icon" width="16" height="16" />
@@ -41,18 +43,21 @@
       </div>
     </div>
     <div class="table-data-list">
-      @for (invitee of invitees()?.data?.content; track $index) {
-      <div class="table-row ">
-        <p>{{invitee.inviteeName}}</p>
-        <p>{{invitee.inviteeEmail}}</p>
-        <p>{{invitee.role}}</p>
-      </div>
+      @if(loading()){
+      <app-loading-card></app-loading-card>
+      }
+      @else{
+        @for (invitee of invitees()?.data?.content; track $index) {
+        <div class="table-row ">
+          <p>{{invitee.inviteeName}}</p>
+          <p>{{invitee.inviteeEmail}}</p>
+          <p>{{invitee.role}}</p>
+        </div>
+        }
       }
     </div>
 
-    @if(loading()){
-     <app-loading-card></app-loading-card>
-    }
+
 
     @if(!invitees()?.data?.content?.length && !loading()){
     <div class="guest-list-empty">

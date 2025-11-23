@@ -10,7 +10,6 @@ export const DEFAULT_SECURITY_SETTINGS: SecuritySettings = {
   contactEmail: 'support@eventhub.com',
   platformDescription:
     'EventHub is a comprehensive event management platform for organizers and attendees.',
-  maintenanceMode: false,
 };
 
 export const DEFAULT_NOTIFICATIONS: ReadonlyArray<NotificationSetting> = [

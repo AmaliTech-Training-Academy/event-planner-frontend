@@ -1,0 +1,207 @@
+<div class="edit-profile">
+  <div class="profile-card">
+    <!-- Profile Header with Avatar and Title -->
+    <div class="profile-header">
+      <div class="profile-avatar" (click)="triggerFileInput()" style="cursor: pointer;">
+        <img
+          [src]="profileImage()"
+          alt="Profile picture"
+          width="128"
+          height="128"
+          priority
+        />
+
+        <button
+          class="avatar-edit-btn"
+          type="button"
+          (click)="triggerFileInput(); $event.stopPropagation()"
+        >
+          <img [src]="statusIcon" alt="Change photo" width="16" height="16" />
+        </button>
+      </div>
+
+      <div class="profile-header__info">
+        <h3>Edit Profile</h3>
+        <p>Update your personal information</p>
+      </div>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <!-- Error Banner -->
+      @if (error()) {
+      <div class="error-banner">
+        <span class="error-icon">⚠️</span>
+        <span class="error-text">{{ error() }}</span>
+      </div>
+      }
+
+      @if (uploadingImage()) {
+      <div class="upload-indicator">
+        <span class="spinner"></span>
+        <span>Uploading image...</span>
+      </div>
+      }
+
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        style="display: none"
+        (change)="onImageSelect($event)"
+      />
+
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h3 class="form-section__title">Basic Information</h3>
+
+        <!-- Full Name -->
+        <div class="form-field">
+          <label for="fullName">Full Name</label>
+          <app-input
+            id="fullName"
+            type="text"
+            formControlName="fullName"
+            placeholder="Enter your full name"
+            [errorMessage]="hasError('fullName') ? getErrorMessage('fullName') : ''"
+          ></app-input>
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-field">
+          <label for="emailAddress">Email Address <span style="color: #9ca3af; font-size: 0.875rem;">(Optional)</span></label>
+          <app-input
+            id="emailAddress"
+            type="email"
+            formControlName="emailAddress"
+            placeholder="user@eventhub.com"
+            [errorMessage]="hasError('emailAddress') ? getErrorMessage('emailAddress') : ''"
+          ></app-input>
+        </div>
+      </div>
+
+      <!-- Contact Information Section -->
+      <div class="form-section">
+        <h3 class="form-section__title">Contact Information</h3>
+
+        <!-- Phone Number Field or Add Button -->
+        @if (!showPhoneField()) {
+        <div class="add-field-container">
+          <app-button
+            type="secondary"
+            buttonType="button"
+            (onClick)="togglePhoneField()"
+            extraClass="btn-add-field"
+          >
+            <span class="button-content">
+              <span class="icon">+</span>
+              Add Phone Number
+            </span>
+          </app-button>
+        </div>
+        } @else {
+        <!-- Phone Number Fields -->
+        <div class="form-field">
+          <div class="field-header">
+            <label for="phone">Phone Number</label>
+            <button
+              type="button"
+              class="remove-field-btn"
+              (click)="togglePhoneField()"
+            >
+              Remove
+            </button>
+          </div>
+
+          <!-- Country Code and Phone Input -->
+          <div class="phone-input-group">
+            <select
+              class="phone-code-select"
+              formControlName="phoneCode"
+            >
+              @for (country of phoneCodes; track country.value) {
+              <option [value]="country.value">
+                {{ country.code }} {{ country.label }}
+              </option>
+              }
+            </select>
+
+            <app-input
+              id="phone"
+              type="tel"
+              formControlName="phone"
+              placeholder="241234567"
+              [errorMessage]="hasError('phone') ? getErrorMessage('phone') : ''"
+            ></app-input>
+          </div>
+
+          <!-- Display formatted phone number -->
+          @if (getFormattedPhoneNumber()) {
+          <div class="formatted-phone">
+            <small>Formatted: {{ getFormattedPhoneNumber() }}</small>
+          </div>
+          }
+        </div>
+        }
+
+        <!-- Address Field or Add Button -->
+        @if (!showAddressField()) {
+        <div class="add-field-container">
+          <app-button
+            type="secondary"
+            buttonType="button"
+            (onClick)="toggleAddressField()"
+            extraClass="btn-add-field"
+          >
+            <span class="button-content">
+              <span class="icon">+</span>
+              Add Address
+            </span>
+          </app-button>
+        </div>
+        } @else {
+        <!-- Address Field -->
+        <div class="form-field">
+          <div class="field-header">
+            <label for="address">Address</label>
+            <button
+              type="button"
+              class="remove-field-btn"
+              (click)="toggleAddressField()"
+            >
+              Remove
+            </button>
+          </div>
+
+          <app-input
+            id="address"
+            type="text"
+            formControlName="address"
+            placeholder="123 Main Street, City, State, 12345"
+          ></app-input>
+        </div>
+        }
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <app-button
+          type="secondary"
+          buttonType="button"
+          (onClick)="cancelEdit()" 
+          [disabled]="saving()"
+          extraClass="btn-cancel"
+        >
+          Cancel
+        </app-button>
+
+        <app-button
+          type="primary"
+          buttonType="submit"
+          [disabled]="profileForm.invalid || saving() || uploadingImage()"
+        >
+          {{ saving() ? "Saving..." : "Save Changes" }}
+        </app-button>
+      </div>
+    </form>
+  </div>
+</div>

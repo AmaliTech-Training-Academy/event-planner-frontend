@@ -2,8 +2,10 @@
 @use 'colors' as *;
 @use 'variables' as *;
 
+$chart-height: 200px;
+
 .event-statistics {
-  background: $gray-50;
+  background: $white;
   border-radius: $radius-4;
   padding: $spacing-6;
   border: $stroke-1 solid $general-stroke-light;
@@ -12,54 +14,101 @@
     @include h-6;
     color: $header-dark;
     margin: 0 0 $spacing-6 0;
+    font-weight: 600;
   }
 
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: $spacing-5;
-    align-items: flex-end;
-    padding-bottom: $spacing-2;
+  &__chart {
+    display: flex;
+    gap: $spacing-3;
   }
 
-  &__card {
+  // Y-Axis
+  &__y-axis {
+    position: relative;
+    width: 40px;
+    height: $chart-height;
+    flex-shrink: 0;
+  }
+
+  &__y-label {
+    position: absolute;
+    right: 0;
+    transform: translateY(50%);
+    font-size: 12px;
+    color: $paragraph-text;
+    line-height: 1;
+  }
+
+  // Chart Area
+  &__chart-area {
+    flex: 1;
+    position: relative;
+    height: $chart-height;
+  }
+
+  // Bars Container
+  &__bars {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    height: 100%;
+    padding: 0 $spacing-4;
+  }
+
+  &__bar-column {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1;
+    max-width: 120px;
+    height: 100%;
+  }
+
+  &__bar-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    width: 100%;
     gap: $spacing-2;
   }
 
   &__count-bubble {
-    @include body-3;
-    background-color: #3b9eff;
-    color: white;
-    padding: $spacing-1 $spacing-3;
-    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #3B82F6;
+    color: $white;
+    padding: 4px 10px;
+    border-radius: 100px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 12px;
+    line-height: 1;
+    min-width: 36px;
     white-space: nowrap;
   }
 
   &__bar {
     width: 100%;
-    max-width: 85px;
+    max-width: 64px;
+    min-height: 4px;
     border-radius: $radius-3;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    will-change: transform;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba($gray-950, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
   }
 
   &__label {
-    @include body-3;
+    font-size: 12px;
     color: $paragraph-text;
     text-align: center;
-    margin: 0;
+    margin: $spacing-2 0 0 0;
     line-height: 1.3;
-    font-size: 13px;
+    white-space: nowrap;
   }
 
   &__empty {
@@ -68,7 +117,7 @@
     align-items: center;
     padding: $spacing-8;
     color: $paragraph-text;
-    
+
     p {
       @include body-2;
       margin: 0;
@@ -76,11 +125,57 @@
   }
 }
 
-@media (max-width: 640px) {
+// Responsive
+@media (max-width: 768px) {
   .event-statistics {
-    &__grid {
-      grid-template-columns: repeat(2, 1fr);
+    &__y-axis {
+      width: 32px;
+    }
+
+    &__y-label {
+      font-size: 10px;
+    }
+
+    &__bar {
+      max-width: 48px;
+    }
+
+    &__label {
+      font-size: 10px;
+    }
+
+    &__count-bubble {
+      font-size: 10px;
+      padding: 3px 8px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .event-statistics {
+    padding: $spacing-4;
+
+    &__chart {
+      flex-direction: column;
+    }
+
+    &__y-axis {
+      display: none;
+    }
+
+    &__bars {
+      flex-wrap: wrap;
       gap: $spacing-4;
+      height: auto;
+    }
+
+    &__bar-column {
+      flex: 0 0 calc(50% - #{$spacing-2});
+      height: auto;
+    }
+
+    &__bar-content {
+      min-height: 100px;
     }
   }
 }

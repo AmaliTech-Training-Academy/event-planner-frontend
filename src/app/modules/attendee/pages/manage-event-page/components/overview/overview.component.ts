@@ -7,7 +7,7 @@ import { ButtonComponent } from "@app/shared/ui/button/button.component";
 
 @Component({
   selector: 'app-overview',
-  imports: [CommonModule, StatCardComponent,NgOptimizedImage],
+  imports: [CommonModule, StatCardComponent, NgOptimizedImage, ButtonComponent],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.scss'
 })

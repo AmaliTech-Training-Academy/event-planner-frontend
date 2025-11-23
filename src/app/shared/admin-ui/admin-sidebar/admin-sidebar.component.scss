@@ -335,22 +335,22 @@
   transition: margin-left 0.3s ease;
 }
 
-// Mobile responsiveness
+// Mobile responsiveness - Keep this!
 @media (max-width: 768px) {
   .admin-sidebar {
+    // Sidebar becomes an overlay on mobile
+    position: fixed;
+    left: 0;
     transform: translateX(-100%);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
     
     &--collapsed {
-      transform: translateX(0);
+      transform: translateX(0); // Show when "collapsed" (actually opened on mobile)
       width: 5rem;
     }
   }
 
   .admin-layout__main {
-    margin-left: 0;
-  }
-
-  .admin-sidebar--collapsed ~ .admin-layout__main {
-    margin-left: 5rem;
+    margin-left: 0 !important; // Full width on mobile
   }
 }
