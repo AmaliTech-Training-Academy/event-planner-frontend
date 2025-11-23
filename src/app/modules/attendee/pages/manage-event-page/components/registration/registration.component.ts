@@ -8,8 +8,6 @@ import { PaginationComponent } from "@app/shared/admin-ui/pagination/pagination.
 import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
 import { InputComponent } from "@app/shared/ui/input/input.component";
 import { Registration } from '../../manage-event-page.component';
-import { Router } from '@angular/router';
-import { APP_ROUTES } from '@app/core/constants/app-routes.constants';
 
 @Component({
   selector: 'app-registration',

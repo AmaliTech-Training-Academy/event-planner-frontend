@@ -23,9 +23,6 @@
   }
 }
 
-
-
-
 .table-data-list {
   display: flex;
   flex-direction: column;
@@ -36,17 +33,17 @@
     padding: 1rem 0;
     cursor: pointer;
 
-    &:hover{
+    &:hover {
       background-color: rgba(217, 217, 217, 0.21);
     }
 
-    p{
+    p {
       text-align: left;
 
-      &:first-child{
+      &:first-child {
         text-align: left;
       }
-      &:last-child{
+      &:last-child {
         text-align: right;
       }
     }
