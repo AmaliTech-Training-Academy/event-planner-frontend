@@ -7,4 +7,7 @@ export interface AuthStorage {
   [AUTH_STORAGE.PROFILE_PICTURE]: string | null;
   [AUTH_STORAGE.EMAIL]: string;
   [AUTH_STORAGE.ROLE]: string;
+  [AUTH_STORAGE.REFRESHED_AT]: Date;
+  [AUTH_STORAGE.PHONE_NUMBER]: string;
+  [AUTH_STORAGE.ADDRESS]: string;
 }

@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, effect, HostListener, OnInit, signal } from '@angular/core';
+import { Component, effect, HostListener, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
@@ -22,15 +22,15 @@ import {
 
 import {
   MOCK_EVENT_TOGGLES,
-  MOCK_EVENT_TYPE_OPTIONS,
-  MOCK_POPULAR_LOCATIONS,
-  MOCK_RECENT_SEARCHES
+  MOCK_EVENT_TYPE_OPTIONS
 } from '../../../../core/data/mock-data';
-import { EventsServiceService } from '../../../../core/services/events.service';
-import { LocationSearchComponent } from "../../../../shared/components/location-search/location-search.component";
 import { StoredRecentLocation } from '../../../../core/models/recent-location.model';
+import { EventsServiceService } from '../../../../core/services/events.service';
 import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagination.component";
+import { LocationSearchComponent } from "../../../../shared/components/location-search/location-search.component";
 import { EmptyListMessageComponent } from "@app/shared/components/empty-list-message/empty-list-message.component";
+import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-explore-page',
@@ -51,17 +51,19 @@ import { EmptyListMessageComponent } from "@app/shared/components/empty-list-mes
     CommonModule,
     FormsModule,
     PaginationComponent,
-    EmptyListMessageComponent
-  ],
+    EmptyListMessageComponent,
+    LoadingCardComponent
+],
   templateUrl: './explore-page.component.html',
   styleUrl: './explore-page.component.scss',
 })
-export class ExplorePageComponent implements OnInit {
+export class ExplorePageComponent implements OnInit , OnDestroy {
 
   protected allEvents = signal<GetEventsResponse | null>(null);
   protected currentPage = signal<number>(0);
   private readonly EVENTS_PER_PAGE = 12;
   protected loading = signal<boolean>(true)
+  protected subscription = new Subscription()
 
 
   protected locationTerm = signal<string>('');
@@ -78,7 +80,7 @@ export class ExplorePageComponent implements OnInit {
   public eventTypeOptions = signal<EventTypeFilter[]>([]);
   public recentSearches = signal<SearchLocation[]>([]);
   public popularLocations = signal<PopularLocation[]>([]);
-
+  private debounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   private lastFilters: EventFiltersCache = {
     isPaid: 'all',
@@ -118,9 +120,16 @@ export class ExplorePageComponent implements OnInit {
         locationTerm
       };
 
+      if (this.debounceTimeoutId) {
+        clearTimeout(this.debounceTimeoutId);
+      }
+
+      this.debounceTimeoutId = setTimeout(() => {
+        this.searchEvents(isPaid, past, date, searchTerm, locationTerm, currentPage);
+
+      }, 500);
 
 
-      this.searchEvents(isPaid, past, date, searchTerm, locationTerm, currentPage);
     });
 
     effect(() => {
@@ -151,13 +160,17 @@ export class ExplorePageComponent implements OnInit {
     }
   }
 
-  public ngOnInit(): void {
+   ngOnInit(): void {
     this.loadData();
-    this.eventService.loading$.subscribe({
+   this.subscription = this.eventService.loading$.subscribe({
       next: (loading_) => {
         this.loading.set(loading_)
       }
     })
+  }
+
+  ngOnDestroy(): void {
+      this.subscription.unsubscribe()
   }
 
   private loadData(): void {
@@ -168,8 +181,6 @@ export class ExplorePageComponent implements OnInit {
     })
     this.eventToggles.set(MOCK_EVENT_TOGGLES);
     this.eventTypeOptions.set(MOCK_EVENT_TYPE_OPTIONS);
-    this.recentSearches.set(MOCK_RECENT_SEARCHES);
-    this.popularLocations.set(MOCK_POPULAR_LOCATIONS);
   }
 
   protected clearSearchFilters() {
@@ -301,6 +312,12 @@ export class ExplorePageComponent implements OnInit {
   protected onDateSelected(date: Date): void {
     this.selectedDate.set(date);
     this.showDatePicker.set(false);
+  }
+  
+
+
+  protected onPageChange(number_:number){
+   this.currentPage.set(number_ - 1)
   }
 
 

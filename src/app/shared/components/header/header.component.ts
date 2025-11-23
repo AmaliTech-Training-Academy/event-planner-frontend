@@ -17,6 +17,7 @@ import { ButtonComponent } from '../../ui/button/button.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
 import { OtpBodyData } from '../../../core/models/auth-response.model';
+import { LogoComponent } from '../../../modules/auth/components/logo/logo.component';
 
 interface NavLink {
   readonly label: string;
@@ -33,6 +34,7 @@ interface NavLink {
     RouterLinkActive,
     ButtonComponent,
     NgOptimizedImage,
+    LogoComponent,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],

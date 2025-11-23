@@ -2,26 +2,54 @@
   <h3 class="event-statistics__title">{{ title() }}</h3>
 
   @if (statistics().length > 0) {
-  <div class="event-statistics__grid">
-    @for (stat of statistics(); track trackByStat($index, stat)) {
-    <div class="event-statistics__card">
-      <span class="event-statistics__count-bubble">
-        {{ formatNumber(stat.count) }}
-      </span>
-      <div
-        class="event-statistics__bar"
-        [style.background-color]="stat.color"
-        [style.height.px]="getBarHeight(stat.count)"
-        [attr.aria-label]="stat.label + ': ' + formatNumber(stat.count)"
-        role="img"
-      ></div>
-      <p class="event-statistics__label">{{ stat.label }}</p>
+    <div class="event-statistics__chart">
+      <!-- Y-Axis Labels -->
+      <div class="event-statistics__y-axis">
+        @for (label of yAxisLabels(); track trackByLabel($index, label)) {
+          <span 
+            class="event-statistics__y-label"
+            [style.bottom.%]="label.position"
+          >
+            {{ label.label }}
+          </span>
+        }
+      </div>
+
+      <!-- Chart Area with Grid Lines -->
+      <div class="event-statistics__chart-area">
+        <!-- Grid Lines -->
+        <div class="event-statistics__grid-lines">
+          @for (label of yAxisLabels(); track trackByLabel($index, label)) {
+            <div 
+              class="event-statistics__grid-line"
+              [style.bottom.%]="label.position"
+            ></div>
+          }
+        </div>
+
+        <!-- Bars -->
+        <div class="event-statistics__bars">
+          @for (stat of statistics(); track trackByStat($index, stat)) {
+            <div class="event-statistics__bar-column">
+              <div class="event-statistics__bar-content">
+                <span class="event-statistics__count-bubble">
+                  {{ formatNumber(stat.count) }}
+                </span>
+                <div 
+                  class="event-statistics__bar"
+                  [style.height.%]="getBarHeightPercent(stat.count)"
+                  [style.background-color]="stat.color"
+                ></div>
+              </div>
+              <p class="event-statistics__label">{{ stat.label }}</p>
+            </div>
+          }
+        </div>
+      </div>
     </div>
-    }
-  </div>
   } @else {
-  <div class="event-statistics__empty">
-    <p>No statistics available</p>
-  </div>
+    <div class="event-statistics__empty">
+      <p>No statistics available</p>
+    </div>
   }
 </div>

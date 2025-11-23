@@ -1,9 +1,9 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
-import { EventSummary } from '../../../core/models/event.model';
 import { ButtonComponent } from '../../ui/button/button.component';
+import { EventSummary } from '../../../core/models/event.model';
+import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
 import { MyEventItem } from '@app/core/models/myevent.model';
 import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
 
@@ -26,7 +26,6 @@ export class EventCardComponent {
 
 
   protected navigateToDetails(): void {
-
     const route = this.routes.EVENT_DETAILS(this.event().id.toString());
     this.router.navigate([route]);
   }

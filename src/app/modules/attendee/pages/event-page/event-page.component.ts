@@ -1,27 +1,18 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, ElementRef, OnInit, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 
-import { DatePickerComponent } from '../../../../shared/components/date-picker/date-picker.component';
+import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
+import { EventDetail, TicketInfo, TicketType, VenueImage, VenueSection } from '@app/core/models/event.model';
+import { EventsServiceService } from '../../../../core/services/events.service';
 import { HelpCardComponent } from '../../../../shared/components/help-card/help-card.component';
 import { RegistrationModalComponent } from '../../../../shared/components/registration-modal/registration-modal.component';
 import { TicketCardComponent } from '../../../../shared/components/ticket-card/ticket-card.component';
 import { VenueImageSliderComponent } from '../../../../shared/components/venue-image-slider/venue-image-slider.component';
 import { VenueSectionCardComponent } from '../../../../shared/components/venue-section-card/venue-section-card.component';
-import { EventsServiceService } from '../../../../core/services/events.service';
-import { PLACEHOLDER_IMAGE } from '@app/core/constants/user.constants';
-
-import {
-  MOCK_EVENT_DETAILS,
-  MOCK_TICKETS,
-  MOCK_VENUE_IMAGES,
-  MOCK_VENUE_SECTIONS,
-  MOCK_HELP_EMAIL,
-} from '../../../../core/data/mock-data';
-// In event-page.component.ts
-import { EventDetail, EventDetails, TicketInfo, VenueImage, VenueSection } from '../../../../core/models/event.model';
-import { TicketType } from '@app/core/models/events';
+import { Subscription } from 'rxjs';
+import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
 
 @Component({
   selector: 'app-event-page',
@@ -30,48 +21,58 @@ import { TicketType } from '@app/core/models/events';
     CommonModule,
     RouterModule,
     NgOptimizedImage,
-    DatePickerComponent,
     TicketCardComponent,
     HelpCardComponent,
     VenueImageSliderComponent,
     VenueSectionCardComponent,
     RegistrationModalComponent,
-  ],
+    LoadingCardComponent
+],
   templateUrl: './event-page.component.html',
   styleUrl: './event-page.component.scss',
 })
-export class EventPageComponent implements OnInit {
-  
+export class EventPageComponent implements OnInit , OnDestroy {
+
   @ViewChild('heroSection') heroSection!: ElementRef;
+ protected loading = signal<boolean>(true)
+  protected eventDetails = signal<EventDetail | null>(null);
+  protected venueImages = signal<VenueImage[]>([]);
+  protected venueSections = signal<VenueSection[]>([]);
+  protected tickets = signal<TicketInfo[]>([]);
+  protected helpEmail = signal<string>('support@eventhub.com');
+  protected showRegistrationModal = signal(false);
+  protected selectedTicket = signal<TicketType | null>(null);
+  protected subscription = new Subscription()
 
-   eventDetails = signal<EventDetail | null>(null);
-   venueImages = signal<VenueImage[]>([]);
-   venueSections = signal<VenueSection[]>([]);
-   tickets = signal<TicketInfo[]>([]);
-   helpEmail = signal<string>('');
-   showDatePicker = signal(false);
-   showRegistrationModal = signal(false);
-   selectedTicket = signal<TicketType | null>(null);
-
-  
-   selectedHeroImage = signal<string | null>(null);
-   selectedHeroImageAlt = signal<string | null>(null);
-   selectedHeroImageDescription = signal<string | null>(null);
+  protected selectedHeroImage = signal<string | null>(null);
+  protected selectedHeroImageAlt = signal<string | null>(null);
+  protected selectedHeroImageDescription = signal<string | null>(null);
 
   protected readonly routes = APP_ROUTES;
 
 
-  constructor (private readonly eventService:EventsServiceService, private readonly route:ActivatedRoute, private readonly router:Router){}
+  constructor(private readonly eventService: EventsServiceService, private readonly route: ActivatedRoute, private readonly router: Router) { }
+
+  
+  ngOnDestroy(): void {
+      this.subscription.unsubscribe()
+  }
 
   public ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if(!id) {
+    if (!id) {
       this.router.navigate([APP_ROUTES.EXPLORE])
       return
     }
 
+    this.subscription = this.eventService.loading$.subscribe({
+      next: (loading_) => {
+        this.loading.set(loading_)
+      }
+    })
+
     this.eventService.getEvent(id).subscribe({
-      next : (value)=>{
+      next: (value) => {
         this.eventDetails.set(value);
       }
     })
@@ -87,40 +88,15 @@ export class EventPageComponent implements OnInit {
     this.selectedTicket.set(null);
   }
 
-  protected onSubmitRegistration(formData: any): void {
-    this.showRegistrationModal.set(false);
-    this.selectedTicket.set(null);
-  }
 
-  protected toggleDatePicker(): void {
-    this.showDatePicker.update((v) => !v);
-  }
 
-  protected onDateSelected(date: Date): void {
-    const formattedDate = date.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
-    });
-
-    this.eventDetails.update((details) => {
-      if (details) {
-        return { ...details, date: formattedDate };
-      }
-      return null;
-    });
-
-    this.showDatePicker.set(false);
-  }
-
-  
   protected onVenueImageClick(imageData: VenueImage): void {
-    
+
     this.selectedHeroImage.set(imageData.url);
     this.selectedHeroImageAlt.set(imageData.alt || 'Venue image');
     this.selectedHeroImageDescription.set(imageData.description || null);
 
-   
+
     this.scrollToHero();
   }
 
@@ -131,7 +107,7 @@ export class EventPageComponent implements OnInit {
     this.selectedHeroImageDescription.set(null);
   }
 
-  
+
   private scrollToHero(): void {
     setTimeout(() => {
       this.heroSection?.nativeElement.scrollIntoView({

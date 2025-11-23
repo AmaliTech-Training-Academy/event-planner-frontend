@@ -41,7 +41,7 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
   protected readonly routes = APP_ROUTES;
   protected myEvents = signal<MyEventItem[]>([]);
   protected page = signal<number>(0);
-  protected totalaPages = signal<number>(0);
+  protected totalaItems = signal<number>(0);
   protected loading = signal<boolean>(true);
   protected statCards = signal<UserCardData[]>(MY_EVENT_STAT_CARDS);
   private destroy$ = new Subject<void>();
@@ -68,7 +68,7 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
         next: ({ events, overview }) => {
  
           this.myEvents.set(events.data.content);
-          this.totalaPages.set(events.data.totalPages);
+          this.totalaItems.set(events.data.totalElements);
 
           this.statCards.update(prev => {
             const updated = [...prev];
@@ -84,6 +84,15 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
       });
 
 
+  }
+
+  onPageChange(page_:number){
+   this.page.set(page_ )
+    this.eventService.myEvents(page_).subscribe({
+        next: (events)=>{
+          this.myEvents.set(events.data.content);
+        }
+    })
   }
 
   ngOnDestroy(): void {

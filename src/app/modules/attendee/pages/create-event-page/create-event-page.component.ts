@@ -1,6 +1,6 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { EventsServiceService } from '../../../../core/services/events.service';
@@ -22,11 +22,12 @@ import { UploadEventFlyerComponent } from "./components/upload-event-flyer/uploa
 import { NotificationService } from '../../../../core/services/notification.service';
 import { EventType, MeetingType } from '../../../../core/models/event.model';
 import { Subscription } from 'rxjs';
+import { InputComponent } from "@app/shared/ui/input/input.component";
 
 
 @Component({
   selector: 'app-create-event-page',
-  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink, NgOptimizedImage, FormErrorComponent, LocationSearchComponent],
+  imports: [CommonModule, EventDatePickerComponent, EventTimePickerComponent, EventTimeZonePickerComponent, ReactiveFormsModule, CommonModule, ButtonComponent, RadioButtonComponent, SetPriceModalComponent, SetCapacityModalComponent, ConnectZoomModalComponent, UploadEventFlyerComponent, EventOptionsContainerComponent, RouterLink, NgOptimizedImage, FormErrorComponent, LocationSearchComponent, InputComponent],
   templateUrl: './create-event-page.component.html',
   styleUrl: './create-event-page.component.scss'
 })
@@ -174,35 +175,85 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     this.connectZoomModal = !this.connectZoomModal;
   }
 
-  protected createEvent() {
+protected createEvent() {
 
-    if (this.form.invalid) {
+  if (this.form.invalid) {
+    this.form.markAllAsTouched();
 
-      this.form.markAllAsTouched();
-
-      for (const key of Object.keys(this.form.controls)) {
-        const control = this.form.get(key);
-        if (control && control.invalid) {
-          const current_error = `Please provide a value for the ${key} field`;
-          this.notificationService.error(current_error);
-          break;
-        }
-      }
+ 
 
 
-      return;
+    const invalid = this.findInvalid(this.form);
+    if (invalid) {
+      const message = this.getErrorMessage(invalid.control, invalid.key);
+      this.notificationService.error(message);
     }
 
-    const formData = this.parseObjectToFormdata()
-
-
-    this.eventService.createEvent(formData).subscribe({
-      next: () => {
-        this.eventFormService.resetForm();
-        this.notificationService.success(`Event Successfully created`)
-      },
-    });
+    return;
   }
+
+  const formData = this.parseObjectToFormdata();
+
+  this.eventService.createEvent(formData).subscribe({
+    next: () => {
+      this.eventFormService.resetForm();
+      this.notificationService.success(`Event Successfully created`);
+    },
+  });
+}
+
+   private findInvalid = (
+  form: FormGroup,
+  parentKey: string = ''
+): { key: string; control: AbstractControl } | null => {
+  for (const key of Object.keys(form.controls)) {
+    const control = form.get(key)!;
+    const fullKey = parentKey ? `${parentKey}.${key}` : key;
+
+    if (control instanceof FormGroup) {
+      const child = this.findInvalid(control, fullKey);
+      if (child) return child;
+    } else if (control.invalid) {
+      return { key: fullKey, control };
+    }
+  }
+  return null;
+};
+
+
+private getErrorMessage(control: AbstractControl, fieldName: string): string {
+  const errors = control.errors;
+
+  if (!errors) return 'Invalid field';
+
+   const label_ =  (fieldName.split(".")?.[1] || fieldName.split(".")?.[0]).toLowerCase()
+
+  if (errors['required']) {
+    return `${label_} is required`;
+  }
+
+  if (errors['minlength']) {
+    const { requiredLength, actualLength } = errors['minlength'];
+    return `${label_} must be at least ${requiredLength} characters (currently ${actualLength})`;
+  }
+
+  if (errors['maxlength']) {
+    const { requiredLength, actualLength } = errors['maxlength'];
+    return `${label_} cannot exceed ${requiredLength} characters`;
+  }
+
+  if (errors['pattern']) {
+    return `${label_} format is invalid`;
+  }
+
+  if (errors['min']) {
+    return `${label_} must be greater than or equal to ${errors['min'].min}`;
+  }
+
+  return `${label_} is invalid`;
+}
+
+  
 
   private formatDateToDDMMYYYY(date: Date): string {
     if (!(date instanceof Date) || isNaN(date.getTime())) return '';
