@@ -35,7 +35,6 @@ export const API_ENDPOINTS = {
   SEARCH_USERS: `${BASE}/users/search`,
   DEACTIVATE_USER: (userId: string | number): string =>
     `${BASE}/users/${userId}/deactivate`,
-
   UPLOAD_PROFILE_IMAGE: (userId: string): string =>
     `${BASE}/users/${userId}/profile-image`,
 
@@ -48,6 +47,8 @@ export const API_ENDPOINTS = {
   ADMIN_INVITE_USER: `${BASE}/user-invitations/invite-user`,
   VERIFY_INVITATION_TOKEN: `${BASE}/user-invitations/verify`,
   ACCEPT_INVITATION: `${BASE}/user-invitations/accept-invitation`,
+  GET_ALL_EVENT_INVITATIONS: `${BASE}/user-invitations`,
+  USER_ACCEPT_INVITATION: `${BASE}/event-invitations/accept-invitation`,
   GET_ALL_USER_INVITATIONS: `${BASE}/user-invitations`,
 
   // ============================================
@@ -113,11 +114,8 @@ export const PLATFORM_SETTINGS_ENDPOINTS = {
   MY_EVENT: `${BASE}/events/my-events`,
   MY_EVENT_OVERVIEW: `${BASE}/events/my-events/overview`,
   SEARCH_EVENTS: `${BASE}/events/search`,
-  MANAGE_EVENT_DETAILS: (id: number) => `${BASE}/events/${id}`,
-  MANAGE_EVENT_INVITEES: (id: number) =>
-    `${BASE}/event-invitations/${id}/invitees`,
-  MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) =>
-    `${BASE}/events/${id}/registrations/overview`,
-  MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) =>
-    `${BASE}/events/${id}/registrations/search`,
+  MANAGE_EVENT_DETAILS: (id: number) => `${BASE}/events/my-events/details/${id}`,
+  MANAGE_EVENT_INVITEES: (id: number) => `${BASE}/event-invitations/${id}/invitees`,
+  MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) => `${BASE}/events/${id}/registrations/overview`,
+  MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) => `${BASE}/events/${id}/registrations/search`,
 } as const;

@@ -130,6 +130,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
         this.getOverview();
 
+       
         const state = this._location.getState() as ManageEventPageState;
         if (state.eventData) {
           this._loadEventFromState(state.eventData, eventId);
@@ -172,11 +173,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this._loadTicketsAndHosts(event);
     this._layoutService.pageTitle.set(event.title);
 
-
     this.availableEvents.set([
       { id: eventId, title: event.title || 'Current Event' }
     ]);
-
 
     this.inviteForm.patchValue({
       event: eventId,
@@ -185,7 +184,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   }
 
   private _loadTicketsAndHosts(event: EventDetails): void {
-
+   
   }
 
   protected setActiveTab(tab: TabType): void {
@@ -210,13 +209,12 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-
     this.inviteForm.reset({
       title: '',
       name: '',
       email: '',
       message: '',
-      event: eventId,
+      event: eventId, 
       role: 'ATTENDEE'
     });
 
@@ -238,7 +236,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     if (this.inviteForm.valid) {
       this._submitInvitation('SEND');
     } else {
-
       this.inviteForm.markAllAsTouched();
     }
   }
@@ -254,7 +251,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   private _submitInvitation(status: string): void {
     const formData = this.inviteForm.value;
     this.isSubmitting.set(true);
-
 
     let selectedEventId = Number(formData.event);
     if (!selectedEventId || isNaN(selectedEventId)) {

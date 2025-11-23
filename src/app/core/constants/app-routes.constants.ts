@@ -20,6 +20,7 @@ export const APP_ROUTES = {
   MY_EVENTS: '/app/my-events',
   MY_EVENT: (id: string) => `/app/my-events/${id}`,
   MANAGE_EVENT: (id: string) => `/app/manage-event/${id}`,
+  USER_ACCEPT_INVITATION: '/auth/event-invitations/accept',
   PAYMENT_SETTINGS: '/app/payment-settings',
   EVENT_PAYMENT_SUCCESS: '/app/event-payment-success',
   PAYMENT_SUCCESS: '/app/payment-success',
