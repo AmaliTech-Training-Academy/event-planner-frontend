@@ -128,7 +128,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         const eventId = Number(urlEventId);
         this.currentEventId.set(eventId);
 
-
         this.getOverview();
 
         const state = this._location.getState() as ManageEventPageState;
