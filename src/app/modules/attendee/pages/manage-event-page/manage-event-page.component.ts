@@ -329,8 +329,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         this._toggleBodyScroll(false);
       }, 3000);
     } else {
-
-      this._notificationService.success('Invitation draft saved successfully.');
       this._toggleBodyScroll(false);
     }
   }
