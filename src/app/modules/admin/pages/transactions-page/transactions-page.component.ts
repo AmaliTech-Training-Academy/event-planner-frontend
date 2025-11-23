@@ -298,7 +298,7 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     });
 
   protected readonly tableColumns: readonly TableColumn<TransactionDisplay>[] = [
-    { key: 'truncatedTransactionId', header: 'Transaction ID', sortable: true },
+    { key: 'transactionId', header: 'Transaction ID', sortable: true },
     { key: 'formattedDate', header: 'Date', sortable: true },
     { key: 'truncatedEventName', header: 'Event Name', sortable: true },
     { key: 'eventOrganizer', header: 'Organizer', filterable: true },
@@ -308,25 +308,7 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     { key: 'status', header: 'Status', filterable: true },
   ];
 
-  protected readonly tableActions: readonly TableAction<TransactionManagement>[] =
-    [
-      {
-        icon: 'icons/view-icon.png',
-        label: 'View Transaction Details',
-        color: 'view',
-        type: 'action',
-        handler: (transaction: TransactionManagement) =>
-          this._viewTransaction(transaction),
-      },
-      {
-        icon: 'icons/download-icon.png',
-        label: 'Download Receipt',
-        color: 'edit',
-        type: 'action',
-        handler: (transaction: TransactionManagement) =>
-          this._downloadReceipt(transaction),
-      },
-    ];
+  protected readonly tableActions: readonly TableAction<TransactionManagement>[] = [];
 
   protected readonly tableFilters: readonly TableFilter[] = [
     {

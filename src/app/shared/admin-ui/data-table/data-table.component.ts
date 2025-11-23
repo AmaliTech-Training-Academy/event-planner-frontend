@@ -251,15 +251,32 @@ export class DataTableComponent<T extends Record<string, any>> {
       urlParts[urlParts.length - 1] = encodedFileName;
       profileImageUrl = urlParts.join('/');
 
-
       return profileImageUrl;
     }
 
-    const name = item['fullName'] || item['name'] || item['email'] || 'User';
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      name
-    )}&background=FF6B35&color=fff&size=128`;
+    return '';
   }
+
+  public hasProfileImage(item: T): boolean {
+    const profileImageUrl = item['profileImageUrl'] || item['avatar'];
+    return !!profileImageUrl;
+  }
+
+  public getInitials(item: T): string {
+    const name = item['fullName'] || item['name'] || item['email'] || 'U';
+
+    // Split by space and take first letter of first two words
+    const nameParts = name.trim().split(/\s+/);
+
+    if (nameParts.length >= 2) {
+      return (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+    } else if (nameParts.length === 1 && nameParts[0].length > 0) {
+      return nameParts[0].substring(0, 2).toUpperCase();
+    }
+
+    return 'U';
+  }
+
   public isAllSelected(): boolean {
     const pageData = this.paginatedData();
     return (
