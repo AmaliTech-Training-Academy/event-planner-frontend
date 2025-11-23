@@ -7,7 +7,6 @@ export interface SecuritySettings {
   platformUrl: string;
   contactEmail: string;
   platformDescription: string;
-  maintenanceMode: boolean;
 }
 
 export interface SecurityForm {
@@ -15,7 +14,6 @@ export interface SecurityForm {
   platformUrl: FormControl<string>;
   contactEmail: FormControl<string>;
   platformDescription: FormControl<string>;
-  maintenanceMode: FormControl<boolean>;
 }
 
 export interface NotificationSetting {

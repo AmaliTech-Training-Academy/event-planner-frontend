@@ -1,11 +1,9 @@
 <footer class="footer">
   <div class="footer__container container">
     <div class="footer__content">
-      <!-- Brand Section -->
       <div class="footer__brand">
         <div class="footer__logo">
-          <span class="footer__logo--orange">Event</span>
-          <span class="footer__logo--blue">Hub</span>
+          <app-logo></app-logo>
         </div>
         <p class="footer__tagline">
           Making event management seamless and successful.
@@ -14,17 +12,17 @@
 
       <!-- Footer Link Groups -->
       @for (group of footerLinks; track group.title) {
-        @if (group?.links?.length) {
-          <div class="footer__links">
-            <h3 class="footer__title">{{ group?.title }}</h3>
+      @if (group?.links?.length) {
+      <div class="footer__links">
+        <h3 class="footer__title">{{ group?.title }}</h3>
 
-            @for (link of group.links; track link.path) {
-              <a [routerLink]="link?.path" class="footer__link">
-                {{ link?.label }}
-              </a>
-            }
-          </div>
+        @for (link of group.links; track link.path) {
+        <a [routerLink]="link?.path" class="footer__link">
+          {{ link?.label }}
+        </a>
         }
+      </div>
+      }
       }
 
       <!-- Contact / Social Links -->
@@ -32,22 +30,10 @@
         <h3 class="footer__title">Contact</h3>
         <div class="footer__social-icons">
           @for (social of socialLinks; track social.name) {
-            <a
-              [href]="social?.url"
-              [title]="social?.title"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="footer__social-link"
-              [attr.aria-label]="social?.name"
-            >
-              <img
-                [ngSrc]="social.iconPath"
-                [alt]="social?.name"
-                width="20"
-                height="20"
-                loading="lazy"
-              />
-            </a>
+          <a [href]="social?.url" [title]="social?.title" target="_blank" rel="noopener noreferrer"
+            class="footer__social-link" [attr.aria-label]="social?.name">
+            <img [ngSrc]="social.iconPath" [alt]="social?.name" width="20" height="20" loading="lazy" />
+          </a>
           }
         </div>
       </div>
@@ -55,7 +41,7 @@
 
     <!-- Copyright -->
     <div class="footer__copyright">
-      © 2025 EventHub. All rights reserved.
+      © 2025 {{ platformName() }}. All rights reserved.
     </div>
   </div>
 </footer>

@@ -71,6 +71,10 @@ export const API_ENDPOINTS = {
   // Audit endpoints
   GET_AUDIT_LOGS: `${BASE}/auth/audit_logs`,
   GET_AUDIT_LOG_BY_ID: (logId: string) => `${BASE}/audit-logs/${logId}`,
+
+  // Dashboard statistics endpoints
+  EVENT_GRAPH_EVENTS: `${BASE}/event-graph/events`,
+  EVENT_GRAPH_REGISTRATIONS: `${BASE}/event-graph/registrations`,
 } as const;
 
 export const EVENTS_API_ENDPOINTS = {

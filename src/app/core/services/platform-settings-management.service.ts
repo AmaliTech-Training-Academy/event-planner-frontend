@@ -47,6 +47,30 @@ export class PlatformSettingsService {
     private readonly _errorHandlerService: ErrorHandlerService
   ) {}
 
+  // Add getter for platform name
+  public get platformName(): string {
+    const settings = this._securitySettings$.getValue();
+    return settings?.platformName || 'Event Hub';
+  }
+
+  // Add getter for platform URL
+  public get platformUrl(): string {
+    const settings = this._securitySettings$.getValue();
+    return settings?.platformUrl || '';
+  }
+
+  // Add getter for platform description
+  public get platformDescription(): string {
+    const settings = this._securitySettings$.getValue();
+    return settings?.platformDescription || '';
+  }
+
+  // Add getter for contact email
+  public get contactEmail(): string {
+    const settings = this._securitySettings$.getValue();
+    return settings?.contactEmail || '';
+  }
+
   public loadSecuritySettings(): Observable<SecuritySettingsResponse | null> {
     this._setLoading(true);
     return this._platformSettingsBackend.getSecuritySettings().pipe(

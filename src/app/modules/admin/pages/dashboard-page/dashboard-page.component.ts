@@ -4,6 +4,7 @@ import {
   OnInit,
   inject,
   signal,
+  computed,
 } from '@angular/core';
 import { LayoutService } from '../../../../core/services/layout.service';
 import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
@@ -22,6 +23,11 @@ import {
 import { TrafficListComponent } from './components/traffic-list/traffic-list.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { UserManagementService } from '../../../../core/services/user-management.service';
+import { DashboardStatsBackendService } from '../../../../core/services/backend/dashboard-stats-backend.service';
+import {
+  EventMonthlyDataPoint,
+  RegistrationMonthlyDataPoint,
+} from '../../../../core/models/dashboard/dashboard-stats-response.model';
 
 interface DashboardCard {
   readonly title: string;
@@ -56,33 +62,46 @@ interface TrafficByWebsite {
 export class DashboardPageComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
   private readonly _userService = inject(UserManagementService);
+  private readonly _dashboardStatsService = inject(
+    DashboardStatsBackendService
+  );
 
-  private readonly _staticCards: DashboardCard[] = [
-  
+  private readonly _staticCards: DashboardCard[] = [];
+  private readonly _monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
-  // Dashboard cards signal
   protected readonly dashboardCards = signal<DashboardCard[]>([]);
 
-  protected readonly totalUsersData: TimeSeriesDataPoint[] = [
-    { month: 'Jan', value: 12000 },
-    { month: 'Feb', value: 8000 },
-    { month: 'Mar', value: 15000 },
-    { month: 'Apr', value: 25000 },
-    { month: 'May', value: 28000 },
-    { month: 'Jun', value: 22000 },
-    { month: 'Jul', value: 24000 },
-  ];
+  protected readonly visibleDashboardCards = computed(() => {
+    const allowed = ['Total Users', 'Active Organizers', 'Admin', 'Deactivated'];
+    return this.dashboardCards().filter((c) => allowed.includes(c.title));
+  });
 
-  protected readonly totalEventsData: TimeSeriesDataPoint[] = [
-    { month: 'Jan', value: 5000 },
-    { month: 'Feb', value: 13000 },
-    { month: 'Mar', value: 12000 },
-    { month: 'Apr', value: 20000 },
-    { month: 'May', value: 7000 },
-    { month: 'Jun', value: 15000 },
-    { month: 'Jul', value: 30000 },
-  ];
+  // ------------------------------------------------------------------------
+  // TIME SERIES DATA (from API) - Separated by year
+  // ------------------------------------------------------------------------
+  protected readonly totalUsersThisYear = signal<TimeSeriesDataPoint[]>([]);
+  protected readonly totalUsersLastYear = signal<TimeSeriesDataPoint[]>([]);
+  protected readonly totalEventsThisYear = signal<TimeSeriesDataPoint[]>([]);
+  protected readonly totalEventsLastYear = signal<TimeSeriesDataPoint[]>([]);
+
+  protected readonly usersMaxValue = signal<number | undefined>(undefined);
+  protected readonly eventsMaxValue = signal<number | undefined>(undefined);
+
+  protected readonly isLoadingUsers = signal(false);
+  protected readonly isLoadingEvents = signal(false);
 
   protected readonly trafficByDevice: TrafficByDevice[] = [
     { device: 'Linux', value: 17500, color: '#9CA3AF' },
@@ -102,12 +121,53 @@ export class DashboardPageComponent implements OnInit {
     { website: 'YouTube', percentage: 8, color: '#FFF7ED' },
   ];
 
-  protected readonly userStatistics: UserStatistics[] = [
-    { category: 'Attendees', percentage: 52.1, color: '#FF6B35' },
-    { category: 'Organizers', percentage: 22.8, color: '#374151' },
-    { category: 'Co-organizers', percentage: 13.9, color: '#6B7280' },
-    { category: 'Other', percentage: 11.2, color: '#9CA3AF' },
-  ];
+  // ------------------------------------------------------------------------
+  // UPDATED USER STATISTICS (Donut chart)
+  // ------------------------------------------------------------------------
+  protected readonly userStatistics = computed<UserStatistics[]>(() => {
+    const cards = this.dashboardCards();
+
+    const organizers =
+      cards.find((c) => c.title === 'Active Organizers')?.count || 0;
+
+    const totalUsers = cards.find((c) => c.title === 'Total Users')?.count || 0;
+    const deactivated = cards.find((c) => c.title === 'Deactivated')?.count || 0;
+    const activeUsers = Math.max(0, totalUsers - deactivated);
+
+    const admin = cards.find((c) => c.title === 'Admin')?.count || 0;
+
+    const other = cards.find((c) => c.title === 'Other Users')?.count || 0;
+
+    const totalActive = organizers + activeUsers + admin + other;
+
+    if (totalActive === 0) return [];
+
+    const pct = (value: number) =>
+      Number(((value / totalActive) * 100).toFixed(1));
+
+    return [
+      {
+        category: 'Admin',
+        percentage: pct(admin),
+        color: '#D97543', // Burnt orange from design
+      },
+      {
+        category: 'Organizers',
+        percentage: pct(organizers),
+        color: '#3B3B3B', // Darkest gray from design
+      },
+      {
+        category: 'Active Users',
+        percentage: pct(activeUsers),
+        color: '#6B6B6B', // Medium gray from design
+      },
+      {
+        category: 'Other',
+        percentage: pct(other),
+        color: '#5C5C5C', // Dark gray from design
+      },
+    ];
+  });
 
   protected readonly activeChartTab = signal<'users' | 'events'>('users');
 
@@ -116,16 +176,167 @@ export class DashboardPageComponent implements OnInit {
     this._layoutService.logoSrc.set('icons/editor-icon.png');
     this._layoutService.logoAlt.set('Dashboard Icon');
 
-    // Subscribe to live user card updates
+    // Live card updates
     this._userService.userCards$.subscribe((cards) => {
       this.dashboardCards.set([...cards, ...this._staticCards]);
     });
 
-    this._userService.fetchAllUsers(0, 10).subscribe();
+    // Fetch more users to get better statistics (fetch first 100 users)
+    this._userService.fetchAllUsers(0, 100).subscribe();
+
+    // Fetch chart data from API
+    this._fetchRegistrationData();
+    this._fetchEventData();
+  }
+
+
+  private _fetchRegistrationData(): void {
+    this.isLoadingUsers.set(true);
+    this._dashboardStatsService.getRegistrationGraphData().subscribe({
+      next: (response) => {
+        if (response.data?.monthlyData) {
+          const { thisYear, lastYear } = this._transformRegistrationData(
+            response.data.monthlyData
+          );
+          this.totalUsersThisYear.set(thisYear);
+          this.totalUsersLastYear.set(lastYear);
+
+          // Set maxValue from metadata
+          if (response.data.metadata?.maxValue !== undefined) {
+            this.usersMaxValue.set(response.data.metadata.maxValue);
+          }
+        }
+        this.isLoadingUsers.set(false);
+      },
+      error: (error) => {
+        console.error('Error fetching registration data:', error);
+        this.totalUsersThisYear.set(this._createEmptyMonthData());
+        this.totalUsersLastYear.set(this._createEmptyMonthData());
+        this.usersMaxValue.set(undefined);
+        this.isLoadingUsers.set(false);
+      },
+    });
+  }
+
+  /**
+   * Fetches event creation statistics from the API
+   */
+  private _fetchEventData(): void {
+    this.isLoadingEvents.set(true);
+    this._dashboardStatsService.getEventGraphData().subscribe({
+      next: (response) => {
+        if (response.data?.monthlyData) {
+          const { thisYear, lastYear } = this._transformEventData(
+            response.data.monthlyData
+          );
+          this.totalEventsThisYear.set(thisYear);
+          this.totalEventsLastYear.set(lastYear);
+
+          // Set maxValue from metadata
+          if (response.data.metadata?.maxValue !== undefined) {
+            this.eventsMaxValue.set(response.data.metadata.maxValue);
+          }
+        }
+        this.isLoadingEvents.set(false);
+      },
+      error: (error) => {
+        console.error('Error fetching event data:', error);
+        this.totalEventsThisYear.set(this._createEmptyMonthData());
+        this.totalEventsLastYear.set(this._createEmptyMonthData());
+        this.eventsMaxValue.set(undefined);
+        this.isLoadingEvents.set(false);
+      },
+    });
+  }
+
+  /**
+   * Transforms registration API response to chart format
+   * Separates this year and last year data with all 12 months
+   */
+  private _transformRegistrationData(
+    monthlyData: RegistrationMonthlyDataPoint[][]
+  ): { thisYear: TimeSeriesDataPoint[]; lastYear: TimeSeriesDataPoint[] } {
+    // Initialize all 12 months with 0 values
+    const thisYearData = this._createEmptyMonthData();
+    const lastYearData = this._createEmptyMonthData();
+
+    if (!monthlyData || monthlyData.length === 0) {
+      return { thisYear: thisYearData, lastYear: lastYearData };
+    }
+
+    // Process this year's data (monthlyData[0])
+    if (monthlyData[0] && Array.isArray(monthlyData[0])) {
+      monthlyData[0].forEach((item) => {
+        const monthIndex = item.month - 1; // Convert 1-12 to 0-11
+        if (monthIndex >= 0 && monthIndex < 12) {
+          thisYearData[monthIndex].value = item.totalRegistrations;
+        }
+      });
+    }
+
+    // Process last year's data (monthlyData[1]) if it exists
+    if (monthlyData[1] && Array.isArray(monthlyData[1])) {
+      monthlyData[1].forEach((item) => {
+        const monthIndex = item.month - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          lastYearData[monthIndex].value = item.totalRegistrations;
+        }
+      });
+    }
+
+    return { thisYear: thisYearData, lastYear: lastYearData };
+  }
+
+  /**
+   * Transforms event API response to chart format
+   * Separates this year and last year data with all 12 months
+   */
+  private _transformEventData(monthlyData: EventMonthlyDataPoint[][]): {
+    thisYear: TimeSeriesDataPoint[];
+    lastYear: TimeSeriesDataPoint[];
+  } {
+    // Initialize all 12 months with 0 values
+    const thisYearData = this._createEmptyMonthData();
+    const lastYearData = this._createEmptyMonthData();
+
+    if (!monthlyData || monthlyData.length === 0) {
+      return { thisYear: thisYearData, lastYear: lastYearData };
+    }
+
+    // Process this year's data (monthlyData[0])
+    if (monthlyData[0] && Array.isArray(monthlyData[0])) {
+      monthlyData[0].forEach((item) => {
+        const monthIndex = item.month - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          thisYearData[monthIndex].value = item.totalEventsCreated;
+        }
+      });
+    }
+
+    // Process last year's data (monthlyData[1]) if it exists
+    if (monthlyData[1] && Array.isArray(monthlyData[1])) {
+      monthlyData[1].forEach((item) => {
+        const monthIndex = item.month - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          lastYearData[monthIndex].value = item.totalEventsCreated;
+        }
+      });
+    }
+
+    return { thisYear: thisYearData, lastYear: lastYearData };
+  }
+
+  /**
+   * Creates an empty dataset with all 12 months initialized to 0
+   */
+  private _createEmptyMonthData(): TimeSeriesDataPoint[] {
+    return this._monthNames.map((month) => ({
+      month,
+      value: 0,
+    }));
   }
 
   protected switchChartTab(tab: 'users' | 'events'): void {
     this.activeChartTab.set(tab);
   }
 }
-

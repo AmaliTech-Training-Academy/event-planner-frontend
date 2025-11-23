@@ -4,6 +4,7 @@ import {
   effect,
   inject,
   signal,
+  computed,
   DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -73,6 +74,11 @@ export class UserManagementPageComponent implements OnInit {
   });
   protected readonly currentPage = toSignal(this._userService.currentPage$, {
     initialValue: 0,
+  });
+
+  protected readonly visibleUserCards = computed(() => {
+    const allowed = ['Total Users', 'Active Organizers', 'Admin', 'Deactivated'];
+    return this.userCards().filter((c) => allowed.includes(c.title));
   });
 
   private readonly _currentSearch = signal<string>('');
@@ -287,7 +293,7 @@ export class UserManagementPageComponent implements OnInit {
       });
   }
 
-  protected onRowExpanded(user: User): void {}
+  protected onRowExpanded(user: User): void { }
 
   private _openInviteModal(): void {
     this.openInviteModal();

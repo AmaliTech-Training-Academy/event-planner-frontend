@@ -1,7 +1,5 @@
-// shared/components/logo/logo.component.ts
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlatformStateService } from '@app/core/services/platform-state.service';
 
 @Component({
   selector: 'app-logo',
@@ -11,10 +9,5 @@ import { PlatformStateService } from '@app/core/services/platform-state.service'
   styleUrls: ['./logo.component.scss'],
 })
 export class LogoComponent {
-  private readonly _platformStateService: PlatformStateService =
-    inject(PlatformStateService);
-
-  // Use the computed platform name from the state service
-  public readonly platformName = this._platformStateService.platformName;
-  public readonly platformLogo = this._platformStateService.platformLogo;
+  public readonly platformName = 'EventHub';
 }
