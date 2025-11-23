@@ -1,5 +1,6 @@
 @use "typography" as *;
 @use "variables" as *;
+@use "media_query" as *;
 
 .set-price-container {
     display: flex;
@@ -10,6 +11,17 @@
     width: 588px;
     border-radius: 16px;
     padding: 24px;
+
+      @include sm{
+        width: 90%;
+        margin: auto;
+    }
+
+     @include md{
+        width: 90%;
+        margin: auto;
+    }
+
 
     img.icon {
         width: 56px;

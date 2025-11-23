@@ -1,5 +1,6 @@
 @use "typography" as *;
 @use "variables" as *;
+@use "media_query" as *;
 .zoom-connect {
     display: flex;
     flex-direction: column;
@@ -11,6 +12,11 @@
     text-align: center;
     gap: 24px;
 
+
+     @include sm{
+        width: 90%;
+        margin: auto;
+    }
     .content {
         display: flex;
         flex-direction: column;
