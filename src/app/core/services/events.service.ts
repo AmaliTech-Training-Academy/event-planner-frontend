@@ -4,7 +4,7 @@ import { EventBackendServiceService } from './backend/event-backend-service.serv
 import { ErrorHandlerService } from './error-handler.service';
 import { Router } from '@angular/router';
 import { APP_ROUTES } from '../constants/app-routes.constants';
-import { GetEventProps, RegisterEventBody } from '../models/event.model';
+import { EventDetail, GetEventProps, RegisterEventBody } from '../models/event.model';
 import { NotificationService } from './notification.service';
 
 @Injectable({
@@ -108,6 +108,40 @@ export class EventsServiceService {
   }
 
 
+  public register(
+    id: string,
+    data: RegisterEventBody,
+    eventData: EventDetail,
+    isFree: boolean = false
+  ) {
+    this.setLoading(true);
+
+    return this.eventBackendService.registerEvent(id, data).pipe(
+      take(1),
+      tap((response) => {
+        if (isFree) {
+          this.notificationService.success("Hurray 🎉, you've successfully registered for this event.")
+          this.router.navigate([APP_ROUTES.EVENT_PAYMENT_SUCCESS], {
+            state: { eventData, eventResponse: response },
+          });
+        }
+      }),
+      map((response) => response),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => { this.setLoading(false); })
+    );
+  }
+
+
+  public getReciept(refrence:string){
+    return this.eventBackendService.getReciept(refrence).pipe(
+      take(1),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => { this.setLoading(false); })
+    )
+  }
+
+
   public myEvents(page: number = 0, pageSize: number = 3) {
     const params = new URLSearchParams();
 
@@ -132,32 +166,6 @@ export class EventsServiceService {
       finalize(() => this.setLoading(false))
     )
   }
-
-  public register(
-    id: string,
-    data: RegisterEventBody,
-    eventData: any,
-    isPaid: boolean = false
-  ) {
-    this.setLoading(true);
-
-    return this.eventBackendService.registerEvent(id, data).pipe(
-      take(1),
-      tap((response) => {
-        if (!isPaid) {
-          this.notificationService.success("Hurray 🎉, you've successfully registered for this event.")
-          this.router.navigate([APP_ROUTES.EVENT_PAYMENT_SUCCESS], {
-            state: { eventData, eventResponse: response },
-          });
-        }
-      }),
-      map((response) => response),
-      catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
-    );
-  }
-
-
 
   private setLoading(isLoading: boolean): void {
     this._loadingStateSubject.next(isLoading);

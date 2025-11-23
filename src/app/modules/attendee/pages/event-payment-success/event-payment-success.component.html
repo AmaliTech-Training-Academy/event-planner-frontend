@@ -18,15 +18,15 @@
       <ul class="details-list">
         <li>
           <span>Event</span>
-          <strong>{{ details.event }}</strong>
+          <strong>{{ details.eventTitle }}</strong>
         </li>
         <li>
           <span>Date</span>
-          <strong>{{ details.date }}</strong>
+          <strong>{{ details.startDate | date }}</strong>
         </li>
         <li>
           <span>Time</span>
-          <strong>{{ details.time }}</strong>
+          <strong>{{ details.startDate | date:'shortTime' }}</strong>
         </li>
         <li>
           <span>Location</span>
@@ -44,9 +44,6 @@
     <footer class="button-group">
       <app-button type="secondary" (click)="onBackToHome()">
         Back To Home
-      </app-button>
-      <app-button type="primary" (click)="onDownloadReceipt()">
-        Download Receipt
       </app-button>
     </footer>
     </div>
