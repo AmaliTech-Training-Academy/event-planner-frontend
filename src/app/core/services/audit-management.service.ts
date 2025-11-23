@@ -29,7 +29,7 @@ export class AuditManagementService {
   constructor(
     private readonly _backend: AuditBackendService,
     private readonly _errorHandler: ErrorHandlerService
-  ) {}
+  ) { }
 
   /**
    * Load paginated audit logs with optional filters
@@ -49,16 +49,8 @@ export class AuditManagementService {
       .pipe(
         tap((data) => {
           this._auditLogsData.next(data);
-          console.log('✅ Audit logs loaded:', {
-            pageNumber: data.pageNumber,
-            pageSize: data.pageSize,
-            totalElements: data.totalElements,
-            totalPages: data.totalPages,
-            currentPageLogs: data.auditListResponse.length,
-          });
         }),
         catchError((err) => {
-          console.error('❌ Failed to load audit logs:', err);
           this._errorHandler.handle(err);
           return throwError(() => err);
         }),
@@ -74,12 +66,11 @@ export class AuditManagementService {
 
     return this._backend.getAuditLogById(logId).pipe(
       tap((data) => {
-        if (data.auditListResponse.length > 0) {
-          this._selectedAuditLog.next(data.auditListResponse[0]);
+        if (data.data.length > 0) {
+          this._selectedAuditLog.next(data.data[0]);
         }
       }),
       catchError((err) => {
-        console.error('❌ Failed to load audit log:', err);
         this._errorHandler.handle(err);
         return throwError(() => err);
       }),
