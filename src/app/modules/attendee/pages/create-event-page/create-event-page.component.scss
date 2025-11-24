@@ -48,7 +48,10 @@
   max-width: 589px;
   width: 100%;
   overflow: hidden;
-
+  
+  @include md {
+    max-width: none;
+  }
   @include sm {
     max-width: none;
   }
@@ -113,8 +116,18 @@
       }
 
       @include sm {
-        @include body-3;
+        display: grid;
+        grid-template-columns: 1fr 1fr; // 2 columns
         gap: $spacing-4;
+        @include body-2;
+
+        > * {
+          width: 100%;
+        }
+
+        > :first-child {
+          grid-column: 1 / -1;
+        }
       }
     }
 
@@ -316,6 +329,9 @@
   width: 100%;
   overflow: hidden;
 
+  @include md {
+    max-width: none;
+  }
   @include sm {
     max-width: none;
   }

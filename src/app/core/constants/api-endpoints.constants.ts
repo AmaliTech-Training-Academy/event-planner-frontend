@@ -110,6 +110,7 @@ export const EVENTS_API_ENDPOINTS = {
     `${BASE}/events/${id}/registrations/overview`,
   MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) =>
     `${BASE}/events/${id}/registrations/search`,
+  REFRENCE_EVENT_INFO: (refrence: string) => `${BASE}/payment/success?reference=${refrence}`
 } as const;
 
 

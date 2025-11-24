@@ -53,11 +53,11 @@ import { Subscription } from 'rxjs';
     PaginationComponent,
     EmptyListMessageComponent,
     LoadingCardComponent
-],
+  ],
   templateUrl: './explore-page.component.html',
   styleUrl: './explore-page.component.scss',
 })
-export class ExplorePageComponent implements OnInit , OnDestroy {
+export class ExplorePageComponent implements OnInit, OnDestroy {
 
   protected allEvents = signal<GetEventsResponse | null>(null);
   protected currentPage = signal<number>(0);
@@ -160,9 +160,9 @@ export class ExplorePageComponent implements OnInit , OnDestroy {
     }
   }
 
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.loadData();
-   this.subscription = this.eventService.loading$.subscribe({
+    this.subscription = this.eventService.loading$.subscribe({
       next: (loading_) => {
         this.loading.set(loading_)
       }
@@ -170,15 +170,10 @@ export class ExplorePageComponent implements OnInit , OnDestroy {
   }
 
   ngOnDestroy(): void {
-      this.subscription.unsubscribe()
+    this.subscription.unsubscribe()
   }
 
   private loadData(): void {
-    this.eventService.getEvents({ pageSize: this.EVENTS_PER_PAGE }).subscribe({
-      next: (events) => {
-        this.allEvents.set(events)
-      },
-    })
     this.eventToggles.set(MOCK_EVENT_TOGGLES);
     this.eventTypeOptions.set(MOCK_EVENT_TYPE_OPTIONS);
   }
@@ -313,11 +308,11 @@ export class ExplorePageComponent implements OnInit , OnDestroy {
     this.selectedDate.set(date);
     this.showDatePicker.set(false);
   }
-  
 
 
-  protected onPageChange(number_:number){
-   this.currentPage.set(number_ - 1)
+
+  protected onPageChange(number_: number) {
+    this.currentPage.set(number_ - 1)
   }
 
 

@@ -4,7 +4,7 @@ import { EventBackendServiceService } from './backend/event-backend-service.serv
 import { ErrorHandlerService } from './error-handler.service';
 import { Router } from '@angular/router';
 import { APP_ROUTES } from '../constants/app-routes.constants';
-import { GetEventProps, RegisterEventBody } from '../models/event.model';
+import { EventDetail, GetEventProps, RegisterEventBody } from '../models/event.model';
 import { NotificationService } from './notification.service';
 
 @Injectable({
@@ -12,7 +12,7 @@ import { NotificationService } from './notification.service';
 })
 export class EventsServiceService {
 
-  private _loadingStateSubject = new BehaviorSubject<boolean>(false);
+  private _loadingStateSubject = new BehaviorSubject<boolean>(true);
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
   constructor(private readonly eventBackendService: EventBackendServiceService, private readonly errorHandlerService: ErrorHandlerService, private readonly router: Router, private readonly notificationService: NotificationService) { }
@@ -98,11 +98,20 @@ export class EventsServiceService {
     )
   }
 
+  public updateEvent(id: string, formData: FormData) {
+    this.setLoading(true)
+    return this.eventBackendService.updateEvent(id, formData).pipe(
+      take(1),
+      catchError(err => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    )
+  }
+
 
   public register(
     id: string,
     data: RegisterEventBody,
-    eventData: any,
+    eventData: EventDetail,
     isFree: boolean = false
   ) {
     this.setLoading(true);
@@ -112,15 +121,24 @@ export class EventsServiceService {
       tap((response) => {
         if (isFree) {
           this.notificationService.success("Hurray 🎉, you've successfully registered for this event.")
-          this.router.navigate([APP_ROUTES.PAYMENT_SUCCESS], {
+          this.router.navigate([APP_ROUTES.EVENT_PAYMENT_SUCCESS], {
             state: { eventData, eventResponse: response },
           });
         }
       }),
       map((response) => response),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => { this.setLoading(false); })
     );
+  }
+
+
+  public getReciept(refrence:string){
+    return this.eventBackendService.getReciept(refrence).pipe(
+      take(1),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => { this.setLoading(false); })
+    )
   }
 
 

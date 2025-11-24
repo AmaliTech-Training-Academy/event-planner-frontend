@@ -84,7 +84,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
   public readonly registrations = signal<Registration[]>([]);
-
   protected readonly availableEvents = signal<{ id: number, title: string }[]>([]);
   protected readonly currentEventId = signal<number | null>(null);
   private readonly _manageService = inject(ManageEventService);
@@ -356,10 +355,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     });
   }
   protected onEdit(): void {
-    this._router.navigate([APP_ROUTES.EDIT_EVENT((this.currentEventId()||0).toString())], {
-      state: {
-        eventId: this.currentEventId()
-      }
-    })
+    this._router.navigate([APP_ROUTES.EDIT_EVENT(this.currentEventId()?.toString() || '')])
   }
 }

@@ -1,0 +1,51 @@
+@if(loading() && !submitting()){
+<app-loading-card></app-loading-card>
+}@else {
+<form [formGroup]="form" class="container">
+ <div class="header-action">
+    <div></div>
+    <app-button (onClick)="goBack()" type="secondary">Go back</app-button>
+ </div>
+    <app-upload-event-flyer [flyerPreview]="flyerPreview" (selectedFlyer)="onFlyerImageSelected($event)"
+        title="Update Event Flyer"></app-upload-event-flyer>
+
+    <div class="content">
+        <section class="basic-info">
+            <h2>Event Information</h2>
+            <app-input formControlName="title" label="Event Title"></app-input>
+            <app-location-search formControlName="location" label="Add event location"
+                placeholder="Type location here"></app-location-search>
+            <div class="field">
+                <label for="description">Add event description</label>
+                <textarea formControlName="description" placeholder="Type description here"></textarea>
+                <app-form-error></app-form-error>
+            </div>
+
+            @if (eventType === 'VIRTUAL') {
+            <app-input label="Meeting Link"></app-input>
+            }
+
+        </section>
+        <section class="tickets">
+            <h2>Ticket Information</h2>
+
+            <div class="ticket-list" formArrayName="tickets">
+                @for (ticket of tickets.controls; track $index) {
+                <div [formGroup]="ticket">
+                    <app-edit-ticket-card (removeGroup)="removeTicket($index)" [formGroup]="ticket"
+                        [ticketGroup]="ticket"></app-edit-ticket-card>
+                </div>
+                }
+            </div>
+
+            <app-button (onClick)="addTicket()" type="secondary">Add Ticket</app-button>
+
+        </section>
+    </div>
+
+    <div class="form-action">
+        <app-button [disabled]="form.invalid || submitting()" (onClick)="sumbitUpdate()">Update Event</app-button>
+        <app-button (onClick)="goBack()" type="secondary">Go back</app-button>
+    </div>
+</form>
+}
