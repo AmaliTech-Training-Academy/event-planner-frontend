@@ -63,7 +63,6 @@ export interface TableFilter {
   imports: [
     CommonModule,
     FormsModule,
-    NgOptimizedImage,
     FilterSelectComponent,
     ButtonComponent,
     CheckboxComponent,

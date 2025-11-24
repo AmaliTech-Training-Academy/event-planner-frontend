@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ExplorePageComponent } from './explore-page.component';
 
-describe('MyEventPageComponent', () => {
+describe('ExplorePageComponent', () => {
   let component: ExplorePageComponent;
   let fixture: ComponentFixture<ExplorePageComponent>;
 

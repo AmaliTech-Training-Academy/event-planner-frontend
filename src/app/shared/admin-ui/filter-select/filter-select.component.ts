@@ -33,7 +33,6 @@ interface FilterOption {
     FormsModule,
     ReactiveFormsModule,
     FormErrorComponent,
-    ButtonComponent,
   ],
   templateUrl: './filter-select.component.html',
   styleUrls: ['./filter-select.component.scss'],

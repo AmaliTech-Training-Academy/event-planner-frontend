@@ -53,11 +53,7 @@ export class AdminSidebarComponent {
           iconPath: 'icons/users-icon.png',
           route: '/admin/users',
         },
-        {
-          label: 'Saved Invites',
-          iconPath: 'icons/save-icon.png',
-          route: '/admin/saved-invites',
-        },
+    
         {
           label: 'Event Overview',
           iconPath: 'icons/calender-icon.png',
@@ -78,11 +74,7 @@ export class AdminSidebarComponent {
           iconPath: 'icons/social-icon.png',
           route: '/admin/transactions',
         },
-        {
-          label: 'Reports',
-          iconPath: 'icons/action-icon.png',
-          route: '/admin/reports',
-        },
+       
       ],
     },
   ]);

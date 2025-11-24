@@ -159,7 +159,7 @@
         .invite-btn {
           app-button {
             button {
-              padding: 12px 28px;
+              padding: 12px 8px;
               min-width: 180px;
               font-weight: 600;
               font-size: 1rem;
@@ -293,9 +293,9 @@
         }
 
         &__badge {
-          min-width: 90px;
-          font-size: 0.8125rem;
-          padding: 5px 14px;
+          max-width: 90px;
+          font-size: 0.7125rem;
+          padding: 5px 4px !important;
         }
       }
     }

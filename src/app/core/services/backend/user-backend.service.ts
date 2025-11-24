@@ -34,7 +34,7 @@ export interface UserUpdateRequestPayload {
 
 @Injectable({ providedIn: 'root' })
 export class UserBackendService {
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   public getAllUsers(
     page: number = 0,

@@ -72,7 +72,7 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       formattedDate: this._formatDate(transaction.transactionTime),
       formattedAmount: this._formatAmount(transaction.amount),
       displayPaymentMethod: transaction.paymentMethod || '-',
-      truncatedEmail: this._truncateText(transaction.attendeeEmail, 10),
+      truncatedEmail: this._truncateText(transaction.attendeeEmail, 5),
       truncatedEventName: transaction.eventName,
       truncatedTransactionId: this._truncateText(transaction.transactionId, 5),
     }));
