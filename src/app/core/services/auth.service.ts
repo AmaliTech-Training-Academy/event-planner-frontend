@@ -240,9 +240,8 @@ export class AuthService {
 
   public updateUser(userId: string, data: UpdateUserPayload) {
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value as any);
-    });
+    const formDataText:string = JSON.stringify({...data,profilePicture :'' })
+    formData.append('userUpdateRequest',formDataText)
     this.setLoading(true);
     return this.userBackendService.updateUserWithFormData(userId, formData).pipe(
       take(1),
