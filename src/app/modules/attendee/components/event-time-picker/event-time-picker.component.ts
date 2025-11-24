@@ -1,37 +1,52 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, input, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  input,
+  OnInit,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { EventBackendServiceService } from '../../../../core/services/backend/event-backend-service.service';
-import { TimePickerComponent } from "../../../../shared/components/time-picker/time-picker.component";
-import { CreateEventDateComponent } from "../create-event-date/create-event-date.component";
+import { TimePickerComponent } from '../../../../shared/components/time-picker/time-picker.component';
+import { CreateEventDateComponent } from '../create-event-date/create-event-date.component';
 
 @Component({
   selector: 'app-event-time-picker',
-  imports: [CreateEventDateComponent, TimePickerComponent, CommonModule, ReactiveFormsModule],
+  imports: [
+    CreateEventDateComponent,
+    TimePickerComponent,
+    CommonModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: './event-time-picker.component.html',
-  styleUrl: './event-time-picker.component.scss'
+  styleUrl: './event-time-picker.component.scss',
 })
 export class EventTimePickerComponent implements OnInit {
   public readonly control = input<FormControl | undefined>(undefined);
 
   protected isOpen: boolean = false;
-  protected selectedTime: string = "";
-  protected readonly selectableTime: string[] = this.generateTimes()
+  protected selectedTime: string = '';
+  protected readonly selectableTime: string[] = this.generateTimes();
 
-  constructor(private readonly elementRef: ElementRef, private readonly backendService: EventBackendServiceService) { }
+  constructor(
+    private readonly elementRef: ElementRef,
+    private readonly backendService: EventBackendServiceService
+  ) {}
 
   ngOnInit(): void {
     const currentValue = this.control()?.value;
     if (currentValue) {
-      this.selectedTime = this.selectableTime.find((time) => time === currentValue) || '';
+      this.selectedTime =
+        this.selectableTime.find((time) => time === currentValue) || '';
     }
   }
 
-  protected toggleState() {
+  protected toggleState(): void {
     this.isOpen = !this.isOpen;
   }
 
-  protected selectTime(time: string) {
+  protected selectTime(time: string): void {
     this.selectedTime = time;
     if (this.control()) {
       this.control()?.setValue(time);
@@ -56,7 +71,7 @@ export class EventTimePickerComponent implements OnInit {
   }
 
   @HostListener('document:click', ['$event'])
-  protected handleOutsideClick(event: MouseEvent) {
+  protected handleOutsideClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
 
     if (this.isOpen && !this.elementRef.nativeElement.contains(target)) {

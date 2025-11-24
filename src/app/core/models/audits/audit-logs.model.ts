@@ -1,3 +1,4 @@
+// Interfaces (no changes needed)
 export interface AuditLog {
   id: string;
   first_name?: string;
@@ -42,7 +43,7 @@ export function mapAuditLogToTableData(
       firstName: '',
       lastName: '',
       email: '',
-      avatar: `https://i.pravatar.cc/150?img=1`,
+      avatar: 'https://i.pravatar.cc/150?img=1',
       ipAddress: '',
       timestamp: '',
       formattedTimestamp: 'Invalid Date',
@@ -88,8 +89,15 @@ export function mapAuditLogToTableData(
   const status =
     log.status?.toLowerCase() === 'failed' ? 'Failed' : 'Successful';
 
-  const avatarSeed = log.id || log.email || 'default';
-  const avatarIndex = Math.floor(Math.random() * 70) + 1;
+  // Generate consistent avatar based on email or id
+  const avatarSeed = log.email || log.id || 'default';
+  // Use a hash of the seed to get a consistent number
+  let hash = 0;
+  for (let i = 0; i < avatarSeed.length; i++) {
+    hash = (hash << 5) - hash + avatarSeed.charCodeAt(i);
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  const avatarIndex = (Math.abs(hash) % 70) + 1;
 
   return {
     id: log.id || '',
@@ -98,7 +106,6 @@ export function mapAuditLogToTableData(
     lastName,
     email: log.email || '',
     avatar: `https://i.pravatar.cc/150?img=${avatarIndex}`,
-
     ipAddress: log.ipAddress || 'N/A',
     timestamp: dateString || '',
     formattedTimestamp,
