@@ -359,8 +359,7 @@ export class UserManagementService {
       tap((response: InviteUserResponse) => {
         this.invalidateCache();
       }),
-      catchError((err) => this._errorHandler.handle(err)
-      ),
+      catchError((err) => this._errorHandler.handle(err)),
       finalize(() => this._setLoading(false))
     );
   }
@@ -377,7 +376,6 @@ export class UserManagementService {
   private _invalidateSearchCache(): void {
     this._searchCache.clear();
   }
-
 
   private _updateCardsFromUserList(users: User[]): void {
     const totalUsers = users.length;
@@ -402,7 +400,6 @@ export class UserManagementService {
       (u) => u.status === 'Inactive'
     ).length;
 
-
     const accountedFor =
       totalOrganizers + totalCoOrganizers + totalAdmin + totalAttendees;
     const totalOthers = Math.max(
@@ -423,8 +420,6 @@ export class UserManagementService {
     this._updateUserCards();
   }
 
-
-
   private _updateUserCards(data?: Partial<UserStats>): void {
     const stats: UserStats =
       data?.totalUsers != null ? (data as UserStats) : this._userStats;
@@ -434,7 +429,10 @@ export class UserManagementService {
     }
 
     // Calculate Admin count as: Total Users - Active Organizers
-    const calculatedAdmin = Math.max(0, stats.totalUsers - stats.totalOrganizers);
+    const calculatedAdmin = Math.max(
+      0,
+      stats.totalUsers - stats.totalOrganizers
+    );
 
     const cards: UserCardData[] = [
       {
