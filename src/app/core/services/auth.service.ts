@@ -240,7 +240,13 @@ export class AuthService {
 
   public updateUser(userId: string, data: UpdateUserPayload) {
     const formData = new FormData();
-    const formDataText:string = JSON.stringify({...data,profilePicture :'' })
+
+    const formDataText:string = JSON.stringify({
+      phone: data.phone,
+      email:data.email,
+      fullName: data.fullName,
+      address: data.address
+     })
     formData.append('userUpdateRequest',formDataText)
     this.setLoading(true);
     return this.userBackendService.updateUserWithFormData(userId, formData).pipe(
