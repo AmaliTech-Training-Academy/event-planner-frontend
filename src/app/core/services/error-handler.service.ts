@@ -38,9 +38,13 @@ let message = "Please try again later.";
         case 404:
           message = 'The requested resource was not found.';
           break;
+        
+        
+        
         case 500:
           message = 'Server error. Please try again later.';
           break;
+        
         default:
           message = error.error?.message || `Unexpected error: ${error.status}`;
       }

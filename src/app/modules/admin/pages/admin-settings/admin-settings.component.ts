@@ -32,11 +32,11 @@ import {
 } from '@app/core/constants/admin-settings.constants';
 
 @Component({
-  selector: 'app-admin-settings',
+  selector: 'app-admin-settings-page',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ButtonComponent, InputComponent],
-  templateUrl: './admin-settings.component.html',
-  styleUrl: './admin-settings.component.scss',
+  templateUrl: './admin-settings-page.component.html',
+  styleUrls: ['./admin-settings-page.component.scss'],
 })
 export class AdminSettingsComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);

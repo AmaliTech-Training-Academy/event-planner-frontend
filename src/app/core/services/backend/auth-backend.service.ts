@@ -9,7 +9,6 @@ import {
 import { User } from '../../models/user.model';
 import { AcceptInvitationPayload } from '../../models/accept-invitation.model';
 
-
 export interface EventInvitationPayload {
   fullName: string;
   invitationCode: string;
@@ -19,20 +18,20 @@ export interface EventInvitationPayload {
 interface UpdateProfilePayload {
   fullName?: string;
   email?: string;
-  phone?:string;
-  address?:string;
+  phone?: string;
+  address?: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthBackendService {
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
   public login(email: string, password: string) {
     return this.http.post(API_ENDPOINTS.AUTH_LOGIN, { email, password });
   }
-  
+
   public adminLogin(email: string, password: string) {
     return this.http.post(API_ENDPOINTS.AUTH_ADMIN_LOGIN, { email, password });
   }
@@ -48,21 +47,21 @@ export class AuthBackendService {
       { fullName, email, password, confirmPassword }
     );
   }
-  
+
   public verifyEmail(otp: string, email: string) {
     return this.http.post<AuthResponseBody<OtpBodyData>>(
       API_ENDPOINTS.AUTH_VERIFY_OTP,
       { otp, email }
     );
   }
-  
+
   public forgotPassword(email: string) {
     return this.http.post<AuthResponseBody<unknown>>(
       API_ENDPOINTS.AUTH_FORGOT_PASSWORD,
       { email }
     );
   }
-  
+
   public resendOtp(email: string) {
     return this.http.post(API_ENDPOINTS.AUTH_RESEND_OTP, { email });
   }
@@ -81,7 +80,7 @@ export class AuthBackendService {
   }
 
   public refreshToken() {
-    return this.http.post(API_ENDPOINTS.AUTH_REFRESH_TOKEN,{})
+    return this.http.post(API_ENDPOINTS.AUTH_REFRESH_TOKEN, {});
   }
 
   public getAuthenticatedUser() {
@@ -101,8 +100,8 @@ export class AuthBackendService {
     return this.http.post<AuthResponseBody<{ profilePicture: string }>>(
       API_ENDPOINTS.UPLOAD_AVATAR(userId),
       formData
-    )
-  };
+    );
+  }
   public acceptInvitation(payload: AcceptInvitationPayload) {
     return this.http.post<AuthResponseBody<OtpBodyData>>(
       API_ENDPOINTS.ACCEPT_INVITATION,
@@ -110,11 +109,7 @@ export class AuthBackendService {
     );
   }
 
- 
- public acceptEventInvitation(payload: EventInvitationPayload) {
-    return this.http.post<void>(
-      API_ENDPOINTS.USER_ACCEPT_INVITATION,
-      payload
-    );
+  public acceptEventInvitation(payload: EventInvitationPayload) {
+    return this.http.post<void>(API_ENDPOINTS.USER_ACCEPT_INVITATION, payload);
   }
 }
