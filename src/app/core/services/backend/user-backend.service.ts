@@ -89,6 +89,13 @@ export class UserBackendService {
     payload: InviteUserPayload
   ): Observable<InviteUserResponse> {
     return this.http.post<InviteUserResponse>(
+      API_ENDPOINTS.ADMIN_INVITE_USER,
+      payload
+    );
+  }
+
+  public eventInviteUser(payload: InviteUserPayload): Observable<void> {
+    return this.http.post<void>(
       API_ENDPOINTS.INVITE_USER,
       payload
     );

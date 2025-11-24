@@ -327,7 +327,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       message: formData.message || '',
     };
 
-    this._userBackendService.inviteUsers(payload as any).subscribe({
+    this._userBackendService.eventInviteUser(payload as any).subscribe({
       next: () => {
         const roleValue = payload.invitees[0].role;
         this.isSubmitting.set(false);
