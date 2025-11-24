@@ -26,6 +26,7 @@ export interface AuditLogTableData {
   lastName: string;
   email: string;
   avatar?: string;
+  initials?: string;
   ipAddress: string;
   timestamp: string;
   formattedTimestamp: string;
@@ -43,7 +44,8 @@ export function mapAuditLogToTableData(
       firstName: '',
       lastName: '',
       email: '',
-      avatar: 'https://i.pravatar.cc/150?img=1',
+      avatar: '',
+      initials: '',
       ipAddress: '',
       timestamp: '',
       formattedTimestamp: 'Invalid Date',
@@ -87,15 +89,15 @@ export function mapAuditLogToTableData(
   const status =
     log.status?.toLowerCase() === 'failed' ? 'Failed' : 'Successful';
 
-  // Generate consistent avatar based on email or id
-  const avatarSeed = log.email || log.id || 'default';
-  // Use a hash of the seed to get a consistent number
-  let hash = 0;
-  for (let i = 0; i < avatarSeed.length; i++) {
-    hash = (hash << 5) - hash + avatarSeed.charCodeAt(i);
-    hash = hash & hash; // Convert to 32-bit integer
+  // Generate initials
+  let initials = '';
+  if (firstName && lastName) {
+    initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  } else if (firstName) {
+    initials = firstName.substring(0, 2).toUpperCase();
+  } else if (log.email) {
+    initials = log.email.substring(0, 2).toUpperCase();
   }
-  const avatarIndex = (Math.abs(hash) % 70) + 1;
 
   return {
     id: log.id || '',
@@ -103,7 +105,8 @@ export function mapAuditLogToTableData(
     firstName,
     lastName,
     email: log.email || '',
-    avatar: `https://i.pravatar.cc/150?img=${avatarIndex}`,
+    avatar: '', // No avatar from API for audit logs usually
+    initials,
     ipAddress: log.ipAddress || 'N/A',
     timestamp: dateString || '',
     formattedTimestamp,

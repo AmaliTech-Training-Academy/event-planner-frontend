@@ -39,7 +39,6 @@
 
   <div class="transactions-page__content">
     <app-data-table [data]="transactions()" [columns]="tableColumns" [actions]="tableActions" [filters]="tableFilters"
-      [searchable]="true" [expandable]="false" [primaryAction]="primaryAction" [itemsPerPage]="10"
-      [emptyState]="transactionsEmptyState" />
+      [searchable]="true" [expandable]="false" [itemsPerPage]="10" [emptyState]="transactionsEmptyState" />
   </div>
 </div>

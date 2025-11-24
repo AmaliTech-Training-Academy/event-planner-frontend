@@ -495,3 +495,16 @@
     }
   }
 }
+.data-table__user-avatar-initials {
+  width: 32px;
+  height: 32px;
+  border-radius: -full;
+  background: -100;
+  color: -700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
+}

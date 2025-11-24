@@ -31,11 +31,6 @@ interface ChartTab {
   readonly label: string;
 }
 
-interface PrimaryAction {
-  readonly label: string;
-  readonly handler: () => void;
-}
-
 interface TransactionDisplay extends TransactionManagement {
   readonly formattedDate: string;
   readonly formattedAmount: string;
@@ -323,11 +318,6 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     },
   ];
 
-  protected readonly primaryAction: PrimaryAction = {
-    label: 'Create Event',
-    handler: () => this._openCreateEventModal(),
-  };
-
   public ngOnInit(): void {
     this._layoutService.pageTitle.set('Transaction History');
     this._layoutService.logoSrc.set('icons/transaction-icon.png');
@@ -390,9 +380,5 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   }
 
   private _downloadReceipt(transaction: TransactionManagement): void {
-  }
-
-  private _openCreateEventModal(): void {
-    this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
   }
 }

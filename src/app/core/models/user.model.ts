@@ -9,6 +9,7 @@ export interface User {
   phone?: string;
   address?: string;
   avatar?: string;
+  initials?: string;
   profileImageUrl?: string;
   role: UserRole;
   status: 'Active' | 'Inactive';
