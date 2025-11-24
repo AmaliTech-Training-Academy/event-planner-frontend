@@ -20,12 +20,12 @@ export interface EventDetails {
   totalTicketsSold: number;
   ticketRevenue: number;
   status:
-    | 'Pending'
-    | 'Completed'
-    | 'Draft'
-    | 'Active'
-    | 'Cancelled'
-    | 'Upcoming';
+  | 'Pending'
+  | 'Completed'
+  | 'Draft'
+  | 'Active'
+  | 'Cancelled'
+  | 'Upcoming';
   time?: string;
   location?: string;
   description?: string;
@@ -178,10 +178,10 @@ export class EventDetailsPageComponent implements OnInit {
           status: this._mapStatusToTableStatus(apiEvent.status),
           time: apiEvent.startTime
             ? new Date(apiEvent.startTime).toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                timeZoneName: 'short',
-              })
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZoneName: 'short',
+            })
             : '09:00am GMT',
           location: 'Virtual (Zoom meeting)',
           description: 'Event description coming soon.',
@@ -253,7 +253,6 @@ export class EventDetailsPageComponent implements OnInit {
   }
 
   protected onSendInvites(): void {
-    console.log('Send invites clicked');
   }
 
   protected onScheduleFeedback(): void {
@@ -261,7 +260,6 @@ export class EventDetailsPageComponent implements OnInit {
     if (!event) {
       return;
     }
-    console.log('Schedule feedback clicked');
   }
 
   protected onViewAllGuests(): void {

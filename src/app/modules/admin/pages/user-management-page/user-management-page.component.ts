@@ -144,7 +144,6 @@ export class UserManagementPageComponent implements OnInit {
       options: [
         { label: 'Organizer', value: USER_ROLES.ORGANIZER },
         { label: 'Co-Organizer', value: USER_ROLES.CO_ORGANIZER },
-        { label: 'Attendee', value: USER_ROLES.ATTENDEE },
         { label: 'Admin', value: USER_ROLES.ADMIN },
       ],
     },

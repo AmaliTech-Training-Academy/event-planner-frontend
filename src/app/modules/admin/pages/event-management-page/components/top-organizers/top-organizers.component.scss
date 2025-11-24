@@ -7,6 +7,7 @@
     opacity: 0;
     transform: translateY(8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -18,6 +19,7 @@
     opacity: 0;
     transform: translateX(-12px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -29,6 +31,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -36,18 +39,24 @@
 }
 
 @keyframes pulseGreen {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.85;
   }
 }
 
 @keyframes pulseRed {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.85;
   }
@@ -115,8 +124,8 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    padding: 0 $spacing-2;
-    margin: 0 -$spacing-2;
+    padding: 0;
+    margin: 0;
   }
 
   &__item {
@@ -124,13 +133,14 @@
     grid-template-columns: 56px 1fr auto;
     gap: $spacing-4;
     align-items: center;
-    padding: $spacing-4 $spacing-2;
+    padding: $spacing-4;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: fadeIn 0.5s ease-out backwards;
-    border-radius: $radius-2;
+    border-radius: $radius-3;
     background: #F8F9FA;
-margin-top: 1rem;
+    margin-bottom: $spacing-3;
+
     @for $i from 1 through 10 {
       &:nth-child(#{$i}) {
         animation-delay: #{$i * 0.05}s;
@@ -138,13 +148,11 @@ margin-top: 1rem;
     }
 
     &:last-child {
-      border-bottom: none;
+      margin-bottom: 0;
     }
 
     &:hover {
-      background: $gray-50;
-      padding-left: $spacing-4;
-      padding-right: $spacing-4;
+      background: darken(#F8F9FA, 2%);
       transform: translateX(2px);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 
@@ -169,15 +177,15 @@ margin-top: 1rem;
     &:focus-visible {
       outline: 2px solid $blue-500;
       outline-offset: -2px;
-      background: $gray-50;
+      background: darken(#F8F9FA, 2%);
     }
   }
 
   &__avatar {
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
     border-radius: $radius-full;
-    background: $gray-200;
+    background: $gray-300;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -194,7 +202,7 @@ margin-top: 1rem;
 
     span {
       @include h-6;
-      color: $paragraph-text;
+      color: $gray-600;
       font-weight: 600;
     }
   }
@@ -219,7 +227,7 @@ margin-top: 1rem;
 
   &__email {
     @include body-2;
-    color: $paragraph-text;
+    color: $gray-600;
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -230,34 +238,36 @@ margin-top: 1rem;
   &__stats {
     display: flex;
     align-items: center;
-    gap: $spacing-4;
+    gap: $spacing-3;
     flex-shrink: 0;
     margin-left: auto;
   }
 
   &__event-count {
     @include body-2;
-    color: $paragraph-text;
+    color: $gray-600;
     white-space: nowrap;
-    min-width: 55px;
+    min-width: 65px;
+    font-weight: 400;
   }
 
   &__sparkline {
     flex-shrink: 0;
-    height: 40px;
+    height: 36px;
     width: auto;
-    max-width: 150px;
+    max-width: 140px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05));
   }
 
   &__growth {
     @include body-1;
-    font-weight: 700;
+    font-weight: 600;
     white-space: nowrap;
-    min-width: 60px;
+    min-width: 55px;
     text-align: right;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1rem;
 
     &--positive {
       color: $green-700;
@@ -294,9 +304,12 @@ margin-top: 1rem;
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-8px);
   }
@@ -305,25 +318,28 @@ margin-top: 1rem;
 @media (max-width: 1024px) {
   .top-organizers {
     &__stats {
-      gap: $spacing-3;
+      gap: $spacing-2;
     }
 
     &__sparkline {
       max-width: 120px;
+      height: 32px;
     }
   }
 }
 
 @media (max-width: 768px) {
   .top-organizers {
+    padding: $spacing-4;
+
     &__item {
       grid-template-columns: 48px 1fr;
       gap: $spacing-3;
     }
 
     &__avatar {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
     }
 
     &__stats {
@@ -331,10 +347,21 @@ margin-top: 1rem;
       justify-content: flex-start;
       margin-left: 0;
       margin-top: $spacing-2;
+      gap: $spacing-2;
     }
 
     &__sparkline {
       max-width: 100px;
+      height: 28px;
+    }
+
+    &__event-count {
+      min-width: 55px;
+    }
+
+    &__growth {
+      min-width: 45px;
+      font-size: 0.9rem;
     }
   }
 }

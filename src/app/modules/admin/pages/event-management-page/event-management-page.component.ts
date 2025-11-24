@@ -420,7 +420,7 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
       if (newStatus !== currentStatus) {
         this._selectedStatus.set(newStatus);
         this._currentPage.set(0);
-        this._loadEventsData(); 
+        this._loadEventsData();
       }
     }
 

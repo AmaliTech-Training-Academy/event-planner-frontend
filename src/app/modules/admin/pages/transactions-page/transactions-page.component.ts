@@ -1,5 +1,11 @@
-import { Component, OnInit, inject, signal, computed, Signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, Signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { LayoutService } from '../../../../core/services/layout.service';
+import { TransactionsManagementService } from '../../../../core/services/transactions-management.service';
+import { TransactionManagement } from '../../../../core/models/transactions-management.model';
 import {
   DataTableComponent,
   EmptyState,
@@ -11,20 +17,14 @@ import {
   LineChartComponent,
   LineSeriesConfig,
 } from '../../pages/dashboard-page/components/line-chart/line-chart.component';
+import { APP_ROUTES } from '@app/core/constants/app-routes.constants';
 
-interface Transaction {
-  transactionId: string;
-  date: string;
-  eventName: string;
-  organizer: string;
-  email: string;
-  type: 'Completed' | 'Pending' | 'Failed' | 'Refund';
-  amount: number;
-  paymentMethod: string;
-  status: 'Completed' | 'Refunded' | 'Pending' | 'Failed';
-}
-
-type TransactionFilter = 'Total' | 'Completed' | 'Pending' | 'Failed' | 'Refund';
+type TransactionFilter =
+  | 'Total'
+  | 'Completed'
+  | 'Pending'
+  | 'Failed'
+  | 'Refund';
 
 interface ChartTab {
   readonly key: TransactionFilter;
@@ -36,17 +36,50 @@ interface PrimaryAction {
   readonly handler: () => void;
 }
 
+interface TransactionDisplay extends TransactionManagement {
+  readonly formattedDate: string;
+  readonly formattedAmount: string;
+  readonly displayPaymentMethod: string;
+  readonly truncatedEmail: string;
+  readonly truncatedEventName: string;
+  readonly truncatedTransactionId: string;
+}
+
 @Component({
   selector: 'app-transactions-page',
   standalone: true,
-  imports: [DataTableComponent, LineChartComponent],
+  imports: [CommonModule, DataTableComponent, LineChartComponent],
   templateUrl: './transactions-page.component.html',
   styleUrl: './transactions-page.component.scss',
 })
-export class TransactionsPageComponent implements OnInit {
+export class TransactionsPageComponent implements OnInit, OnDestroy {
   private readonly _layoutService = inject(LayoutService);
+  private readonly _transactionsService = inject(TransactionsManagementService);
+  private readonly _router = inject(Router);
+  private readonly _destroy$ = new Subject<void>();
 
   protected readonly activeTab = signal<TransactionFilter>('Total');
+  protected readonly isLoading = signal<boolean>(false);
+  private readonly _transactionsSignal = toSignal(
+    this._transactionsService.transactions$,
+    { initialValue: [] as TransactionManagement[] }
+  );
+
+  protected readonly transactions = computed<TransactionDisplay[]>(() => {
+    const apiTransactions = this._transactionsSignal();
+    return apiTransactions.map((transaction) => ({
+      ...transaction,
+      formattedDate: this._formatDate(transaction.transactionTime),
+      formattedAmount: this._formatAmount(transaction.amount),
+      displayPaymentMethod: transaction.paymentMethod || '-',
+      truncatedEmail: this._truncateText(transaction.attendeeEmail, 10),
+      truncatedEventName: transaction.eventName,
+      truncatedTransactionId: this._truncateText(transaction.transactionId, 5),
+    }));
+  });
+
+  protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
+
 
   protected readonly chartTabs: readonly ChartTab[] = [
     { key: 'Total', label: 'Total' },
@@ -59,7 +92,8 @@ export class TransactionsPageComponent implements OnInit {
   protected readonly transactionsEmptyState: EmptyState = {
     imageSrc: 'images/no-transactions.png',
     imageAlt: 'No transactions found',
-    message: 'No transactions found. When events with payments are created, they will appear here.',
+    message:
+      'No transactions found. When events with payments are created, they will appear here.',
   };
 
   private readonly _allTransactionsChartData: readonly LineSeriesConfig[] = [
@@ -247,116 +281,34 @@ export class TransactionsPageComponent implements OnInit {
     },
   ] as const;
 
-  protected readonly chartSeriesConfig: Signal<readonly LineSeriesConfig[]> = computed(() => {
-    const chartDataMap: Record<TransactionFilter, readonly LineSeriesConfig[]> = {
-      Total: this._allTransactionsChartData,
-      Completed: this._completedChartData,
-      Pending: this._pendingChartData,
-      Failed: this._failedChartData,
-      Refund: this._refundChartData,
-    };
-    
-    return chartDataMap[this.activeTab()];
-  });
+  protected readonly chartSeriesConfig: Signal<readonly LineSeriesConfig[]> =
+    computed(() => {
+      const chartDataMap: Record<
+        TransactionFilter,
+        readonly LineSeriesConfig[]
+      > = {
+        Total: this._allTransactionsChartData,
+        Completed: this._completedChartData,
+        Pending: this._pendingChartData,
+        Failed: this._failedChartData,
+        Refund: this._refundChartData,
+      };
 
-  private readonly _transactions = signal<readonly Transaction[]>([
-    {
-      transactionId: 'TX123',
-      date: '2023-10-15',
-      eventName: 'Tech Conference 2023',
-      organizer: 'John Smith',
-      email: 'john.smith@example.com',
-      type: 'Completed',
-      amount: 120.99,
-      paymentMethod: 'Credit Card',
-      status: 'Completed',
-    },
-    {
-      transactionId: 'TX124',
-      date: '2023-09-28',
-      eventName: 'Marketing Workshop',
-      organizer: 'Lisa Johnson',
-      email: 'lisa.johnson@example.com',
-      type: 'Refund',
-      amount: 45.0,
-      paymentMethod: 'MTN Mobile Money',
-      status: 'Refunded',
-    },
-    {
-      transactionId: 'TX125',
-      date: '2023-11-10',
-      eventName: 'Leadership Summit',
-      organizer: 'Michael Brown',
-      email: 'michael.brown@example.com',
-      type: 'Pending',
-      amount: 85.98,
-      paymentMethod: '-',
-      status: 'Pending',
-    },
-    {
-      transactionId: 'TX126',
-      date: '2023-10-22',
-      eventName: 'Product Launch',
-      organizer: 'Sarah Davis',
-      email: 'alice.smith@example.com',
-      type: 'Completed',
-      amount: 150.0,
-      paymentMethod: 'Credit Card',
-      status: 'Completed',
-    },
-    {
-      transactionId: 'TX127',
-      date: '2023-12-05',
-      eventName: 'Annual Networking Event',
-      organizer: 'Robert Wilson',
-      email: 'charlie.davis@example.com',
-      type: 'Completed',
-      amount: 0,
-      paymentMethod: 'Airtel Tigo',
-      status: 'Completed',
-    },
-    {
-      transactionId: 'TX128',
-      date: '2023-11-18',
-      eventName: 'Digital Marketing Summit',
-      organizer: 'Emma Thompson',
-      email: 'emma.thompson@example.com',
-      type: 'Pending',
-      amount: 95.5,
-      paymentMethod: 'Vodafone Cash',
-      status: 'Pending',
-    },
-  ]);
+      return chartDataMap[this.activeTab()];
+    });
 
-  protected readonly transactions: Signal<readonly Transaction[]> = this._transactions.asReadonly();
-
-  protected readonly tableColumns: readonly TableColumn<Transaction>[] = [
+  protected readonly tableColumns: readonly TableColumn<TransactionDisplay>[] = [
     { key: 'transactionId', header: 'Transaction ID', sortable: true },
-    { key: 'date', header: 'Date', sortable: true },
-    { key: 'eventName', header: 'Event Name', sortable: true },
-    { key: 'organizer', header: 'Organizer', filterable: true },
-    { key: 'type', header: 'Type', filterable: true },
-    { key: 'amount', header: 'Amount', sortable: true },
-    { key: 'paymentMethod', header: 'Payment Method', filterable: true },
+    { key: 'formattedDate', header: 'Date', sortable: true },
+    { key: 'truncatedEventName', header: 'Event Name', sortable: true },
+    { key: 'eventOrganizer', header: 'Organizer', filterable: true },
+    { key: 'truncatedEmail', header: 'Attendee', filterable: true },
+    { key: 'formattedAmount', header: 'Amount', sortable: true },
+    { key: 'displayPaymentMethod', header: 'Payment Method', filterable: true },
     { key: 'status', header: 'Status', filterable: true },
   ];
 
-  protected readonly tableActions: readonly TableAction<Transaction>[] = [
-    {
-      icon: 'icons/view-icon.png',
-      label: 'View Transaction Details',
-      color: 'view',
-      type: 'action',
-      handler: (transaction: Transaction) => this._viewTransaction(transaction),
-    },
-    {
-      icon: 'icons/download-icon.png',
-      label: 'Download Receipt',
-      color: 'edit',
-      type: 'action',
-      handler: (transaction: Transaction) => this._downloadReceipt(transaction),
-    },
-  ];
+  protected readonly tableActions: readonly TableAction<TransactionManagement>[] = [];
 
   protected readonly tableFilters: readonly TableFilter[] = [
     {
@@ -364,21 +316,9 @@ export class TransactionsPageComponent implements OnInit {
       placeholder: 'All Status',
       options: [
         { label: 'All Status', value: 'all' },
-        { label: 'Completed', value: 'Completed' },
-        { label: 'Pending', value: 'Pending' },
-        { label: 'Refunded', value: 'Refunded' },
-        { label: 'Failed', value: 'Failed' },
-      ],
-    },
-    {
-      key: 'date',
-      placeholder: 'Date',
-      options: [
-        { label: 'All Dates', value: 'all' },
-        { label: 'Today', value: 'today' },
-        { label: 'This Week', value: 'week' },
-        { label: 'This Month', value: 'month' },
-        { label: 'This Year', value: 'year' },
+        { label: 'Completed', value: 'COMPLETED' },
+        { label: 'Pending', value: 'PENDING' },
+        { label: 'Failed', value: 'FAILED' },
       ],
     },
   ];
@@ -392,18 +332,67 @@ export class TransactionsPageComponent implements OnInit {
     this._layoutService.pageTitle.set('Transaction History');
     this._layoutService.logoSrc.set('icons/transaction-icon.png');
     this._layoutService.logoAlt.set('Transaction History');
+
+    this._transactionsService.loading$
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((loading) => {
+        this.isLoading.set(loading);
+      });
+
+    this._loadTransactions();
+  }
+
+  public ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   protected onTabChange(tab: TransactionFilter): void {
     this.activeTab.set(tab);
   }
 
-  private _viewTransaction(transaction: Transaction): void {
+  protected onStatusFilterChange(status: string): void {
+    if (status === 'all') {
+      this._loadTransactions();
+    } else {
+      this._transactionsService.filterByStatus(status);
+    }
   }
 
-  private _downloadReceipt(transaction: Transaction): void {
+  private _loadTransactions(): void {
+    this._transactionsService.loadTransactions().subscribe();
+  }
+
+  private _formatDate(isoString: string): string {
+    const date = new Date(isoString);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private _formatAmount(amount: number | null): string {
+    if (amount === null || amount === 0) {
+      return 'Free';
+    }
+    return `$${amount.toFixed(2)}`;
+  }
+
+  private _truncateText(text: string, maxLength: number): string {
+    if (!text) return '-';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+
+  private _viewTransaction(transaction: TransactionManagement): void {
+  }
+
+  private _downloadReceipt(transaction: TransactionManagement): void {
   }
 
   private _openCreateEventModal(): void {
+    this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
   }
 }

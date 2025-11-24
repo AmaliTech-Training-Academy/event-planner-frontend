@@ -74,6 +74,12 @@ export const API_ENDPOINTS = {
   GET_AUDIT_LOGS: `${BASE}/auth/audit_logs`,
   GET_AUDIT_LOG_BY_ID: (logId: string) => `${BASE}/audit-logs/${logId}`,
 
+  // Transactions Management endpoints
+  PAYMENT_TRANSACTIONS: `${BASE}/payment`,
+  GET_TRANSACTION: (id: string): string => `${BASE}/payment/${id}`,
+  GET_EVENT_TRANSACTIONS: (eventId: string): string =>
+    `${BASE}/payment/event/${eventId}`,
+  USER_TRANSACTIONS: `${BASE}/payment/user/history`,
   // Dashboard statistics endpoints
   EVENT_GRAPH_EVENTS: `${BASE}/event-graph/events`,
   EVENT_GRAPH_REGISTRATIONS: `${BASE}/event-graph/registrations`,

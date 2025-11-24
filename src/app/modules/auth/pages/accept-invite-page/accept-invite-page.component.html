@@ -63,15 +63,13 @@
         [disabled]="isSubmitting() || form.invalid"
         [attr.aria-busy]="isSubmitting()"
       >
-        <ng-container *ngIf="!isSubmitting(); else loadingTemplate">
+        @if (!isSubmitting()) {
           Accept Invite
-        </ng-container>
-
-        <ng-template #loadingTemplate>
+        } @else {
           <span class="loading-text">
             Accepting Invite<span class="dots"></span>
           </span>
-        </ng-template>
+        }
       </app-button>
     </form>
 
