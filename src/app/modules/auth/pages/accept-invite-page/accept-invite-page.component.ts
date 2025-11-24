@@ -98,9 +98,7 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.isSubmitting.set(false);
-            this.notificationService.success(
-              'Invitation accepted successfully! You can now log in.'
-            );
+            
 
 
           },

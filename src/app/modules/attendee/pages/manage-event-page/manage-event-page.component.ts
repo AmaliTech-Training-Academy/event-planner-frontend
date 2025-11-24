@@ -246,7 +246,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this.setActiveTab('guests');
   }
 
-  protected onViewTickets(): void {}
+  protected onViewTickets(): void { }
 
   protected onInviteGuest(): void {
     const eventId = this.currentEventId();
@@ -303,7 +303,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
     let selectedEventId = Number(formData.event);
     if (!selectedEventId || isNaN(selectedEventId)) {
-      console.warn('Form ID missing, using Signal ID fallback');
       selectedEventId = this.currentEventId() || 0;
     }
 

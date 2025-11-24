@@ -78,11 +78,9 @@ export function mapAuditLogToTableData(
         const seconds = String(date.getSeconds()).padStart(2, '0');
 
         formattedTimestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      } else {
-        console.warn('Invalid timestamp:', dateString);
       }
     } catch (error) {
-      console.warn('Error parsing timestamp:', dateString, error);
+      // Silently handle parsing errors
     }
   }
 
