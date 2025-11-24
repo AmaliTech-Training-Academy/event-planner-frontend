@@ -1,11 +1,6 @@
 <div class="login-container">
   <div class="login-card">
-    <app-button
-      type="action"
-      [extraClass]="'back-button'"
-      (onClick)="goBack()"
-      [attr.aria-label]="'Go back'"
-    >
+    <app-button type="action" [extraClass]="'back-button'" (onClick)="goBack()" [attr.aria-label]="'Go back'">
       <img src="icons/chevron_left.png" alt="Back" />
       <span>Go Back</span>
     </app-button>
@@ -16,37 +11,19 @@
     <p class="subtitle">Log In to your account</p>
 
     <form [formGroup]="form" (ngSubmit)="handleSubmit()">
-      <app-input
-        formControlName="email"
-        label="Email Address"
-        type="email"
-        placeholder="user@gmail.com"
-        [required]="true"
-        [errorMessage]="
+      <app-input formControlName="email" label="Email Address" type="email" placeholder="user@gmail.com"
+        [required]="true" [errorMessage]="
           hasFieldError('email') ? getFieldErrorMessage('email') : ''
-        "
-        [iconSrc]="'icons/mail.png'"
-      ></app-input>
+        " [iconSrc]="'icons/mail.png'"></app-input>
 
-      <app-input
-        formControlName="password"
-        label="Password"
-        type="password"
-        placeholder="••••••••"
-        [required]="true"
+      <app-input formControlName="password" label="Password" type="password" placeholder="••••••••" [required]="true"
         [errorMessage]="
           hasFieldError('password') ? getFieldErrorMessage('password') : ''
-        "
-        [iconSrc]="'icons/lock.png'"
-      ></app-input>
+        " [iconSrc]="'icons/lock.png'"></app-input>
 
       <div class="extras">
         <label class="custom-checkbox">
-          <input
-            type="checkbox"
-            formControlName="remember"
-            autocomplete="off"
-          />
+          <input type="checkbox" formControlName="remember" autocomplete="off" aria-label="Remember me" />
           <span class="checkmark"></span>
           <span class="label-text">Remember me</span>
         </label>
@@ -56,14 +33,8 @@
         </a>
       </div>
 
-      <app-button
-        buttonType="submit"
-        type="primary"
-        [fullWidth]="true"
-        [disabled]="loading || form.invalid"
-        (onClick)="handleSubmit()"
-        [attr.aria-busy]="loading"
-      >
+      <app-button type="primary" buttonType="submit" [fullWidth]="true" [disabled]="loading || form.invalid"
+        (onClick)="handleSubmit()" [attr.aria-busy]="loading">
         <ng-container *ngIf="!loading; else loadingTemplate">
           Log In
         </ng-container>
@@ -87,4 +58,7 @@
       <a [routerLink]="APP_ROUTES.SIGNUP">Sign Up</a>
     </p>
   </div>
+  @if (showDeactivatedModal()) {
+  <app-account-deactivated-modal (close)="showDeactivatedModal.set(false)" />
+  }
 </div>

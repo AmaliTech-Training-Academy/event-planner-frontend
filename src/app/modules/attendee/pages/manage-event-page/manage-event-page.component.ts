@@ -246,7 +246,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this.setActiveTab('guests');
   }
 
-  protected onViewTickets(): void {}
+  protected onViewTickets(): void { }
 
   protected onInviteGuest(): void {
     const eventId = this.currentEventId();

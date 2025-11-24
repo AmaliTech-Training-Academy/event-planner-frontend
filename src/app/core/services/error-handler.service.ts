@@ -10,7 +10,6 @@ export class ErrorHandlerService {
 
   constructor(private readonly notificationService: NotificationService) { }
 
-
   handle(error: HttpErrorResponse) {
 let message = "Please try again later.";
 

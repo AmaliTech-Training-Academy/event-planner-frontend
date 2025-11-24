@@ -83,6 +83,7 @@ export class AuthBackendService {
     return this.http.post(API_ENDPOINTS.AUTH_REFRESH_TOKEN, {});
   }
 
+  
   public getAuthenticatedUser() {
     return this.http.get<AuthResponseBody<OtpBodyData>>(API_ENDPOINTS.AUTH_ME);
   }
