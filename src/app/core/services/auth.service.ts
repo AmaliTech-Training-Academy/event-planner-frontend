@@ -238,8 +238,13 @@ export class AuthService {
 
   public updateUser(userId: string, data: UpdateUserPayload) {
     const formData = new FormData();
-    const formDataText:string = JSON.stringify({...data,profilePicture :'' })
-    formData.append('userUpdateRequest',formDataText)
+    const formDataText: string = JSON.stringify({
+      phone: data.phone,
+      email: data.email,
+      fullName: data.fullName,
+      address: data.address
+    })
+    formData.append('userUpdateRequest', formDataText)
     this.setLoading(true);
     return this.userBackendService.updateUserWithFormData(userId, formData).pipe(
       take(1),
@@ -580,28 +585,28 @@ export class AuthService {
       );
   }
 
-  
-  
-public acceptEventInvitation(
-  fullName: string,
-  invitationCode: string,
-  password: string
-): Observable<void> {
-  this.setLoading(true);
 
-  const payload: EventInvitationPayload = {
-    fullName,
-    invitationCode,
-    password,
-  };
 
-  return this.authBackend.acceptEventInvitation(payload).pipe(
-    take(1),
-    tap(() => {
-      this.router.navigate([APP_ROUTES.LOGIN]);
-    }),
-    catchError((err) => this.errorHandlerService.handle(err)),
-    finalize(() => this.setLoading(false))
-  );
-}
+  public acceptEventInvitation(
+    fullName: string,
+    invitationCode: string,
+    password: string
+  ): Observable<void> {
+    this.setLoading(true);
+
+    const payload: EventInvitationPayload = {
+      fullName,
+      invitationCode,
+      password,
+    };
+
+    return this.authBackend.acceptEventInvitation(payload).pipe(
+      take(1),
+      tap(() => {
+        this.router.navigate([APP_ROUTES.LOGIN]);
+      }),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
 }
