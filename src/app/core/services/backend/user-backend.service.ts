@@ -34,7 +34,7 @@ export interface UserUpdateRequestPayload {
 
 @Injectable({ providedIn: 'root' })
 export class UserBackendService {
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   public getAllUsers(
     page: number = 0,
@@ -89,7 +89,7 @@ export class UserBackendService {
     payload: InviteUserPayload
   ): Observable<InviteUserResponse> {
     return this.http.post<InviteUserResponse>(
-      API_ENDPOINTS.ADMIN_INVITE_USER,
+      API_ENDPOINTS.INVITE_USER,
       payload
     );
   }
