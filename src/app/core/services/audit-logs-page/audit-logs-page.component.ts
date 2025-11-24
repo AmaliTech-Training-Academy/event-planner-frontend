@@ -13,7 +13,7 @@ import {
   DataTableComponent,
   TableColumn,
   TableFilter,
-} from '../../../../shared/admin-ui/data-table/data-table.component';
+} from '../../../shared/admin-ui/data-table/data-table.component';
 import {
   AuditLogTableData,
   mapAuditLogToTableData,
@@ -28,7 +28,7 @@ import {
 })
 export class AuditLogsComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
-  private readonly _auditManagementService = inject(AuditManagementService);
+  private readonly _auditManagementService: AuditManagementService = inject(AuditManagementService);
   private readonly _destroyRef = inject(DestroyRef);
 
   private readonly _auditLogsData = signal<any>(null);
@@ -142,7 +142,7 @@ export class AuditLogsComponent implements OnInit {
     this._auditManagementService
       .loadAuditLogs(page, size, email, startDate, endDate, status)
       .subscribe({
-        error: (err) => {
+        error: (err: any) => {
           this._error.set('Failed to load audit logs');
         },
       });

@@ -26,7 +26,7 @@
     line-height: 50px;
     justify-content: flex-end;
     flex: 0 0 70%;
-    
+
     &--expanded {
       flex: 1;
     }
@@ -121,7 +121,7 @@
 
   &__th {
     @include label-1;
-    padding: $spacing-4 $spacing-5; 
+    padding: $spacing-4 $spacing-5;
 
     text-align: left;
     font-weight: 600;
@@ -234,7 +234,7 @@
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      
+
       &:hover {
         transform: none;
         box-shadow: none;
@@ -313,12 +313,35 @@
       font-size: 0.75rem;
     }
 
-  &--inactive {
+    &--inactive {
+      background: $red-50;
+      color: $red-600;
+      border: 1px solid $red-300;
+    }
+
+    &--success {
+      background: $green-50;
+      color: $green-700;
+      border: 1px solid $green-300;
+    }
+ &--successful {
+    background: $green-50;
+    color: $green-700;
+    border: 1px solid $green-300;
+  }
+
+  &--failed {
     background: $red-50;
     color: $red-600;
     border: 1px solid $red-300;
   }
-}
+    &--draft {
+      background: $gray-100;
+      color: $gray-600;
+      border: 1px solid $gray-300;
+    }
+  }
+
   &__user-cell {
     display: flex;
     align-items: center;
@@ -376,12 +399,10 @@
 
   &__skeleton-cell {
     height: 20px;
-    background: linear-gradient(
-      90deg,
-      $gray-200 0%,
-      $gray-300 50%,
-      $gray-200 100%
-    );
+    background: linear-gradient(90deg,
+        $gray-200 0%,
+        $gray-300 50%,
+        $gray-200 100%);
     background-size: 200% 100%;
     border-radius: $radius-2;
     animation: shimmer 1.5s infinite;
@@ -402,12 +423,10 @@
         content: '';
         width: 32px;
         height: 32px;
-        background: linear-gradient(
-          90deg,
-          $gray-200 0%,
-          $gray-300 50%,
-          $gray-200 100%
-        );
+        background: linear-gradient(90deg,
+            $gray-200 0%,
+            $gray-300 50%,
+            $gray-200 100%);
         background-size: 200% 100%;
         border-radius: $radius-2;
         animation: shimmer 1.5s infinite;
@@ -417,9 +436,12 @@
 }
 
 @keyframes pulse-bg {
-  0%, 100% {
+
+  0%,
+  100% {
     background-color: lighten($gray-50, 2%);
   }
+
   50% {
     background-color: lighten($gray-100, 5%);
   }
@@ -429,6 +451,7 @@
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -438,6 +461,7 @@
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
+
   100% {
     transform: translate(-50%, -50%) rotate(360deg);
   }
@@ -456,7 +480,7 @@
       width: 100%;
       flex: 1;
 
-      > * {
+      >* {
         width: 100%;
       }
     }
@@ -495,12 +519,13 @@
     }
   }
 }
+
 .data-table__user-avatar-initials {
   width: 32px;
   height: 32px;
-  border-radius: -full;
-  background: -100;
-  color: -700;
+  border-radius: $radius-full;
+  background: $orange-100;
+  color: $orange-700;
   display: flex;
   align-items: center;
   justify-content: center;
