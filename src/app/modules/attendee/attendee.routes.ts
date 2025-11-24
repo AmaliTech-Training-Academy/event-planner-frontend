@@ -110,10 +110,18 @@ export const ATTENDEE_ROUTES: Routes = [
       ),
   },
   {
-    path: 'account-deactivated',
+    path: 'manage-event/:id',
     loadComponent: () =>
-      import('../../shared/components/account-deactivated-modal/account-deactivated-modal.component').then(
-        (m) => m.AccountDeactivatedModalComponent
+      import('../attendee/pages/manage-event-page/manage-event-page.component').then(
+        (m) => m.ManageEventPageComponent
       ),
-  }
+    canActivate: [AuthGuard],
+  },
+  {
+  path: 'account-deactivated',
+  loadComponent: () =>
+    import('../../shared/components/account-deactivated-modal/account-deactivated-modal.component').then(
+      (m) => m.AccountDeactivatedModalComponent
+    ),
+}
 ];

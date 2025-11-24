@@ -14,8 +14,8 @@ import { AUTH_STORAGE } from '../constants/storage.constants';
 import { OtpBodyData } from '../models/auth-response.model';
 import { AuthStorage } from '../models/auth.model';
 import { AuthBackendService, EventInvitationPayload } from './backend/auth-backend.service';
-import { UpdateUserPayload, UserBackendService } from './backend/user-backend.service';
 import { ErrorHandlerService } from './error-handler.service';
+import { UpdateUserPayload, UserBackendService } from './backend/user-backend.service';
 import { USER_ROLES } from '../constants/user.constants';
 import { User } from '../models';
 
@@ -93,14 +93,16 @@ export class AuthService {
 
   public register(fullName: string, email: string, password: string, confirmPassword: string) {
     this.setLoading(true);
-    return this.authBackend.register(fullName, email, password, confirmPassword).pipe(
-      take(1),
-      tap(() => {
-        this.router.navigate([APP_ROUTES.LOGIN]);
-      }),
-      catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
-    );
+    return this.authBackend
+      .register(fullName, email, password, confirmPassword)
+      .pipe(
+        take(1),
+        tap(() => {
+          this.router.navigate([APP_ROUTES.LOGIN]);
+        }),
+        catchError((err) => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false))
+      );
   }
 
   public verifyEmail(otp: string, email: string) {
@@ -238,9 +240,14 @@ export class AuthService {
 
   public updateUser(userId: string, data: UpdateUserPayload) {
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value as any);
-    });
+
+    const formDataText:string = JSON.stringify({
+      phone: data.phone,
+      email:data.email,
+      fullName: data.fullName,
+      address: data.address
+     })
+    formData.append('userUpdateRequest',formDataText)
     this.setLoading(true);
     return this.userBackendService.updateUserWithFormData(userId, formData).pipe(
       take(1),
