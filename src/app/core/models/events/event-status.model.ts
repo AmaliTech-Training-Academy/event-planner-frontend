@@ -1,1 +1,1 @@
-export type EventStatus = 'ACTIVE' | 'DRAFT' | 'COMPLETED' | 'CANCELED';
+export type EventStatus = 'ACTIVE' | 'DRAFT' | 'COMPLETED'

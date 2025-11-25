@@ -1,13 +1,14 @@
+// Interfaces
 export interface AuditLog {
-  id: string;
-  first_name?: string;
-  last_name?: string;
+  id: number;
+  fullName: string;
   email: string;
+  profileImageUrl?: string;
   ipAddress: string;
   timestamp: string;
   createdAt: string;
   updatedAt: string;
-  status?: string;
+  auditStatus: string;
 }
 
 export interface AuditLogsResponse {
@@ -15,16 +16,15 @@ export interface AuditLogsResponse {
   pageSize: number;
   totalElements: number;
   totalPages: number;
-  auditListResponse: AuditLog[];
+  data: AuditLog[];
 }
 
 export interface AuditLogTableData {
   id: string;
   fullName: string;
-  firstName: string;
-  lastName: string;
   email: string;
   avatar?: string;
+  initials?: string;
   ipAddress: string;
   timestamp: string;
   formattedTimestamp: string;
@@ -39,10 +39,9 @@ export function mapAuditLogToTableData(
     return {
       id: '',
       fullName: '',
-      firstName: '',
-      lastName: '',
       email: '',
-      avatar: `https://i.pravatar.cc/150?img=1`,
+      avatar: '',
+      initials: '',
       ipAddress: '',
       timestamp: '',
       formattedTimestamp: 'Invalid Date',
@@ -51,15 +50,7 @@ export function mapAuditLogToTableData(
     } as AuditLogTableData;
   }
 
-  let fullName = '';
-  const firstName = log.first_name || '';
-  const lastName = log.last_name || '';
-
-  if (firstName || lastName) {
-    fullName = `${firstName} ${lastName}`.trim();
-  } else if (log.email) {
-    fullName = log.email.split('@')[0];
-  }
+  const fullName = log.fullName || log.email.split('@')[0];
 
   let formattedTimestamp = 'Invalid Date';
   const dateString = log.timestamp || log.createdAt;
@@ -77,28 +68,34 @@ export function mapAuditLogToTableData(
         const seconds = String(date.getSeconds()).padStart(2, '0');
 
         formattedTimestamp = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-      } else {
-        console.warn('Invalid timestamp:', dateString);
       }
     } catch (error) {
-      console.warn('Error parsing timestamp:', dateString, error);
+      // Silently handle parsing errors
     }
   }
 
   const status =
-    log.status?.toLowerCase() === 'failed' ? 'Failed' : 'Successful';
+    log.auditStatus?.toUpperCase() === 'SUCCESS' ? 'Successful' : 'Failed';
 
-  const avatarSeed = log.id || log.email || 'default';
-  const avatarIndex = Math.floor(Math.random() * 70) + 1;
+  // Generate initials
+  let initials = '';
+  if (fullName) {
+    const parts = fullName.split(' ');
+    if (parts.length >= 2) {
+      initials = `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase();
+    } else {
+      initials = fullName.substring(0, 2).toUpperCase();
+    }
+  } else if (log.email) {
+    initials = log.email.substring(0, 2).toUpperCase();
+  }
 
   return {
-    id: log.id || '',
+    id: log.id.toString(),
     fullName,
-    firstName,
-    lastName,
     email: log.email || '',
-    avatar: `https://i.pravatar.cc/150?img=${avatarIndex}`,
-
+    avatar: log.profileImageUrl || '',
+    initials,
     ipAddress: log.ipAddress || 'N/A',
     timestamp: dateString || '',
     formattedTimestamp,

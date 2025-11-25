@@ -1,0 +1,132 @@
+<div class="modal-backdrop" (click)="onCancel()"></div>
+
+<div class="modal modal--profile">
+  <app-modal-header
+    title="Edit Profile Information"
+    (close)="onCancel()"
+  ></app-modal-header>
+
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    <div class="modal__content">
+      @if (error()) {
+      <div class="error-banner">
+        <span class="error-icon">⚠️</span>
+        <span class="error-text">{{ error() }}</span>
+      </div>
+      }
+
+      <!-- Upload Progress Indicator -->
+      @if (uploadingImage()) {
+      <div class="upload-indicator">
+        <span class="spinner"></span>
+        <span>Uploading image...</span>
+      </div>
+      }
+
+      <!-- Hidden File Input -->
+      <input
+        #fileInput
+        type="file"
+        accept="image/*"
+        style="display: none"
+        (change)="onImageSelect($event)"
+      />
+
+      <div class="profile-section">
+        <div
+          class="profile-avatar"
+          (click)="triggerFileInput()"
+          style="cursor: pointer"
+        >
+          <img
+            [ngSrc]="profileImage()"
+            alt="Profile picture"
+            width="128"
+            height="128"
+            priority
+          />
+          <app-button
+            type="plain"
+            [extraClass]="'status-button'"
+            size="small"
+            class="status-button"
+            (click)="triggerFileInput(); $event.stopPropagation()"
+          >
+            <span class="button-content">
+              <img
+                [src]="statusIcon"
+                alt="Change photo"
+                width="16"
+                height="16"
+              />
+            </span>
+          </app-button>
+        </div>
+        <div class="profile-info">
+          <h3>Edit Profile</h3>
+          <p class="user-role">Update Your personal information</p>
+        </div>
+      </div>
+      <div class="form-section">
+        <h4 class="section-title">Basic Information</h4>
+
+        <app-input
+          type="text"
+          label="Full Name"
+          placeholder="Enter your full name"
+          formControlName="fullName"
+          [errorMessage]="getErrorMessage('fullName')"
+        ></app-input>
+
+        <app-input
+          type="email"
+          label="Email Address"
+          placeholder="user@eventhub.com"
+          formControlName="email"
+          [errorMessage]="getErrorMessage('email')"
+        ></app-input>
+      </div>
+
+      <div class="form-section">
+        <h4 class="section-title">Contact Information</h4>
+
+        <!-- Phone Number (no country code selector) -->
+        <app-input
+          type="text"
+          label="Phone Number"
+          placeholder="+233241234567"
+          formControlName="phone"
+          [errorMessage]="getErrorMessage('phone')"
+        ></app-input>
+
+        <!-- Display formatted phone number -->
+        @if (getFormattedPhoneNumber()) {
+        <div class="formatted-phone">
+          <small>Formatted: {{ getFormattedPhoneNumber() }}</small>
+        </div>
+        }
+
+        <app-input
+          type="text"
+          label="Address"
+          placeholder="123 Main Street, City, State, 12345"
+          formControlName="address"
+        ></app-input>
+      </div>
+    </div>
+
+    <div class="modal__actions">
+      <app-button type="secondary" (click)="onCancel()" [disabled]="saving()">
+        Cancel
+      </app-button>
+
+      <app-button
+        type="primary"
+        [disabled]="profileForm.invalid || saving() || uploadingImage()"
+        buttonType="submit"
+      >
+        {{ saving() ? "Saving..." : "Save Changes" }}
+      </app-button>
+    </div>
+  </form>
+</div>

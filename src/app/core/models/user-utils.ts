@@ -6,9 +6,24 @@ export function normalizeUserStatus(user: User): User {
     typeof user.status === 'boolean'
       ? user.status
       : String(user.status).toLowerCase() === 'active';
+
+  // Generate initials
+  let initials = '';
+  if (user.fullName) {
+    const names = user.fullName.trim().split(' ');
+    if (names.length >= 2) {
+      initials = `${names[0].charAt(0)}${names[names.length - 1].charAt(0)}`.toUpperCase();
+    } else if (names.length === 1) {
+      initials = names[0].substring(0, 2).toUpperCase();
+    }
+  } else if (user.email) {
+    initials = user.email.substring(0, 2).toUpperCase();
+  }
+
   return {
     ...user,
     status: mapUserStatus(isActive),
+    initials,
   };
 }
 

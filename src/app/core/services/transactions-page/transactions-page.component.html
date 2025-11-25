@@ -1,0 +1,45 @@
+<div class="transactions-page">
+  @if (isLoading()) {
+  <div class="transactions-page__loading-overlay">
+    <div class="transactions-page__spinner">
+      <div class="spinner"></div>
+      <p class="transactions-page__loading-text">Loading transactions...</p>
+    </div>
+  </div>
+  }
+
+  <div class="transactions-page__header">
+    <div class="transactions-page__header-content">
+      <h1 class="transactions-page__title">Transaction History</h1>
+      <p class="transactions-page__subtitle">
+        View and manage all payment transactions
+      </p>
+    </div>
+    <div class="transactions-page__user-icon">
+      <img src="icons/users-icon.png" alt="Users" />
+    </div>
+  </div>
+
+
+  <div class="transactions-page__chart-container">
+    <div class="transactions-page__chart-tabs">
+      @for (tab of chartTabs; track tab.key) {
+      <button class="transactions-page__tab" [class.transactions-page__tab--active]="activeTab() === tab.key"
+        (click)="onTabChange(tab.key)" [disabled]="isLoading()">
+        {{ tab.label }}
+      </button>
+      }
+    </div>
+
+    <div class="transactions-page__chart">
+      <app-line-chart [seriesConfig]="chartSeriesConfig().slice()" [height]="'350px'" [showLegend]="true"
+        [smooth]="true" />
+    </div>
+  </div>
+
+  <div class="transactions-page__content">
+    <app-data-table [data]="transactions()" [columns]="tableColumns" [actions]="tableActions" [filters]="tableFilters"
+      [searchable]="true" [expandable]="false" [primaryAction]="primaryAction" [itemsPerPage]="10"
+      [emptyState]="transactionsEmptyState" />
+  </div>
+</div>
