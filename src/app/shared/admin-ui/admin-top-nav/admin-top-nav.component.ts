@@ -74,34 +74,19 @@ export class AdminTopNavComponent implements OnChanges, OnInit, OnDestroy {
   // Computed signals for user data with fallbacks
   public readonly displayName = computed(() => {
     const user = this._authService.currentUser();
-    console.log('👤 AdminTopNav - Current user for display name:', user);
     return user?.fullName || this.userName || 'Administrator';
   });
 
   public readonly displayAvatar = computed(() => {
     const user = this._authService.currentUser();
-    console.log('🖼️ AdminTopNav - Current user for avatar:', user);
     return user?.profilePicture || this.avatarSrc || 'icons/default-avatar.png';
   });
 
   ngOnInit(): void {
-    console.log('🎯 AdminTopNav - Component initialized');
-
-    // Subscribe to user changes to ensure we have the latest data
     this._authService
       .currentUser$()
       .pipe(takeUntil(this._destroy$))
-      .subscribe((user) => {
-        console.log('🔄 AdminTopNav - User data updated:', user);
-        console.log('📊 AdminTopNav - Input values:', {
-          userName: this.userName,
-          avatarSrc: this.avatarSrc,
-        });
-      });
-
-    // Log initial state
-    const initialUser = this._authService.currentUser();
-    console.log('📸 AdminTopNav - Initial user state:', initialUser);
+      .subscribe();
   }
 
   ngOnDestroy(): void {
@@ -110,26 +95,12 @@ export class AdminTopNavComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
-    console.log('🔄 AdminTopNav - Input changes:', changes);
-
     if (changes['notificationsCount']) {
       this._notifications.set(this.notificationsCount);
     }
 
     if (changes['isCollapsed']) {
       this._isCollapsed.set(this.isCollapsed);
-    }
-
-    // Log when userName or avatarSrc inputs change
-    if (changes['userName']) {
-      console.log('📝 AdminTopNav - userName input changed to:', this.userName);
-    }
-
-    if (changes['avatarSrc']) {
-      console.log(
-        '🖼️ AdminTopNav - avatarSrc input changed to:',
-        this.avatarSrc
-      );
     }
   }
 
