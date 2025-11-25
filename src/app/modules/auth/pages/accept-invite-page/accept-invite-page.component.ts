@@ -96,17 +96,22 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
       this.authService
         .acceptInvitation(fullName, password, confirmPassword, invitationToken)
         .subscribe({
-          next: () => {
+          next: (response) => {
             this.isSubmitting.set(false);
-            
 
+            // Success notification
+            this.notificationService.success(
+              'Invitation accepted successfully! Redirecting...'
+            );
 
+            // The routing is already handled in auth.service.ts
+            // based on the user's role, so we don't need to do anything else here
           },
           error: (error) => {
             this.isSubmitting.set(false);
             this.notificationService.error(
               error?.error?.message ||
-              'Failed to accept invitation. Please try again.'
+                'Failed to accept invitation. Please try again.'
             );
           },
         })

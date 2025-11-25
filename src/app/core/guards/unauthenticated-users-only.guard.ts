@@ -6,8 +6,9 @@ import {
   ActivatedRouteSnapshot,
 } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { map, Observable, take } from 'rxjs';
+import { map, Observable, take, switchMap } from 'rxjs';
 import { APP_ROUTES } from '../constants/app-routes.constants';
+import { USER_ROLES } from '../constants/user.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -29,11 +30,28 @@ export class UnAuthenticatedUsersOnlyGuard implements CanActivate {
 
     return this.authService.isLoggedIn().pipe(
       take(1),
-      map((isLoggedIn) => {
-        // if logged in redirect users to landing or explore else allow access to auth pages
-        return isLoggedIn
-          ? this.router.createUrlTree([APP_ROUTES.EXPLORE])
-          : true;
+      switchMap((isLoggedIn) => {
+        if (!isLoggedIn) {
+          // Not logged in, allow access to auth pages
+          return [true];
+        }
+
+        // User is logged in, redirect based on role
+        return this.authService.currentUser$().pipe(
+          take(1),
+          map((user) => {
+            if (!user) {
+              return true;
+            }
+
+            // Redirect to appropriate dashboard based on role
+            if (user.role === USER_ROLES.ADMIN) {
+              return this.router.createUrlTree([APP_ROUTES.ADMIN_DASHBOARD]);
+            } else {
+              return this.router.createUrlTree([APP_ROUTES.MY_EVENTS]);
+            }
+          })
+        );
       })
     );
   }
