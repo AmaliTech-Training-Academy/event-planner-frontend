@@ -72,18 +72,16 @@ export class EditProfileComponent implements OnInit {
       const name = this._editingMember.fullName || 'Team Member';
       const profilePic = this._editingMember.profilePicture;
 
-      // If there's a profile picture and it's not empty
       if (profilePic && profilePic.trim() !== '') {
         return profilePic;
       }
 
-      // Fallback to avatar with initials
       return `https://ui-avatars.com/api/?name=${encodeURIComponent(
         name
       )}&background=FF6B35&color=fff&size=128`;
     }
 
-    // For current user
+    // For current user - get fresh data from auth service
     const user = this._authService.currentUser();
     const name = user?.fullName || 'Admin';
     const profilePic = user?.profilePicture;
@@ -153,25 +151,34 @@ export class EditProfileComponent implements OnInit {
         this.isEditingTeamMember.set(true);
         this._loadTeamMemberData(userId);
       } else {
-        // Editing current user
+        // Editing current user - fetch full user details
         this.isEditingTeamMember.set(false);
         const currentUser = this._authService.currentUser();
 
         if (currentUser?.id) {
           this._currentUserId = currentUser.id.toString();
 
-          // Check if we need to fetch updated user data
-          this._authService.checkAuthUser(this._currentUserId).subscribe({
-            next: () => {
-              // After checking auth, get the updated user data
-              const updatedUser = this._authService.currentUser();
-              if (updatedUser) {
-                this._initializeForm(updatedUser);
+          // Fetch full user details including phone and address
+          this._userManagementService.getUser(this._currentUserId).subscribe({
+            next: (response) => {
+              if (response.data) {
+                const fullUserData: OtpBodyData = {
+                  id: response.data.userId,
+                  email: response.data.email,
+                  fullName: response.data.fullName,
+                  profilePicture: response.data.profileImageUrl || null,
+                  role: response.data.role,
+                  phone: response.data.phone || undefined,
+                  address: response.data.address || undefined,
+                };
+
+                this._initializeForm(fullUserData);
                 this._initializeProfileImage();
               }
             },
-            error: () => {
-              // If check fails, use cached user data
+            error: (err) => {
+              // If fetch fails, use cached user data
+              console.error('Failed to fetch user details:', err);
               if (currentUser) {
                 this._initializeForm(currentUser);
                 this._initializeProfileImage();
@@ -405,20 +412,25 @@ export class EditProfileComponent implements OnInit {
           const updatedUser = response.data || response;
 
           if (!this.isEditingTeamMember()) {
+            // Update auth service with new user data including phone and address
             const authData: OtpBodyData = {
               id: updatedUser.userId || parseInt(this._currentUserId!, 10),
               email: updatedUser.email,
               fullName: updatedUser.fullName,
-              profilePicture: updatedUser.profileImageUrl as string,
+              profilePicture: updatedUser.profileImageUrl || null,
               role: updatedUser.role,
+              phone: updatedUser.phone || undefined,
+              address: updatedUser.address || undefined,
             };
 
+            // Update the BehaviorSubject in AuthService
             this._authService['_userInfo$'].next(authData);
 
             const context =
               this._authService.getCurrentAuthContext() ||
               (authData.role === 'admin' ? 'admin' : 'user');
 
+            // Save to storage
             this._authService['saveAuthToStorage'](
               authData.id.toString(),
               authData.fullName,
@@ -427,7 +439,17 @@ export class EditProfileComponent implements OnInit {
               authData.role,
               context
             );
+
+            // Update the local profile image immediately
+            this._originalImageUrl = updatedUser.profileImageUrl || null;
+            this.profileImage.set(
+              this._originalImageUrl || this.currentProfileImage()
+            );
+
+            // Clear the selected file since it's now uploaded
+            this._selectedImageFile = null;
           } else {
+            // For team member updates
             this._platformSettingsService.loadTeamMembers().subscribe();
           }
 
