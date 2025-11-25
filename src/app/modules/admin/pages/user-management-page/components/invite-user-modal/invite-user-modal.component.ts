@@ -93,7 +93,6 @@ export class InviteUserModalComponent {
     this.userManagementService.inviteUsers(payload).subscribe({
       next: (response) => {
         this.isSubmitting = false;
-        this.notificationService.success('Invitations sent successfully!');
         this.success.emit();
         this.close.emit();
       },

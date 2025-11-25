@@ -357,11 +357,9 @@ export class UserManagementService {
     this._setLoading(true);
     return this._userBackend.inviteUsers(payload).pipe(
       tap((response: InviteUserResponse) => {
-        console.log('🎯 Invite response:', response);
         this.invalidateCache();
       }),
       catchError((err) => {
-        console.error('🚨 Invite error:', err);
         return throwError(() => err);
       }),
       finalize(() => this._setLoading(false))

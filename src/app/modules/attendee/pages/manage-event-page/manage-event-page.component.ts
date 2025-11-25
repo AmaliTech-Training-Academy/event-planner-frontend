@@ -1,11 +1,28 @@
 import { CommonModule, Location, NgOptimizedImage } from '@angular/common';
-import { Component, computed, inject, OnDestroy, OnInit, signal, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { MOCK_EVENT_DETAILS } from '../../../../core/data/mock-data';
-import { EventDetails, StatCardData, TicketType } from '../../../../core/models/event.model';
+import {
+  EventDetails,
+  StatCardData,
+  TicketType,
+} from '../../../../core/models/event.model';
 import { LayoutService } from '../../../../core/services/layout.service';
 
 import { MANAGE_EVENT_ANALYTIC } from '@app/core/constants/manage-event.contant';
@@ -15,16 +32,16 @@ import { EventAnalyticsResponse } from '@app/core/models/manage-events';
 import { UserBackendService } from '@app/core/services/backend/user-backend.service';
 import { ManageEventService } from '@app/core/services/manage-event.service';
 import { NotificationService } from '@app/core/services/notification.service';
-import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
+import { AuthService } from '@app/core/services/auth.service';
+import { USER_ROLES } from '@app/core/constants/user.constants';
+import { LoadingCardComponent } from '@app/shared/components/loading-card/loading-card.component';
 import { take } from 'rxjs';
 import { ModalWrapperComponent } from '../../../../shared/components/modal-wrapper/modal-wrapper.component';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { GuestComponent } from "./components/guest/guest.component";
-import { OverviewComponent } from "./components/overview/overview.component";
-import { RegistrationComponent } from "./components/registration/registration.component";
+import { GuestComponent } from './components/guest/guest.component';
+import { OverviewComponent } from './components/overview/overview.component';
+import { RegistrationComponent } from './components/registration/registration.component';
 import { number } from 'echarts';
-
-
 
 export interface Registration {
   fullName: string;
@@ -32,6 +49,7 @@ export interface Registration {
   numberOfTickets: number;
   ticketType: string;
 }
+
 export interface InviteUserPayload {
   invitationTitle: string;
   event: number;
@@ -62,7 +80,7 @@ interface ManageEventPageState {
     OverviewComponent,
     GuestComponent,
     RegistrationComponent,
-    LoadingCardComponent
+    LoadingCardComponent,
   ],
   templateUrl: './manage-event-page.component.html',
   styleUrls: ['./manage-event-page.component.scss'],
@@ -75,6 +93,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   private readonly _layoutService = inject(LayoutService);
   private readonly _userBackendService = inject(UserBackendService);
   private readonly _notificationService = inject(NotificationService);
+  private readonly _authService = inject(AuthService);
+  private readonly _manageService = inject(ManageEventService);
 
   protected readonly APP_ROUTES = APP_ROUTES;
 
@@ -83,18 +103,20 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected readonly hosts = signal<EventHost[]>([]);
   protected readonly activeTab = signal<TabType>('overview');
   public readonly registrations = signal<Registration[]>([]);
-  protected readonly availableEvents = signal<{ id: number, title: string }[]>([]);
+  protected readonly availableEvents = signal<{ id: number; title: string }[]>(
+    []
+  );
   protected readonly currentEventId = signal<number | null>(null);
-  private readonly _manageService = inject(ManageEventService);
-
-  protected readonly eventOverview = signal<EventAnalyticsResponse | null>(null)
-
+  protected readonly eventOverview = signal<EventAnalyticsResponse | null>(
+    null
+  );
   protected readonly showInviteModal = signal<boolean>(false);
   protected readonly showSuccessModal = signal<boolean>(false);
   protected readonly isSubmitting = signal<boolean>(false);
+  protected readonly loading = signal<boolean>(true);
 
-
-  protected loading = signal<boolean>(true)
+  // New signal to track if current user is admin
+  protected readonly isAdmin = signal<boolean>(false);
 
   protected inviteForm: FormGroup = this._fb.group({
     title: ['', Validators.required],
@@ -102,7 +124,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     email: ['', [Validators.required, Validators.email]],
     event: [null, Validators.required],
     role: ['ATTENDEE', Validators.required],
-    message: ['']
+    message: [''],
   });
 
   @ViewChild(GuestComponent) invitees!: GuestComponent;
@@ -111,25 +133,34 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     const eventoverview = this.eventOverview();
     if (!eventoverview) return MANAGE_EVENT_ANALYTIC;
 
-    return MANAGE_EVENT_ANALYTIC.map(item => ({
+    return MANAGE_EVENT_ANALYTIC.map((item) => ({
       ...item,
-      value: eventoverview.data.eventStats[item.backend_key]
+      value: eventoverview.data.eventStats[item.backend_key],
     }));
   });
 
   public ngOnInit(): void {
-    this._route.params.pipe(take(1)).subscribe(params => {
+    // Check if user is admin
+    this._authService
+      .currentUser$()
+      .pipe(take(1))
+      .subscribe((user) => {
+        if (user) {
+          this.isAdmin.set(user.role === USER_ROLES.ADMIN);
+        }
+      });
+
+    this._route.params.pipe(take(1)).subscribe((params) => {
       const urlEventId = params['id'];
 
       if (!urlEventId) {
-        this._router.navigate([APP_ROUTES.MY_EVENTS]);
+        this._navigateToEventsList();
       } else {
         const eventId = Number(urlEventId);
         this.currentEventId.set(eventId);
 
         this.getOverview();
 
-       
         const state = this._location.getState() as ManageEventPageState;
         if (state.eventData) {
           this._loadEventFromState(state.eventData, eventId);
@@ -143,8 +174,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   private prePopulateEventFields(title: string, id: number) {
     this.inviteForm.patchValue({
       title: title,
-      event: number
-    })
+      event: id,
+    });
   }
 
   private getOverview() {
@@ -154,11 +185,14 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this._manageService.getOverview(eventId).subscribe({
       next: (response) => {
         this.eventOverview.set(response);
-        this.prePopulateEventFields(response.data.eventSummary?.title || '', eventId)
+        this.prePopulateEventFields(
+          response.data.eventSummary?.title || '',
+          eventId
+        );
       },
       complete: () => {
-        this.loading.set(false)
-      }
+        this.loading.set(false);
+      },
     });
   }
 
@@ -173,17 +207,17 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this._layoutService.pageTitle.set(event.title);
 
     this.availableEvents.set([
-      { id: eventId, title: event.title || 'Current Event' }
+      { id: eventId, title: event.title || 'Current Event' },
     ]);
 
     this.inviteForm.patchValue({
       event: eventId,
-      role: 'ATTENDEE'
+      role: 'ATTENDEE',
     });
   }
 
   private _loadTicketsAndHosts(event: EventDetails): void {
-   
+    // Implementation here
   }
 
   protected setActiveTab(tab: TabType): void {
@@ -191,7 +225,21 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   }
 
   protected onBack(): void {
-    this._router.navigate([APP_ROUTES.MY_EVENTS]);
+    this._navigateToEventsList();
+  }
+
+  // Helper method to navigate to correct events list based on user role
+  private _navigateToEventsList(): void {
+    if (this.isAdmin()) {
+      this._router.navigate([APP_ROUTES.ADMIN_EVENTS]);
+    } else {
+      this._router.navigate([APP_ROUTES.MY_EVENTS]);
+    }
+  }
+
+  // Helper method to get breadcrumb text
+  protected getBreadcrumbText(): string {
+    return this.isAdmin() ? 'Event Overview' : 'My Events';
   }
 
   protected onViewAllGuests(): void {
@@ -204,7 +252,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     const eventId = this.currentEventId();
 
     if (!eventId) {
-      this._notificationService.error('Error: No Event ID found. Please refresh the page.');
+      this._notificationService.error(
+        'Error: No Event ID found. Please refresh the page.'
+      );
       return;
     }
 
@@ -213,8 +263,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       name: '',
       email: '',
       message: '',
-      event: eventId, 
-      role: 'ATTENDEE'
+      event: eventId,
+      role: 'ATTENDEE',
     });
 
     this.showInviteModal.set(true);
@@ -226,7 +276,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     const eventId = this.currentEventId();
     this.inviteForm.reset({
       role: 'ATTENDEE',
-      event: eventId || null
+      event: eventId || null,
     });
     this._toggleBodyScroll(false);
   }
@@ -253,7 +303,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
     let selectedEventId = Number(formData.event);
     if (!selectedEventId || isNaN(selectedEventId)) {
-      console.warn('Form ID missing, using Signal ID fallback');
       selectedEventId = this.currentEventId() || 0;
     }
 
@@ -263,7 +312,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-
     const payload: InviteUserPayload = {
       invitationTitle: formData.title,
       event: selectedEventId,
@@ -271,13 +319,12 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
         {
           inviteeName: formData.name,
           inviteeEmail: formData.email,
-          role: formData.role
-        }
+          role: formData.role,
+        },
       ],
       status: status,
-      message: formData.message || ''
+      message: formData.message || '',
     };
-
 
     this._userBackendService.inviteUsers(payload as any).subscribe({
       next: () => {
@@ -288,19 +335,25 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
           id: 0,
           inviteeEmail: payload.invitees[0].inviteeEmail,
           inviteeName: payload.invitees[0].inviteeName,
-          role: roleValue
-        })
+          role: roleValue,
+        });
       },
       error: (err) => {
         this.isSubmitting.set(false);
 
         if (err.status === 0) {
-          this._notificationService.error('Connection blocked (CORS). Please check your network or use the CORS extension.');
+          this._notificationService.error(
+            'Connection blocked (CORS). Please check your network or use the CORS extension.'
+          );
         } else {
-          const errorMessage = err.error?.description || err.error?.message || err.statusText || 'Unknown error occurred';
+          const errorMessage =
+            err.error?.description ||
+            err.error?.message ||
+            err.statusText ||
+            'Unknown error occurred';
           this._notificationService.error(`Failed to send: ${errorMessage}`);
         }
-      }
+      },
     });
   }
 
@@ -310,14 +363,13 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
     this.inviteForm.reset({
       role: 'ATTENDEE',
-      event: eventId || null
+      event: eventId || null,
     });
 
     if (status === 'SEND') {
       this._notificationService.success('Invitation sent successfully.');
 
       this.showSuccessModal.set(true);
-
 
       setTimeout(() => {
         this.showSuccessModal.set(false);
@@ -353,7 +405,10 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       year: 'numeric',
     });
   }
+
   protected onEdit(): void {
-    this._router.navigate([APP_ROUTES.EDIT_EVENT(this.currentEventId()?.toString() || '')])
+    this._router.navigate([
+      APP_ROUTES.EDIT_EVENT(this.currentEventId()?.toString() || ''),
+    ]);
   }
 }

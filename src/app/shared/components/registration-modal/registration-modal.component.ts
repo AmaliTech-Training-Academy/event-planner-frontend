@@ -80,7 +80,7 @@ export class RegistrationModalComponent implements OnInit, OnDestroy {
     }
     const eventId = (this.currentEvent()?.id || 0).toString()
     this.eventService.register(eventId, requestData, this.currentEvent() as EventDetail, !this.selectedTicket()?.isPaid).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         if (this.isPaid()) {
           this.notificationService.success(
             "Event registration initiated. Make payment to complete the registration"

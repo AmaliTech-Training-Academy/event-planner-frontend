@@ -251,14 +251,33 @@ export class DataTableComponent<T extends Record<string, any>> {
       urlParts[urlParts.length - 1] = encodedFileName;
       profileImageUrl = urlParts.join('/');
 
-     
       return profileImageUrl;
     }
 
-    const name = item['fullName'] || item['name'] || item['email'] || 'User';
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      name
-    )}&background=FF6B35&color=fff&size=128`;
+    return '';
+  }
+
+  public getUserInitials(item: T): string {
+    if (item['initials']) {
+      return item['initials'];
+    }
+
+    const name = item['fullName'] || item['name'] || '';
+    if (name) {
+      const names = name.trim().split(' ');
+      if (names.length >= 2) {
+        return `${names[0].charAt(0)}${names[names.length - 1].charAt(0)}`.toUpperCase();
+      } else if (names.length === 1) {
+        return names[0].substring(0, 2).toUpperCase();
+      }
+    }
+
+    const email = item['email'] || '';
+    if (email) {
+      return email.substring(0, 2).toUpperCase();
+    }
+
+    return '??';
   }
   public isAllSelected(): boolean {
     const pageData = this.paginatedData();
@@ -415,9 +434,8 @@ export class DataTableComponent<T extends Record<string, any>> {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${this.tableTitle()}-${
-      new Date().toISOString().split('T')[0]
-    }.html`;
+    link.download = `${this.tableTitle()}-${new Date().toISOString().split('T')[0]
+      }.html`;
     link.click();
     window.URL.revokeObjectURL(url);
   }
@@ -431,9 +449,8 @@ export class DataTableComponent<T extends Record<string, any>> {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${this.tableTitle()}-${
-      new Date().toISOString().split('T')[0]
-    }.${extension}`;
+    link.download = `${this.tableTitle()}-${new Date().toISOString().split('T')[0]
+      }.${extension}`;
     link.click();
     window.URL.revokeObjectURL(url);
   }

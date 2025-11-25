@@ -1,0 +1,377 @@
+@use 'colors' as *;
+@use 'typography' as *;
+@use 'variables' as *;
+@use 'media_query' as *;
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; 
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: $gray-50;
+  border-radius: 0; 
+  padding: 0;
+  width: 90%;
+  max-width: 550px; 
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  z-index: 1001;
+  animation: slideInRight 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0; 
+    flex: 1;
+    height: 100%;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-5;
+    padding: $spacing-6;
+    flex: 1;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-3;
+    justify-content: flex-end;
+    padding: $spacing-5 $spacing-6;
+    border-top: 1px solid $gray-200;
+    background: $gray-50;
+    margin-top: auto;
+  }
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-3 $spacing-4;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: $radius-3;
+  margin-bottom: 0; // Remove margin, let gap handle spacing
+
+  .error-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .error-text {
+    @include body-2;
+    color: #dc2626;
+    flex: 1;
+  }
+}
+
+// Upload Indicator
+.upload-indicator {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding: $spacing-3 $spacing-4;
+  background: rgba(249, 115, 22, 0.1);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  border-radius: $radius-3;
+  margin-bottom: 0; // Remove margin, let gap handle spacing
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(249, 115, 22, 0.3);
+    border-top-color: $orange-600;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  span:last-child {
+    @include body-2;
+    color: $orange-700;
+  }
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  padding-bottom: $spacing-5;
+  border-bottom: 1px solid $gray-200;
+  margin-bottom: 0; 
+}
+
+.profile-avatar {
+  position: relative;
+  width: 90px;
+  height:   90px;
+  flex-shrink: 0;
+
+  img, .profile-picture {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .status-button {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 50%;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+  
+
+    .button-content {
+      display: block;
+      width: 32px;
+      height:32px;
+      background: url('../../../../../../../assets/icons/camera.png') no-repeat center center;
+      background-size: contain;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.profile-info {
+  flex: 1;
+
+  h3 {
+    @include h-6;
+    color: $gray-900;
+    margin: 0 0 $spacing-1 0;
+    font-weight: 600;
+  }
+
+  p {
+    @include body-2;
+    color: $gray-600;
+    margin: 0;
+  }
+
+  .user-role {
+    @include body-2;
+    color: $gray-600;
+    margin: 0;
+    font-weight: 400;
+  }
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .section-title {
+    @include body-2;
+    color: $gray-900;
+    font-weight: 600;
+    margin: 0 0 $spacing-4 0;
+    padding-bottom: $spacing-2;
+    border-bottom: 1px solid $gray-200;
+  }
+}
+
+.phone-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+
+  .phone-code-select {
+    flex: 0 0 auto;
+
+    .input-label {
+      @include body-2;
+      color: $gray-900;
+      font-weight: 500;
+      display: block;
+      margin-bottom: $spacing-2;
+    }
+
+    .country-code-dropdown {
+      @include body-2;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: $radius-2;
+      border: 1px solid $gray-200;
+      background: #ffffff; 
+      color: $gray-900;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 44px;
+
+      &:focus {
+        border-color: $orange-500;
+        box-shadow: 0 0 0 3px rgba($orange-500, 0.1);
+      }
+
+      &:hover {
+        border-color: $gray-400;
+      }
+    }
+  }
+
+  .phone-number-input {
+    flex: 1;
+  }
+}
+
+.formatted-phone {
+  margin-top: -$spacing-2;
+  padding-left: $spacing-2;
+
+  small {
+    @include body-3;
+    color: $gray-500;
+    font-style: italic;
+  }
+}
+
+
+
+@include md {
+  .modal {
+    width: 95%;
+    max-width: 450px;
+
+    &__content {
+      padding: $spacing-5;
+    }
+
+    &__actions {
+      flex-direction: column;
+      padding: $spacing-4 $spacing-5;
+
+      app-button {
+        width: 100%;
+      }
+    }
+  }
+
+  .profile-section {
+    flex-direction: column;
+    text-align: center;
+    gap: $spacing-4;
+  }
+
+  .phone-input-group {
+    gap: $spacing-3;
+  }
+}
+
+@include sm {
+  .modal {
+    width: 100%;
+    max-width: 100%;
+
+    &__content {
+      padding: $spacing-4;
+    }
+
+    &__actions {
+      padding: $spacing-3 $spacing-4;
+    }
+  }
+
+  .profile-avatar {
+    width: 64px;
+    height: 64px;
+
+    .status-button {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+
+      .button-content {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .profile-info {
+    h3 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 13px;
+    }
+  }
+
+  .form-section {
+    gap: $spacing-3;
+
+    .section-title {
+      font-size: 15px;
+    }
+  }
+}
