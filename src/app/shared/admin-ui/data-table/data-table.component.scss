@@ -56,7 +56,6 @@
   }
 
   &__search-input {
-
     &::placeholder {
       color: $gray-400;
     }
@@ -122,7 +121,6 @@
   &__th {
     @include label-1;
     padding: $spacing-4 $spacing-5;
-
     text-align: left;
     font-weight: 600;
     color: $paragraph-text;
@@ -209,7 +207,6 @@
 
     &:hover {
       transform: translateY(-1px);
-
     }
 
     &:active {
@@ -288,7 +285,7 @@
     @include body-3;
     display: inline-flex;
     align-items: center;
-    padding: 4px $spacing-3;
+    padding: 2px 8px !important;
     border-radius: $radius-full;
     font-weight: 500;
     font-size: 12px;
@@ -307,7 +304,7 @@
     }
 
     &--active {
-      background: $green-50;
+      background: #D1FAE5;
       color: $green-700;
       border: 1px solid $green-300;
       font-size: 0.75rem;
@@ -320,25 +317,42 @@
     }
 
     &--success {
-      background: $green-50;
+      background: #D1FAE5;
       color: $green-700;
       border: 1px solid $green-300;
     }
- &--successful {
-    background: $green-50;
-    color: $green-700;
-    border: 1px solid $green-300;
-  }
 
-  &--failed {
-    background: $red-50;
-    color: $red-600;
-    border: 1px solid $red-300;
-  }
+    &--successful {
+      background: #D1FAE5;
+      color: $green-700;
+      border: 1px solid $green-300;
+    }
+
+    &--failed {
+      background: $red-50;
+      color: $red-600;
+      border: 1px solid $red-300;
+    }
+
     &--draft {
-      background: $gray-100;
-      color: $gray-600;
-      border: 1px solid $gray-300;
+     background: $red-50;
+      color: $red-600;
+      border: 1px solid $red-300;
+    }
+    &--pending {
+      background: $red-200;
+      color: $red-700;
+      border: 1px solid $red-300;
+    }
+    &--cancelled {
+      background: $red-50;
+      color: $red-600;
+      border: 1px solid $red-300;
+    }
+    &--completed {
+      background: #D1FAE5;
+      color: $green-700;
+      border: 1px solid $green-300;
     }
   }
 

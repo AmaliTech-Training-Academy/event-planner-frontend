@@ -250,7 +250,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
   // Helper method to navigate to correct events list based on user role
   private _navigateToEventsList(): void {
-    if (this.isAdmin()) {
+    // Check both the isAdmin signal and the current route
+    const isAdminRoute = this._router.url.startsWith('/admin');
+    if (this.isAdmin() || isAdminRoute) {
       this._router.navigate([APP_ROUTES.ADMIN_EVENTS]);
     } else {
       this._router.navigate([APP_ROUTES.MY_EVENTS]);
@@ -259,7 +261,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
   // Helper method to get breadcrumb text
   protected getBreadcrumbText(): string {
-    return this.isAdmin() ? 'Event Overview' : 'My Events';
+    // Check both the isAdmin signal and the current route
+    const isAdminRoute = this._router.url.startsWith('/admin');
+    return (this.isAdmin() || isAdminRoute) ? 'Event Overview' : 'My Events';
   }
 
   protected onViewAllGuests(): void {
