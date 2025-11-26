@@ -148,11 +148,11 @@ export class AdminSettingsComponent implements OnInit {
   }
 
   public saveNotificationSettings(): void {
-    console.log('Saving notification settings:', this._notifications());
+
   }
 
   public addTeamMember(): void {
-    console.log('Opening add team member modal');
+
   }
 
   public toggleMemberStatus(memberId: string): void {
@@ -161,11 +161,11 @@ export class AdminSettingsComponent implements OnInit {
       m.id === memberId ? { ...m, active: !m.active } : m
     );
     this._teamMembers.set(updated);
-    console.log('Team member status toggled');
+
   }
 
   public editTeamMember(member: TeamMember): void {
-    console.log('Editing team member:', member);
+
   }
 
   public deleteTeamMember(memberId: string): void {
@@ -179,7 +179,6 @@ export class AdminSettingsComponent implements OnInit {
         (m: TeamMember) => m.id !== memberId
       );
       this._teamMembers.set(updated);
-      console.log('Team member removed');
     }
   }
 
