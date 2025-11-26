@@ -29,11 +29,6 @@ export class ButtonComponent {
 
   // button.component.ts
   protected handleClick(event?: Event): void {
-    console.log('🟡 Button handleClick:', {
-      disabled: this.disabled(),
-      buttonType: this.buttonType(),
-      type: this.type(),
-    });
 
     if (this.disabled()) {
       event?.preventDefault();
@@ -43,7 +38,6 @@ export class ButtonComponent {
 
     // For submit buttons, DON'T prevent default - let it submit the form
     if (this.buttonType() === 'submit') {
-      console.log('✅ Submit button - allowing form submission');
       return; // Don't emit, let native form submit
     }
 

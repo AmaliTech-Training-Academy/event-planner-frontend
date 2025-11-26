@@ -1,4 +1,5 @@
-import { PAYMENT_TYPES } from './../constant/payment.contant'
+import { AsyncValidatorFn, ValidatorFn } from '@angular/forms';
+import { PAYMENT_TYPES } from './../constant/payment.contant';
 export interface SelectOption {
   label: string;
   value: string;
@@ -16,6 +17,8 @@ export interface FormField {
   options?: SelectOption[];
   action?: FieldAction;
   backend_key: string,
+  defaultValue?:string|boolean;
+  validators?: (ValidatorFn | AsyncValidatorFn)[];
 }
 
 
