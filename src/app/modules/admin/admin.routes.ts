@@ -35,14 +35,14 @@ export const ADMIN_ROUTES: Routes = [
       ).then((m) => m.ManageEventPageComponent),
   },
 
-  {
-    path: 'saved-invites',
-    loadComponent: () =>
-      import('./pages/saved-invite/saved-invite-page.component').then(
-        (m) => m.SavedInviteComponent
-      ),
-    // canActivate: [AdminGuard], // Consider adding this for consistency
-  },
+  // {
+  //   path: 'saved-invites',
+  //   loadComponent: () =>
+  //     import('./pages/saved-invite/saved-invite-page.component').then(
+  //       (m) => m.SavedInviteComponent
+  //     ),
+  //   // canActivate: [AdminGuard], // Consider adding this for consistency
+  // },
   {
     path: 'audit-logs',
     loadComponent: () =>

@@ -53,7 +53,6 @@ export class AdminSidebarComponent {
           iconPath: 'icons/users-icon.png',
           route: '/admin/users',
         },
-    
         {
           label: 'Event Overview',
           iconPath: 'icons/calender-icon.png',
