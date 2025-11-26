@@ -119,3 +119,12 @@ export const PLATFORM_SETTINGS_ENDPOINTS = {
   MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) => `${BASE}/events/${id}/registrations/overview`,
   MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) => `${BASE}/events/${id}/registrations/search`,
 } as const;
+
+
+export const PAYMENT_ENDPOINTS = {
+  BANK_SETTINGS: `${BASE}/users/payment-settings/bank-account`,
+  MOMO_SETTINGS: `${BASE}/users/payment-settings/mobile-money`,
+  PAYMENT_STATS: `${BASE}/events/earnings`,
+  EARNINS_WITHDRAW: `${BASE}/events/earnings/withdraw`,
+
+} as const;
