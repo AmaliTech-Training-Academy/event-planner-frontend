@@ -48,9 +48,12 @@ export const API_ENDPOINTS = {
   VERIFY_INVITATION_TOKEN: `${BASE}/user-invitations/verify`,
   ACCEPT_INVITATION: `${BASE}/user-invitations/accept-invitation`,
   GET_ALL_EVENT_INVITATIONS: `${BASE}/user-invitations`,
-  USER_ACCEPT_INVITATION: `${BASE}/event-invitations/accept-invitation`,
+  USER_ACCEPT_INVITATION: `${BASE}/event-invitations/accept-invitation/`,
   GET_ALL_USER_INVITATIONS: `${BASE}/user-invitations`,
 
+  
+  
+  
   // ============================================
   // EVENT MANAGEMENT ENDPOINTS
   // ============================================
