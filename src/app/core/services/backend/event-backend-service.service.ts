@@ -62,7 +62,10 @@ export class EventBackendServiceService {
   }
 
   public updateEvent(id: string, formData: FormData): Observable<EventDetail> {
-    return this.http.post<EventDetail>(EVENTS_API_ENDPOINTS.GET_EVENT(id), formData);
+    return this.http.post<EventDetail>(
+      EVENTS_API_ENDPOINTS.GET_EVENT(id),
+      formData
+    );
   }
 
   public getEvents(params: URLSearchParams): Observable<GetEventsResponse> {
@@ -85,7 +88,19 @@ export class EventBackendServiceService {
     );
   }
 
-  public registerEvent(id: string, data: RegisterEventBody): Observable<RegisterEventResponse> {
-    return this.http.post<RegisterEventResponse>(EVENTS_API_ENDPOINTS.REGISTER_EVENT(id), data)
+  public registerEvent(
+    id: string,
+    data: RegisterEventBody
+  ): Observable<RegisterEventResponse> {
+    return this.http.post<RegisterEventResponse>(
+      EVENTS_API_ENDPOINTS.REGISTER_EVENT(id),
+      data
+    );
+  }
+
+  public getReciept(refrence: string): Observable<RegisterEventResponse> {
+    return this.http.get<RegisterEventResponse>(
+      EVENTS_API_ENDPOINTS.REFRENCE_EVENT_INFO(refrence)
+    );
   }
 }

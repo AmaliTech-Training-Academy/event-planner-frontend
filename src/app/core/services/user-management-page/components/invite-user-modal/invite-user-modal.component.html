@@ -1,0 +1,105 @@
+<div class="modal-backdrop" (click)="onCancel()"></div>
+
+<div class="modal" (click)="$event.stopPropagation()">
+  <app-modal-header
+    title="Invite New User"
+    (close)="onCancel()"
+  ></app-modal-header>
+
+  <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()">
+    <div class="users-section">
+      <label>Users</label>
+
+      <div class="users-header">
+        <span class="header-name">Name</span>
+        <span class="header-email">Email</span>
+        <span class="header-role">Role</span>
+        <span class="header-action"></span>
+      </div>
+
+      <div class="users-list" formArrayName="users">
+        @for (user of users.controls; track $index) {
+        <div class="user-row" [formGroupName]="$index">
+          <div class="user-field user-field--name">
+            <app-input
+              formControlName="name"
+              placeholder="Kofi Manu"
+              [errorMessage]="
+                hasUserFieldError($index, 'name')
+                  ? getUserFieldErrorMessage($index, 'name')
+                  : ''
+              "
+            ></app-input>
+          </div>
+
+          <div class="user-field user-field--email">
+            <app-input
+              type="email"
+              formControlName="email"
+              placeholder="kofimanu@gmail.com"
+              [errorMessage]="
+                hasUserFieldError($index, 'email')
+                  ? getUserFieldErrorMessage($index, 'email')
+                  : ''
+              "
+            ></app-input>
+          </div>
+
+          <div class="user-field user-field--role">
+            <app-filter-select
+              formControlName="role"
+              [options]="roles"
+              placeholder="Select Role"
+              extraClass="full-width-select"
+              [errorMessage]="
+                hasUserFieldError($index, 'role')
+                  ? getUserFieldErrorMessage($index, 'role')
+                  : ''
+              "
+            ></app-filter-select>
+          </div>
+
+          @if (users.length > 1) {
+          <button
+            type="button"
+            class="btn-delete"
+            (click)="removeUser($index)"
+            aria-label="Delete user"
+          >
+            <img src="icons/delete-user.png" alt="Delete" />
+          </button>
+          }
+        </div>
+        }
+      </div>
+
+      <app-button type="social" (onClick)="addUser()" extraClass="btn-add-user">
+        <img src="icons/add-icon.png" alt="Add icon" />
+        <span>Add User</span>
+      </app-button>
+    </div>
+
+    <div class="form-field">
+      <label for="message">Type Message(Optional)</label>
+      <textarea
+        id="message"
+        formControlName="message"
+        placeholder="Type your message here"
+        rows="4"
+      ></textarea>
+    </div>
+
+    <div class="modal__actions">
+      <app-button type="secondary" (onClick)="onSaveProgress()">
+        Save Progress
+      </app-button>
+      <app-button
+        type="primary"
+        buttonType="submit"
+        [disabled]="inviteForm.invalid || isSubmitting"
+      >
+        {{ isSubmitting ? "Sending..." : "Send Invite" }}
+      </app-button>
+    </div>
+  </form>
+</div>

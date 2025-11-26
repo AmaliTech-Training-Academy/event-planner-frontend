@@ -6,16 +6,18 @@
 <div class="event-details-page">
 
   <nav class="event-details-page__breadcrumb">
-    <button class="breadcrumb-link" (click)="onBack()">My Events</button>
+    <button class="breadcrumb-link" (click)="onBack()">{{ getBreadcrumbText() }}</button>
     <span class="breadcrumb-separator">›</span>
     <span class="breadcrumb-current">{{ eventOverview()?.data?.eventSummary?.title || "N/A" }}</span>
   </nav>
 
   <div class="event-details-page__header">
     <h1 class="event-details-page__title">{{ eventOverview()?.data?.eventSummary?.title || "N/A" }}</h1>
+    @if (!isAdmin()) {
     <app-button (onClick)="onEdit()" type="secondary">
       Edit Event
     </app-button>
+    }
   </div>
 
   <div class="event-details-page__tabs" role="tablist">

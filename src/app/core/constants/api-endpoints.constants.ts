@@ -77,6 +77,15 @@ export const API_ENDPOINTS = {
   // Dashboard statistics endpoints
   EVENT_GRAPH_EVENTS: `${BASE}/event-graph/events`,
   EVENT_GRAPH_REGISTRATIONS: `${BASE}/event-graph/registrations`,
+
+  // ============================================
+  // TRANSACTION MANAGEMENT ENDPOINTS
+  // ============================================
+  PAYMENT_TRANSACTIONS: `${BASE}/payment`,
+  GET_TRANSACTION: (id: string): string => `${BASE}/payment/${id}`,
+  GET_EVENT_TRANSACTIONS: (eventId: string): string =>
+    `${BASE}/payment/event/${eventId}`,
+  USER_TRANSACTIONS: `${BASE}/payment/user/history`,
 } as const;
 
 export const EVENTS_API_ENDPOINTS = {
@@ -104,6 +113,7 @@ export const EVENTS_API_ENDPOINTS = {
     `${BASE}/events/${id}/registrations/overview`,
   MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) =>
     `${BASE}/events/${id}/registrations/search`,
+  REFRENCE_EVENT_INFO: (refrence: string) => `${BASE}/payment/success?reference=${refrence}`
 } as const;
 
 

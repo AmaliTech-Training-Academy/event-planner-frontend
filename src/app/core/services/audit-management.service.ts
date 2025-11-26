@@ -29,7 +29,7 @@ export class AuditManagementService {
   constructor(
     private readonly _backend: AuditBackendService,
     private readonly _errorHandler: ErrorHandlerService
-  ) {}
+  ) { }
 
   /**
    * Load paginated audit logs with optional filters
@@ -45,20 +45,12 @@ export class AuditManagementService {
     this._loading.next(true);
 
     return this._backend
-      .getAuditLogs(page, size, email, startDate, endDate)
+      .getAuditLogs(page, size, email, startDate, endDate, status)
       .pipe(
         tap((data) => {
           this._auditLogsData.next(data);
-          console.log('✅ Audit logs loaded:', {
-            pageNumber: data.pageNumber,
-            pageSize: data.pageSize,
-            totalElements: data.totalElements,
-            totalPages: data.totalPages,
-            currentPageLogs: data.auditListResponse.length,
-          });
         }),
         catchError((err) => {
-          console.error('❌ Failed to load audit logs:', err);
           this._errorHandler.handle(err);
           return throwError(() => err);
         }),
@@ -69,24 +61,24 @@ export class AuditManagementService {
   /**
    * Load a specific audit log by ID
    */
+  // Fixed loadAuditLogById method
   public loadAuditLogById(logId: string): Observable<AuditLogsResponse> {
     this._loading.next(true);
 
     return this._backend.getAuditLogById(logId).pipe(
       tap((data) => {
-        if (data.auditListResponse.length > 0) {
-          this._selectedAuditLog.next(data.auditListResponse[0]);
+        // Fixed: Use data instead of auditListResponse
+        if (data.data && data.data.length > 0) {
+          this._selectedAuditLog.next(data.data[0]);
         }
       }),
       catchError((err) => {
-        console.error('❌ Failed to load audit log:', err);
         this._errorHandler.handle(err);
         return throwError(() => err);
       }),
       finalize(() => this._loading.next(false))
     );
   }
-
   /**
    * Clear selected audit log
    */

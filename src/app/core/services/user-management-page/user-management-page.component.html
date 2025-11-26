@@ -1,0 +1,27 @@
+<div class="user-management-page">
+  <div class="user-management-page__cards">
+    @for (card of visibleUserCards(); track card.title) {
+    <app-admin-user-card [data]="card" />
+    }
+  </div>
+
+  <div class="user-management-page__table">
+    <app-data-table tableTitle="User List" searchPlaceholder="Search users by name or email..." [data]="users()"
+      [columns]="tableColumns" [actions]="tableActions" [filters]="tableFilters" [loading]="loading()"
+      [primaryAction]="primaryAction" [searchable]="true" [showAvatar]="true" [showCheckboxes]="true"
+      [showActionLabels]="false" [itemsPerPage]="10" [serverSidePagination]="true" [totalItems]="totalElements()"
+      (pageChange)="onPageChange($event)" (searchChange)="onSearchChange($event)"
+      (filterChange)="onFilterChange($event)" (rowExpanded)="onRowExpanded($event)" />
+  </div>
+
+  @if (isInviteModalOpen()) {
+  <app-invite-user-modal (close)="closeInviteModal()" (success)="onInviteSuccess()" />
+  } @if (isSuccessModalOpen()) {
+  <app-success-modal (close)="closeSuccessModal()" (action)="goToDashboard()" />
+  } @if (isEditModalOpen() && selectedUser()) {
+  <app-edit-user-profile [userData]="selectedUser()!" (close)="closeEditModal()" (save)="onSaveEdit($event)" />
+  } @if (isViewModalOpen() && selectedUser()) {
+  <app-view-user-profile [userData]="selectedUser()!" (close)="closeViewModal()"
+    (toggleStatus)="onToggleUserStatus($event)" (edit)="onEditFromView()" />
+  }
+</div>

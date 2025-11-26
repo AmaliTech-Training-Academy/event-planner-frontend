@@ -5,32 +5,18 @@
     <div class="data-table__controls">
       @if (searchable()) {
       <div class="data-table__search-box">
-     <app-input
-  [class]="searchBoxClass() || 'md'"
-  [placeholder]="effectiveSearchPlaceholder()"
-  [value]="searchQuery()"
-  (valueChange)="updateSearch($event)"
-  iconSrc="icons/search-icon.png"
-  [disabled]="loading()"
-/>
+        <app-input [class]="searchBoxClass() || 'md'" [placeholder]="effectiveSearchPlaceholder()"
+          [value]="searchQuery()" (valueChange)="updateSearch($event)" iconSrc="icons/search-icon.png"
+          [disabled]="loading()" />
       </div>
       }
       @for (filter of filters(); track filter.key) {
-      <app-filter-select
-        [placeholder]="filter.placeholder"
-        [options]="filter.options"
-        [value]="getFilterValue(filter.key)"
-        (valueChange)="updateFilter(filter.key, $event)"
-        [disabled]="loading()"
-      ></app-filter-select>
+      <app-filter-select [placeholder]="filter.placeholder" [options]="filter.options"
+        [value]="getFilterValue(filter.key)" (valueChange)="updateFilter(filter.key, $event)"
+        [disabled]="loading()"></app-filter-select>
       } @if (primaryAction(); as action) {
       <div class="invite-btn">
-        <app-button
-          type="primary"
-          (click)="executePrimaryAction()"
-          [disabled]="loading()"
-          aria-label="Add new user"
-        >
+        <app-button type="primary" (click)="executePrimaryAction()" [disabled]="loading()" aria-label="Add new user">
           + {{ action.label }}
         </app-button>
       </div>
@@ -43,15 +29,11 @@
     <div class="data-table__skeleton">
       @for (row of [1,2,3,4,5]; track row) {
       <div class="data-table__skeleton-row">
-        <div
-          class="data-table__skeleton-cell data-table__skeleton-cell--checkbox"
-        ></div>
+        <div class="data-table__skeleton-cell data-table__skeleton-cell--checkbox"></div>
         @for (col of columns(); track col.key) {
         <div class="data-table__skeleton-cell"></div>
         } @if (actions().length > 0) {
-        <div
-          class="data-table__skeleton-cell data-table__skeleton-cell--actions"
-        ></div>
+        <div class="data-table__skeleton-cell data-table__skeleton-cell--actions"></div>
         }
       </div>
       }
@@ -62,11 +44,8 @@
     <thead class="data-table__thead">
       <tr>
         <th class="data-table__th data-table__th--checkbox">
-          <app-checkbox
-            [checked]="isAllSelected()"
-            (checkedChange)="toggleSelectAll()"
-            [ariaLabel]="'Select all users'"
-          ></app-checkbox>
+          <app-checkbox [checked]="isAllSelected()" (checkedChange)="toggleSelectAll()"
+            [ariaLabel]="'Select all users'"></app-checkbox>
         </th>
 
         @if (expandable()) {
@@ -85,11 +64,8 @@
       @for (item of paginatedData(); track trackByIndex($index)) {
       <tr class="data-table__tr">
         <td class="data-table__td data-table__td--checkbox">
-          <app-checkbox
-            [checked]="isSelected(item)"
-            (checkedChange)="toggleSelect(item)"
-            [ariaLabel]="'Select user ' + (item['name'] || '')"
-          ></app-checkbox>
+          <app-checkbox [checked]="isSelected(item)" (checkedChange)="toggleSelect(item)"
+            [ariaLabel]="'Select user ' + (item['name'] || '')"></app-checkbox>
         </td>
 
         @if (expandable()) {
@@ -102,14 +78,16 @@
         <td class="data-table__td">
           @if (column.key === 'fullName') {
           <div class="data-table__user-cell">
-            <img
-            [src]="getUserAvatar(item)"
-              [alt]="
+            @if (getUserAvatar(item)) {
+            <img [src]="getUserAvatar(item)" [alt]="
                 (column.getValue ? column.getValue(item) : item[column.key]) +
                 ' avatar'
-              "
-              class="data-table__user-avatar-img"
-            />
+              " class="data-table__user-avatar-img" />
+            } @else {
+            <div class="data-table__user-avatar-initials">
+              {{ getUserInitials(item) }}
+            </div>
+            }
             <div class="data-table__user-info">
               <p class="data-table__user-name">
                 {{ column.getValue ? column.getValue(item) : item[column.key] }}
@@ -130,39 +108,27 @@
         } @if (actions().length > 0) {
         <td class="data-table__td data-table__td--actions">
           @for (action of actions(); track action.label) {
-          <app-button
-            type="action"
-            [extraClass]="
+          <app-button type="action" [extraClass]="
               action.color === 'power'
                 ? item['status'] === 'Active'
                   ? 'power-active'
                   : 'power-inactive'
                 : action.extraClass || action.color || ''
-            "
-            (click)="executeAction(action, item)"
-            [disabled]="isActionDisabled(action, item)"
-            [attr.aria-label]="action.label"
-            [attr.title]="action.label"
-            class="data-table__action-btn"
-            [class.data-table__action-btn--with-label]="showActionLabels()"
-            [class.data-table__action-btn--loading]="
+            " (click)="executeAction(action, item)" [disabled]="isActionDisabled(action, item)"
+            [attr.aria-label]="action.label" [attr.title]="action.label" class="data-table__action-btn"
+            [class.data-table__action-btn--with-label]="showActionLabels()" [class.data-table__action-btn--loading]="
               isActionLoading(action, item)
-            "
-          >
+            ">
             @if (isActionLoading(action, item)) {
             <span class="data-table__action-spinner"></span>
             } @else {
-            <img
-              [src]="
+            <img [src]="
                 action.color === 'power'
                   ? item['status'] === 'Active'
                     ? 'icons/power-icon-red.png'
                     : 'icons/power-icon-green.png'
                   : action.icon
-              "
-              [alt]="action.label"
-              class="data-table__action-icon"
-            />
+              " [alt]="action.label" class="data-table__action-icon" />
 
             <!-- Label (conditionally shown) -->
             @if (showActionLabels()) {
@@ -179,22 +145,14 @@
 
   @if (filteredData().length === 0) {
   <div class="data-table__no-data">
-    <img
-      [src]="emptyState().imageSrc"
-      [alt]="emptyState().imageAlt"
-      class="data-table__no-data-image"
-    />
+    <img [src]="emptyState().imageSrc" [alt]="emptyState().imageAlt" class="data-table__no-data-image" />
     @if (emptyState().message) {
     <p class="data-table__no-data-message">{{ emptyState().message }}</p>
     }
   </div>
   } } @if (filteredData().length > 0 && !loading()) {
-  <app-pagination
-    [totalItems]="totalItems()"
-    [itemsPerPage]="itemsPerPage()"
-    [currentPage]="currentPage()"
-    (pageChange)="setCurrentPage($event)"
-  ></app-pagination>
+  <app-pagination [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()" [currentPage]="currentPage()"
+    (pageChange)="setCurrentPage($event)"></app-pagination>
 
   }
 </div>

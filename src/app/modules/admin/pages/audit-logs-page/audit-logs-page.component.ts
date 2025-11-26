@@ -44,10 +44,10 @@ export class AuditLogsComponent implements OnInit {
 
   protected readonly auditLogs = computed<AuditLogTableData[]>(() => {
     const data = this._auditLogsData();
-    if (!data || !data.auditListResponse) {
+    if (!data || !data.data) {
       return [];
     }
-    return data.auditListResponse.map(mapAuditLogToTableData);
+    return data.data.map(mapAuditLogToTableData);
   });
 
   protected readonly isLoading = computed(() => this._isLoading());
@@ -144,7 +144,6 @@ export class AuditLogsComponent implements OnInit {
       .subscribe({
         error: (err) => {
           this._error.set('Failed to load audit logs');
-          console.error('Error loading audit logs:', err);
         },
       });
   }
