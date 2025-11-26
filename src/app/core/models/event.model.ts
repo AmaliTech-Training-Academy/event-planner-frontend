@@ -168,7 +168,7 @@ export interface EventSummary {
   flyerUrl: string;
   ticketPrice: number;
   attendees?: number;
-  attendeesCount?: number;
+  attendeeCount?: number;
   isPaid?: boolean;
 }
 
