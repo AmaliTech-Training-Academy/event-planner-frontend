@@ -1,0 +1,371 @@
+/* ===============================================
+   view-user-profile.component.scss - UPDATED
+   =============================================== */
+
+@use 'colors' as *;
+@use 'typography' as *;
+@use 'variables' as *;
+@use 'media_query' as *;
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; // Changed from center to flex-end
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.modal {
+  background: $gray-50;
+  border-radius: 0; 
+  padding: 0;
+  width: 90%;
+  max-width: 550px; 
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh; // Full height
+  max-height: 100vh;
+  overflow-y: auto;
+  z-index: 1001;
+  animation: slideInRight 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-6;
+    flex: 1;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-5;
+    padding: $spacing-6;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-3;
+    justify-content: space-between; // Changed from flex-end
+    padding: $spacing-5 $spacing-6;
+    border-top: 1px solid $gray-200;
+    background: $gray-50;
+    margin-top: auto; // Push to bottom
+    
+    // Make buttons equal width
+    app-button {
+      flex: 1;
+      max-width: 200px;
+      
+      // Activate Account button (first child) - on the left
+      &:first-child {
+        order: 1;
+      }
+      
+      // Edit button (second child) - on the right
+      &:last-child {
+        order: 2;
+      }
+    }
+  }
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: $spacing-4;
+  padding-bottom: $spacing-5;
+  border-bottom: 1px solid $gray-200;
+  margin-bottom: $spacing-5;
+}
+
+.profile-avatar {
+  position: relative;
+  width: 90px; 
+  height: 90px;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .status-button {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: 50%;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $gray-300;
+    }
+
+    .button-content {
+      display: block;
+      width: 32px;
+      height: 32px;
+      background: url('../../../../../../../assets/icons/camera.png') no-repeat center center;
+      background-size: contain;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .status-badge {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border: 2px solid white;
+    letter-spacing: 0.5px;
+
+    &--active {
+      background: $green-600;
+      color: white;
+    }
+
+    &--inactive {
+      background: $red-600;
+      color: white;
+    }
+  }
+}
+
+.profile-info {
+  flex: 1;
+
+  h3 {
+    @include h-6;
+    color: $gray-900;
+    margin: 0 0 $spacing-1 0;
+    font-weight: 600;
+  }
+
+  .user-role {
+    @include body-2;
+    color: $gray-600;
+    margin: 0 0 4px 0;
+    font-weight: 400;
+  }
+
+  .user-id {
+    @include body-3;
+    color: $gray-500;
+    margin: 0;
+    font-size: 12px;
+  }
+}
+
+// Info Sections
+.info-section {
+  margin-bottom: $spacing-5;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .section-title {
+    @include body-2;
+    color: $gray-900;
+    font-weight: 600;
+    margin: 0 0 $spacing-4 0;
+    padding-bottom: $spacing-2;
+    border-bottom: 1px solid $gray-200;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-4;
+
+  &--two {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  &--three {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+
+  .info-label {
+    @include body-3;
+    color: $gray-600;
+    font-weight: 500;
+    margin: 0;
+    font-size: 13px;
+  }
+
+  .info-value {
+    @include body-2;
+    color: $gray-900;
+    margin: 0;
+    padding: 12px 14px;
+    background: #ffffff; // Changed from $gray-100 to white
+    border-radius: $radius-2;
+    border: 1px solid $gray-200;
+    word-break: break-word;
+    min-height: 44px; // Consistent height
+    display: flex;
+    align-items: center;
+
+    &--highlight {
+      background: $orange-50;
+      color: $orange-600;
+      font-weight: 600;
+      font-size: 18px;
+      text-align: center;
+      justify-content: center;
+    }
+
+    &--success {
+      color: $green-600;
+      font-weight: 600;
+    }
+
+    &--danger {
+      color: $red-600;
+      font-weight: 600;
+    }
+  }
+}
+
+// Responsive
+@include md {
+  .modal {
+    width: 95%;
+    max-width: 450px;
+
+    &__content {
+      padding: $spacing-5;
+    }
+
+    &__actions {
+      flex-direction: column;
+      padding: $spacing-4 $spacing-5;
+
+      app-button {
+        max-width: none;
+      }
+    }
+  }
+
+  .profile-section {
+    flex-direction: column;
+    text-align: center;
+    padding-bottom: $spacing-4;
+  }
+
+  .info-grid {
+    &--two,
+    &--three {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@include sm {
+  .modal {
+    width: 100%;
+    max-width: 100%;
+
+    &__content {
+      padding: $spacing-4;
+    }
+
+    &__actions {
+      padding: $spacing-3 $spacing-4;
+      gap: $spacing-2;
+    }
+  }
+
+  .profile-avatar {
+    width: 64px;
+    height: 64px;
+
+    .status-badge {
+      font-size: 9px;
+      padding: 3px 6px;
+    }
+
+    .status-button {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+
+      .button-content {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .info-section {
+    margin-bottom: $spacing-4;
+
+    .section-title {
+      margin-bottom: $spacing-3;
+    }
+  }
+
+  .info-grid {
+    gap: $spacing-3;
+  }
+}
+
+.edit-button {
+  margin-left: auto;
+  width: fit-content;
+  margin-top: $spacing-4;
+}

@@ -6,6 +6,7 @@ import {
   finalize,
   tap,
   take,
+  map,
 } from 'rxjs';
 
 import { TransactionsBackendService } from './backend/transactions-backend.service';
@@ -45,7 +46,7 @@ export class TransactionsManagementService {
   constructor(
     private readonly transactionsBackend: TransactionsBackendService,
     private readonly errorHandlerService: ErrorHandlerService
-  ) { }
+  ) {}
 
   public loadTransactions(
     filters?: TransactionManagementFilterParams
@@ -80,6 +81,7 @@ export class TransactionsManagementService {
 
     return this.transactionsBackend.getTransactionById(transactionId).pipe(
       take(1),
+      map((response) => response.data),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );

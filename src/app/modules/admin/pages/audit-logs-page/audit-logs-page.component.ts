@@ -144,7 +144,6 @@ export class AuditLogsComponent implements OnInit {
       .subscribe({
         error: (err) => {
           this._error.set('Failed to load audit logs');
-          console.error('Error loading audit logs:', err);
         },
       });
   }

@@ -91,7 +91,6 @@ export function getEventStatusClass(status: EventStatus): string {
     ACTIVE: 'status-active',
     DRAFT: 'status-draft',
     COMPLETED: 'status-completed',
-    CANCELED: 'status-canceled',
   };
   return statusClasses[status] || 'status-default';
 }

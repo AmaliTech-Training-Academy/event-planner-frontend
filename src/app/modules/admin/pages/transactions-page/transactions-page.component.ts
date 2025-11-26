@@ -31,9 +31,13 @@ interface ChartTab {
   readonly label: string;
 }
 
-interface PrimaryAction {
-  readonly label: string;
-  readonly handler: () => void;
+interface TransactionDisplay extends TransactionManagement {
+  readonly formattedDate: string;
+  readonly formattedAmount: string;
+  readonly displayPaymentMethod: string;
+  readonly truncatedEmail: string;
+  readonly truncatedEventName: string;
+  readonly truncatedTransactionId: string;
 }
 
 interface TransactionDisplay extends TransactionManagement {
@@ -72,7 +76,7 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       formattedDate: this._formatDate(transaction.transactionTime),
       formattedAmount: this._formatAmount(transaction.amount),
       displayPaymentMethod: transaction.paymentMethod || '-',
-      truncatedEmail: this._truncateText(transaction.attendeeEmail, 5),
+      truncatedEmail: this._truncateText(transaction.attendeeEmail, 8),
       truncatedEventName: transaction.eventName,
       truncatedTransactionId: this._truncateText(transaction.transactionId, 5),
     }));
@@ -323,11 +327,6 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     },
   ];
 
-  protected readonly primaryAction: PrimaryAction = {
-    label: 'Create Event',
-    handler: () => this._openCreateEventModal(),
-  };
-
   public ngOnInit(): void {
     this._layoutService.pageTitle.set('Transaction History');
     this._layoutService.logoSrc.set('icons/transaction-icon.png');
@@ -390,9 +389,5 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   }
 
   private _downloadReceipt(transaction: TransactionManagement): void {
-  }
-
-  private _openCreateEventModal(): void {
-    this._router.navigate([this.APP_ROUTES.CREATE_EVENT]);
   }
 }

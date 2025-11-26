@@ -6,15 +6,16 @@ import { AuditLogsResponse } from '../../models/audits/audit-logs.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuditBackendService {
-  constructor(private readonly _http: HttpClient) {}
+  constructor(private readonly _http: HttpClient) { }
 
- 
+
   public getAuditLogs(
     page = 0,
     size = 10,
     email?: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
+    status?: string
   ): Observable<AuditLogsResponse> {
     let params = new HttpParams()
       .set('pageNumber', page.toString())
@@ -30,6 +31,10 @@ export class AuditBackendService {
 
     if (endDate) {
       params = params.set('endDate', endDate);
+    }
+
+    if (status) {
+      params = params.set('auditStatus', status.toUpperCase());
     }
 
     return this._http.get<AuditLogsResponse>(API_ENDPOINTS.GET_AUDIT_LOGS, {

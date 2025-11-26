@@ -256,6 +256,29 @@ export class DataTableComponent<T extends Record<string, any>> {
     return '';
   }
 
+  public getUserInitials(item: T): string {
+    if (item['initials']) {
+      return item['initials'];
+    }
+
+    const name = item['fullName'] || item['name'] || '';
+    if (name) {
+      const names = name.trim().split(' ');
+      if (names.length >= 2) {
+        return `${names[0].charAt(0)}${names[names.length - 1].charAt(0)}`.toUpperCase();
+      } else if (names.length === 1) {
+        return names[0].substring(0, 2).toUpperCase();
+      }
+    }
+
+    const email = item['email'] || '';
+    if (email) {
+      return email.substring(0, 2).toUpperCase();
+    }
+
+    return '??';
+  }
+
   public hasProfileImage(item: T): boolean {
     const profileImageUrl = item['profileImageUrl'] || item['avatar'];
     return !!profileImageUrl;

@@ -319,36 +319,26 @@
       border: 1px solid $red-300;
     }
 
-    &--pending {
-      background: #FEF3C7; 
-      color: #92400E;
-      border: 1px solid #FDE68A;
-      font-size: 0.75rem;
-    }
-
-    &--draft {
-      background: #FED7AA; 
-      color: #9A3412;
-      border: 1px solid #FDBA74;
-      font-size: 0.75rem;
-    }
-
-    &--completed {
-      background: #D1FAE5;
-      border: none;
-      font-size: 0.75rem;
-    }
     &--success {
-      background: #D1FAE5;
-      border: none;
-      font-size: 0.75rem;
+      background: $green-50;
+      color: $green-700;
+      border: 1px solid $green-300;
     }
+ &--successful {
+    background: $green-50;
+    color: $green-700;
+    border: 1px solid $green-300;
+  }
 
-    &--cancelled {
-      background: #FEE2E2; // Light red/pink
-      color: #991B1B;
-      border: 1px solid #FCA5A5;
-      font-size: 0.75rem;
+  &--failed {
+    background: $red-50;
+    color: $red-600;
+    border: 1px solid $red-300;
+  }
+    &--draft {
+      background: $gray-100;
+      color: $gray-600;
+      border: 1px solid $gray-300;
     }
   }
 
@@ -543,4 +533,18 @@
       font-size: 0.813rem;
     }
   }
+}
+
+.data-table__user-avatar-initials {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  background: $orange-100;
+  color: $orange-700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
 }

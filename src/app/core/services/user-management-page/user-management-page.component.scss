@@ -1,0 +1,114 @@
+@use 'colors' as *;
+@use 'typography' as *;
+@use 'variables' as *;
+
+.user-management-page {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-5;
+  margin: 0 auto;
+
+  &__cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: $spacing-4;
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 0;
+    border-radius: $radius-4 $radius-4 0 0;
+    border-bottom: $stroke-1 solid $general-stroke-light;
+    align-items: center
+  }
+
+  &__tab {
+    @include body-2;
+    padding: $spacing-4 $spacing-5;
+    font-weight: 500;
+    color: $paragraph-text;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    position: relative;
+    bottom: -1px;
+
+    &:hover:not(&--active) {
+      color: $header-dark;
+      background-color: lighten($gray-100, 2%);
+    }
+
+    &--active {
+      color: $orange-600;
+      background: lighten($gray-100, 3%);
+      border-bottom-color: $orange-600;
+      font-weight: 600;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $orange-600;
+      outline-offset: -2px;
+      border-radius: $radius-3 $radius-3 0 0;
+    }
+  }
+
+  &__table {
+    background: #F8F9FA;
+    border-radius: $radius-4 $radius-4;
+    box-shadow: 0 0 10px rgb(0 0 0 /15%);
+    overflow: hidden;
+    
+
+    // Override the data-table border-radius to make it flush with tabs
+    ::ng-deep .data-table {
+      border-radius: 0 0 $radius-4 $radius-4;
+      box-shadow: none;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 1024px) {
+  .user-management-page {
+    &__cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .user-management-page {
+    padding: $spacing-4;
+    gap: $spacing-4;
+
+    &__cards {
+      grid-template-columns: 1fr;
+      gap: $spacing-3;
+    }
+
+    &__tabs {
+      margin-bottom: 0;
+    }
+
+    &__tab {
+      padding: $spacing-3 $spacing-4;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .user-management-page {
+    padding: $spacing-3;
+
+    &__tab {
+      flex: 1;
+      padding: $spacing-3 $spacing-2;
+      font-size: 0.8125rem;
+      text-align: center;
+    }
+  }
+}

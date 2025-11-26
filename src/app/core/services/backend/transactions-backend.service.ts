@@ -63,8 +63,8 @@ export class TransactionsBackendService {
    */
   public getTransactionById(
     transactionId: string
-  ): Observable<TransactionManagement> {
-    return this.http.get<TransactionManagement>(
+  ): Observable<{ data: TransactionManagement }> {
+    return this.http.get<{ data: TransactionManagement }>(
       API_ENDPOINTS.GET_TRANSACTION(transactionId)
     );
   }

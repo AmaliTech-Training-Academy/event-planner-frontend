@@ -78,14 +78,14 @@
         <td class="data-table__td">
           @if (column.key === 'fullName') {
           <div class="data-table__user-cell">
-            @if (hasProfileImage(item)) {
+            @if (getUserAvatar(item)) {
             <img [src]="getUserAvatar(item)" [alt]="
                 (column.getValue ? column.getValue(item) : item[column.key]) +
                 ' avatar'
               " class="data-table__user-avatar-img" />
             } @else {
             <div class="data-table__user-avatar-initials">
-              {{ getInitials(item) }}
+              {{ getUserInitials(item) }}
             </div>
             }
             <div class="data-table__user-info">

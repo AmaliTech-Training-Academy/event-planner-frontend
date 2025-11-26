@@ -359,8 +359,9 @@ export class UserManagementService {
       tap((response: InviteUserResponse) => {
         this.invalidateCache();
       }),
-      catchError((err) => this._errorHandler.handle(err)
-      ),
+      catchError((err) => {
+        return throwError(() => err);
+      }),
       finalize(() => this._setLoading(false))
     );
   }

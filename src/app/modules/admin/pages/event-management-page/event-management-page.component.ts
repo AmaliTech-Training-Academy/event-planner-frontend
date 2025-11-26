@@ -45,7 +45,7 @@ interface EventTableData {
   organizer: string;
   date: string;
   attendees: number;
-  status: 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled';
+  status: 'Pending' | 'Completed' | 'Draft' | 'Active' ;
   time?: string;
   location?: string;
   description?: string;
@@ -71,8 +71,8 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
 
   private readonly _dashboardData = signal<DashboardData | null>(null);
-  private readonly _isLoadingDashboard = signal<boolean>(false); // Dashboard loading
-  private readonly _isLoadingTable = signal<boolean>(false); // Table-specific loading
+  private readonly _isLoadingDashboard = signal<boolean>(false); 
+  private readonly _isLoadingTable = signal<boolean>(false); 
   private readonly _error = signal<string | null>(null);
 
   private readonly _currentPage = signal<number>(0);
@@ -242,7 +242,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
         { label: 'Active', value: 'ACTIVE' },
         { label: 'Draft', value: 'DRAFT' },
         { label: 'Completed', value: 'COMPLETED' },
-        { label: 'Cancelled', value: 'CANCELED' },
       ],
     },
     {
@@ -500,15 +499,14 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
 
   private _mapStatusToTableStatus(
     status: EventStatus
-  ): 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled' {
+  ): 'Pending' | 'Completed' | 'Draft' | 'Active'  {
     const statusMap: Record<
       EventStatus,
-      'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled'
+      'Pending' | 'Completed' | 'Draft' | 'Active' 
     > = {
       ACTIVE: 'Active',
       DRAFT: 'Draft',
       COMPLETED: 'Completed',
-      CANCELED: 'Cancelled',
     };
     return statusMap[status] || 'Pending';
   }
