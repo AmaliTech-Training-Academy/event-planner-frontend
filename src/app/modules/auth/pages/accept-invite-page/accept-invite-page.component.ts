@@ -99,13 +99,9 @@ export class AcceptInvitePageComponent implements OnInit, OnDestroy {
           next: (response) => {
             this.isSubmitting.set(false);
 
-            // Success notification
             this.notificationService.success(
               'Invitation accepted successfully! Redirecting...'
             );
-
-            // The routing is already handled in auth.service.ts
-            // based on the user's role, so we don't need to do anything else here
           },
           error: (error) => {
             this.isSubmitting.set(false);

@@ -399,7 +399,6 @@ export class AuthService {
           }, 500);
         }
       } catch (error) {
-        console.error('Error loading auth data:', error);
       }
     }
   }
@@ -475,7 +474,6 @@ export class AuthService {
       .pipe(take(1))
       .subscribe({
         next: (response) => {
-          console.log(response, 'token');
           this.saveAuthToStorage(
             data[AUTH_STORAGE.USER_ID],
             data[AUTH_STORAGE.FULL_NAME],
