@@ -1,14 +1,13 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { RouterLink } from "@angular/router";
 import { APP_ROUTES } from '../../../../../../core/constants/app-routes.constants';
 import { ButtonComponent } from "../../../../../../shared/ui/button/button.component";
 import { EVENT_TYPE, EVENT_FORM_FIELDS as FIELDS, MEETING_TYPE } from '../../../../constants/event-form.constant';
 
 @Component({
   selector: 'app-event-options-container',
-  imports: [ButtonComponent, CommonModule, RouterLink, NgOptimizedImage],
+  imports: [ButtonComponent, CommonModule, NgOptimizedImage],
   templateUrl: './event-options-container.component.html',
   styleUrl: './event-options-container.component.scss',
   changeDetection: ChangeDetectionStrategy.Default,

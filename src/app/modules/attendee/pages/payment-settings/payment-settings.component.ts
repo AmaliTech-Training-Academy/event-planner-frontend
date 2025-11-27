@@ -2,23 +2,22 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BankInformation, MoMoInformation, PaymentAnalytics, withdrawRequest } from '@app/core/models/payment.model';
+import { NotificationService } from '@app/core/services/notification.service';
 import { PaymentService } from '@app/core/services/payment.service';
+import { Subscription } from 'rxjs';
 import { UserCardData } from '../../../../core/models';
 import { AdminUserCardComponent } from "../../../../shared/admin-ui/admin-user-card/admin-user-card.component";
 import { ModalContainerComponent } from "../../../../shared/components/modal-container/modal-container.component";
-import { ModalComponent } from "../../../../shared/components/modal/modal.component";
 import { ButtonComponent } from "../../../../shared/ui/button/button.component";
 import { FormErrorComponent } from "../../../../shared/ui/form-error/form-error.component";
 import { InputComponent } from "../../../../shared/ui/input/input.component";
 import { SwitchComponent } from "../../../../shared/ui/switch/switch.component";
 import { MY_EVENT_STAT_CARDS, PAYMENT_TYPES, paymentSetting } from './constant/payment.contant';
 import { FormField, PaymentSettings } from './model/payment.model';
-import { Subscription } from 'rxjs';
-import { NotificationService } from '@app/core/services/notification.service';
 
 @Component({
   selector: 'app-payment-settings-page',
-  imports: [ButtonComponent, CommonModule, InputComponent, FormErrorComponent, SwitchComponent, ReactiveFormsModule, AdminUserCardComponent, ModalComponent, ModalContainerComponent],
+  imports: [ButtonComponent, CommonModule, InputComponent, FormErrorComponent, SwitchComponent, ReactiveFormsModule, AdminUserCardComponent,  ModalContainerComponent],
   templateUrl: './payment-settings.component.html',
   styleUrl: './payment-settings.component.scss'
 })

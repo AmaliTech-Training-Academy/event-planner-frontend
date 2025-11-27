@@ -2,16 +2,18 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
   signal,
-  computed,
 } from '@angular/core';
-import { LayoutService } from '../../../../core/services/layout.service';
-import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import {
-  LineChartComponent,
-  TimeSeriesDataPoint,
-} from './components/line-chart/line-chart.component';
+  EventMonthlyDataPoint,
+  RegistrationMonthlyDataPoint,
+} from '../../../../core/models/dashboard/dashboard-stats-response.model';
+import { DashboardStatsBackendService } from '../../../../core/services/backend/dashboard-stats-backend.service';
+import { LayoutService } from '../../../../core/services/layout.service';
+import { UserManagementService } from '../../../../core/services/user-management.service';
+import { AdminUserCardComponent } from '../../../../shared/admin-ui/admin-user-card/admin-user-card.component';
 import {
   BarChartComponent,
   TrafficByDevice,
@@ -20,14 +22,11 @@ import {
   DonutChartComponent,
   UserStatistics,
 } from './components/donut-chart/donut-chart.component';
-import { TrafficListComponent } from './components/traffic-list/traffic-list.component';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { UserManagementService } from '../../../../core/services/user-management.service';
-import { DashboardStatsBackendService } from '../../../../core/services/backend/dashboard-stats-backend.service';
 import {
-  EventMonthlyDataPoint,
-  RegistrationMonthlyDataPoint,
-} from '../../../../core/models/dashboard/dashboard-stats-response.model';
+  LineChartComponent,
+  TimeSeriesDataPoint,
+} from './components/line-chart/line-chart.component';
+import { TrafficListComponent } from './components/traffic-list/traffic-list.component';
 
 interface DashboardCard {
   readonly title: string;
@@ -53,7 +52,6 @@ interface TrafficByWebsite {
     BarChartComponent,
     DonutChartComponent,
     TrafficListComponent,
-    ButtonComponent,
   ],
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.scss'],

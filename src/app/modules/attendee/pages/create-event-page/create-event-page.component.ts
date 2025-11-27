@@ -50,8 +50,6 @@ import { InputComponent } from '@app/shared/ui/input/input.component';
     ConnectZoomModalComponent,
     UploadEventFlyerComponent,
     EventOptionsContainerComponent,
-    RouterLink,
-    NgOptimizedImage,
     FormErrorComponent,
     LocationSearchComponent,
     InputComponent,
