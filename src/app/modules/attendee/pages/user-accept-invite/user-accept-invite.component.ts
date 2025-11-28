@@ -11,8 +11,6 @@ import {
 } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-
-// Ensure these paths match your project structure
 import { APP_ROUTES } from '../../../../core/constants/app-routes.constants';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
@@ -28,7 +26,6 @@ interface AcceptInviteForm {
 
 @Component({
   selector: 'app-user-accept-invite',
-  standalone: true, // Explicitly marking as standalone since you use imports
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -54,8 +51,10 @@ export class UserAcceptInviteComponent implements OnInit, OnDestroy {
 
   protected loading = false;
 
-  private readonly subscription = new Subscription();
-  // Password regex: At least 8 chars, 1 number, 1 special char
+   private readonly subscription = new Subscription();
+ 
+  
+  
   private readonly passwordRegex =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
 
@@ -64,7 +63,6 @@ export class UserAcceptInviteComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Extract token from URL query params (e.g., ?token=...)
     this.subscription.add(
       this.route.queryParams.subscribe((params) => {
         this.inviteToken.set(params['token'] || '');
@@ -83,74 +81,111 @@ export class UserAcceptInviteComponent implements OnInit, OnDestroy {
   }
 
   protected handleSubmit(): void {
-  this.hasAttemptedSubmit.set(true);
-  this.form.markAllAsTouched();
+    this.hasAttemptedSubmit.set(true);
+    this.form.markAllAsTouched();
 
-  if (this.form.invalid || this.isSubmitting()) return;
+    if (this.form.invalid) {
+      this.notificationService.error('Please fix the errors in the form before submitting.');
+      return;
+    }
 
-  this.isSubmitting.set(true);
+    if (this.isSubmitting()) return;
 
-  const fullName = this.form.value.fullName ?? '';
-  const invitationCode = this.inviteToken();
-  const password = this.form.value.password ?? '';
+    this.isSubmitting.set(true);
 
-  this.subscription.add(
-    this.authService
-      .acceptEventInvitation(fullName, invitationCode, password) // Changed this line
-      .subscribe({
-        next: () => {
-          this.isSubmitting.set(false);
-          this.notificationService.success(
-            'Invitation accepted successfully! You can now log in.'
-          );
-          this.router.navigate([APP_ROUTES.LOGIN]);
-        },
-        error: (error) => {
-          this.isSubmitting.set(false);
-          this.notificationService.error(
-            error?.error?.message ||
-              'Failed to accept invitation. Please try again.'
-          );
-        },
-      })
-  );
-}
+    const fullName = this.form.value.fullName ?? '';
+    const invitationCode = this.inviteToken();
+    const password = this.form.value.password ?? '';
+
+    this.subscription.add(
+      this.authService
+        .acceptEventInvitation(fullName, invitationCode, password)
+        .subscribe({
+          next: () => {
+            this.isSubmitting.set(false);
+            this.notificationService.success(
+              'Invitation accepted successfully! You can now log in.'
+            );
+            this.router.navigate([APP_ROUTES.LOGIN]);
+          },
+          error: (error) => {
+            this.isSubmitting.set(false);
+            this.notificationService.error(
+              error?.error?.message ||
+                'Failed to accept invitation. Please try again.'
+            );
+          },
+        })
+    );
+  }
 
   protected hasFieldError(fieldName: keyof AcceptInviteForm): boolean {
     const field = this.form?.get(fieldName);
-    return !!(field?.invalid && (field?.touched || this.hasAttemptedSubmit()));
+    const fieldInvalid = field?.invalid && (field?.touched || this.hasAttemptedSubmit());
+    
+   
+    if (fieldName === 'confirmPassword') {
+      const hasPasswordMismatch = this.form.errors?.['passwordMismatch'] && 
+                                   (field?.touched || this.hasAttemptedSubmit());
+      return !!(fieldInvalid || hasPasswordMismatch);
+    }
+    
+    return !!fieldInvalid;
   }
 
   protected getFieldErrorMessage(fieldName: keyof AcceptInviteForm): string {
     const field = this.form?.get(fieldName);
-    if (!field?.errors) {
-      if (
-        fieldName === 'confirmPassword' &&
-        this.form.errors?.['passwordMismatch']
-      ) {
+    
+    
+    if (fieldName === 'confirmPassword') {
+      if (this.form.errors?.['passwordMismatch'] && (field?.touched || this.hasAttemptedSubmit())) {
         return 'Passwords do not match';
       }
+    }
+
+    if (!field?.errors) {
       return '';
     }
 
     const errors = field.errors;
-    switch (true) {
-      case !!errors?.['required']:
-        return `${this.capitalize(
-          fieldName.replace(/([A-Z])/g, ' $1').trim()
-        )} is required`;
-      case !!errors?.['minLength'] && fieldName === 'fullName':
-        return 'Full name must be at least 2 characters';
-      case !!errors?.['pattern'] && fieldName === 'password':
-        return 'Password must include at least 8 chars, one number & one special character';
-      default:
-        return 'Invalid input';
+    
+    
+    if (errors['required']) {
+      const fieldLabel = this.getFieldLabel(fieldName);
+      return `${fieldLabel} is required`;
     }
+    
+    
+    if (errors['noEmail'] && fieldName === 'fullName') {
+      return 'Please enter your full name, not an email address';
+    }
+    
+   
+    if (errors['pattern'] && fieldName === 'password') {
+      return 'Password must be at least 8 characters with one letter, one number, and one special character';
+    }
+
+    return 'Invalid input';
   }
 
   protected isFieldValid(fieldName: keyof AcceptInviteForm): boolean {
     const field = this.form?.get(fieldName);
+    
+    
+    if (fieldName === 'confirmPassword' && this.form.errors?.['passwordMismatch']) {
+      return false;
+    }
+    
     return !!(field?.valid && field?.touched);
+  }
+
+  private getFieldLabel(fieldName: keyof AcceptInviteForm): string {
+    const labels: Record<keyof AcceptInviteForm, string> = {
+      fullName: 'Full name',
+      password: 'Password',
+      confirmPassword: 'Confirm password'
+    };
+    return labels[fieldName];
   }
 
   private createForm(): FormGroup<AcceptInviteForm> {
@@ -158,7 +193,7 @@ export class UserAcceptInviteComponent implements OnInit, OnDestroy {
       {
         fullName: this.fb.control('', [
           Validators.required,
-          Validators.minLength(2),
+          this.noEmailValidator,
         ]),
         password: this.fb.control('', [
           Validators.required,
@@ -170,6 +205,16 @@ export class UserAcceptInviteComponent implements OnInit, OnDestroy {
         validators: this.passwordMatchValidator,
       }
     );
+  }
+
+
+  private noEmailValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) {
+      return null;
+    }
+
+    const hasAtSymbol = control.value.includes('@');
+    return hasAtSymbol ? { noEmail: true } : null;
   }
 
   private passwordMatchValidator(
