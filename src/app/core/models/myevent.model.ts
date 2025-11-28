@@ -52,6 +52,7 @@ export interface MyEventItem {
     startTime: string;
     location: string;
     flyerUrl: string;
+    attendeesCount: number;
     attendeeCount: number;
     attendees?: number;
     isPaid: boolean;

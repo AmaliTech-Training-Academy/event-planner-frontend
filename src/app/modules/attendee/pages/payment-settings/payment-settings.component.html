@@ -1,98 +1,130 @@
 <div class="container">
-
-
-
-    <div class="card-container">
-        @for (card of analytics(); track $index) {
-        <app-admin-user-card [data]="card"></app-admin-user-card>
-        }
-    </div>
-
-    <h2>Payment Settings</h2>
-
-    <form method="POST" [formGroup]="form" (ngSubmit)="onSubmit()">
-        @for (method of methods.controls; track $index) {
-        <div class="form-group" [formGroup]="method">
-            <div class="group-header">
-                <h3>{{method.get('title')?.value}}</h3>
-                <div class="container-right">
-                    <app-switch [value]="method.get('active')?.value" (onChange)="onToggle(method,$event)"></app-switch>
-                </div>
-            </div>
-
-            <div class="group-body">
-                <div class="field-container">
-                    @for (field of methodFields(method).controls; track $index) {
-                    <div class="field" [formGroup]="field">
-                        @if (field.get('type')?.value =="select") {
-                        <label>{{field.get('label')?.value}}</label>
-                        }
-                        <div class="input-container">
-                            @switch (field.get('type')?.value) {
-                            @case ('text') {
-                            <app-input [formControlName]="field.get('backend_key')?.value"
-                                [value]="field.get(field.get('backend_key')?.value)?.value"
-                                [label]="field.get('label')?.value" type="text"
-                                [errorMessage]="getError(field, field.get('backend_key')?.value)" />
-                            }
-                            @case ('number') {
-                            <app-input [formControlName]="field.get('backend_key')?.value"
-                                [value]="field.get(field.get('backend_key')?.value)?.value"
-                                [label]="field.get('label')?.value" type="number"
-                                [errorMessage]="getError(field, field.get('backend_key')?.value)" />
-                            }
-                            @case ('tel') {
-                            <app-input [formControlName]="field.get('backend_key')?.value"
-                            [errorMessage]="getError(field, field.get('backend_key')?.value)"
-                                [label]="field.get('label')?.value" type="tel" />
-                            }
-                            @case ('select') {
-
-                            <div class="select-container">
-                                <select [value]="field.get(field.get('backend_key')?.value)?.value"
-                                    [formControlName]="field.get('backend_key')?.value">
-                                    @for (option of field.get('options')?.value; track $index) {
-                                    <option def [value]="option.value">{{option.label}}</option>
-                                    }
-                                </select>
-                                <app-form-error [message]="getError(field, field.get('backend_key')?.value)"></app-form-error>
-                            </div>
-                            }
-                            }
-                        </div>
-                    </div>
-                    }
-                </div>
-                <div class="save-container">
-                    <div></div>
-                    <app-button [disabled]="!method.get('active')?.value  || loading()" buttonType="submit" type="secondary">
-                        Save
-                    </app-button>
-                </div>
-            </div>
-
-        </div>
-        }
-    </form>
-
-    <div class="request-payout">
-        <app-button [disabled]="form.invalid || loading()" (onClick)="showPayoutModalToggle()" type="primary">
-            Request Payout
-        </app-button>
-    </div>
-
-
-    @if (showPayoutModal()) {
-    <app-modal-container (close)="showPayoutModalToggle()">
-        <div class="modal-content">
-            <div class="header">
-                <h3>Request Payout</h3>
-                <p>Enter the amount you want to withdraw</p>
-            </div>
-            <app-input [errorMessage]="getWithdrawErro()" (valueChange)="withdrawAmountChange($event)" [value]="payoutAmount().toString()" iconSrc="icons/money.svg" placeholder="0.00" [type]="'number'"></app-input>
-            <app-button [disabled]="payoutAmount() <= 0 ||payoutAmount() > maxPayoutAmount() || loading()" (onClick)="withdrawFund()">Withdraw</app-button>
-        </div>
-    </app-modal-container>
+  <div class="card-container">
+    @for (card of analytics(); track $index) {
+    <app-admin-user-card [data]="card"></app-admin-user-card>
     }
+  </div>
 
+  <h2>Payment Settings</h2>
+
+  <form method="POST" [formGroup]="form" (ngSubmit)="onSubmit()">
+    @for (method of methods.controls; track $index) {
+    <div class="form-group" [formGroup]="method">
+      <div class="group-header">
+        <h3>{{ method.get("title")?.value }}</h3>
+        <div class="container-right">
+          <app-switch
+            [value]="method.get('active')?.value"
+            (onChange)="onToggle(method, $event)"
+          ></app-switch>
+        </div>
+      </div>
+
+      <div class="group-body">
+        <div class="field-container">
+          @for (field of methodFields(method).controls; track $index) {
+          <div class="field" [formGroup]="field">
+            @if (field.get('type')?.value =="select") {
+            <label>{{ field.get("label")?.value }}</label>
+            }
+            <div class="input-container">
+              @switch (field.get('type')?.value) { @case ('text') {
+              <app-input
+                [formControlName]="field.get('backend_key')?.value"
+                [value]="field.get(field.get('backend_key')?.value)?.value"
+                [label]="field.get('label')?.value"
+                type="text"
+                [errorMessage]="
+                  getError(field, field.get('backend_key')?.value)
+                "
+              />
+              } @case ('number') {
+              <app-input
+                [formControlName]="field.get('backend_key')?.value"
+                [value]="field.get(field.get('backend_key')?.value)?.value"
+                [label]="field.get('label')?.value"
+                type="number"
+                [errorMessage]="
+                  getError(field, field.get('backend_key')?.value)
+                "
+              />
+              } @case ('tel') {
+              <app-input
+                [formControlName]="field.get('backend_key')?.value"
+                [errorMessage]="
+                  getError(field, field.get('backend_key')?.value)
+                "
+                [label]="field.get('label')?.value"
+                type="tel"
+              />
+              } @case ('select') {
+
+              <div class="select-container">
+                <select
+                  [value]="field.get(field.get('backend_key')?.value)?.value"
+                  [formControlName]="field.get('backend_key')?.value"
+                >
+                  @for (option of field.get('options')?.value; track $index) {
+                  <option def [value]="option.value">{{ option.label }}</option>
+                  }
+                </select>
+                <app-form-error
+                  [message]="getError(field, field.get('backend_key')?.value)"
+                ></app-form-error>
+              </div>
+              } }
+            </div>
+          </div>
+          }
+        </div>
+        <div class="save-container">
+          <div></div>
+          <app-button
+            [disabled]="!method.get('active')?.value || loading()"
+            buttonType="submit"
+            type="secondary"
+          >
+            Save
+          </app-button>
+        </div>
+      </div>
+    </div>
+    }
+  </form>
+
+  <div class="request-payout">
+    <app-button
+      [disabled]="form.invalid || loading()"
+      (onClick)="showPayoutModalToggle()"
+      type="primary"
+    >
+      Request Payout
+    </app-button>
+  </div>
+
+  @if (showPayoutModal()) {
+  <app-modal-container (close)="showPayoutModalToggle()">
+    <div class="modal-content">
+      <div class="header">
+        <h3>Request Payout</h3>
+        <p>Enter the amount you want to withdraw</p>
+      </div>
+      <app-input
+        [errorMessage]="getWithdrawErro()"
+        (valueChange)="withdrawAmountChange($event)"
+        [value]="payoutAmount().toString()"
+        iconSrc="icons/money.svg"
+        placeholder="0.00"
+        [type]="'number'"
+      ></app-input>
+      <app-button
+        [disabled]="
+          payoutAmount() <= 0 || payoutAmount() > maxPayoutAmount() || loading()
+        "
+        (onClick)="withdrawFund()"
+        >Withdraw</app-button
+      >
+    </div>
+  </app-modal-container>
+  }
 </div>

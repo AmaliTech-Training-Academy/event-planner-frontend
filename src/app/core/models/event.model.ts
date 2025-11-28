@@ -170,7 +170,9 @@ export interface EventSummary {
   ticketPrice: number;
   organizer?: string;
   attendees?: number;
-  attendeeCount?: number;
+  attendeesCount?: number;
+  attendeeCount: number;
+
   isPaid?: boolean;
 }
 

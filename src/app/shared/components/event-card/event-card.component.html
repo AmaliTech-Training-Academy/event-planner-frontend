@@ -1,8 +1,12 @@
 <article class="event-card">
-  <img (error)="handleImageFallback($event)" [src]="event().flyerUrl" [alt]="event().title" class="event-card__image" />
+  <img
+    (error)="handleImageFallback($event)"
+    [src]="event().flyerUrl"
+    [alt]="event().title"
+    class="event-card__image"
+  />
 
   <div class="event-card__content">
-
     @if (event().ticketPrice || event().isPaid) {
     <span class="event-card__badge badge--paid">Paid</span>
     } @else {
@@ -12,7 +16,7 @@
     <div class="event-card__info">
       <span class="event-card__icon-text">
         <img src="icons/Mixed.png" alt="Calendar" class="info-icon" />
-        {{ (event().startTime| date : 'MMM d, y')|| "N/A"   }}
+        {{ (event().startTime | date : "MMM d, y") || "N/A" }}
       </span>
 
       <h3 class="event-card__title">{{ event().title }}</h3>
@@ -25,18 +29,25 @@
       @if (event()) {
       <span class="event-card__icon-text">
         <img src="icons/users-icon.png" alt="Attendees" class="info-icon" />
-        {{ event().attendeeCount || 0}} attendees
+        {{ event().attendeesCount || event().attendeeCount || 0 }} attendees
       </span>
       }
     </div>
 
-
     @if (variant() === 'manage') {
-    <app-button [type]="'secondary'" [extraClass]="'event-card__button'" (onClick)="onManageClick()">
+    <app-button
+      [type]="'secondary'"
+      [extraClass]="'event-card__button'"
+      (onClick)="onManageClick()"
+    >
       Manage Event
     </app-button>
     } @else {
-    <app-button [type]="'secondary'" [extraClass]="'event-card__button'" (onClick)="navigateToDetails()">
+    <app-button
+      [type]="'secondary'"
+      [extraClass]="'event-card__button'"
+      (onClick)="navigateToDetails()"
+    >
       View Event
     </app-button>
     }
