@@ -136,7 +136,6 @@ export class VenueLayoutEditorComponent implements AfterViewInit {
 
     this.canvas.on('mouse:down', (opt) => {
 
-      console.log(this.shapes)
       if (this.activeTool() === DrawingTool.NONE) return;
 
       // Do not start polygon drawing if a shape is currently selected
@@ -409,12 +408,11 @@ export class VenueLayoutEditorComponent implements AfterViewInit {
 
       const entry = this.shapes.find(s => s.object === target);
       const idInfo = entry ? ` (id: ${entry.id})` : '';
-      console.log(`Selected shape: ${typeLabel}${idInfo}`);
+
     };
 
     this.canvas.on('selection:created', (e: any) => logType(e.selected?.[0]));
     this.canvas.on('selection:updated', (e: any) => logType(e.selected?.[0]));
-    this.canvas.on('selection:cleared', () => console.log('Selection cleared'));
   }
 
   private registerKeyboardDeletion(): void {

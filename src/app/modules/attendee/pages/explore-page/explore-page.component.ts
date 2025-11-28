@@ -27,10 +27,10 @@ import {
 import { StoredRecentLocation } from '../../../../core/models/recent-location.model';
 import { EventsServiceService } from '../../../../core/services/events.service';
 import { PaginationComponent } from "../../../../shared/admin-ui/pagination/pagination.component";
-import { LocationSearchComponent } from "../../../../shared/components/location-search/location-search.component";
 import { EmptyListMessageComponent } from "@app/shared/components/empty-list-message/empty-list-message.component";
 import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
 import { Subscription } from 'rxjs';
+import { LocationSearchComponent } from '@app/shared/components/location-search/location-search.component';
 
 @Component({
   selector: 'app-explore-page',
@@ -308,7 +308,6 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
     this.selectedDate.set(date);
     this.showDatePicker.set(false);
   }
-
 
 
   protected onPageChange(number_: number) {

@@ -50,8 +50,6 @@ import { InputComponent } from '@app/shared/ui/input/input.component';
     ConnectZoomModalComponent,
     UploadEventFlyerComponent,
     EventOptionsContainerComponent,
-    RouterLink,
-    NgOptimizedImage,
     FormErrorComponent,
     LocationSearchComponent,
     InputComponent,
@@ -86,7 +84,6 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
   ) {
     this.eventId =
       this.router.getCurrentNavigation()?.extras.state?.['eventId'];
-    console.log(this.eventId);
 
     this.form = this.eventFormService.getForm();
     this.checked = this.eventFormService.requireApproval?.value;

@@ -362,13 +362,28 @@
     gap: $spacing-3;
   }
 
-  &__user-avatar-img {
+&__user-avatar-img {
     width: 32px;
     height: 32px;
     border-radius: $radius-full;
     object-fit: cover;
     flex-shrink: 0;
     background: $gray-100;
+  }
+
+  &__user-avatar-initials {
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-full;
+    background: $orange-100;
+    color: $orange-700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    flex-shrink: 0;
+    text-transform: uppercase;
   }
 
   &__user-info {

@@ -40,6 +40,15 @@ interface TransactionDisplay extends TransactionManagement {
   readonly truncatedTransactionId: string;
 }
 
+interface TransactionDisplay extends TransactionManagement {
+  readonly formattedDate: string;
+  readonly formattedAmount: string;
+  readonly displayPaymentMethod: string;
+  readonly truncatedEmail: string;
+  readonly truncatedEventName: string;
+  readonly truncatedTransactionId: string;
+}
+
 @Component({
   selector: 'app-transactions-page',
   standalone: true,

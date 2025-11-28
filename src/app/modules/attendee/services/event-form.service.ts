@@ -20,7 +20,7 @@ export class EventFormService {
       [F.CAPACITY]: [0, [Validators.min(0)]],
       [F.PRICE]: [0, [Validators.min(0)]],
       [F.PERCS]: ['', [Validators.required, Validators.minLength(3)]],
-      [F.REQUIRE_APPROVAL]: [false, Validators.required],
+      [F.REQUIRE_APPROVAL]: [false],
       [F.PRICE_TYPE]: [PRICE_TYPE.FREE, Validators.required],
       [F.VENUE_SECTIONS]: this.fb.array([]),
     });

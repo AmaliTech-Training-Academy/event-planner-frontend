@@ -77,18 +77,16 @@ export const API_ENDPOINTS = {
   GET_AUDIT_LOGS: `${BASE}/auth/audit_logs`,
   GET_AUDIT_LOG_BY_ID: (logId: string) => `${BASE}/audit-logs/${logId}`,
 
-  // Dashboard statistics endpoints
-  EVENT_GRAPH_EVENTS: `${BASE}/event-graph/events`,
-  EVENT_GRAPH_REGISTRATIONS: `${BASE}/event-graph/registrations`,
-
-  // ============================================
-  // TRANSACTION MANAGEMENT ENDPOINTS
-  // ============================================
+  // Transactions Management endpoints
   PAYMENT_TRANSACTIONS: `${BASE}/payment`,
   GET_TRANSACTION: (id: string): string => `${BASE}/payment/${id}`,
   GET_EVENT_TRANSACTIONS: (eventId: string): string =>
     `${BASE}/payment/event/${eventId}`,
   USER_TRANSACTIONS: `${BASE}/payment/user/history`,
+  // Dashboard statistics endpoints
+  EVENT_GRAPH_EVENTS: `${BASE}/event-graph/events`,
+  EVENT_GRAPH_REGISTRATIONS: `${BASE}/event-graph/registrations`,
+
 } as const;
 
 export const EVENTS_API_ENDPOINTS = {
@@ -131,4 +129,13 @@ export const PLATFORM_SETTINGS_ENDPOINTS = {
   MANAGE_EVENT_INVITEES: (id: number) => `${BASE}/event-invitations/${id}/invitees`,
   MANAGE_EVENT_REGISTRANTS_OVERVIEW: (id: number) => `${BASE}/events/${id}/registrations/overview`,
   MANAGE_EVENT_REGISTRANTS_SEARCH: (id: number) => `${BASE}/events/${id}/registrations/search`,
+} as const;
+
+
+export const PAYMENT_ENDPOINTS = {
+  BANK_SETTINGS: `${BASE}/users/payment-settings/bank-account`,
+  MOMO_SETTINGS: `${BASE}/users/payment-settings/mobile-money`,
+  PAYMENT_STATS: `${BASE}/events/earnings`,
+  EARNINS_WITHDRAW: `${BASE}/events/earnings/withdraw`,
+
 } as const;

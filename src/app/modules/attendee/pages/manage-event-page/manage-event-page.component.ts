@@ -120,16 +120,34 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
   // Computed signal to check if current user is the event owner/organizer
   protected readonly isEventOwner = computed<boolean>(() => {
+    // If user is admin, they shouldn't see the edit button
+    if (this.isAdmin()) {
+      return false;
+    }
+
     const currentUser = this._authService.currentUser();
     const eventData = this.eventOverview();
 
-    if (!currentUser || !eventData?.data?.eventHosts) {
+    if (!currentUser || !eventData) {
       return false;
     }
 
     // Check if current user is an organizer of this event
-    return eventData.data.eventHosts.some(
-      host => host.email === currentUser.email && host.role === 'ORGANIZER'
+    // If eventHosts is populated, check against it
+    if (eventData.data.eventHosts && eventData.data.eventHosts.length > 0) {
+      return eventData.data.eventHosts.some(
+        (host) =>
+          host.email === currentUser.email &&
+          (host.role === USER_ROLES.ORGANIZER ||
+            host.role === USER_ROLES.CO_ORGANIZER)
+      );
+    }
+
+    // Fallback: If eventHosts is empty (backend issue), but user is an ORGANIZER/CO_ORGANIZER
+    // and has access to this page (data loaded), allow it.
+    return (
+      currentUser.role === USER_ROLES.ORGANIZER ||
+      currentUser.role === USER_ROLES.CO_ORGANIZER
     );
   });
 
@@ -263,7 +281,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected getBreadcrumbText(): string {
     // Check both the isAdmin signal and the current route
     const isAdminRoute = this._router.url.startsWith('/admin');
-    return (this.isAdmin() || isAdminRoute) ? 'Event Overview' : 'My Events';
+    return this.isAdmin() || isAdminRoute ? 'Event Overview' : 'My Events';
   }
 
   protected onViewAllGuests(): void {
@@ -350,7 +368,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       message: formData.message || '',
     };
 
-    this._userBackendService.inviteUsers(payload as any).subscribe({
+    this._userBackendService.eventInvitation(payload as any).subscribe({
       next: () => {
         const roleValue = payload.invitees[0].role;
         this.isSubmitting.set(false);

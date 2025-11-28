@@ -73,11 +73,7 @@ export class AdminSidebarComponent {
           iconPath: 'icons/social-icon.png',
           route: '/admin/transactions',
         },
-        {
-          label: 'Reports',
-          iconPath: 'icons/action-icon.png',
-          route: '/admin/reports',
-        },
+       
       ],
     },
   ]);

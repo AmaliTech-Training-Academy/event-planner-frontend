@@ -63,6 +63,7 @@ export class EditEventPageComponent implements OnInit {
           location: response.location,
           description: response.description,
         })
+        
         this.flyerPreview = response.flyerUrl;
         const ticketsArray = this.form.get('tickets') as FormArray;
         response.ticketTypes.forEach(ticket => {
@@ -83,13 +84,6 @@ export class EditEventPageComponent implements OnInit {
     })
   }
 
-
-
-  private updateForm() {
-    this.form.patchValue({
-
-    })
-  }
 
   protected onFlyerImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -136,17 +130,13 @@ export class EditEventPageComponent implements OnInit {
       title: data.title,
       description: data.description,
       location: data.location,
-      zoomUrl: '',
+      zoomUrl: data.meetingLink || "",
       tickets: data.tickets
     };
 
     if (data.flyer instanceof File) {
       formData.append('image', data.flyer);
     }
-
-    data.tickets.map((ticket: any) => {
-
-    })
 
     formData.append('event', JSON.stringify(eventInfo));
 

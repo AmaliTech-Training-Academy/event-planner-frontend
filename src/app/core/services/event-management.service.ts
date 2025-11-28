@@ -55,7 +55,7 @@ export class EventManagementService {
   constructor(
     private readonly _backend: EventBackendService,
     private readonly _errorHandler: ErrorHandlerService
-  ) {}
+  ) { }
 
   public loadDashboardData(
     page = 0,
@@ -95,34 +95,20 @@ export class EventManagementService {
     const cachedData = this._getFromCache(cacheKey);
 
     if (cachedData) {
-      console.log('📦 Using cached search results for:', cacheKey);
       this._searchResults.next(cachedData);
       this._loading.next(false);
       return of(cachedData);
     }
 
-    console.log('🔍 Fetching search results:', {
-      keyword,
-      page,
-      size,
-      status,
-    });
 
     return this._backend.searchEvents(keyword, page, size, status).pipe(
       map((res) => res.data),
       tap((data) => {
-        console.log('📥 Search results received:', {
-          totalElements: data.totalElements,
-          contentLength: data.content.length,
-        });
         this._searchResults.next(data);
-        // DO NOT clear _dashboardData here - keep dashboard context intact
         this._addToCache(cacheKey, data);
       }),
       catchError((err) => {
-        console.error('❌ Search error:', err);
         this._errorHandler.handle(err);
-        // Clear search results on error
         this._searchResults.next(null);
         return throwError(() => err);
       }),
@@ -132,15 +118,11 @@ export class EventManagementService {
 
   // Method to clear search results and show normal dashboard data
   public clearSearch(): void {
-    console.log('🧹 Clearing search results');
     this._searchResults.next(null);
-    // Optionally reload dashboard data to refresh the events list
-    // this.loadDashboardData(0, 10).subscribe();
   }
 
   // Clear entire cache (useful for manual refresh)
   public clearCache(): void {
-    console.log('🗑️ Clearing entire cache');
     Object.keys(this._searchCache).forEach((key) => {
       delete this._searchCache[key];
     });

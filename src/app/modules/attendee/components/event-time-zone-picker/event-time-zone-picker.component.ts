@@ -27,7 +27,6 @@ export class EventTimeZonePickerComponent implements OnInit {
         this.timeZones = value;
         const currentValue = this.control()?.value;
         if (currentValue) {
-          console.log(currentValue)
           this.selectedTimeZone =
             this.timeZones.find((tz) => tz.zoneId === currentValue) || null;
         }

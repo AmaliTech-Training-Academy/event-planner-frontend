@@ -98,9 +98,8 @@ export class InviteUserModalComponent {
       },
       error: (error) => {
         this.isSubmitting = false;
-        this.notificationService.error(
-          'Failed to send invitations. Please try again.'
-        );
+        
+
       },
     });
   }

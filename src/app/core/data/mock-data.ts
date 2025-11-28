@@ -1,10 +1,18 @@
 import {
   EventDetails,
-  EventTypeFilter,
-  TabToggle,
-  TicketInfo,
   VenueImage,
-  VenueSection
+  VenueSection,
+  TicketInfo,
+  EventCard,
+  SearchLocation,
+  PopularLocation,
+  TabToggle,
+  EventHostAdmin,
+  StatCardData,
+  EventSummary,
+  TicketStatus,
+  EventDetailsAdmin,
+  EventTypeFilter
 } from '../models/event.model';
 
 import { LineSeriesConfig } from '../models/chart.model';
