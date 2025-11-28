@@ -160,7 +160,7 @@ export class AuthService {
     this.setLoading(true);
     return this.authBackend.resendOtp(email).pipe(
       take(1),
-      tap(() => {}),
+      tap(() => { }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
     );
@@ -399,7 +399,6 @@ export class AuthService {
           }, 500);
         }
       } catch (error) {
-        console.error('Error loading auth data:', error);
       }
     }
   }
@@ -475,7 +474,6 @@ export class AuthService {
       .pipe(take(1))
       .subscribe({
         next: (response) => {
-          console.log(response, 'token');
           this.saveAuthToStorage(
             data[AUTH_STORAGE.USER_ID],
             data[AUTH_STORAGE.FULL_NAME],
@@ -573,17 +571,51 @@ export class AuthService {
         take(1),
         tap((response) => {
           const userData = response?.data;
+
           if (userData) {
             const role = String(userData.role).trim().toUpperCase();
 
+            this._loggedIn$.next(true);
+            this._userInfo$.next(userData);
+
             if (role === 'ADMIN') {
+              this._currentAuthContext = 'admin';
+
+              this.saveAuthToStorage(
+                userData.id.toString(),
+                userData.fullName,
+                userData.profilePicture,
+                userData.email,
+                userData.role,
+                'admin',
+                new Date()
+              );
+
+              this.startAutomaticRefresh(new Date());
+
               setTimeout(() => {
-                this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
-              }, 100);
+                this.router.navigate([APP_ROUTES.ADMIN_DASHBOARD]);
+              }, 500);
             } else {
+              this._currentAuthContext = 'user';
+
+              this.saveAuthToStorage(
+                userData.id.toString(),
+                userData.fullName,
+                userData.profilePicture,
+                userData.email,
+                userData.role,
+                'user',
+                new Date(),
+                userData.phone || '',
+                userData.address || ''
+              );
+
+              this.startAutomaticRefresh(new Date());
+
               setTimeout(() => {
-                this.router.navigate([APP_ROUTES.LOGIN]);
-              }, 100);
+                this.router.navigate([APP_ROUTES.MY_EVENTS]);
+              }, 500);
             }
           }
         }),

@@ -386,7 +386,7 @@ export class EditProfileComponent implements OnInit {
       if (phoneNumberObj && phoneNumberObj.isValid()) {
         return phoneNumberObj.formatInternational();
       }
-    } catch {}
+    } catch { }
 
     return phoneNumber;
   }
@@ -412,7 +412,6 @@ export class EditProfileComponent implements OnInit {
           const updatedUser = response.data || response;
 
           if (!this.isEditingTeamMember()) {
-            // Update auth service with new user data including phone and address
             const authData: OtpBodyData = {
               id: updatedUser.userId || parseInt(this._currentUserId!, 10),
               email: updatedUser.email,
@@ -423,30 +422,13 @@ export class EditProfileComponent implements OnInit {
               address: updatedUser.address || undefined,
             };
 
-            // Update the BehaviorSubject in AuthService
-            this._authService['_userInfo$'].next(authData);
+            this._authService.updateStoredUserInfo(authData);
 
-            const context =
-              this._authService.getCurrentAuthContext() ||
-              (authData.role === 'admin' ? 'admin' : 'user');
-
-            // Save to storage
-            this._authService['saveAuthToStorage'](
-              authData.id.toString(),
-              authData.fullName,
-              authData.profilePicture,
-              authData.email,
-              authData.role,
-              context
-            );
-
-            // Update the local profile image immediately
             this._originalImageUrl = updatedUser.profileImageUrl || null;
             this.profileImage.set(
               this._originalImageUrl || this.currentProfileImage()
             );
 
-            // Clear the selected file since it's now uploaded
             this._selectedImageFile = null;
           } else {
             // For team member updates
@@ -491,7 +473,7 @@ export class EditProfileComponent implements OnInit {
         if (phoneNumberObj?.isValid()) {
           formattedPhone = phoneNumberObj.number;
         }
-      } catch {}
+      } catch { }
     }
 
     let userRole = 'admin';

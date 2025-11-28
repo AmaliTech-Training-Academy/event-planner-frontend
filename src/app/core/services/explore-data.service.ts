@@ -1,18 +1,16 @@
-
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { AppEvent } from '../models/event-model';
 import { PopularLocation, RecentSearch } from '../models/location-model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExploreDataService {
-
   getRecentSearches(): Observable<RecentSearch[]> {
     return of([
       { id: '1', name: 'New York, USA' },
-      { id: '2', name: 'London, UK' }
+      { id: '2', name: 'London, UK' },
     ]);
   }
 
@@ -20,7 +18,7 @@ export class ExploreDataService {
     return of([
       { name: 'San Francisco, USA', meta: 'California' },
       { name: 'Toronto, Canada', meta: 'Ontario' },
-      { name: 'Sydney, Australia', meta: 'New South Wales' }
+      { name: 'Sydney, Australia', meta: 'New South Wales' },
     ]);
   }
 
@@ -29,21 +27,21 @@ export class ExploreDataService {
       {
         id: 'evt1',
         imageUrl: 'images/event1.jpg',
-        date: '2025-04-15T00:00:00Z', 
+        date: '2025-04-15T00:00:00Z',
         title: 'Tech Innovation Summit 2025',
         location: 'Silicon Valley, CA',
         attendees: 5000,
-        isPaid: true
+        isPaid: true,
       },
       {
         id: 'evt2',
         imageUrl: 'images/event2.jpg',
-        date: '2025-06-20T00:00:00Z', 
+        date: '2025-06-20T00:00:00Z',
         title: 'AI World Conference',
         location: 'New York, NY',
         attendees: 2500,
-        isPaid: true
-      }
+        isPaid: true,
+      },
     ]);
   }
 
@@ -52,21 +50,21 @@ export class ExploreDataService {
       {
         id: 'evt3',
         imageUrl: 'images/event3.jpg',
-        date: '2025-05-10T00:00:00Z', 
+        date: '2025-05-10T00:00:00Z',
         title: 'Community Code & Coffee',
         location: 'Austin, TX',
         attendees: 150,
-        isPaid: false
+        isPaid: false,
       },
       {
         id: 'evt4',
         imageUrl: 'images/event4.jpg',
-        date: '2025-07-15T00:00:00Z',  
+        date: '2025-07-15T00:00:00Z',
         title: 'Open Source Meetup',
         location: 'Seattle, WA',
         attendees: 80,
-        isPaid: false
-      }
+        isPaid: false,
+      },
     ]);
   }
 }

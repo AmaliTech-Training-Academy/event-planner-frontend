@@ -118,6 +118,21 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   // New signal to track if current user is admin
   protected readonly isAdmin = signal<boolean>(false);
 
+  // Computed signal to check if current user is the event owner/organizer
+  protected readonly isEventOwner = computed<boolean>(() => {
+    const currentUser = this._authService.currentUser();
+    const eventData = this.eventOverview();
+
+    if (!currentUser || !eventData?.data?.eventHosts) {
+      return false;
+    }
+
+    // Check if current user is an organizer of this event
+    return eventData.data.eventHosts.some(
+      host => host.email === currentUser.email && host.role === 'ORGANIZER'
+    );
+  });
+
   protected inviteForm: FormGroup = this._fb.group({
     title: ['', Validators.required],
     name: ['', Validators.required],
@@ -185,6 +200,11 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this._manageService.getOverview(eventId).subscribe({
       next: (response) => {
         this.eventOverview.set(response);
+
+        // Set the page title dynamically from event data
+        const eventTitle = response.data.eventSummary?.title || 'Event Details';
+        this._layoutService.pageTitle.set(eventTitle);
+
         this.prePopulateEventFields(
           response.data.eventSummary?.title || '',
           eventId
@@ -230,7 +250,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
   // Helper method to navigate to correct events list based on user role
   private _navigateToEventsList(): void {
-    if (this.isAdmin()) {
+    // Check both the isAdmin signal and the current route
+    const isAdminRoute = this._router.url.startsWith('/admin');
+    if (this.isAdmin() || isAdminRoute) {
       this._router.navigate([APP_ROUTES.ADMIN_EVENTS]);
     } else {
       this._router.navigate([APP_ROUTES.MY_EVENTS]);
@@ -239,7 +261,9 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
   // Helper method to get breadcrumb text
   protected getBreadcrumbText(): string {
-    return this.isAdmin() ? 'Event Overview' : 'My Events';
+    // Check both the isAdmin signal and the current route
+    const isAdminRoute = this._router.url.startsWith('/admin');
+    return (this.isAdmin() || isAdminRoute) ? 'Event Overview' : 'My Events';
   }
 
   protected onViewAllGuests(): void {
