@@ -52,22 +52,22 @@ import { LocationSearchComponent } from '@app/shared/components/location-search/
     FormsModule,
     PaginationComponent,
     EmptyListMessageComponent,
-    LoadingCardComponent
+    LoadingCardComponent,
   ],
   templateUrl: './explore-page.component.html',
   styleUrl: './explore-page.component.scss',
 })
 export class ExplorePageComponent implements OnInit, OnDestroy {
-
   protected allEvents = signal<GetEventsResponse | null>(null);
   protected currentPage = signal<number>(0);
   private readonly EVENTS_PER_PAGE = 12;
-  protected loading = signal<boolean>(true)
-  protected subscription = new Subscription()
-
+  protected loading = signal<boolean>(true);
+  protected subscription = new Subscription();
+  protected totalItems = signal<number>(0);
+  protected itemsPerPage = signal<number>(this.EVENTS_PER_PAGE);
 
   protected locationTerm = signal<string>('');
-  protected locationInputFocused = signal<boolean>(false)
+  protected locationInputFocused = signal<boolean>(false);
   public searchQuery = signal('');
   public selectedLocation = signal('Location');
   public selectedEventType = signal(MOCK_EVENT_TYPE_OPTIONS[0]);
@@ -87,11 +87,13 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
     past: null,
     date: null,
     searchTerm: '',
-    locationTerm: ''
+    locationTerm: '',
   };
 
-  constructor(private readonly router: Router, private readonly eventService: EventsServiceService) {
-
+  constructor(
+    private readonly router: Router,
+    private readonly eventService: EventsServiceService
+  ) {
     effect(() => {
       const isPaid = this.selectedEventType().value;
       const past = this.activeToggle();
@@ -117,7 +119,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
         past,
         date,
         searchTerm,
-        locationTerm
+        locationTerm,
       };
 
       if (this.debounceTimeoutId) {
@@ -125,11 +127,15 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
       }
 
       this.debounceTimeoutId = setTimeout(() => {
-        this.searchEvents(isPaid, past, date, searchTerm, locationTerm, currentPage);
-
+        this.searchEvents(
+          isPaid,
+          past,
+          date,
+          searchTerm,
+          locationTerm,
+          currentPage
+        );
       }, 500);
-
-
     });
 
     effect(() => {
@@ -141,13 +147,12 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
         return;
       }
 
-      if (term.trim() === "") {
+      if (term.trim() === '') {
         this.openLocationDropdown();
       } else {
         this.closeLocationDropdown();
       }
     });
-
   }
 
   @HostListener('document:click', ['$event'])
@@ -164,13 +169,13 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
     this.loadData();
     this.subscription = this.eventService.loading$.subscribe({
       next: (loading_) => {
-        this.loading.set(loading_)
-      }
-    })
+        this.loading.set(loading_);
+      },
+    });
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe()
+    this.subscription.unsubscribe();
   }
 
   private loadData(): void {
@@ -187,7 +192,6 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
   }
 
   protected hasActiveFilters(): boolean {
-
     return Object.entries(this.lastFilters).some(([key, value]) => {
       switch (key) {
         case 'isPaid':
@@ -204,16 +208,22 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  private searchEvents(isPaid: string, past: boolean | null, date: Date | null, searchTerm: string, locationTerm: string, currentPage: number) {
+  private searchEvents(
+    isPaid: string,
+    past: boolean | null,
+    date: Date | null,
+    searchTerm: string,
+    locationTerm: string,
+    currentPage: number
+  ) {
     let props: GetEventProps = {};
 
     if (isPaid !== '') {
-      props.priceFilter = isPaid
+      props.priceFilter = isPaid;
     }
 
     if (typeof past === 'boolean') {
-      props.past = past
+      props.past = past;
     }
 
     if (date instanceof Date) {
@@ -232,11 +242,17 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
       props.pageNumber = currentPage;
     }
 
-    this.eventService.getEvents({ ...props, pageSize: this.EVENTS_PER_PAGE }).subscribe({
-      next: (events) => {
-        this.allEvents.set(events)
-      },
-    })
+    this.eventService
+      .getEvents({ ...props, pageSize: this.EVENTS_PER_PAGE })
+      .subscribe({
+        next: (events) => {
+          this.allEvents.set(events);
+          // Calculate total items from the response
+          this.totalItems.set(
+            (events?.pageSize || 0) * (events?.totalPages || 0)
+          );
+        },
+      });
   }
 
   private formatDate(date: Date): string {
@@ -252,13 +268,11 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
     }
   }
 
-
   private closeAllDropdowns(): void {
     this.showLocationDropdown.set(false);
     this.showEventTypeDropdown.set(false);
     this.showDatePicker.set(false);
   }
-
 
   protected onTabChange(selectedTabKey: boolean | null): void {
     this.activeToggle.set(selectedTabKey);
@@ -267,7 +281,6 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
   protected onSearchChange(query: string): void {
     this.searchQuery.set(query);
   }
-
 
   protected closeLocationDropdown(): void {
     this.showLocationDropdown.set(false);
@@ -280,7 +293,6 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
     this.locationTerm.update(() => location.address);
     this.showLocationDropdown.set(false);
   }
-
 
   protected toggleEventTypeDropdown(): void {
     this.showEventTypeDropdown.update((v) => !v);
@@ -295,7 +307,6 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
   protected onEventTypeSelected(type: EventTypeFilter): void {
     this.selectedEventType.set(type);
     this.showEventTypeDropdown.set(false);
-
   }
 
   protected toggleDatePicker(): void {
@@ -310,8 +321,10 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
   }
 
 
-  protected onPageChange(number_: number) {
-    this.currentPage.set(number_ - 1)
+
+  // Add the new method here
+  protected setCurrentPage(pageNumber: number): void {
+    this.currentPage.set(pageNumber - 1); // Subtract 1 if your API uses 0-based indexing
   }
 
 
