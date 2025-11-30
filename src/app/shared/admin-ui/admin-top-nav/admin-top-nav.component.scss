@@ -27,6 +27,19 @@
     gap: $spacing-4;
   }
 
+  &__menu-btn {
+    display: none; // Hidden by default (desktop)
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: $gray-600;
+
+    &:hover {
+      color: $orange-600;
+    }
+  }
+
   &__logo {
     height: 28px;
     width: 28px;
@@ -109,7 +122,7 @@
     width: 1rem;
     height: 1rem;
     transition: transform 0.2s ease;
-    object-fit:contain;
+    object-fit: contain;
 
     &--open {
       transform: rotate(180deg);
@@ -222,17 +235,28 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+
 @media (max-width: 768px) {
   .admin-top-nav {
     left: 0 !important; // Always full width on mobile
-    
+    padding: 0 $spacing-4; // Reduce padding on mobile
+
     &--collapsed {
       left: 0 !important;
+    }
+
+    &__menu-btn {
+      display: flex; // Show on mobile
+    }
+
+    &__logo {
+      display: none; // Hide logo on mobile to save space if needed
     }
   }
 }
