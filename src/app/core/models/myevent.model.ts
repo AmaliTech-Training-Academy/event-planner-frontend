@@ -53,6 +53,7 @@ export interface MyEventItem {
     location: string;
     flyerUrl: string;
     attendeesCount: number;
+    attendeeCount: number;
     attendees?: number;
     isPaid: boolean;
     ticketPrice?: number;
