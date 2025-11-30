@@ -6,35 +6,28 @@ import { AuditLogsResponse } from '../../models/audits/audit-logs.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuditBackendService {
-  constructor(private readonly _http: HttpClient) { }
-
+  constructor(private readonly _http: HttpClient) {}
 
   public getAuditLogs(
     page = 0,
     size = 10,
-    email?: string,
-    startDate?: string,
-    endDate?: string,
-    status?: string
+    fullName?: string,
+    status?: string,
+    sortBy = 'createdAt',
+    direction = 'DESC'
   ): Observable<AuditLogsResponse> {
     let params = new HttpParams()
-      .set('pageNumber', page.toString())
-      .set('pageSize', size.toString());
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sortBy', sortBy)
+      .set('direction', direction);
 
-    if (email) {
-      params = params.set('email', email);
+    if (fullName) {
+      params = params.set('fullName', fullName);
     }
 
-    if (startDate) {
-      params = params.set('startDate', startDate);
-    }
-
-    if (endDate) {
-      params = params.set('endDate', endDate);
-    }
-
-    if (status) {
-      params = params.set('auditStatus', status.toUpperCase());
+    if (status && status.trim().length > 0) {
+      params = params.set('status', status.trim().toUpperCase());
     }
 
     return this._http.get<AuditLogsResponse>(API_ENDPOINTS.GET_AUDIT_LOGS, {
@@ -42,10 +35,6 @@ export class AuditBackendService {
     });
   }
 
-  /**
-   * Fetches a single audit log by ID
-   * @param logId - The audit log ID
-   */
   public getAuditLogById(logId: string): Observable<AuditLogsResponse> {
     return this._http.get<AuditLogsResponse>(
       API_ENDPOINTS.GET_AUDIT_LOG_BY_ID(logId)

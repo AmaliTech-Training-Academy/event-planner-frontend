@@ -1,13 +1,4 @@
 <div class="transactions-page">
-  @if (isLoading()) {
-  <div class="transactions-page__loading-overlay">
-    <div class="transactions-page__spinner">
-      <div class="spinner"></div>
-      <p class="transactions-page__loading-text">Loading transactions...</p>
-    </div>
-  </div>
-  }
-
   <div class="transactions-page__header">
     <div class="transactions-page__header-content">
       <h1 class="transactions-page__title">Transaction History</h1>
@@ -37,20 +28,9 @@
   </div>
 
   <div class="transactions-page__content">
-    <app-data-table 
-      [data]="transactions()" 
-      [columns]="tableColumns" 
-      [actions]="tableActions" 
-      [filters]="tableFilters"
-      [searchable]="true" 
-      [expandable]="false" 
-      [itemsPerPage]="10" 
-      [emptyState]="transactionsEmptyState"
-      [serverSidePagination]="true"
-      [totalItems]="totalElements()"
-      [loading]="isLoading()"
-      (pageChange)="onPageChange($event)"
-      (filterChange)="onFilterChange($event)"
-    />
+    <app-data-table [data]="transactions()" [columns]="tableColumns" [actions]="tableActions" [filters]="tableFilters"
+      [searchable]="true" [expandable]="false" [itemsPerPage]="10" [emptyState]="transactionsEmptyState"
+      [serverSidePagination]="true" [totalItems]="totalElements()" [loading]="isLoading()"
+      (pageChange)="onPageChange($event)" (filterChange)="onFilterChange($event)" />
   </div>
 </div>

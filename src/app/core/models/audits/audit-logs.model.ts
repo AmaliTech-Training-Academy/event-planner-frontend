@@ -28,7 +28,7 @@ export interface AuditLogTableData {
   ipAddress: string;
   timestamp: string;
   formattedTimestamp: string;
-  status: 'Successful' | 'Failed';
+  status: 'Success' | 'Failed';
   statusClass: string;
 }
 

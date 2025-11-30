@@ -37,10 +37,10 @@ export class AuditLogsComponent implements OnInit {
 
   private readonly _currentPage = signal<number>(0);
   private readonly _pageSize = signal<number>(10);
-  private readonly _emailFilter = signal<string>('');
+  private readonly _fullNameFilter = signal<string>('');
   private readonly _statusFilter = signal<string>('');
-  private readonly _startDate = signal<string>('');
-  private readonly _endDate = signal<string>('');
+  private readonly _sortBy = signal<string>('createdAt');
+  private readonly _direction = signal<string>('DESC');
 
   protected readonly auditLogs = computed<AuditLogTableData[]>(() => {
     const data = this._auditLogsData();
@@ -81,7 +81,7 @@ export class AuditLogsComponent implements OnInit {
       placeholder: 'Status',
       options: [
         { label: 'All Statuses', value: '' },
-        { label: 'Successful', value: 'successful' },
+        { label: 'Successful', value: 'success' },
         { label: 'Failed', value: 'failed' },
       ],
     },
@@ -117,14 +117,20 @@ export class AuditLogsComponent implements OnInit {
 
   protected onFilterChange(filter: { key: string; value: string }): void {
     if (filter.key === 'status') {
-      this._statusFilter.set(filter.value);
+      const statusValue =
+        filter.value === 'all' ||
+        !filter.value ||
+        filter.value.trim().length === 0
+          ? ''
+          : filter.value.trim();
+      this._statusFilter.set(statusValue);
       this._currentPage.set(0);
       this._loadAuditLogs();
     }
   }
 
   protected onSearch(query: string): void {
-    this._emailFilter.set(query);
+    this._fullNameFilter.set(query);
     this._currentPage.set(0);
     this._loadAuditLogs();
   }
@@ -134,13 +140,15 @@ export class AuditLogsComponent implements OnInit {
 
     const page = this._currentPage();
     const size = this._pageSize();
-    const email = this._emailFilter().trim() || undefined;
-    const startDate = this._startDate() || undefined;
-    const endDate = this._endDate() || undefined;
-    const status = this._statusFilter() || undefined;
+    const fullName = this._fullNameFilter().trim() || undefined;
+    const statusValue = this._statusFilter().trim();
+    const status =
+      statusValue && statusValue.length > 0 ? statusValue : undefined;
+    const sortBy = this._sortBy();
+    const direction = this._direction();
 
     this._auditManagementService
-      .loadAuditLogs(page, size, email, startDate, endDate, status)
+      .loadAuditLogs(page, size, fullName, status, sortBy, direction)
       .subscribe({
         error: (err) => {
           this._error.set('Failed to load audit logs');
