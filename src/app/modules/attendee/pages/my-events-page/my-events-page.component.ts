@@ -35,9 +35,9 @@ import { LoadingCardComponent } from '@app/shared/components/loading-card/loadin
 export class MyEventsPageComponent implements OnInit, OnDestroy {
   protected readonly routes = APP_ROUTES;
   protected myEvents = signal<MyEventItem[]>([]);
-  protected currentPage = signal<number>(1); // Changed from page, starts at 1
-  protected totalItems = signal<number>(0); // Renamed from totalaItems
-  protected itemsPerPage = signal<number>(10); // Add this - adjust the number based on your API's page size
+  protected currentPage = signal<number>(1);
+  protected totalItems = signal<number>(0);
+  protected itemsPerPage = signal<number>(10);
   protected loading = signal<boolean>(true);
   protected statCards = signal<UserCardData[]>(MY_EVENT_STAT_CARDS);
   private destroy$ = new Subject<void>();
@@ -45,7 +45,7 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
   constructor(
     private readonly router: Router,
     private readonly eventService: EventsServiceService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.eventService.loading$.pipe(takeUntil(this.destroy$)).subscribe({
@@ -57,7 +57,7 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
     this.getMyEvents();
 
     forkJoin({
-      events: this.eventService.myEvents(this.currentPage() - 1), // Subtract 1 if API is 0-based
+      events: this.eventService.myEvents(this.currentPage() - 1),
       overview: this.eventService.myEventOverview(),
     })
       .pipe(takeUntil(this.destroy$))
@@ -80,8 +80,6 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Remove onPageChange method
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -89,12 +87,12 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
 
   private getMyEvents() {
     this.eventService
-      .myEvents(this.currentPage() - 1) // Subtract 1 if API is 0-based
+      .myEvents(this.currentPage() - 1)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.myEvents.set(response.data.content);
-          this.totalItems.set(response.data.totalElements); // Use totalElements, not totalPages
+          this.totalItems.set(response.data.totalElements);
         },
       });
   }

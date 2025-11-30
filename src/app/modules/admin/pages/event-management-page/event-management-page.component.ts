@@ -45,7 +45,7 @@ interface EventTableData {
   organizer: string;
   date: string;
   attendees: number;
-  status: 'Pending' | 'Completed' | 'Draft' | 'Active' ;
+  status: 'Pending' | 'Completed' | 'Draft' | 'Active';
   time?: string;
   location?: string;
   description?: string;
@@ -209,7 +209,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     return searchResults && searchResults.content.length > 0;
   });
 
-  // Separate loading states for different sections
   public readonly isLoadingDashboard = computed(() =>
     this._isLoadingDashboard()
   );
@@ -271,15 +270,13 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
         if (trimmedQuery !== currentSearch) {
           this._searchQuery.set(trimmedQuery);
           this._currentPage.set(0);
-          this._loadEventsData(); // Load only events data
+          this._loadEventsData();
         }
       });
 
-    // Subscribe to service loading states separately
     this._eventManagementService.loading$
       .pipe(takeUntilDestroyed())
       .subscribe((loading) => {
-        // Only update table loading during search/filter operations
         if (this._searchQuery() || this._selectedStatus() !== 'all') {
           this._isLoadingTable.set(loading);
         } else {
@@ -312,7 +309,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     this._searchSubject.complete();
   }
 
-  // Load initial dashboard data (stats, organizers, upcoming events)
   private _loadInitialData(): void {
     this._isLoadingDashboard.set(true);
     this._error.set(null);
@@ -330,7 +326,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Load only events data for search/filter/pagination
   private _loadEventsData(): void {
     this._isLoadingTable.set(true);
     this._error.set(null);
@@ -341,19 +336,13 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
       this._selectedStatus() !== 'all' ? this._selectedStatus() : undefined;
     const search = this._searchQuery().trim() || undefined;
 
-    console.log('🔄 Loading events:', { page, size, search, status });
-
-    // ✅ ALWAYS use searchEvents (like we did for users)
-    // This ensures pagination works consistently
     this._eventManagementService
       .searchEvents(search || '', page, size, status)
       .subscribe({
         next: () => {
-          console.log('✅ Events loaded for page:', page);
           this._isLoadingTable.set(false);
         },
         error: (err) => {
-          console.error('❌ Failed to load events:', err);
           this._error.set('Failed to load events');
           this._isLoadingTable.set(false);
         },
@@ -367,7 +356,7 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
 
   public onPageChange(page: number): void {
     this._currentPage.set(page - 1);
-    this._loadEventsData(); // Only reload events table
+    this._loadEventsData();
   }
 
   public onViewAllOrganizers(): void {
@@ -394,7 +383,7 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     this._searchQuery.set('');
     this._currentPage.set(0);
     this._eventManagementService.clearSearch();
-    this._loadEventsData(); // Only reload events table
+    this._loadEventsData();
   }
 
   public onFilterChange(filterEvent: { key: string; value: string }): void {
@@ -420,8 +409,8 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
 
   private _onCreateEvent(): void {
     this._router.navigate(['/app/create-event']).then(
-      (success) => {},
-      (error) => {}
+      (success) => { },
+      (error) => { }
     );
   }
 
