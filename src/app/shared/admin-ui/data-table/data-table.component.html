@@ -40,73 +40,166 @@
     </div>
   </div>
   } @else {
-  <table class="data-table__table" role="table">
-    <thead class="data-table__thead">
-      <tr>
-        <th class="data-table__th data-table__th--checkbox">
-          <app-checkbox [checked]="isAllSelected()" (checkedChange)="toggleSelectAll()"
-            [ariaLabel]="'Select all users'"></app-checkbox>
-        </th>
+  
+  <!-- Desktop/Tablet Table View -->
+  <div class="data-table__table-wrapper">
+    <table class="data-table__table" role="table">
+      <thead class="data-table__thead">
+        <tr>
+          <th class="data-table__th data-table__th--checkbox">
+            <app-checkbox [checked]="isAllSelected()" (checkedChange)="toggleSelectAll()"
+              [ariaLabel]="'Select all users'"></app-checkbox>
+          </th>
 
-        @if (expandable()) {
-        <th class="data-table__th data-table__th--expand"></th>
-        } @for (column of columns(); track column.key) {
-        <th class="data-table__th" scope="col">{{ column.header }}</th>
-        } @if (actions().length > 0) {
-        <th class="data-table__th data-table__th--actions" scope="col">
-          Actions
-        </th>
-        }
-      </tr>
-    </thead>
+          @if (expandable()) {
+          <th class="data-table__th data-table__th--expand"></th>
+          } @for (column of columns(); track column.key) {
+          <th class="data-table__th" scope="col">{{ column.header }}</th>
+          } @if (actions().length > 0) {
+          <th class="data-table__th data-table__th--actions" scope="col">
+            Actions
+          </th>
+          }
+        </tr>
+      </thead>
 
-    <tbody class="data-table__tbody">
-      @for (item of paginatedData(); track trackByIndex($index)) {
-      <tr class="data-table__tr">
-        <td class="data-table__td data-table__td--checkbox">
-          <app-checkbox [checked]="isSelected(item)" (checkedChange)="toggleSelect(item)"
-            [ariaLabel]="'Select user ' + (item['name'] || '')"></app-checkbox>
-        </td>
+      <tbody class="data-table__tbody">
+        @for (item of paginatedData(); track trackByIndex($index)) {
+        <tr class="data-table__tr">
+          <td class="data-table__td data-table__td--checkbox">
+            <app-checkbox [checked]="isSelected(item)" (checkedChange)="toggleSelect(item)"
+              [ariaLabel]="'Select user ' + (item['name'] || '')"></app-checkbox>
+          </td>
 
-        @if (expandable()) {
-        <td class="data-table__td data-table__td--expand">
-          <app-button type="social" (click)="toggleRow($index, item)">
-            {{ isRowExpanded($index) ? "−" : "+" }}
-          </app-button>
-        </td>
-        } @for (column of columns(); track column.key) {
-        <td class="data-table__td">
-          @if (column.key === 'fullName') {
-          <div class="data-table__user-cell">
-            @if (getUserAvatar(item)) {
-            <img [src]="getUserAvatar(item)" [alt]="
-                (column.getValue ? column.getValue(item) : item[column.key]) +
-                ' avatar'
-              " class="data-table__user-avatar-img" />
+          @if (expandable()) {
+          <td class="data-table__td data-table__td--expand">
+            <app-button type="social" (click)="toggleRow($index, item)">
+              {{ isRowExpanded($index) ? "−" : "+" }}
+            </app-button>
+          </td>
+          } @for (column of columns(); track column.key) {
+          <td class="data-table__td">
+            @if (column.key === 'fullName') {
+            <div class="data-table__user-cell">
+              @if (getUserAvatar(item)) {
+              <img [src]="getUserAvatar(item)" [alt]="
+                  (column.getValue ? column.getValue(item) : item[column.key]) +
+                  ' avatar'
+                " class="data-table__user-avatar-img" />
+              } @else {
+              <div class="data-table__user-avatar-initials">
+                {{ getUserInitials(item) }}
+              </div>
+              }
+              <div class="data-table__user-info">
+                <p class="data-table__user-name">
+                  {{ column.getValue ? column.getValue(item) : item[column.key] }}
+                </p>
+                <p class="data-table__user-email">
+                  {{ item["email"] || "No email" }}
+                </p>
+              </div>
+            </div>
+            } @else if (isRoleOrStatus(column.key)) {
+            <span [class]="getBadgeClass(item[column.key])">
+              {{ capitalizeFirstLetter(item[column.key]) }}
+            </span>
             } @else {
-            <div class="data-table__user-avatar-initials">
-              {{ getUserInitials(item) }}
+            {{ column.getValue ? column.getValue(item) : item[column.key] }}
+            }
+          </td>
+          } @if (actions().length > 0) {
+          <td class="data-table__td data-table__td--actions">
+            @for (action of actions(); track action.label) {
+            <app-button type="action" [extraClass]="
+                action.color === 'power'
+                  ? item['status'] === 'Active'
+                    ? 'power-active'
+                    : 'power-inactive'
+                  : action.extraClass || action.color || ''
+              " (click)="executeAction(action, item)" [disabled]="isActionDisabled(action, item)"
+              [attr.aria-label]="action.label" [attr.title]="action.label" class="data-table__action-btn"
+              [class.data-table__action-btn--with-label]="showActionLabels()" [class.data-table__action-btn--loading]="
+                isActionLoading(action, item)
+              ">
+              @if (isActionLoading(action, item)) {
+              <span class="data-table__action-spinner"></span>
+              } @else {
+              <img [src]="
+                  action.color === 'power'
+                    ? item['status'] === 'Active'
+                      ? 'icons/power-icon-red.png'
+                      : 'icons/power-icon-green.png'
+                    : action.icon
+                " [alt]="action.label" class="data-table__action-icon" />
+
+              @if (showActionLabels()) {
+              <span class="data-table__action-label">{{ action.label }}</span>
+              } }
+            </app-button>
+            }
+          </td>
+          }
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile Card View -->
+  <div class="data-table__cards">
+    @for (item of paginatedData(); track trackByIndex($index)) {
+    <div class="data-table__card">
+      <div class="data-table__card-header">
+        <app-checkbox [checked]="isSelected(item)" (checkedChange)="toggleSelect(item)"
+          [ariaLabel]="'Select user ' + (item['name'] || '')"></app-checkbox>
+        
+        @if (expandable()) {
+        <app-button type="social" (click)="toggleRow($index, item)" class="data-table__card-expand">
+          {{ isRowExpanded($index) ? "−" : "+" }}
+        </app-button>
+        }
+      </div>
+
+      <div class="data-table__card-body">
+        <!-- User Info Section -->
+        <div class="data-table__card-user">
+          @if (getUserAvatar(item)) {
+          <img [src]="getUserAvatar(item)" [alt]="item['name'] + ' avatar'" class="data-table__card-avatar" />
+          } @else {
+          <div class="data-table__card-avatar-initials">
+            {{ getUserInitials(item) }}
+          </div>
+          }
+          <div class="data-table__card-user-info">
+            <p class="data-table__card-user-name">{{ item['fullName'] || item['name'] }}</p>
+            <p class="data-table__card-user-email">{{ item['email'] || 'No email' }}</p>
+          </div>
+        </div>
+
+        <!-- Other Data Fields -->
+        <div class="data-table__card-fields">
+          @for (column of columns(); track column.key) {
+            @if (column.key !== 'fullName' && column.key !== 'email') {
+            <div class="data-table__card-field">
+              <span class="data-table__card-field-label">{{ column.header }}:</span>
+              @if (isRoleOrStatus(column.key)) {
+              <span [class]="getBadgeClass(item[column.key])">
+                {{ capitalizeFirstLetter(item[column.key]) }}
+              </span>
+              } @else {
+              <span class="data-table__card-field-value">
+                {{ column.getValue ? column.getValue(item) : item[column.key] }}
+              </span>
+              }
             </div>
             }
-            <div class="data-table__user-info">
-              <p class="data-table__user-name">
-                {{ column.getValue ? column.getValue(item) : item[column.key] }}
-              </p>
-              <p class="data-table__user-email">
-                {{ item["email"] || "No email" }}
-              </p>
-            </div>
-          </div>
-          } @else if (isRoleOrStatus(column.key)) {
-          <span [class]="getBadgeClass(item[column.key])">
-            {{ capitalizeFirstLetter(item[column.key]) }}
-          </span>
-          } @else {
-          {{ column.getValue ? column.getValue(item) : item[column.key] }}
           }
-        </td>
-        } @if (actions().length > 0) {
-        <td class="data-table__td data-table__td--actions">
+        </div>
+
+        <!-- Actions -->
+        @if (actions().length > 0) {
+        <div class="data-table__card-actions">
           @for (action of actions(); track action.label) {
           <app-button type="action" [extraClass]="
               action.color === 'power'
@@ -116,9 +209,7 @@
                 : action.extraClass || action.color || ''
             " (click)="executeAction(action, item)" [disabled]="isActionDisabled(action, item)"
             [attr.aria-label]="action.label" [attr.title]="action.label" class="data-table__action-btn"
-            [class.data-table__action-btn--with-label]="showActionLabels()" [class.data-table__action-btn--loading]="
-              isActionLoading(action, item)
-            ">
+            [class.data-table__action-btn--loading]="isActionLoading(action, item)">
             @if (isActionLoading(action, item)) {
             <span class="data-table__action-spinner"></span>
             } @else {
@@ -129,19 +220,16 @@
                     : 'icons/power-icon-green.png'
                   : action.icon
               " [alt]="action.label" class="data-table__action-icon" />
-
-            <!-- Label (conditionally shown) -->
-            @if (showActionLabels()) {
             <span class="data-table__action-label">{{ action.label }}</span>
-            } }
+            }
           </app-button>
           }
-        </td>
+        </div>
         }
-      </tr>
-      }
-    </tbody>
-  </table>
+      </div>
+    </div>
+    }
+  </div>
 
   @if (filteredData().length === 0) {
   <div class="data-table__no-data">
@@ -150,9 +238,10 @@
     <p class="data-table__no-data-message">{{ emptyState().message }}</p>
     }
   </div>
-  } } @if (filteredData().length > 0 && !loading()) {
+  } } 
+  
+  @if (filteredData().length > 0 && !loading()) {
   <app-pagination [totalItems]="totalItems()" [itemsPerPage]="itemsPerPage()" [currentPage]="currentPage()"
     (pageChange)="setCurrentPage($event)"></app-pagination>
-
   }
 </div>
