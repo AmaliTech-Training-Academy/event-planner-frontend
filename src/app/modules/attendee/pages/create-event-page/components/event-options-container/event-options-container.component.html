@@ -13,7 +13,7 @@
                 </app-button>
             </div>
         </li>
-        <li class="item">
+        <!-- <li class="item">
             <div class="left">
                 <img width="24" height="24" ngSrc="icons/add-user.svg" alt="" class="preview">
                 <p>Require Approval</p>
@@ -24,14 +24,14 @@
                     <span class="slider"></span>
                 </label>
             </div>
-        </li>
+        </li> -->
         <li class="item">
             <div class="left">
                 <img width="24" height="24" ngSrc="icons/trend-up.svg" alt="" class="preview">
                 <p>Capacity</p>
             </div>
             <div class="right">
-                <p>{{form()?.get(EVENT_FORM_FIELDS.CAPACITY)?.value || 'Unlimited'}}</p>
+                <p>{{form()?.get(EVENT_FORM_FIELDS.CAPACITY)?.value || 'e.g., 100'}}</p>
                 <app-button buttonType="button" (onClick)="toggleCapacityModal()" type="plain">
                     <img width="24" height="24" ngSrc="icons/pencil.svg" alt="" class="preview">
                 </app-button>

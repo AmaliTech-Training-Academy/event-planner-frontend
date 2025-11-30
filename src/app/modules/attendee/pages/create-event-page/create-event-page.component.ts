@@ -194,11 +194,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  protected removeCapacityLimit() {
-    this.eventFormService.capacity?.setValue(0);
-    this.eventFormService.controlValueChanged(this.eventFormService.capacity);
-    this.toggleCapacityModal();
-  }
+
 
   protected setCapacityLimit() {
     this.eventFormService.controlValueChanged(this.eventFormService.capacity);

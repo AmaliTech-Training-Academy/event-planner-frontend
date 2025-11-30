@@ -142,7 +142,7 @@
 
         @if (showCapacityModal) {
         <app-set-capacity-modal [capacity]="form.get(EVENT_FORM_FIELDS.CAPACITY)?.value"
-            (removeCapacity)="removeCapacityLimit()" (setCapacity)="setCapacityLimit()"
+            (setCapacity)="setCapacityLimit()"
             (close)="toggleCapacityModal()"></app-set-capacity-modal>
         }
 
