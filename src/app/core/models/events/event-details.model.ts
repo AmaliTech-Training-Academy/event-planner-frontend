@@ -1,5 +1,6 @@
 // models/event-details.models.ts
 
+import { TicketType } from "../event.model";
 import { EventStatus } from "./event-status.model";
 
 export interface EventDetails {
@@ -17,16 +18,7 @@ export interface EventDetails {
 }
 
 
-export interface TicketType {
-  id: number;
-  type: string;
-  description: string;
-  price: number;
-  isActive: boolean;
-  remainingTickets: number;
-  soldTickets?: number;
-  isPaid: boolean;
-}
+
 
 export interface EventHost {
   id?: number;

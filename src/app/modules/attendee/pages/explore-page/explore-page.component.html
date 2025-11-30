@@ -79,7 +79,7 @@
       }
       @else if (!loading() && (allEvents()?.events?.length ?? 0) < 1) { 
         <app-empty-list-message
-        (handleAction)="clearSearchFilters()" actionText="Clear Filters"
+        (handleAction)="clearSearchFilters()" [actionText]="hasActiveFilters()? 'Clear Filters': ''"
         descrition="No results found. You may want to clear your filters or return to the previous page."
         title="No Events Here"></app-empty-list-message>
         }

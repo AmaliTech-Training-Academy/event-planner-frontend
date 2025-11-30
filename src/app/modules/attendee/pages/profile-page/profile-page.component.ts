@@ -63,8 +63,8 @@ export class ProfilePageComponent implements OnInit {
         email: [this.currentUser?.email, [Validators.email, Validators.required]],
       }),
       contactInfo: this.fb.group({
-        phone: ['', [Validators.required]],
-        address: ['', [Validators.required]],
+        phone: [this.currentUser?.phone, [Validators.required]],
+        address: [this.currentUser?.address, [Validators.required]],
       }),
     });
 
@@ -159,7 +159,8 @@ export class ProfilePageComponent implements OnInit {
   private saveContactInfo(): void {
     if (this.contactInfoGroup?.valid) {
       const contactInfo = this.contactInfoGroup?.value;
-      this.updateProfile({ phone: contactInfo?.phone, address: contactInfo?.address })
+      const basicInfo = this.basicInfoGroup?.value;
+      this.updateProfile({ fullName:basicInfo.fullName ,email:basicInfo.email,  phone: contactInfo?.phone, address: contactInfo?.address })
       this.disableContactInfo();
       return
     }
@@ -169,7 +170,7 @@ export class ProfilePageComponent implements OnInit {
   protected onLogout(): void {
     this.isLoggingOut.set(true);
     this.authService.logout().subscribe({
-      next: () => this.router.navigate([this.routes.LOGIN]),
+      next: () => this.notificationnService.success(`Succesfully logged out`),
       error: () => this.isLoggingOut.set(false)
     });
   }

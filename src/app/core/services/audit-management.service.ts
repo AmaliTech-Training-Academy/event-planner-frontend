@@ -21,7 +21,6 @@ export class AuditManagementService {
     null
   );
 
-  // Public observables
   public readonly loading$ = this._loading.asObservable();
   public readonly auditLogsData$ = this._auditLogsData.asObservable();
   public readonly selectedAuditLog$ = this._selectedAuditLog.asObservable();
@@ -31,9 +30,7 @@ export class AuditManagementService {
     private readonly _errorHandler: ErrorHandlerService
   ) {}
 
-  /**
-   * Load paginated audit logs with optional filters
-   */
+
   public loadAuditLogs(
     page = 0,
     size = 10,
@@ -69,16 +66,11 @@ export class AuditManagementService {
       );
   }
 
-  /**
-   * Load a specific audit log by ID
-   */
-  // Fixed loadAuditLogById method
   public loadAuditLogById(logId: string): Observable<AuditLogsResponse> {
     this._loading.next(true);
 
     return this._backend.getAuditLogById(logId).pipe(
       tap((data) => {
-        // Fixed: Use data instead of auditListResponse
         if (data.data && data.data.length > 0) {
           this._selectedAuditLog.next(data.data[0]);
         }
@@ -90,24 +82,16 @@ export class AuditManagementService {
       finalize(() => this._loading.next(false))
     );
   }
-  /**
-   * Clear selected audit log
-   */
+
   public clearSelectedAuditLog(): void {
     this._selectedAuditLog.next(null);
   }
 
-  /**
-   * Clear cache/data
-   */
   public clearCache(): void {
     this._auditLogsData.next(null);
     this._selectedAuditLog.next(null);
   }
 
-  /**
-   * Refresh current audit logs data
-   */
   public refresh(): void {
     const currentData = this._auditLogsData.getValue();
     if (currentData) {

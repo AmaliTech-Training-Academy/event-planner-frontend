@@ -32,11 +32,11 @@ import {
 } from '@app/core/constants/admin-settings.constants';
 
 @Component({
-  selector: 'app-admin-settings',
+  selector: 'app-admin-settings-page',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ButtonComponent, InputComponent],
-  templateUrl: './admin-settings.component.html',
-  styleUrl: './admin-settings.component.scss',
+  templateUrl: './admin-settings-page.component.html',
+  styleUrls: ['./admin-settings-page.component.scss'],
 })
 export class AdminSettingsComponent implements OnInit {
   private readonly _fb: FormBuilder = inject(FormBuilder);
@@ -148,11 +148,11 @@ export class AdminSettingsComponent implements OnInit {
   }
 
   public saveNotificationSettings(): void {
-    console.log('Saving notification settings:', this._notifications());
+
   }
 
   public addTeamMember(): void {
-    console.log('Opening add team member modal');
+
   }
 
   public toggleMemberStatus(memberId: string): void {
@@ -161,11 +161,11 @@ export class AdminSettingsComponent implements OnInit {
       m.id === memberId ? { ...m, active: !m.active } : m
     );
     this._teamMembers.set(updated);
-    console.log('Team member status toggled');
+
   }
 
   public editTeamMember(member: TeamMember): void {
-    console.log('Editing team member:', member);
+
   }
 
   public deleteTeamMember(memberId: string): void {
@@ -179,7 +179,6 @@ export class AdminSettingsComponent implements OnInit {
         (m: TeamMember) => m.id !== memberId
       );
       this._teamMembers.set(updated);
-      console.log('Team member removed');
     }
   }
 

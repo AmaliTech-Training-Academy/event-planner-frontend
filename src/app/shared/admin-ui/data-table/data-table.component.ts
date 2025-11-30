@@ -63,7 +63,6 @@ export interface TableFilter {
   imports: [
     CommonModule,
     FormsModule,
-    NgOptimizedImage,
     FilterSelectComponent,
     ButtonComponent,
     CheckboxComponent,
@@ -279,6 +278,27 @@ export class DataTableComponent<T extends Record<string, any>> {
 
     return '??';
   }
+
+  public hasProfileImage(item: T): boolean {
+    const profileImageUrl = item['profileImageUrl'] || item['avatar'];
+    return !!profileImageUrl;
+  }
+
+  public getInitials(item: T): string {
+    const name = item['fullName'] || item['name'] || item['email'] || 'U';
+
+    // Split by space and take first letter of first two words
+    const nameParts = name.trim().split(/\s+/);
+
+    if (nameParts.length >= 2) {
+      return (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+    } else if (nameParts.length === 1 && nameParts[0].length > 0) {
+      return nameParts[0].substring(0, 2).toUpperCase();
+    }
+
+    return 'U';
+  }
+
   public isAllSelected(): boolean {
     const pageData = this.paginatedData();
     return (
@@ -528,6 +548,12 @@ export class DataTableComponent<T extends Record<string, any>> {
       inactive: 'inactive',
       successful: 'successful',
       failed: 'failed',
+      // Event statuses
+      pending: 'pending',
+      draft: 'draft',
+      completed: 'completed',
+      canceled: 'cancelled',
+      cancelled: 'cancelled',
     };
 
     const badgeClass = roleMap[normalized] || normalized;

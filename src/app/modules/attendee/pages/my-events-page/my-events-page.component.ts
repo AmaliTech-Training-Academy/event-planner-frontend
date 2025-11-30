@@ -94,6 +94,18 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+
+  private getMyEvents() {
+    this.eventService.myEvents(this.page())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.myEvents.set(response.data.content);
+          this.totalaItems.set(response.data.totalPages)
+        }
+      })
+  }
+
   protected handleManageEvent(event: EventCard): void {
     this.router.navigate([this.routes.MANAGE_EVENT_ROLES, event.id]);
   }
@@ -108,5 +120,10 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
 
   protected navigateToExploreEvent(): void {
     this.router.navigate([APP_ROUTES.EXPLORE]);
+  }
+
+  protected setCurrentPage(page: number) {
+    this.page.set(page);
+    this.getMyEvents();
   }
 }

@@ -1,17 +1,16 @@
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Output,
-  input,
   computed,
+  input,
   signal,
-  ChangeDetectionStrategy,
 } from '@angular/core';
-import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/modal-header.component';
-import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 import { User } from '../../../../../../core/models/user.model';
-import { EditUserProfileComponent } from '../edit-user-profile/edit-user-profile.component';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
+import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/modal-header.component';
 
 @Component({
   selector: 'app-view-user-profile',
@@ -20,7 +19,6 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
     ModalHeaderComponent,
     ButtonComponent,
     CommonModule,
-    EditUserProfileComponent,
     NgOptimizedImage,
   ],
   templateUrl: './view-user-profile.component.html',

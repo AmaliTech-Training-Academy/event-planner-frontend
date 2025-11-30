@@ -79,6 +79,7 @@ export interface TicketType {
   remainingTickets: number;
   soldTickets?:number;
   isPaid: boolean;
+  
 }
 
 
@@ -167,6 +168,7 @@ export interface EventSummary {
   location: string | null;
   flyerUrl: string;
   ticketPrice: number;
+  organizer?: string;
   attendees?: number;
   attendeesCount: number;
   attendeeCount: number;
@@ -428,12 +430,6 @@ export interface StatCardData {
   trend?: 'up' | 'down' | 'neutral';  // Add this
   trendValue?: string;                 // Add this
 }
-export interface EventSummary {
-  organizer: string;
-  date: string;
-  time: string;
-  location: string | null;
-}
 
 export interface TicketStatus {
   name: string;
@@ -487,4 +483,29 @@ export interface EventDetailsAdmin {
   attendees: number;
   status: 'Pending' | 'Completed' | 'Draft' | 'Active' | 'Cancelled';
   time?: string;
+}
+
+export   interface EventFiltersCache {
+  isPaid: string | null;
+  past: boolean | null;
+  date: Date | null;
+  searchTerm: string;
+  locationTerm: string;
+}
+
+export interface RegisterEventBody {
+  ticketTypeId: number,
+  numberOfTickets: number,
+  fullName: string,
+  email: string
+}
+
+
+export interface RegisterEventResponse {
+  id: number;
+  eventTitle: string | null;
+  location: string | null;
+  organizer: string | null;
+  startDate: string | null;
+  authorizationUrl: string | null;
 }

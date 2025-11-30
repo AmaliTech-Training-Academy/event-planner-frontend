@@ -1,31 +1,31 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
-  signal,
+  ElementRef,
   OnInit,
   ViewChild,
-  ElementRef,
   computed,
+  signal,
 } from '@angular/core';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
-  AbstractControl,
   ValidationErrors,
+  Validators,
 } from '@angular/forms';
-import { parsePhoneNumber, CountryCode } from 'libphonenumber-js';
-import { finalize, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ButtonComponent } from '../../../../shared/ui/button/button.component';
-import { InputComponent } from '../../../../shared/ui/input/input.component';
-import { LayoutService } from '../../../../core/services/layout.service';
-import { AuthService } from '../../../../core/services/auth.service';
-import { UserManagementService } from '../../../../core/services/user-management.service';
-import { PlatformSettingsService } from '../../../../core/services/platform-settings-management.service';
+import { CountryCode, parsePhoneNumber } from 'libphonenumber-js';
+import { finalize, take } from 'rxjs';
 import { OtpBodyData } from '../../../../core/models/auth-response.model';
 import { TeamMember } from '../../../../core/models/platform-settings.model';
+import { AuthService } from '../../../../core/services/auth.service';
+import { LayoutService } from '../../../../core/services/layout.service';
+import { PlatformSettingsService } from '../../../../core/services/platform-settings-management.service';
+import { UserManagementService } from '../../../../core/services/user-management.service';
+import { ButtonComponent } from '../../../../shared/ui/button/button.component';
+import { InputComponent } from '../../../../shared/ui/input/input.component';
 
 interface CountryOption {
   readonly value: CountryCode;
@@ -41,7 +41,6 @@ interface CountryOption {
     ReactiveFormsModule,
     ButtonComponent,
     InputComponent,
-    NgOptimizedImage,
   ],
   templateUrl: './admin-edit-profile.component.html',
   styleUrls: ['./admin-edit-profile.component.scss'],

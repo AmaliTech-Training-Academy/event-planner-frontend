@@ -14,7 +14,7 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
 import { InputComponent } from '../../ui/input/input.component';
 import { QuantityInputComponent } from '../../ui/quantity-input/quantity-input.component';
 import { ButtonComponent } from '../../ui/button/button.component';
-import { EventDetail, RegisterEventBody, TicketType } from '../../../core/models/event.model';
+import { EventDetail, RegisterEventBody, TicketType } from '@app/core/models/event.model';
 import { EventsServiceService } from '../../../core/services/events.service';
 import { Subscription } from 'rxjs';
 import { NotificationService } from '../../../core/services/notification.service';
