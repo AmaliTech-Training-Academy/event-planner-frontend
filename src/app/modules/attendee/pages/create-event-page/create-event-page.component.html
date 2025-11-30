@@ -23,6 +23,7 @@
                     @for (dateGroup of eventDates.controls; track $index) {
                     <div class="row" [formGroupName]="$index">
                         <app-event-date-picker
+                            [minDate]="$index === 1 ? getStartDate() : null"
                             [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.DATE)"></app-event-date-picker>
                         <app-event-time-picker
                             [control]="getDateControl(dateGroup, EVENT_FORM_FIELDS.TIME)"></app-event-time-picker>

@@ -12,6 +12,7 @@ import { CreateEventDateComponent } from "../create-event-date/create-event-date
 export class EventDatePickerComponent implements OnInit {
 
   public readonly control = input<FormControl | undefined>(undefined);
+  public readonly minDate = input<Date | null>(null);
   protected isOpen: boolean = false;
   protected currentSelectedDate: Date | null = null;
 

@@ -2,6 +2,6 @@
     <app-create-event-date (clicked)="toggleState()" icon="icons/event_note.svg"
         [title]="parseSelectedDate"></app-create-event-date>
     @if (isOpen) {
-    <app-date-picker (dateSelected)="selectedDate($event)"></app-date-picker>
+    <app-date-picker [minDate]="minDate()" (dateSelected)="selectedDate($event)"></app-date-picker>
     }
 </div>

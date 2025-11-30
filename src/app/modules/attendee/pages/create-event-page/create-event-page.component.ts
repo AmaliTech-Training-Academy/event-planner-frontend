@@ -166,6 +166,11 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     return group.get(controlName) as FormControl;
   }
 
+  protected getStartDate(): Date | null {
+    const startDate = this.eventDates.at(0)?.get(FIELDS.DATE)?.value;
+    return startDate instanceof Date ? startDate : null;
+  }
+
   protected getImageSrc(image: any): string {
     return this.eventFormService.getImageSrc(image);
   }
