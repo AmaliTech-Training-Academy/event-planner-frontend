@@ -20,7 +20,6 @@
     </div>
   </div>
 
-
   <div class="transactions-page__chart-container">
     <div class="transactions-page__chart-tabs">
       @for (tab of chartTabs; track tab.key) {
@@ -38,7 +37,20 @@
   </div>
 
   <div class="transactions-page__content">
-    <app-data-table [data]="transactions()" [columns]="tableColumns" [actions]="tableActions" [filters]="tableFilters"
-      [searchable]="true" [expandable]="false" [itemsPerPage]="10" [emptyState]="transactionsEmptyState" />
+    <app-data-table 
+      [data]="transactions()" 
+      [columns]="tableColumns" 
+      [actions]="tableActions" 
+      [filters]="tableFilters"
+      [searchable]="true" 
+      [expandable]="false" 
+      [itemsPerPage]="10" 
+      [emptyState]="transactionsEmptyState"
+      [serverSidePagination]="true"
+      [totalItems]="totalElements()"
+      [loading]="isLoading()"
+      (pageChange)="onPageChange($event)"
+      (filterChange)="onFilterChange($event)"
+    />
   </div>
 </div>
