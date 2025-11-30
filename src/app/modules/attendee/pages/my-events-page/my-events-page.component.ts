@@ -35,8 +35,9 @@ import { LoadingCardComponent } from '@app/shared/components/loading-card/loadin
 export class MyEventsPageComponent implements OnInit, OnDestroy {
   protected readonly routes = APP_ROUTES;
   protected myEvents = signal<MyEventItem[]>([]);
-  protected page = signal<number>(1);
-  protected totalaItems = signal<number>(0);
+  protected currentPage = signal<number>(1); // Changed from page, starts at 1
+  protected totalItems = signal<number>(0); // Renamed from totalaItems
+  protected itemsPerPage = signal<number>(10); // Add this - adjust the number based on your API's page size
   protected loading = signal<boolean>(true);
   protected statCards = signal<UserCardData[]>(MY_EVENT_STAT_CARDS);
   private destroy$ = new Subject<void>();
@@ -53,15 +54,17 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
       },
     });
 
+    this.getMyEvents();
+
     forkJoin({
-      events: this.eventService.myEvents(0),
+      events: this.eventService.myEvents(this.currentPage() - 1), // Subtract 1 if API is 0-based
       overview: this.eventService.myEventOverview(),
     })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: ({ events, overview }) => {
           this.myEvents.set(events.data.content);
-          this.totalaItems.set(events.data.totalElements);
+          this.totalItems.set(events.data.totalElements);
 
           this.statCards.update((prev) => {
             const updated = [...prev];
@@ -77,33 +80,23 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  onPageChange(page_: number): void {
-    const zeroBasedPage = page_ - 1;
-    this.page.set(page_);
-
-    this.eventService.myEvents(zeroBasedPage).subscribe({
-      next: (events) => {
-        this.myEvents.set(events.data.content);
-        this.totalaItems.set(events.data.totalElements);
-      },
-    });
-  }
+  // Remove onPageChange method
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-
   private getMyEvents() {
-    this.eventService.myEvents(this.page())
+    this.eventService
+      .myEvents(this.currentPage() - 1) // Subtract 1 if API is 0-based
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.myEvents.set(response.data.content);
-          this.totalaItems.set(response.data.totalPages)
-        }
-      })
+          this.totalItems.set(response.data.totalElements); // Use totalElements, not totalPages
+        },
+      });
   }
 
   protected handleManageEvent(event: EventCard): void {
@@ -114,16 +107,16 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
     this.router.navigate([this.routes.MANAGE_EVENT(id)]);
   }
 
-  protected navigateToCreateEvent(): void {
+  protected navigateToCreateEvent() {
     this.router.navigate([APP_ROUTES.CREATE_EVENT]);
   }
 
-  protected navigateToExploreEvent(): void {
+  protected navigateToExploreEvent() {
     this.router.navigate([APP_ROUTES.EXPLORE]);
   }
 
-  protected setCurrentPage(page: number) {
-    this.page.set(page);
+  protected setCurrentPage(pageNumber: number): void {
+    this.currentPage.set(pageNumber);
     this.getMyEvents();
   }
 }
