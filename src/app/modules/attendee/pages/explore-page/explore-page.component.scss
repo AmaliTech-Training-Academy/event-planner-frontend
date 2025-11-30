@@ -11,7 +11,6 @@
 }
 
 .explore-page-content {
-  width: 100%;
   background: #ffffff;
   box-shadow: none;
   border: none;
@@ -78,6 +77,12 @@ app-location-search{
   width: 100%;
   overflow: visible;
   order: 2;
+  @media (max-width:557px) {
+  grid-template-columns: 1fr !important;
+  
+}
+
+
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -95,7 +100,6 @@ app-location-search{
     gap: 1rem;
   }
 }
-
 
 .filter-button-wrapper {
   position: relative;
@@ -269,20 +273,10 @@ app-tab-toggle ::ng-deep .tab-button {
 .event-section .event-grid {
   display: grid;
   gap: 1.5rem;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr))
 }
 
-@media (min-width: 640px) {
-  .event-section .event-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
-@media (min-width: 1024px) {
-  .event-section .event-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
 
 
 
