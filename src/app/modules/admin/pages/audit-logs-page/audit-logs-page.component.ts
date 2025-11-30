@@ -5,8 +5,17 @@ import {
   OnInit,
   inject,
   DestroyRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  trigger,
+  transition,
+  style,
+  animate,
+  query,
+  stagger,
+} from '@angular/animations';
 import { LayoutService } from '../../../../core/services/layout.service';
 import { AuditManagementService } from '../../../../core/services/audit-management.service';
 import {
@@ -25,6 +34,35 @@ import {
   imports: [DataTableComponent],
   templateUrl: './audit-logs-page.component.html',
   styleUrls: ['./audit-logs-page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate(
+          '300ms ease-out',
+          style({ opacity: 1, transform: 'translateY(0)' })
+        ),
+      ]),
+    ]),
+    trigger('listAnimation', [
+      transition('* => *', [
+        query(
+          ':enter',
+          [
+            style({ opacity: 0, transform: 'translateY(20px)' }),
+            stagger(50, [
+              animate(
+                '400ms cubic-bezier(0.4, 0.0, 0.2, 1)',
+                style({ opacity: 1, transform: 'translateY(0)' })
+              ),
+            ]),
+          ],
+          { optional: true }
+        ),
+      ]),
+    ]),
+  ],
 })
 export class AuditLogsComponent implements OnInit {
   private readonly _layoutService = inject(LayoutService);
@@ -133,6 +171,10 @@ export class AuditLogsComponent implements OnInit {
     this._fullNameFilter.set(query);
     this._currentPage.set(0);
     this._loadAuditLogs();
+  }
+
+  protected trackByLogId(index: number, item: AuditLogTableData): string {
+    return item.id || `${item.fullName}-${item.formattedTimestamp}-${index}`;
   }
 
   private _loadAuditLogs(): void {
