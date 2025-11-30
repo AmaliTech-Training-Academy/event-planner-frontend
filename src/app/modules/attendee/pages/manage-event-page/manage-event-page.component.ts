@@ -115,23 +115,10 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected readonly isSubmitting = signal<boolean>(false);
   protected readonly loading = signal<boolean>(true);
 
-  // New signal to track if current user is admin
-  protected readonly isAdmin = signal<boolean>(false);
-
   // Computed signal to check if current user is the event owner/organizer
-  protected readonly isEventOwner = computed<boolean>(() => {
-    const currentUser = this._authService.currentUser();
-    const eventData = this.eventOverview();
-
-    if (!currentUser || !eventData?.data?.eventHosts) {
-      return false;
-    }
-
-    // Check if current user is an organizer of this event
-    return eventData.data.eventHosts.some(
-      host => host.email === currentUser.email && host.role === 'ORGANIZER'
-    );
-  });
+  // Since this page is now dedicated to organizers (admins have their own view),
+  // we can simplify this to always return true.
+  protected readonly isEventOwner = computed<boolean>(() => true);
 
   protected inviteForm: FormGroup = this._fb.group({
     title: ['', Validators.required],
@@ -155,16 +142,6 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   });
 
   public ngOnInit(): void {
-    // Check if user is admin
-    this._authService
-      .currentUser$()
-      .pipe(take(1))
-      .subscribe((user) => {
-        if (user) {
-          this.isAdmin.set(user.role === USER_ROLES.ADMIN);
-        }
-      });
-
     this._route.params.pipe(take(1)).subscribe((params) => {
       const urlEventId = params['id'];
 
@@ -250,20 +227,12 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
   // Helper method to navigate to correct events list based on user role
   private _navigateToEventsList(): void {
-    // Check both the isAdmin signal and the current route
-    const isAdminRoute = this._router.url.startsWith('/admin');
-    if (this.isAdmin() || isAdminRoute) {
-      this._router.navigate([APP_ROUTES.ADMIN_EVENTS]);
-    } else {
-      this._router.navigate([APP_ROUTES.MY_EVENTS]);
-    }
+    this._router.navigate([APP_ROUTES.MY_EVENTS]);
   }
 
   // Helper method to get breadcrumb text
   protected getBreadcrumbText(): string {
-    // Check both the isAdmin signal and the current route
-    const isAdminRoute = this._router.url.startsWith('/admin');
-    return (this.isAdmin() || isAdminRoute) ? 'Event Overview' : 'My Events';
+    return 'My Events';
   }
 
   protected onViewAllGuests(): void {
@@ -350,7 +319,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
       message: formData.message || '',
     };
 
-    this._userBackendService.inviteUsers(payload as any).subscribe({
+    this._userBackendService.eventInvitation(payload as any).subscribe({
       next: () => {
         const roleValue = payload.invitees[0].role;
         this.isSubmitting.set(false);

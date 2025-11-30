@@ -93,6 +93,14 @@ export class UserBackendService {
       payload
     );
   }
+  public eventInvitation(
+    payload: InviteUserPayload
+  ): Observable<InviteUserResponse> {
+    return this.http.post<InviteUserResponse>(
+      API_ENDPOINTS.INVITE_USER,
+      payload
+    );
+  }
 
   public searchUsers(
     keyword?: string,
