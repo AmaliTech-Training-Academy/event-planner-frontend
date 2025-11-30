@@ -33,6 +33,7 @@
             @for (day of daysInMonth; track $index) {
             <div class="day cell"
                 [class.selected]="selectedDate?.getDate() === day && selectedDate?.getMonth() === currentMonth"
+                [class.disabled]="isPastDate(day)"
                 (click)="selectDate(day)">
                 {{ day }}
             </div>

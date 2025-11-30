@@ -123,4 +123,13 @@
         background: #e65100;
         color: white;
     }
+
+    &.disabled {
+        color: #d1d5db;
+        cursor: not-allowed;
+
+        &:hover {
+            background: transparent;
+        }
+    }
 }

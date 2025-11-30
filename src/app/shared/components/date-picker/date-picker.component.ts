@@ -46,8 +46,18 @@ export class DatePickerComponent {
   }
 
   protected selectDate(day: number) {
-    this.selectedDate = new Date(this.currentYear, this.currentMonth, day);
+    const date = new Date(this.currentYear, this.currentMonth, day);
+    if (this.isPastDate(day)) return;
+    this.selectedDate = date;
     this.dateSelected.emit(this.selectedDate);
+  }
+
+  protected isPastDate(day: number): boolean {
+    const date = new Date(this.currentYear, this.currentMonth, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
+    return date < today;
   }
 
   protected selectToday() {
