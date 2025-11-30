@@ -80,7 +80,7 @@
     top: $spacing-2;
     left: $spacing-2;
     height: calc(100% - #{$spacing-2} * 2);
-    background: $gray-200;
+    background: $gray-100;
     display: flex !important;
     align-items: center;
     justify-content: center !important;
@@ -806,4 +806,435 @@ app-button[disabled] {
 .btn-box {
   width: fit-content;
   max-width: 300px;
+}
+// Add to the end of your existing file, before or after the current media queries
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .admin-settings {
+    padding: $spacing-5 0;
+  }
+
+  .settings-section,
+  .team-section {
+    padding: $spacing-5 $spacing-6;
+  }
+
+  .team-member {
+    &__actions {
+      flex-wrap: wrap;
+      gap: $spacing-3;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-settings {
+    padding: $spacing-4 0;
+    gap: $spacing-4;
+  }
+
+  .tabs {
+    gap: $spacing-1;
+    padding: $spacing-1;
+    border-radius: $radius-3;
+
+    &::before {
+      top: $spacing-1;
+      left: $spacing-1;
+      height: calc(100% - #{$spacing-1} * 2);
+    }
+
+    &:has(.tab--active:nth-child(1))::before {
+      width: calc(33.333% - #{$spacing-1} - #{$spacing-1} / 3);
+      transform: translateX(0);
+    }
+
+    &:has(.tab--active:nth-child(2))::before {
+      width: calc(33.333% - #{$spacing-1} - #{$spacing-1} / 3);
+      transform: translateX(calc(100% + #{$spacing-1}));
+    }
+
+    &:has(.tab--active:nth-child(3))::before {
+      width: calc(33.333% - #{$spacing-1} - #{$spacing-1} / 3);
+      transform: translateX(calc(200% + #{$spacing-1} * 2));
+    }
+
+    .tab {
+      padding: $spacing-2 $spacing-3 !important;
+      font-size: 0.875rem;
+      gap: $spacing-1;
+
+      span {
+        display: none;
+      }
+
+      .tab__icon {
+        width: 24px;
+        height: 24px;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .tab-content {
+    padding: $spacing-4 0;
+  }
+
+  .settings-section,
+  .team-section {
+    padding: $spacing-4 $spacing-5;
+    gap: $spacing-5;
+  }
+
+  .settings-section {
+    &__header {
+      flex-direction: column;
+      gap: $spacing-3;
+      align-items: flex-start;
+    }
+
+    &__icon {
+      width: 32px;
+      height: 32px;
+      align-self: flex-end;
+    }
+
+    &__title {
+      h2 {
+        font-size: 1.25rem;
+      }
+
+      p {
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .team-section {
+    &__header {
+      flex-direction: column;
+      gap: $spacing-4;
+      align-items: flex-start;
+    }
+
+    &__title {
+      h2 {
+        font-size: 1.25rem;
+      }
+
+      p {
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .form-field {
+    gap: $spacing-1;
+
+    label {
+      font-size: 0.875rem;
+    }
+
+    textarea {
+      font-size: 0.875rem;
+      padding: $spacing-2 $spacing-3;
+    }
+  }
+
+  .notification-item {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: $spacing-4;
+    gap: $spacing-3;
+
+    .toggle {
+      align-self: flex-end;
+    }
+
+    &__content {
+      h3 {
+        font-size: 0.9375rem;
+      }
+
+      p {
+        font-size: 0.813rem;
+      }
+    }
+  }
+
+  .team-member {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: $spacing-4;
+    gap: $spacing-3;
+
+    &__info {
+      width: 100%;
+    }
+
+    &__avatar {
+      width: 40px;
+      height: 40px;
+    }
+
+    &__details {
+      h3 {
+        font-size: 0.9375rem;
+      }
+
+      p {
+        font-size: 0.813rem;
+      }
+    }
+
+    &__actions {
+      width: 100%;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: $spacing-2;
+    }
+  }
+
+  .badge {
+    font-size: 0.688rem;
+    padding: 3px 10px;
+  }
+
+  .btn-add-team-member {
+    width: 100%;
+    justify-content: center;
+    padding: $spacing-3 $spacing-4 !important;
+    font-size: 0.875rem;
+  }
+
+  .btn-edit,
+  .btn-edit-member {
+    font-size: 0.813rem;
+    padding: 6px 10px !important;
+
+    img {
+      width: 14px !important;
+      height: 14px !important;
+    }
+  }
+
+  .btn-box {
+    width: 100%;
+    max-width: 100%;
+
+    app-button {
+      width: 100%;
+    }
+  }
+
+  .toggle-field {
+    padding: $spacing-3 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-settings {
+    gap: $spacing-3;
+  }
+
+  .tabs {
+    .tab {
+      padding: $spacing-2 !important;
+
+      .tab__icon {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .settings-section,
+  .team-section {
+    padding: $spacing-3 $spacing-4;
+    border-radius: $radius-3;
+  }
+
+  .settings-section {
+    &__header {
+      padding-bottom: $spacing-3;
+    }
+
+    &__title {
+      h2 {
+        font-size: 1.125rem;
+        margin-bottom: $spacing-1;
+      }
+
+      p {
+        font-size: 0.813rem;
+      }
+    }
+
+    &__icon {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .team-section {
+    &__header {
+      padding-bottom: $spacing-4;
+    }
+
+    &__title {
+      h2 {
+        font-size: 1.125rem;
+      }
+
+      p {
+        font-size: 0.813rem;
+      }
+    }
+  }
+
+  .form-field {
+    label {
+      font-size: 0.813rem;
+    }
+
+    textarea {
+      font-size: 0.813rem;
+      padding: $spacing-2;
+    }
+  }
+
+  .notification-item {
+    padding: $spacing-3;
+
+    &__content {
+      h3 {
+        font-size: 0.875rem;
+      }
+
+      p {
+        font-size: 0.75rem;
+        line-height: 1.4;
+      }
+    }
+  }
+
+  .team-member {
+    padding: $spacing-3;
+
+    &__avatar {
+      width: 36px;
+      height: 36px;
+    }
+
+    &__details {
+      h3 {
+        font-size: 0.875rem;
+      }
+
+      p {
+        font-size: 0.75rem;
+      }
+    }
+
+    &__actions {
+      gap: $spacing-2;
+    }
+  }
+
+  .badge {
+    font-size: 0.625rem;
+    padding: 2px 8px;
+  }
+
+  .toggle {
+    width: 44px;
+    height: 22px;
+
+    &__slider::before {
+      height: 16px;
+      width: 16px;
+    }
+
+    &__input:checked + .toggle__slider::before {
+      transform: translateX(22px);
+    }
+  }
+
+  .btn-add-team-member {
+    padding: $spacing-2 $spacing-3 !important;
+    font-size: 0.813rem;
+
+    span:first-child {
+      font-size: 1.125rem;
+    }
+  }
+
+  .btn-edit,
+  .btn-edit-member {
+    font-size: 0.75rem;
+    padding: 5px 8px !important;
+
+    &__icon {
+      width: 12px !important;
+      height: 12px !important;
+    }
+  }
+}
+
+// Landscape mobile orientation
+@media (max-width: 768px) and (orientation: landscape) {
+  .tabs {
+    .tab {
+      span {
+        display: inline;
+        font-size: 0.75rem;
+      }
+
+      .tab__icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  .settings-section,
+  .team-section {
+    padding: $spacing-3 $spacing-5;
+  }
+}
+
+// Touch-friendly adjustments
+@media (hover: none) and (pointer: coarse) {
+  .tabs .tab {
+    min-height: 44px;
+    padding: $spacing-2 $spacing-3 !important;
+  }
+
+  .toggle {
+    width: 52px;
+    height: 28px;
+
+    &__slider::before {
+      height: 22px;
+      width: 22px;
+    }
+
+    &__input:checked + .toggle__slider::before {
+      transform: translateX(24px);
+    }
+  }
+
+  .btn-add-team-member,
+  .btn-edit,
+  .btn-edit-member,
+  .btn-more {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .notification-item,
+  .team-member {
+    padding: $spacing-4;
+  }
 }
