@@ -247,7 +247,6 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (events) => {
           this.allEvents.set(events);
-          // Calculate total items from the response
           this.totalItems.set(
             (events?.pageSize || 0) * (events?.totalPages || 0)
           );
@@ -322,9 +321,8 @@ export class ExplorePageComponent implements OnInit, OnDestroy {
 
 
 
-  // Add the new method here
   protected setCurrentPage(pageNumber: number): void {
-    this.currentPage.set(pageNumber - 1); // Subtract 1 if your API uses 0-based indexing
+    this.currentPage.set(pageNumber - 1); 
   }
 
 
