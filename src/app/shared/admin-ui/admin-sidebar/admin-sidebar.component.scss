@@ -21,7 +21,7 @@
 
     .admin-sidebar__title {
       justify-content: center;
-      
+
       span:last-child {
         display: none;
       }
@@ -42,7 +42,7 @@
     }
 
     // When collapsed, adjust the adjacent main content
-    ~ .admin-layout__main {
+    ~.admin-layout__main {
       margin-left: 5rem;
     }
   }
@@ -221,8 +221,7 @@
       }
 
       .admin-sidebar__icon {
-        filter: brightness(0) saturate(100%) invert(45%) sepia(89%)
-          saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
+        filter: brightness(0) saturate(100%) invert(45%) sepia(89%) saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
         transform: scale(1.15);
       }
 
@@ -246,13 +245,12 @@
       }
 
       .admin-sidebar__icon {
-        filter: brightness(0) saturate(100%) invert(45%) sepia(89%)
-          saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
+        filter: brightness(0) saturate(100%) invert(45%) sepia(89%) saturate(2477%) hue-rotate(360deg) brightness(102%) contrast(101%);
       }
 
       &:hover {
         transform: translateX(2px);
-        
+
         .admin-sidebar__icon {
           transform: scale(1.1);
         }
@@ -317,15 +315,13 @@
     }
 
     .admin-sidebar__icon {
-      filter: brightness(0) saturate(100%) invert(27%) sepia(93%)
-        saturate(4367%) hue-rotate(348deg) brightness(95%) contrast(90%);
+      filter: brightness(0) saturate(100%) invert(27%) sepia(93%) saturate(4367%) hue-rotate(348deg) brightness(95%) contrast(90%);
       transform: rotate(180deg);
     }
   }
 
   .admin-sidebar__icon {
-    filter: brightness(0) saturate(100%) invert(27%) sepia(93%)
-      saturate(4367%) hue-rotate(348deg) brightness(95%) contrast(90%);
+    filter: brightness(0) saturate(100%) invert(27%) sepia(93%) saturate(4367%) hue-rotate(348deg) brightness(95%) contrast(90%);
   }
 }
 
@@ -335,22 +331,47 @@
   transition: margin-left 0.3s ease;
 }
 
-// Mobile responsiveness - Keep this!
+// Mobile responsiveness with glassmorphism
 @media (max-width: 768px) {
   .admin-sidebar {
     // Sidebar becomes an overlay on mobile
     position: fixed;
     left: 0;
-    transform: translateX(-100%);
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-    
+    transform: translateX(0); // Visible by default when not collapsed
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    // In mobile, "collapsed" means HIDDEN
     &--collapsed {
-      transform: translateX(0); // Show when "collapsed" (actually opened on mobile)
-      width: 5rem;
+      transform: translateX(-100%);
+      width: 16rem; // Keep full width when sliding out/in
     }
   }
 
   .admin-layout__main {
     margin-left: 0 !important; // Full width on mobile
+  }
+
+  .admin-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 90; // Below sidebar (100) but above content
+    backdrop-filter: blur(8px) saturate(180%);
+    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    opacity: 1;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    // Glassmorphic gradient overlay
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+          rgba(255, 255, 255, 0.1) 0%,
+          rgba(255, 255, 255, 0.05) 50%,
+          rgba(0, 0, 0, 0.1) 100%);
+      pointer-events: none;
+    }
   }
 }

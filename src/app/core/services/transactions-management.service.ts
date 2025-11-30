@@ -35,6 +35,16 @@ export class TransactionsManagementService {
   );
   public readonly paginationInfo$ = this._paginationInfoSubject.asObservable();
 
+  // ✅ ADD: Individual pagination observables for easier access
+  private _totalElementsSubject = new BehaviorSubject<number>(0);
+  public readonly totalElements$ = this._totalElementsSubject.asObservable();
+
+  private _totalPagesSubject = new BehaviorSubject<number>(0);
+  public readonly totalPages$ = this._totalPagesSubject.asObservable();
+
+  private _currentPageSubject = new BehaviorSubject<number>(0);
+  public readonly currentPage$ = this._currentPageSubject.asObservable();
+
   private _currentFiltersSubject =
     new BehaviorSubject<TransactionManagementFilterParams>({
       page: 0,
@@ -51,6 +61,7 @@ export class TransactionsManagementService {
   public loadTransactions(
     filters?: TransactionManagementFilterParams
   ): Observable<TransactionManagementResponse> {
+    console.log('🔧 SERVICE loadTransactions:', filters);
     this.setLoading(true);
 
     const appliedFilters = filters || this._currentFiltersSubject.getValue();
@@ -59,7 +70,16 @@ export class TransactionsManagementService {
     return this.transactionsBackend.getTransactions(appliedFilters).pipe(
       take(1),
       tap((response) => {
+        console.log('✅ Transactions API response:', {
+          page: response.data.number,
+          totalElements: response.data.totalElements,
+          totalPages: response.data.totalPages,
+          contentLength: response.data.content?.length,
+        });
+
         this._transactionsSubject.next(response.data.content);
+
+        // Update pagination info object
         this._paginationInfoSubject.next({
           pageNumber: response.data.number,
           pageSize: response.data.size,
@@ -68,6 +88,11 @@ export class TransactionsManagementService {
           first: response.data.first,
           last: response.data.last,
         });
+
+        // ✅ ADD: Update individual pagination subjects
+        this._totalElementsSubject.next(response.data.totalElements);
+        this._totalPagesSubject.next(response.data.totalPages);
+        this._currentPageSubject.next(response.data.number);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
@@ -105,6 +130,11 @@ export class TransactionsManagementService {
           first: response.data.first,
           last: response.data.last,
         });
+
+        // ✅ ADD: Update individual subjects
+        this._totalElementsSubject.next(response.data.totalElements);
+        this._totalPagesSubject.next(response.data.totalPages);
+        this._currentPageSubject.next(response.data.number);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
@@ -128,6 +158,11 @@ export class TransactionsManagementService {
           first: response.data.first,
           last: response.data.last,
         });
+
+        // ✅ ADD: Update individual subjects
+        this._totalElementsSubject.next(response.data.totalElements);
+        this._totalPagesSubject.next(response.data.totalPages);
+        this._currentPageSubject.next(response.data.number);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
       finalize(() => this.setLoading(false))
@@ -144,11 +179,12 @@ export class TransactionsManagementService {
   }
 
   public filterByStatus(status: string): void {
+    console.log('🏷️ SERVICE filterByStatus:', status);
     const currentFilters = this._currentFiltersSubject.getValue();
     this.loadTransactions({
       ...currentFilters,
       status,
-      page: 0,
+      page: 0, // ✅ Reset to first page
     }).subscribe();
   }
 
@@ -175,6 +211,7 @@ export class TransactionsManagementService {
   }
 
   public goToPage(page: number): void {
+    console.log('📄 SERVICE goToPage:', page);
     const currentFilters = this._currentFiltersSubject.getValue();
     this.loadTransactions({
       ...currentFilters,

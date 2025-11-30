@@ -77,7 +77,12 @@ export class UserManagementPageComponent implements OnInit {
   });
 
   protected readonly visibleUserCards = computed(() => {
-    const allowed = ['Total Users', 'Active Organizers', 'Admin', 'Deactivated'];
+    const allowed = [
+      'Total Users',
+      'Active Organizers',
+      'Admin',
+      'Deactivated',
+    ];
     return this.userCards().filter((c) => allowed.includes(c.title));
   });
 
@@ -185,17 +190,26 @@ export class UserManagementPageComponent implements OnInit {
     const statusValue =
       status && status !== 'all' ? this._normalizeStatus(status) : undefined;
 
-    if (keyword || roleValue || statusValue !== undefined) {
-      this._userService
-        .searchUsers(keyword, roleValue, statusValue, page)
-        .pipe(takeUntilDestroyed(this._destroyRef))
-        .subscribe();
-    } else {
-      this._userService
-        .fetchAllUsers(page)
-        .pipe(takeUntilDestroyed(this._destroyRef))
-        .subscribe();
-    }
+    console.log('🔄 PARENT _loadUsers called:', {
+      page,
+      keyword,
+      roleValue,
+      statusValue,
+    });
+
+    // ✅ ALWAYS use searchUsers (it works correctly with pagination)
+    // Remove the if/else and just call searchUsers with undefined params
+    this._userService
+      .searchUsers(keyword, roleValue, statusValue, page)
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe({
+        next: () => {
+          console.log('✅ searchUsers completed - page:', page);
+          console.log('   Users:', this.users().length);
+          console.log('   Total:', this.totalElements());
+        },
+        error: (err) => console.error('❌ searchUsers error:', err),
+      });
   }
   private _normalizeStatus(value: string): boolean {
     return value.toLowerCase() === 'active' || value === 'true';
@@ -292,7 +306,7 @@ export class UserManagementPageComponent implements OnInit {
       });
   }
 
-  protected onRowExpanded(user: User): void { }
+  protected onRowExpanded(user: User): void {}
 
   private _openInviteModal(): void {
     this.openInviteModal();

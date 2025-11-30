@@ -20,6 +20,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { APP_ROUTES } from '../../../core/constants/app-routes.constants';
 import { LogoutConfirmationModalComponent } from '../../components/logout-confirmation-modal/logout-confirmation-modal.component';
 
+import { LayoutService } from '../../../core/services/layout.service';
+
 @Component({
   selector: 'app-admin-top-nav',
   standalone: true,
@@ -36,6 +38,7 @@ import { LogoutConfirmationModalComponent } from '../../components/logout-confir
 })
 export class AdminTopNavComponent implements OnChanges, OnInit, OnDestroy {
   private readonly _authService: AuthService = inject(AuthService);
+  protected readonly layoutService = inject(LayoutService);
   private readonly _destroy$ = new Subject<void>();
 
   protected readonly APP_ROUTES = APP_ROUTES;

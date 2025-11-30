@@ -61,14 +61,23 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   private readonly _transactionsService = inject(TransactionsManagementService);
   private readonly _router = inject(Router);
   private readonly _destroy$ = new Subject<void>();
-
+  private readonly _currentPage = signal<number>(0);
+  private readonly _pageSize = signal<number>(10);
+  private readonly _statusFilter = signal<string>('all');
   protected readonly activeTab = signal<TransactionFilter>('Total');
   protected readonly isLoading = signal<boolean>(false);
   private readonly _transactionsSignal = toSignal(
     this._transactionsService.transactions$,
     { initialValue: [] as TransactionManagement[] }
   );
-
+  protected readonly totalElements = toSignal(
+    this._transactionsService.totalElements$,
+    { initialValue: 0 }
+  );
+  protected readonly totalPages = toSignal(
+    this._transactionsService.totalPages$,
+    { initialValue: 0 }
+  );
   protected readonly transactions = computed<TransactionDisplay[]>(() => {
     const apiTransactions = this._transactionsSignal();
     return apiTransactions.map((transaction) => ({
@@ -83,7 +92,6 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   });
 
   protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
-
 
   protected readonly chartTabs: readonly ChartTab[] = [
     { key: 'Total', label: 'Total' },
@@ -301,18 +309,24 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       return chartDataMap[this.activeTab()];
     });
 
-  protected readonly tableColumns: readonly TableColumn<TransactionDisplay>[] = [
-    { key: 'transactionId', header: 'Transaction ID', sortable: true },
-    { key: 'formattedDate', header: 'Date', sortable: true },
-    { key: 'truncatedEventName', header: 'Event Name', sortable: true },
-    { key: 'eventOrganizer', header: 'Organizer', filterable: true },
-    { key: 'truncatedEmail', header: 'Attendee', filterable: true },
-    { key: 'formattedAmount', header: 'Amount', sortable: true },
-    { key: 'displayPaymentMethod', header: 'Payment Method', filterable: true },
-    { key: 'status', header: 'Status', filterable: true },
-  ];
+  protected readonly tableColumns: readonly TableColumn<TransactionDisplay>[] =
+    [
+      { key: 'transactionId', header: 'Transaction ID', sortable: true },
+      { key: 'formattedDate', header: 'Date', sortable: true },
+      { key: 'truncatedEventName', header: 'Event Name', sortable: true },
+      { key: 'eventOrganizer', header: 'Organizer', filterable: true },
+      { key: 'truncatedEmail', header: 'Attendee', filterable: true },
+      { key: 'formattedAmount', header: 'Amount', sortable: true },
+      {
+        key: 'displayPaymentMethod',
+        header: 'Payment Method',
+        filterable: true,
+      },
+      { key: 'status', header: 'Status', filterable: true },
+    ];
 
-  protected readonly tableActions: readonly TableAction<TransactionManagement>[] = [];
+  protected readonly tableActions: readonly TableAction<TransactionManagement>[] =
+    [];
 
   protected readonly tableFilters: readonly TableFilter[] = [
     {
@@ -351,15 +365,49 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   }
 
   protected onStatusFilterChange(status: string): void {
-    if (status === 'all') {
-      this._loadTransactions();
-    } else {
-      this._transactionsService.filterByStatus(status);
+    console.log('🏷️ Status filter change:', status);
+    this._statusFilter.set(status);
+    this._currentPage.set(0); 
+    this._loadTransactions(); 
+  }
+  protected onFilterChange(filterEvent: { key: string; value: string }): void {
+    if (filterEvent.key === 'status') {
+      this.onStatusFilterChange(filterEvent.value);
     }
   }
 
   private _loadTransactions(): void {
-    this._transactionsService.loadTransactions().subscribe();
+    const page = this._currentPage();
+    const size = this._pageSize();
+    const status =
+      this._statusFilter() !== 'all' ? this._statusFilter() : undefined;
+
+    console.log('🔄 Loading transactions:', { page, size, status });
+
+    // ✅ CORRECT: Pass a filter object
+    this._transactionsService
+      .loadTransactions({
+        page,
+        size,
+        status,
+        sort: 'transactionTime,desc',
+      })
+      .subscribe({
+        next: () => {
+          console.log('✅ Transactions loaded for page:', page);
+        },
+        error: (err) => {
+          console.error('❌ Failed to load transactions:', err);
+        },
+      });
+  }
+  protected onPageChange(page: number): void {
+    console.log('📄 Transaction page change:', {
+      page1Based: page,
+      page0Based: page - 1,
+    });
+    this._currentPage.set(page - 1);
+    this._loadTransactions();
   }
 
   private _formatDate(isoString: string): string {
@@ -385,9 +433,7 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     return text.substring(0, maxLength) + '...';
   }
 
-  private _viewTransaction(transaction: TransactionManagement): void {
-  }
+  private _viewTransaction(transaction: TransactionManagement): void {}
 
-  private _downloadReceipt(transaction: TransactionManagement): void {
-  }
+  private _downloadReceipt(transaction: TransactionManagement): void {}
 }
