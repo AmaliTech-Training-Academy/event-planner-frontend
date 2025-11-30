@@ -6,10 +6,6 @@
 .tab-toggle {
   display: flex;
   gap: $spacing-3;
-  @media (max-width:557px) {
-    display:grid;
-    grid-template-columns: 1fr;
-  }
 }
 
 .toggle-btn {
