@@ -295,6 +295,18 @@ app-tab-toggle ::ng-deep .tab-button {
   gap: 1rem;
   grid-template-columns: 1fr;
   width: 100%;
+  align-items: stretch;
+}
+
+.event-section .event-grid app-event-card {
+  display: flex;
+  width: 100%;
+}
+
+.event-section .event-grid > app-event-card {
+  display: flex;
+  width: 100%;
+  min-width: 0;
 }
 
 @media (min-width: 640px) {
