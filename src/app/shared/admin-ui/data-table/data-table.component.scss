@@ -335,20 +335,23 @@
     }
 
     &--draft {
-     background: $red-50;
+      background: $red-50;
       color: $red-600;
       border: 1px solid $red-300;
     }
+
     &--pending {
-     background: $red-50;
+      background: $red-50;
       color: $red-600;
       border: 1px solid $red-300;
     }
+
     &--cancelled {
       background: $red-50;
       color: $red-600;
       border: 1px solid $red-300;
     }
+
     &--completed {
       background: #D1FAE5;
       color: $green-700;
@@ -362,7 +365,7 @@
     gap: $spacing-3;
   }
 
-&__user-avatar-img {
+  &__user-avatar-img {
     width: 32px;
     height: 32px;
     border-radius: $radius-full;
@@ -561,4 +564,198 @@
   font-weight: 600;
   font-size: 12px;
   flex-shrink: 0;
+}
+
+// Add after existing styles, before media queries
+
+// Card view (hidden on desktop)
+.data-table__cards {
+  display: none;
+}
+
+.data-table__card {
+  background: $gray-50;
+  border: $stroke-1 solid $general-stroke-light;
+  border-radius: $radius-4;
+  padding: $spacing-4;
+  margin-bottom: $spacing-3;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.data-table__card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-3;
+}
+
+.data-table__card-expand {
+  width: 32px;
+  height: 32px;
+}
+
+.data-table__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+.data-table__card-user {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  padding-bottom: $spacing-3;
+  border-bottom: $stroke-1 solid $gray-200;
+}
+
+.data-table__card-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-full;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: $gray-100;
+}
+
+.data-table__card-avatar-initials {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-full;
+  background: $orange-100;
+  color: $orange-700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 18px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.data-table__card-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.data-table__card-user-name {
+  @include body-2;
+  font-weight: 600;
+  color: $header-dark;
+  margin: 0 0 $spacing-1 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-table__card-user-email {
+  @include body-3;
+  color: $paragraph-text;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-table__card-fields {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+}
+
+.data-table__card-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-2;
+}
+
+.data-table__card-field-label {
+  @include body-3;
+  color: $paragraph-text;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.data-table__card-field-value {
+  @include body-3;
+  color: $gray-700;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.data-table__card-actions {
+  display: flex;
+  gap: $spacing-2;
+  padding-top: $spacing-3;
+  border-top: $stroke-1 solid $gray-200;
+  flex-wrap: wrap;
+
+  .data-table__action-btn {
+    flex: 1;
+    min-width: fit-content;
+    justify-content: center;
+    padding: $spacing-2 $spacing-3;
+  }
+
+  .data-table__action-label {
+    display: none;
+    margin-left: $spacing-2;
+  }
+}
+
+// Update existing media query
+@media (max-width: 768px) {
+  .data-table {
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-4;
+    }
+
+    &__controls {
+      flex-direction: column;
+      width: 100%;
+      flex: 1;
+
+      >* {
+        width: 100%;
+      }
+    }
+
+    &__search-box {
+      flex: 1;
+      width: 100%;
+    }
+
+    &__search-input {
+      width: 100%;
+    }
+
+    // Hide table view on mobile
+    &__table-wrapper {
+      display: none;
+    }
+
+    // Show card view on mobile
+    &__cards {
+      display: block;
+      padding: 0 $spacing-4 $spacing-4;
+    }
+  }
+}
+
+// Tablet size - keep table but allow scroll
+@media (min-width: 769px) and (max-width: 1024px) {
+  .data-table__table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-table__table {
+    min-width: 800px;
+  }
 }

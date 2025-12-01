@@ -14,23 +14,40 @@
   <div class="transactions-page__chart-container">
     <div class="transactions-page__chart-tabs">
       @for (tab of chartTabs; track tab.key) {
-      <button class="transactions-page__tab" [class.transactions-page__tab--active]="activeTab() === tab.key"
-        (click)="onTabChange(tab.key)" [disabled]="isLoading()">
+      <button 
+        class="transactions-page__tab" 
+        [class.transactions-page__tab--active]="activeTab() === tab.key"
+        (click)="onTabChange(tab.key)" 
+        [disabled]="isLoading()">
         {{ tab.label }}
       </button>
       }
     </div>
 
     <div class="transactions-page__chart">
-      <app-line-chart [seriesConfig]="chartSeriesConfig().slice()" [height]="'350px'" [showLegend]="true"
+      <app-line-chart 
+        [seriesConfig]="chartSeriesConfig().slice()" 
+        [height]="'350px'" 
+        [showLegend]="true"
         [smooth]="true" />
     </div>
   </div>
 
   <div class="transactions-page__content">
-    <app-data-table [data]="transactions()" [columns]="tableColumns" [actions]="tableActions" [filters]="tableFilters"
-      [searchable]="true" [expandable]="false" [itemsPerPage]="10" [emptyState]="transactionsEmptyState"
-      [serverSidePagination]="true" [totalItems]="totalElements()" [loading]="isLoading()"
-      (pageChange)="onPageChange($event)" (filterChange)="onFilterChange($event)" />
+    <app-data-table 
+      [data]="transactions()" 
+      [columns]="tableColumns" 
+      [actions]="tableActions" 
+      [filters]="tableFilters"
+      [searchable]="true" 
+      [expandable]="false" 
+      [itemsPerPage]="10" 
+      [emptyState]="transactionsEmptyState"
+      [serverSidePagination]="true" 
+      [totalItems]="totalElements()" 
+      [loading]="isLoading()"
+      (pageChange)="onPageChange($event)" 
+      (filterChange)="onFilterChange($event)"
+      (searchChange)="onSearch($event)" />
   </div>
 </div>

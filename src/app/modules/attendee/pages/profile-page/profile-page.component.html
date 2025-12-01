@@ -7,12 +7,17 @@
     <header class="profile-header">
       <div class="avatar">
         <img [ngSrc]="avatarUrl()" [alt]="'Avatar'" width="64" height="64" priority />
+
+        <!-- Upload Button (hidden file input) -->
+        <label class="avatar-upload-btn">
+          <input type="file" accept="image/*" hidden (change)="onAvatarSelected($event)" />
+          <span class="edit-avatar-icon">📷</span>
+        </label>
       </div>
-      <div class="header-text">
-        <h1>Edit Profile</h1>
-        <p>Update your personal information</p>
-      </div>
+
+     
     </header>
+
 
     <!-- Basic Information Section -->
     <section formGroupName="basicInfo" class="info-section">
@@ -20,8 +25,10 @@
         <h2>Basic Information</h2>
       </div>
       <div class="form-grid">
-        <app-input [errorMessage]="hasError('fullName','basicInfo')" formControlName="fullName" label="Full Name" placeholder="Enter your full name" name="fullName"></app-input>
-        <app-input [errorMessage]="hasError('email','basicInfo')" formControlName="email" label="Email Address" type="email" placeholder="Enter your email" name="email"></app-input>
+        <app-input [errorMessage]="hasError('fullName','basicInfo')" formControlName="fullName" label="Full Name"
+          placeholder="Enter your full name" name="fullName"></app-input>
+        <app-input [errorMessage]="hasError('email','basicInfo')" formControlName="email" label="Email Address"
+          type="email" placeholder="Enter your email" name="email"></app-input>
       </div>
       <div class="edit-button-container">
         <app-button type="secondary" [extraClass]="'edit-button'" (click)="onEditBasicInfo()">
@@ -36,8 +43,10 @@
         <h2>Contact Information</h2>
       </div>
       <div class="form-grid">
-        <app-input [errorMessage]="hasError('phone','contactInfo')" formControlName="phone" label="Phone Number" placeholder="Enter your phone number" name="phone"></app-input>
-        <app-input [errorMessage]="hasError('address','contactInfo')" formControlName="address" label="Address" placeholder="Enter your address" name="address"></app-input>
+        <app-input [errorMessage]="hasError('phone','contactInfo')" formControlName="phone" label="Phone Number"
+          placeholder="Enter your phone number" name="phone"></app-input>
+        <app-input [errorMessage]="hasError('address','contactInfo')" formControlName="address" label="Address"
+          placeholder="Enter your address" name="address"></app-input>
       </div>
       <div class="edit-button-container">
         <app-button type="secondary" [extraClass]="'edit-button'" (click)="onEditContactInfo()">

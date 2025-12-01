@@ -55,6 +55,7 @@ export interface MyEventItem {
     attendeesCount: number;
     attendeeCount: number;
     attendees?: number;
+    isActive?:boolean;
     isPaid: boolean;
     ticketPrice?: number;
 }

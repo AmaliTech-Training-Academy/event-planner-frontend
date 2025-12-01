@@ -6,7 +6,8 @@
 @mixin flex-col($gap: 0) {
   display: flex;
   flex-direction: column;
-  @if $gap != 0 {
+
+  @if $gap !=0 {
     gap: $gap;
   }
 }
@@ -14,7 +15,8 @@
 @mixin flex-row($gap: 0) {
   display: flex;
   flex-direction: row;
-  @if $gap != 0 {
+
+  @if $gap !=0 {
     gap: $gap;
   }
 }
@@ -32,9 +34,7 @@
   margin: auto;
 
   @include md {
-     @include flex-col(1rem);
-    gap: 1.25rem;
-    // padding: 18px 2rem 134px;
+    @include flex-col(1.25rem);
   }
 
   @include sm {
@@ -48,27 +48,24 @@
   max-width: 589px;
   width: 100%;
   overflow: hidden;
-  
+
   @include md {
     max-width: none;
   }
+
   @include sm {
     max-width: none;
   }
 
-  @include md{
-      max-width: none;
-    }
-
   app-upload-event-flyer {
     display: none;
 
-    @include sm{
-      display: block
+    @include sm {
+      display: block;
     }
 
-    @include md{
-      display: block
+    @include md {
+      display: block;
     }
   }
 
@@ -81,8 +78,6 @@
       padding-bottom: 1rem;
       outline: none;
       border: none;
-      width: 100%;
-      padding-bottom: 1rem;
       border-bottom: 1.5px solid rgb(202, 202, 202);
       color: $paragraph-text;
 
@@ -104,6 +99,7 @@
     @include md {
       padding: 2rem 0.5rem;
     }
+
     @include sm {
       padding: 2.125rem 1.25rem;
     }
@@ -119,11 +115,11 @@
 
       @include sm {
         display: grid;
-        grid-template-columns: 1fr 1fr; // 2 columns
+        grid-template-columns: 1fr 1fr;
         gap: $spacing-4;
         @include body-2;
 
-        > * {
+        >* {
           width: 100%;
         }
 
@@ -148,10 +144,9 @@
           @include flex-col($spacing-2);
           background-color: rgb(255, 255, 255);
 
-          & > * {
+          &>* {
             width: 100%;
           }
-
         }
       }
     }
@@ -201,6 +196,7 @@
       outline: none;
       color: $paragraph-text;
       padding: 8px;
+
       &.error {
         border-color: red;
       }
@@ -296,10 +292,10 @@
   }
 
   .virtual-details {
-    
-    app-input{
+    app-input {
       margin-top: 1rem;
     }
+
     app-button {
       background-color: transparent;
       border: 1px solid $general-stroke-light;
@@ -334,22 +330,19 @@
   @include md {
     max-width: none;
   }
+
   @include sm {
     max-width: none;
   }
 
-   @include md{
-      max-width: none;
-    }
+  app-upload-event-flyer {
+    display: block;
 
-  app-upload-event-flyer{
-    display: black;
-
-    @include sm{
+    @include sm {
       display: none;
     }
 
-    @include md{
+    @include md {
       display: none;
     }
   }

@@ -9,7 +9,16 @@ export interface TransactionManagement {
   transactionTime: string;
 }
 
-export type TransactionManagementStatus = 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+export type TransactionManagementStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED';
+
+export interface PaginationInfo {
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  last: boolean;
+}
 
 export interface PageableInfo {
   pageNumber: number;
@@ -43,27 +52,14 @@ export interface TransactionManagementData {
 }
 
 export interface TransactionManagementResponse {
-  description: string | null;
   data: TransactionManagementData;
+  description: string | null;
 }
 
 export interface TransactionManagementFilterParams {
   page?: number;
   size?: number;
   sort?: string;
+  keyword?: string;
   status?: string;
-  eventName?: string;
-  attendeeEmail?: string;
-  transactionId?: string;
-  startDate?: string;
-  endDate?: string;
-}
-
-export interface PaginationInfo {
-  pageNumber: number;
-  pageSize: number;
-  totalElements: number;
-  totalPages: number;
-  first: boolean;
-  last: boolean;
 }

@@ -20,6 +20,8 @@ import {
   MyEventResponse,
   MyEventStatsResponse,
 } from '@app/core/models/myevent.model';
+import { ApiResponse } from '@app/core/models/shared';
+import { EventData } from '@app/modules/attendee/pages/edit-event-page/models/edit-event.model';
 
 @Injectable({
   providedIn: 'root',
@@ -59,6 +61,10 @@ export class EventBackendServiceService {
 
   public getEvent(id: string): Observable<EventDetail> {
     return this.http.get<EventDetail>(EVENTS_API_ENDPOINTS.GET_EVENT(id));
+  }
+
+  public myEventDetails(id: string): Observable<ApiResponse<EventData>> {
+    return this.http.get<ApiResponse<EventData>>(EVENTS_API_ENDPOINTS.GET_MY_EVENT_DETAIL(id));
   }
 
   public updateEvent(id: string, formData: FormData): Observable<EventDetail> {

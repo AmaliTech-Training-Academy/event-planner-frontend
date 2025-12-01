@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, throwError, EMPTY } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { APP_ROUTES } from '../constants/app-routes.constants';
+import { API_ENDPOINTS } from '../constants/api-endpoints.constants';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -22,6 +23,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       // Only handle 401 (Unauthorized/Authentication failed)
       // Don't handle 403 (Forbidden/Authorization failed) - user is authenticated but lacks permission
       if (error.status === 401) {
+        // Check if the request is for login endpoints
+        if (req.url.includes(API_ENDPOINTS.AUTH_LOGIN) || req.url.includes(API_ENDPOINTS.AUTH_ADMIN_LOGIN)) {
+          return throwError(() => error);
+        }
+
         const authContext = authService.getCurrentAuthContext();
         const currentPath = window.location.pathname;
         const isAdminRoute = currentPath.includes('/admin');

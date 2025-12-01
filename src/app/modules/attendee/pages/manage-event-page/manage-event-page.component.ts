@@ -115,10 +115,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected readonly isSubmitting = signal<boolean>(false);
   protected readonly loading = signal<boolean>(true);
 
-  // Computed signal to check if current user is the event owner/organizer
-  // Since this page is now dedicated to organizers (admins have their own view),
-  // we can simplify this to always return true.
-  protected readonly isEventOwner = computed<boolean>(() => true);
+
+
 
   protected inviteForm: FormGroup = this._fb.group({
     title: ['', Validators.required],
@@ -142,6 +140,8 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   });
 
   public ngOnInit(): void {
+
+
     this._route.params.pipe(take(1)).subscribe((params) => {
       const urlEventId = params['id'];
 
@@ -225,12 +225,10 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
     this._navigateToEventsList();
   }
 
-  // Helper method to navigate to correct events list based on user role
   private _navigateToEventsList(): void {
-    this._router.navigate([APP_ROUTES.MY_EVENTS]);
+      this._router.navigate([APP_ROUTES.MY_EVENTS]);
   }
 
-  // Helper method to get breadcrumb text
   protected getBreadcrumbText(): string {
     return 'My Events';
   }

@@ -172,6 +172,7 @@ export interface EventSummary {
   attendees?: number;
   attendeesCount: number;
   attendeeCount: number;
+  isActive?:boolean;
   isPaid?: boolean;
 }
 

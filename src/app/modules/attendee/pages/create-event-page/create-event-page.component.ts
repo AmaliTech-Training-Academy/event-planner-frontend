@@ -126,11 +126,22 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
 
     if (!input.files?.length) return;
 
-    const files = Array.from(input.files);
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+    const selectedFiles = Array.from(input.files);
+
+    const validFiles = [];
+    for (const file of selectedFiles) {
+      if (file.size > MAX_FILE_SIZE) {
+        this.notificationService.error(`${file.name} is larger than 10 MB and was not added.`);
+        continue; 
+      }
+      validFiles.push(file);
+    }
 
     const currentImages = this.eventFormService.venueImages?.value || [];
 
-    const updatedImages = [...currentImages, ...files].slice(0, 5);
+    const updatedImages = [...currentImages, ...validFiles].slice(0, 5);
 
     this.eventFormService.venueImages?.setValue(updatedImages);
     this.eventFormService.venueImages?.markAsDirty();
@@ -141,6 +152,14 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     if (!input.files?.length) return;
 
     const file = input.files[0];
+
+    const maxSize = 10 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      this.notificationService.error('Image size must not exceed 10 MB');
+      input.value = '';
+      return;
+    }
 
     this.eventFormService.flyer?.setValue(file);
     this.eventFormService.controlValueChanged(this.eventFormService.flyer);

@@ -17,10 +17,13 @@ let message = "Please try again later.";
       message = `Network error: ${error.error.message}`;
     }
     else if (error.error?.description) {
-      message = error.error?.data?.[0] || error.error?.description
+      if (!Array.isArray(error.error?.data)) {
+        message = error.error?.data || error.error?.description;
+      }else {
+        message = error.error?.data?.[0] || error.error?.description
+      }
     }
     else {
-      // Backend error
       switch (error.status) {
         case 0:
           message = 'Cannot connect to the server. Please check your internet connection.';

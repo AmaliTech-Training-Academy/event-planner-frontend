@@ -1,28 +1,29 @@
-@use 'sass:color';
+@use "sass:color";
+@use "typography" as *;
+@use "variables" as *;
 
 :host {
   display: block;
 }
 
 .ticket-card {
-  
 }
 
 .card-title {
-  font-family: 'Lato', sans-serif;
-  font-size: 1.75rem; 
+  font-family: "Lato", sans-serif;
+  font-size: 1.75rem;
   font-weight: 700;
-  color: #292929; 
-  margin: 0 0 1rem 0; 
+  color: #292929;
+  margin: 0 0 1rem 0;
 }
 
 .blue-text {
-  color: #0787c2; 
+  color: #0787c2;
 }
 
 .price {
-  font-family: 'Lato', sans-serif;
-  font-size: 2.25rem; 
+  font-family: "Lato", sans-serif;
+  font-size: 2.25rem;
   font-weight: 700;
   color: #0787c2;
   margin-bottom: 1.5rem;
@@ -31,7 +32,7 @@
 .features-list {
   list-style: none;
   padding: 0;
-  margin: 0 0 1.5rem 0; 
+  margin: 0 0 1.5rem 0;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -40,8 +41,8 @@
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem; 
-  font-family: 'Lato', sans-serif;
+  gap: 0.5rem;
+  font-family: "Lato", sans-serif;
   font-size: 1rem;
   font-weight: 400;
   color: #656565;
@@ -68,3 +69,8 @@ app-button {
   }
 }
 
+.ticket-availability {
+  @include body-1;
+  color: $paragraph-text;
+  margin-top: .5rem;
+}
