@@ -183,14 +183,18 @@ export class DataTableComponent<T extends Record<string, any>> {
   });
 
   private _searchSubject = new Subject<string>();
+
   constructor() {
     this._searchSubject.pipe(debounceTime(600)).subscribe((query) => {
       this._searchQuery.set(query);
       this._currentPage.set(1);
 
       if (this.serverSidePagination()) {
+        // ✅ FIX: Only emit searchChange, don't call _performBackendSearch
+        console.log('🔍 DATA-TABLE: Emitting searchChange with query:', query);
         this.searchChange.emit(query);
       } else {
+        // For client-side pagination with UserManagementService
         this._performBackendSearch(0);
       }
     });
@@ -392,7 +396,7 @@ export class DataTableComponent<T extends Record<string, any>> {
   }
   private _exportAsCSV(
     data: readonly T[],
-    columns: readonly TableColumn<T>[]
+    columns: readonly TableColumn<T>[],
   ): void {
     const headers = columns.map((col) => col.header).join(',');
     const rows = data.map((item) =>
@@ -401,7 +405,7 @@ export class DataTableComponent<T extends Record<string, any>> {
           const value = col.getValue ? col.getValue(item) : item[col.key];
           return `"${String(value).replace(/"/g, '""')}"`;
         })
-        .join(',')
+        .join(','),
     );
 
     const csv = [headers, ...rows].join('\n');
@@ -410,7 +414,7 @@ export class DataTableComponent<T extends Record<string, any>> {
 
   private _exportAsJSON(
     data: readonly T[],
-    columns: readonly TableColumn<T>[]
+    columns: readonly TableColumn<T>[],
   ): void {
     const exportData = data.map((item) => {
       const row: Record<string, any> = {};
@@ -426,7 +430,7 @@ export class DataTableComponent<T extends Record<string, any>> {
 
   private _exportAsPDF(
     data: readonly T[],
-    columns: readonly TableColumn<T>[]
+    columns: readonly TableColumn<T>[],
   ): void {
     alert('PDF export requires additional library. Exporting as HTML instead.');
 
@@ -454,8 +458,9 @@ export class DataTableComponent<T extends Record<string, any>> {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${this.tableTitle()}-${new Date().toISOString().split('T')[0]
-      }.html`;
+    link.download = `${this.tableTitle()}-${
+      new Date().toISOString().split('T')[0]
+    }.html`;
     link.click();
     window.URL.revokeObjectURL(url);
   }
@@ -463,14 +468,15 @@ export class DataTableComponent<T extends Record<string, any>> {
   private _downloadFile(
     content: string,
     mimeType: string,
-    extension: string
+    extension: string,
   ): void {
     const blob = new Blob([content], { type: mimeType });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${this.tableTitle()}-${new Date().toISOString().split('T')[0]
-      }.${extension}`;
+    link.download = `${this.tableTitle()}-${
+      new Date().toISOString().split('T')[0]
+    }.${extension}`;
     link.click();
     window.URL.revokeObjectURL(url);
   }
@@ -485,7 +491,15 @@ export class DataTableComponent<T extends Record<string, any>> {
 
   private _performBackendSearch(page: number): void {
     const userService = this.userService;
-    if (!userService) return;
+
+    // ✅ Only call backend search if UserManagementService is available
+    // This allows the component to work with other services via searchChange event
+    if (!userService) {
+      console.log(
+        '🔍 DATA-TABLE: No userService, relying on searchChange emission',
+      );
+      return;
+    }
 
     const keyword = this._searchQuery().trim() || undefined;
     const filters = this._activeFilters();
