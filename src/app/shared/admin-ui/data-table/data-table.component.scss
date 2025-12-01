@@ -335,20 +335,23 @@
     }
 
     &--draft {
-     background: $red-50;
+      background: $red-50;
       color: $red-600;
       border: 1px solid $red-300;
     }
+
     &--pending {
-     background: $red-50;
+      background: $red-50;
       color: $red-600;
       border: 1px solid $red-300;
     }
+
     &--cancelled {
       background: $red-50;
       color: $red-600;
       border: 1px solid $red-300;
     }
+
     &--completed {
       background: #D1FAE5;
       color: $green-700;
@@ -362,7 +365,7 @@
     gap: $spacing-3;
   }
 
-&__user-avatar-img {
+  &__user-avatar-img {
     width: 32px;
     height: 32px;
     border-radius: $radius-full;
@@ -562,6 +565,7 @@
   font-size: 12px;
   flex-shrink: 0;
 }
+
 // Add after existing styles, before media queries
 
 // Card view (hidden on desktop)
@@ -698,7 +702,7 @@
   }
 
   .data-table__action-label {
-    display: inline;
+    display: none;
     margin-left: $spacing-2;
   }
 }
