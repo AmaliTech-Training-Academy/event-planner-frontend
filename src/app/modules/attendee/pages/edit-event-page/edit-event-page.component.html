@@ -10,8 +10,7 @@
 
     <div class="content">
         <section class="basic-info">
-            <app-upload-event-flyer [flyerPreview]="flyerPreview" (selectedFlyer)="onFlyerImageSelected($event)"
-                title="Update Event Flyer"></app-upload-event-flyer>
+
             <h2>Event Information</h2>
 
 
@@ -40,14 +39,14 @@
                 <app-form-error></app-form-error>
             </div>
 
-
-
-
         </section>
         <section class="tickets">
-            <h2>Ticket Information</h2>
+            <app-upload-event-flyer [flyerPreview]="flyerPreview" (selectedFlyer)="onFlyerImageSelected($event)"
+                title="Update Event Flyer"></app-upload-event-flyer>
 
-            <div class="ticket-list" formArrayName="tickets">
+            <!-- <h2>Ticket Information</h2> -->
+
+            <!-- <div class="ticket-list" formArrayName="tickets">
                 @for (ticket of tickets.controls; track $index) {
                 <div [formGroup]="ticket">
                     <app-edit-ticket-card (removeGroup)="removeTicket($index)" [formGroup]="ticket"
@@ -56,8 +55,7 @@
                 }
             </div>
 
-            <app-button (onClick)="addTicket()" type="secondary">Add Ticket</app-button>
-
+            <app-button (onClick)="addTicket()" type="secondary">Add Ticket</app-button> -->
         </section>
     </div>
 

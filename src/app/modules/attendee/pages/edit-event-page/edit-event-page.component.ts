@@ -185,7 +185,7 @@ export class EditEventPageComponent implements OnInit {
       zoomUrl: data.zoomMeetingUrl,
       event_meeting_type_id: this.getEventMeetingTypeId(),
       event_type_id: data.eventType,
-      event_time: this.formatDateToDDMMYYYY(new Date(data.startTime)),
+      event_time:data.startTime.split('T')[1].substring(0, 5),
       event_time_zone_id: this.returnTimeZoneId() || '',
       event_start_time_date: this.formatDateToDDMMYYYY(new Date(data.startTime)),
       event_end_time_date: this.formatDateToDDMMYYYY(new Date(data.startTime)),
@@ -256,6 +256,7 @@ export class EditEventPageComponent implements OnInit {
       },
       complete: () => {
         this.submitting.set(false)
+        this.notificationService.success(`Event updated successfully`)
         this.goBack()
       }
     })
