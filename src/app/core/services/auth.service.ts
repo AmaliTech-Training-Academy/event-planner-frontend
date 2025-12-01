@@ -18,6 +18,7 @@ import { ErrorHandlerService } from './error-handler.service';
 import { UpdateUserPayload, UserBackendService } from './backend/user-backend.service';
 import { USER_ROLES } from '../constants/user.constants';
 import { User } from '../models';
+import { NotificationService } from './notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -36,7 +37,8 @@ export class AuthService {
     private readonly authBackend: AuthBackendService,
     private readonly router: Router,
     private readonly errorHandlerService: ErrorHandlerService,
-    private readonly userBackendService: UserBackendService
+    private readonly userBackendService: UserBackendService,
+    private readonly notificationService: NotificationService,
   ) {
     this.onload();
   }
@@ -52,7 +54,7 @@ export class AuthService {
         this.router.navigate([APP_ROUTES.VERIFY_EMAIL]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -75,19 +77,21 @@ export class AuthService {
             userData.email,
             userData.role,
             'admin',
-            new Date()
+            new Date(),
           );
+
+          this.notificationService.success(`Welcome back, ${userData.fullName}!`);
         }
 
         this.startAutomaticRefresh(new Date());
         this.router.navigate([APP_ROUTES.ADMIN_DASHBOARD]);
       }),
       catchError((err) => {
-        return this.errorHandlerService.handle(err);
+        return this.errorHandlerService.handle(err); // ← ADD 'return' here!
       }),
       finalize(() => {
         this.setLoading(false);
-      })
+      }),
     );
   }
 
@@ -95,7 +99,7 @@ export class AuthService {
     fullName: string,
     email: string,
     password: string,
-    confirmPassword: string
+    confirmPassword: string,
   ) {
     this.setLoading(true);
     return this.authBackend
@@ -106,7 +110,7 @@ export class AuthService {
           this.router.navigate([APP_ROUTES.LOGIN]);
         }),
         catchError((err) => this.errorHandlerService.handle(err)),
-        finalize(() => this.setLoading(false))
+        finalize(() => this.setLoading(false)),
       );
   }
 
@@ -139,14 +143,16 @@ export class AuthService {
             'user',
             new Date(),
             userData.phone || '',
-            userData.address || ''
+            userData.address || '',
           );
+
+          this.notificationService.success(`Welcome back, ${userData.fullName}!`);
         }
         this.startAutomaticRefresh(new Date());
         this.router.navigate([APP_ROUTES.MY_EVENTS]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -156,7 +162,7 @@ export class AuthService {
       take(1),
       tap(() => { }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -172,7 +178,7 @@ export class AuthService {
         this.router.navigate([APP_ROUTES.LOGIN]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -188,7 +194,7 @@ export class AuthService {
         this.router.navigate([APP_ROUTES.ADMIN_LOGIN]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -210,7 +216,7 @@ export class AuthService {
         }
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -225,7 +231,7 @@ export class AuthService {
         this.router.navigate([APP_ROUTES.LOGIN]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -239,7 +245,7 @@ export class AuthService {
         this.router.navigate([APP_ROUTES.VERIFY_EMAIL]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -250,47 +256,48 @@ export class AuthService {
       email: data.email,
       fullName: data.fullName,
       address: data.address,
-      status: true
-    })
-    formData.append('userUpdateRequest', formDataText)
+      status: true,
+    });
+    formData.append('userUpdateRequest', formDataText);
     this.setLoading(true);
-    return this.userBackendService.updateUserWithFormData(userId, formData).pipe(
-      take(1),
-      tap((response) => {
+    return this.userBackendService
+      .updateUserWithFormData(userId, formData)
+      .pipe(
+        take(1),
+        tap((response) => {
+          let user_: User = response.data;
 
-        let user_: User = response.data;
+          const data_ = localStorage.getItem(AUTH_STORAGE.AUTH);
+          if (!data_ || data_ === '') return;
 
-        const data_ = localStorage.getItem(AUTH_STORAGE.AUTH);
-        if (!data_ || data_ === '') return
+          const dataPasered = JSON.parse(data_) as AuthStorage;
 
-        const dataPasered = JSON.parse(data_) as AuthStorage;
+          this.saveAuthToStorage(
+            user_.userId.toString() || dataPasered[AUTH_STORAGE.USER_ID],
+            user_.fullName || dataPasered[AUTH_STORAGE.FULL_NAME],
+            user_.profileImageUrl || dataPasered[AUTH_STORAGE.PROFILE_PICTURE],
+            user_.email || dataPasered[AUTH_STORAGE.EMAIL],
+            dataPasered[AUTH_STORAGE.ROLE],
+            this.currentUser()?.role === USER_ROLES.ADMIN ? 'admin' : 'user',
+            new Date(dataPasered[AUTH_STORAGE.REFRESHED_AT]),
+            user_.phone || dataPasered[AUTH_STORAGE.PHONE_NUMBER],
+            user_.address || dataPasered[AUTH_STORAGE.ADDRESS],
+          );
 
-        this.saveAuthToStorage(
-          user_.userId.toString() || dataPasered[AUTH_STORAGE.USER_ID],
-          user_.fullName || dataPasered[AUTH_STORAGE.FULL_NAME],
-          user_.profileImageUrl || dataPasered[AUTH_STORAGE.PROFILE_PICTURE],
-          user_.email || dataPasered[AUTH_STORAGE.EMAIL],
-          dataPasered[AUTH_STORAGE.ROLE],
-          this.currentUser()?.role === USER_ROLES.ADMIN ? 'admin' : 'user',
-          new Date(dataPasered[AUTH_STORAGE.REFRESHED_AT]),
-          user_.phone || dataPasered[AUTH_STORAGE.PHONE_NUMBER],
-          user_.address || dataPasered[AUTH_STORAGE.ADDRESS],
-        )
-
-        const data: OtpBodyData = {
-          email: user_.email,
-          fullName: user_.fullName,
-          role: user_.role,
-          profilePicture: user_.profileImageUrl as string,
-          id: user_.userId,
-          address: user_.address,
-          phone: user_.phone,
-        };
-        this._userInfo$.next(data);
-      }),
-      catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
-    );
+          const data: OtpBodyData = {
+            email: user_.email,
+            fullName: user_.fullName,
+            role: user_.role,
+            profilePicture: user_.profileImageUrl as string,
+            id: user_.userId,
+            address: user_.address,
+            phone: user_.phone,
+          };
+          this._userInfo$.next(data);
+        }),
+        catchError((err) => this.errorHandlerService.handle(err)),
+        finalize(() => this.setLoading(false)),
+      );
   }
 
   public updateStoredUserInfo(userData: OtpBodyData): void {
@@ -304,7 +311,7 @@ export class AuthService {
       userData.profilePicture,
       userData.email,
       userData.role,
-      context
+      context,
     );
   }
 
@@ -330,12 +337,12 @@ export class AuthService {
               userData.profilePicture,
               userData.email,
               userData.role,
-              context
+              context,
             );
           }
         }),
         catchError((err) => this.errorHandlerService.handle(err)),
-        finalize(() => this.setLoading(false))
+        finalize(() => this.setLoading(false)),
       );
   }
 
@@ -363,12 +370,12 @@ export class AuthService {
             updatedUser.profilePicture,
             updatedUser.email,
             updatedUser.role,
-            context
+            context,
           );
         }
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -415,8 +422,7 @@ export class AuthService {
             this.startAutomaticRefresh(refreshedAt);
           }, 500);
         }
-      } catch (error) {
-      }
+      } catch (error) { }
     }
   }
 
@@ -429,7 +435,7 @@ export class AuthService {
     context: 'user' | 'admin',
     refreshAt: Date = new Date(),
     phone: string = '',
-    address: string = ''
+    address: string = '',
   ) {
     const authData = {
       [AUTH_STORAGE.AUTHENTICATED]: true,
@@ -463,7 +469,7 @@ export class AuthService {
     const now = new Date();
     const refreshIntervalMs = this.TOKEN_REFRESH_INTERVAL * 60 * 1000;
     const nextRefreshTime = new Date(
-      lastRefresh_.getTime() + refreshIntervalMs
+      lastRefresh_.getTime() + refreshIntervalMs,
     );
 
     const delay = nextRefreshTime.getTime() - now.getTime();
@@ -500,7 +506,7 @@ export class AuthService {
             context,
             newRefreshTime,
             data[AUTH_STORAGE.PHONE_NUMBER],
-            data[AUTH_STORAGE.ADDRESS]
+            data[AUTH_STORAGE.ADDRESS],
           );
 
           this.startAutomaticRefresh(newRefreshTime);
@@ -573,7 +579,7 @@ export class AuthService {
     fullName: string,
     password: string,
     confirmPassword: string,
-    invitationToken: string
+    invitationToken: string,
   ) {
     this.setLoading(true);
 
@@ -605,7 +611,7 @@ export class AuthService {
                 userData.email,
                 userData.role,
                 'admin',
-                new Date()
+                new Date(),
               );
 
               this.startAutomaticRefresh(new Date());
@@ -625,7 +631,7 @@ export class AuthService {
                 'user',
                 new Date(),
                 userData.phone || '',
-                userData.address || ''
+                userData.address || '',
               );
 
               this.startAutomaticRefresh(new Date());
@@ -641,14 +647,14 @@ export class AuthService {
         }),
         finalize(() => {
           this.setLoading(false);
-        })
+        }),
       );
   }
 
   public acceptEventInvitation(
     fullName: string,
     invitationCode: string,
-    password: string
+    password: string,
   ): Observable<void> {
     this.setLoading(true);
 
@@ -664,7 +670,7 @@ export class AuthService {
         this.router.navigate([APP_ROUTES.LOGIN]);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 }
