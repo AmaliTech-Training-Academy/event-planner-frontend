@@ -1,4 +1,12 @@
-import { Component, OnInit, OnDestroy, inject, signal, computed, Signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  signal,
+  computed,
+  Signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
@@ -40,15 +48,6 @@ interface TransactionDisplay extends TransactionManagement {
   readonly truncatedTransactionId: string;
 }
 
-interface TransactionDisplay extends TransactionManagement {
-  readonly formattedDate: string;
-  readonly formattedAmount: string;
-  readonly displayPaymentMethod: string;
-  readonly truncatedEmail: string;
-  readonly truncatedEventName: string;
-  readonly truncatedTransactionId: string;
-}
-
 @Component({
   selector: 'app-transactions-page',
   standalone: true,
@@ -62,11 +61,27 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   private readonly _router = inject(Router);
   private readonly _destroy$ = new Subject<void>();
 
+  // ✅ REMOVED: _pageSize signal - backend has fixed page size of 10
+  private readonly _currentPage = signal<number>(0);
+  private readonly _statusFilter = signal<string>('all');
+  private readonly _searchKeyword = signal<string>('');
+
   protected readonly activeTab = signal<TransactionFilter>('Total');
   protected readonly isLoading = signal<boolean>(false);
+
   private readonly _transactionsSignal = toSignal(
     this._transactionsService.transactions$,
-    { initialValue: [] as TransactionManagement[] }
+    { initialValue: [] as TransactionManagement[] },
+  );
+
+  protected readonly totalElements = toSignal(
+    this._transactionsService.totalElements$,
+    { initialValue: 0 },
+  );
+
+  protected readonly totalPages = toSignal(
+    this._transactionsService.totalPages$,
+    { initialValue: 0 },
   );
 
   protected readonly transactions = computed<TransactionDisplay[]>(() => {
@@ -84,7 +99,6 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
 
   protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
 
-
   protected readonly chartTabs: readonly ChartTab[] = [
     { key: 'Total', label: 'Total' },
     { key: 'Completed', label: 'Completed' },
@@ -100,6 +114,7 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       'No transactions found. When events with payments are created, they will appear here.',
   };
 
+  // Chart data configurations
   private readonly _allTransactionsChartData: readonly LineSeriesConfig[] = [
     {
       name: 'This Year',
@@ -137,153 +152,11 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     },
   ] as const;
 
-  private readonly _completedChartData: readonly LineSeriesConfig[] = [
-    {
-      name: 'This Year',
-      data: [
-        { month: 'Jan', value: 10200 },
-        { month: 'Feb', value: 6800 },
-        { month: 'Mar', value: 13200 },
-        { month: 'Apr', value: 21500 },
-        { month: 'May', value: 24800 },
-        { month: 'Jun', value: 18500 },
-        { month: 'Jul', value: 21200 },
-      ],
-      color: '#10B981',
-      showArea: true,
-      lineStyle: 'solid',
-      areaGradient: {
-        start: 'rgba(16, 185, 129, 0.2)',
-        end: 'rgba(16, 185, 129, 0.05)',
-      },
-    },
-    {
-      name: 'Last 30 Days',
-      data: [
-        { month: 'Jan', value: 4800 },
-        { month: 'Feb', value: 11500 },
-        { month: 'Mar', value: 10200 },
-        { month: 'Apr', value: 18200 },
-        { month: 'May', value: 5500 },
-        { month: 'Jun', value: 10200 },
-        { month: 'Jul', value: 25800 },
-      ],
-      color: '#6B7280',
-      showArea: false,
-      lineStyle: 'dashed',
-    },
-  ] as const;
-
-  private readonly _pendingChartData: readonly LineSeriesConfig[] = [
-    {
-      name: 'This Year',
-      data: [
-        { month: 'Jan', value: 1800 },
-        { month: 'Feb', value: 1200 },
-        { month: 'Mar', value: 2100 },
-        { month: 'Apr', value: 2800 },
-        { month: 'May', value: 3200 },
-        { month: 'Jun', value: 2100 },
-        { month: 'Jul', value: 2500 },
-      ],
-      color: '#F59E0B',
-      showArea: true,
-      lineStyle: 'solid',
-      areaGradient: {
-        start: 'rgba(245, 158, 11, 0.2)',
-        end: 'rgba(245, 158, 11, 0.05)',
-      },
-    },
-    {
-      name: 'Last 30 Days',
-      data: [
-        { month: 'Jan', value: 800 },
-        { month: 'Feb', value: 2200 },
-        { month: 'Mar', value: 2100 },
-        { month: 'Apr', value: 2500 },
-        { month: 'May', value: 1000 },
-        { month: 'Jun', value: 1500 },
-        { month: 'Jul', value: 3200 },
-      ],
-      color: '#6B7280',
-      showArea: false,
-      lineStyle: 'dashed',
-    },
-  ] as const;
-
-  private readonly _failedChartData: readonly LineSeriesConfig[] = [
-    {
-      name: 'This Year',
-      data: [
-        { month: 'Jan', value: 350 },
-        { month: 'Feb', value: 150 },
-        { month: 'Mar', value: 380 },
-        { month: 'Apr', value: 680 },
-        { month: 'May', value: 720 },
-        { month: 'Jun', value: 450 },
-        { month: 'Jul', value: 580 },
-      ],
-      color: '#EF4444',
-      showArea: true,
-      lineStyle: 'solid',
-      areaGradient: {
-        start: 'rgba(239, 68, 68, 0.2)',
-        end: 'rgba(239, 68, 68, 0.05)',
-      },
-    },
-    {
-      name: 'Last 30 Days',
-      data: [
-        { month: 'Jan', value: 150 },
-        { month: 'Feb', value: 380 },
-        { month: 'Mar', value: 350 },
-        { month: 'Apr', value: 620 },
-        { month: 'May', value: 220 },
-        { month: 'Jun', value: 380 },
-        { month: 'Jul', value: 580 },
-      ],
-      color: '#6B7280',
-      showArea: false,
-      lineStyle: 'dashed',
-    },
-  ] as const;
-
-  private readonly _refundChartData: readonly LineSeriesConfig[] = [
-    {
-      name: 'This Year',
-      data: [
-        { month: 'Jan', value: 150 },
-        { month: 'Feb', value: 50 },
-        { month: 'Mar', value: 120 },
-        { month: 'Apr', value: 220 },
-        { month: 'May', value: 180 },
-        { month: 'Jun', value: 150 },
-        { month: 'Jul', value: 220 },
-      ],
-      color: '#8B5CF6',
-      showArea: true,
-      lineStyle: 'solid',
-      areaGradient: {
-        start: 'rgba(139, 92, 246, 0.2)',
-        end: 'rgba(139, 92, 246, 0.05)',
-      },
-    },
-    {
-      name: 'Last 30 Days',
-      data: [
-        { month: 'Jan', value: 50 },
-        { month: 'Feb', value: 120 },
-        { month: 'Mar', value: 150 },
-        { month: 'Apr', value: 180 },
-        { month: 'May', value: 80 },
-        { month: 'Jun', value: 120 },
-        { month: 'Jul', value: 220 },
-      ],
-      color: '#6B7280',
-      showArea: false,
-      lineStyle: 'dashed',
-    },
-  ] as const;
+  private readonly _completedChartData: readonly LineSeriesConfig[] =
+    [] as const;
+  private readonly _pendingChartData: readonly LineSeriesConfig[] = [] as const;
+  private readonly _failedChartData: readonly LineSeriesConfig[] = [] as const;
+  private readonly _refundChartData: readonly LineSeriesConfig[] = [] as const;
 
   protected readonly chartSeriesConfig: Signal<readonly LineSeriesConfig[]> =
     computed(() => {
@@ -301,18 +174,24 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       return chartDataMap[this.activeTab()];
     });
 
-  protected readonly tableColumns: readonly TableColumn<TransactionDisplay>[] = [
-    { key: 'transactionId', header: 'Transaction ID', sortable: true },
-    { key: 'formattedDate', header: 'Date', sortable: true },
-    { key: 'truncatedEventName', header: 'Event Name', sortable: true },
-    { key: 'eventOrganizer', header: 'Organizer', filterable: true },
-    { key: 'truncatedEmail', header: 'Attendee', filterable: true },
-    { key: 'formattedAmount', header: 'Amount', sortable: true },
-    { key: 'displayPaymentMethod', header: 'Payment Method', filterable: true },
-    { key: 'status', header: 'Status', filterable: true },
-  ];
+  protected readonly tableColumns: readonly TableColumn<TransactionDisplay>[] =
+    [
+      { key: 'transactionId', header: 'Transaction ID', sortable: true },
+      { key: 'formattedDate', header: 'Date', sortable: true },
+      { key: 'truncatedEventName', header: 'Event Name', sortable: true },
+      { key: 'eventOrganizer', header: 'Organizer', filterable: true },
+      { key: 'truncatedEmail', header: 'Attendee', filterable: true },
+      { key: 'formattedAmount', header: 'Amount', sortable: true },
+      {
+        key: 'displayPaymentMethod',
+        header: 'Payment Method',
+        filterable: true,
+      },
+      { key: 'status', header: 'Status', filterable: true },
+    ];
 
-  protected readonly tableActions: readonly TableAction<TransactionManagement>[] = [];
+  protected readonly tableActions: readonly TableAction<TransactionManagement>[] =
+    [];
 
   protected readonly tableFilters: readonly TableFilter[] = [
     {
@@ -320,9 +199,10 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
       placeholder: 'All Status',
       options: [
         { label: 'All Status', value: 'all' },
-        { label: 'Completed', value: 'COMPLETED' },
+        { label: 'Success', value: 'SUCCESS' },
         { label: 'Pending', value: 'PENDING' },
         { label: 'Failed', value: 'FAILED' },
+        { label: 'Cancelled', value: 'CANCELLED' },
       ],
     },
   ];
@@ -350,25 +230,66 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
     this.activeTab.set(tab);
   }
 
-  protected onStatusFilterChange(status: string): void {
-    if (status === 'all') {
+  // ✅ UPDATED: Search handler - called by DataTable after debounce
+  protected onSearch(searchTerm: string): void {
+    console.log('🔍 COMPONENT onSearch received:', searchTerm);
+
+    // Use the service's searchTransactions method which handles everything
+    this._transactionsService.searchTransactions(searchTerm);
+  }
+
+  // ✅ UPDATED: Single filter handler
+  protected onFilterChange(filterEvent: { key: string; value: string }): void {
+    console.log('🏷️ COMPONENT onFilterChange:', filterEvent);
+
+    if (filterEvent.key === 'status') {
+      this._statusFilter.set(filterEvent.value);
+      this._currentPage.set(0); // Reset to first page on filter change
       this._loadTransactions();
-    } else {
-      this._transactionsService.filterByStatus(status);
     }
   }
 
+  // ✅ UPDATED: Simplified load method - only sends what backend accepts
   private _loadTransactions(): void {
-    this._transactionsService.loadTransactions().subscribe();
+    const page = this._currentPage();
+    const status =
+      this._statusFilter() !== 'all' ? this._statusFilter() : undefined;
+    const keyword = this._searchKeyword().trim() || undefined;
+
+    console.log('🔄 Loading transactions:', { page, status, keyword });
+
+    this._transactionsService
+      .loadTransactions({
+        page,
+        status,
+        keyword,
+        // ✅ Removed size and sort - backend handles these internally
+      })
+      .subscribe({
+        next: () => {
+          console.log('✅ Transactions loaded for page:', page);
+        },
+        error: (err) => {
+          console.error('❌ Failed to load transactions:', err);
+        },
+      });
+  }
+
+  // ✅ UPDATED: Page change handler converts 1-based to 0-based
+  protected onPageChange(page: number): void {
+    console.log('📄 Page change:', {
+      page1Based: page,
+      page0Based: page - 1,
+    });
+    this._currentPage.set(page - 1);
+    this._loadTransactions();
   }
 
   private _formatDate(isoString: string): string {
     const date = new Date(isoString);
-
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-
     return `${year}-${month}-${day}`;
   }
 
@@ -386,8 +307,10 @@ export class TransactionsPageComponent implements OnInit, OnDestroy {
   }
 
   private _viewTransaction(transaction: TransactionManagement): void {
+    // TODO: Implement view transaction details
   }
 
   private _downloadReceipt(transaction: TransactionManagement): void {
+    // TODO: Implement download receipt
   }
 }

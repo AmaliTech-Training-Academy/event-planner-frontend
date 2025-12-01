@@ -45,7 +45,7 @@ interface EventTableData {
   organizer: string;
   date: string;
   attendees: number;
-  status: 'Pending' | 'Completed' | 'Draft' | 'Active' ;
+  status: 'Pending' | 'Completed' | 'Draft' | 'Active';
   time?: string;
   location?: string;
   description?: string;
@@ -71,8 +71,8 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   protected readonly APP_ROUTES: typeof APP_ROUTES = APP_ROUTES;
 
   private readonly _dashboardData = signal<DashboardData | null>(null);
-  private readonly _isLoadingDashboard = signal<boolean>(false); 
-  private readonly _isLoadingTable = signal<boolean>(false); 
+  private readonly _isLoadingDashboard = signal<boolean>(false);
+  private readonly _isLoadingTable = signal<boolean>(false);
   private readonly _error = signal<string | null>(null);
 
   private readonly _currentPage = signal<number>(0);
@@ -209,7 +209,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     return searchResults && searchResults.content.length > 0;
   });
 
-  // Separate loading states for different sections
   public readonly isLoadingDashboard = computed(() =>
     this._isLoadingDashboard()
   );
@@ -271,15 +270,13 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
         if (trimmedQuery !== currentSearch) {
           this._searchQuery.set(trimmedQuery);
           this._currentPage.set(0);
-          this._loadEventsData(); // Load only events data
+          this._loadEventsData();
         }
       });
 
-    // Subscribe to service loading states separately
     this._eventManagementService.loading$
       .pipe(takeUntilDestroyed())
       .subscribe((loading) => {
-        // Only update table loading during search/filter operations
         if (this._searchQuery() || this._selectedStatus() !== 'all') {
           this._isLoadingTable.set(loading);
         } else {
@@ -312,7 +309,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     this._searchSubject.complete();
   }
 
-  // Load initial dashboard data (stats, organizers, upcoming events)
   private _loadInitialData(): void {
     this._isLoadingDashboard.set(true);
     this._error.set(null);
@@ -330,7 +326,6 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Load only events data for search/filter/pagination
   private _loadEventsData(): void {
     this._isLoadingTable.set(true);
     this._error.set(null);
@@ -339,38 +334,19 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     const size = this._pageSize();
     const status =
       this._selectedStatus() !== 'all' ? this._selectedStatus() : undefined;
-    const search = this._searchQuery().trim();
+    const search = this._searchQuery().trim() || undefined;
 
-    const hasSearch = search && search.length >= 2;
-    const hasStatusFilter = status && status !== 'all';
-
-    if (hasSearch || hasStatusFilter) {
-      const effectiveSearch = hasSearch ? search : '';
-
-      this._eventManagementService
-        .searchEvents(effectiveSearch, page, size, status)
-        .subscribe({
-          next: () => {
-            this._isLoadingTable.set(false);
-          },
-          error: (err) => {
-            this._error.set('Failed to load events');
-            this._isLoadingTable.set(false);
-          },
-        });
-    } else {
-      this._eventManagementService.clearSearch();
-
-      this._eventManagementService.loadDashboardData(page, size).subscribe({
+    this._eventManagementService
+      .searchEvents(search || '', page, size, status)
+      .subscribe({
         next: () => {
           this._isLoadingTable.set(false);
         },
         error: (err) => {
-          this._error.set('Failed to load dashboard data');
+          this._error.set('Failed to load events');
           this._isLoadingTable.set(false);
         },
       });
-    }
   }
 
   public refreshData(): void {
@@ -379,8 +355,8 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   }
 
   public onPageChange(page: number): void {
-    this._currentPage.set(page);
-    this._loadEventsData(); // Only reload events table
+    this._currentPage.set(page - 1);
+    this._loadEventsData();
   }
 
   public onViewAllOrganizers(): void {
@@ -407,11 +383,10 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     this._searchQuery.set('');
     this._currentPage.set(0);
     this._eventManagementService.clearSearch();
-    this._loadEventsData(); // Only reload events table
+    this._loadEventsData();
   }
 
   public onFilterChange(filterEvent: { key: string; value: string }): void {
-
     if (filterEvent.key === 'status') {
       const newStatus = filterEvent.value as EventStatus | 'all';
       const currentStatus = this._selectedStatus();
@@ -433,12 +408,9 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   }
 
   private _onCreateEvent(): void {
-
     this._router.navigate(['/app/create-event']).then(
-      (success) => {
-      },
-      (error) => {
-      }
+      (success) => { },
+      (error) => { }
     );
   }
 
@@ -499,10 +471,10 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
 
   private _mapStatusToTableStatus(
     status: EventStatus
-  ): 'Pending' | 'Completed' | 'Draft' | 'Active'  {
+  ): 'Pending' | 'Completed' | 'Draft' | 'Active' {
     const statusMap: Record<
       EventStatus,
-      'Pending' | 'Completed' | 'Draft' | 'Active' 
+      'Pending' | 'Completed' | 'Draft' | 'Active'
     > = {
       ACTIVE: 'Active',
       DRAFT: 'Draft',

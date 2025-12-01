@@ -1,0 +1,49 @@
+@if(loading()){
+<app-loading-card></app-loading-card>
+}
+@else{
+@if (eventDetails(); as event) {
+<div class="event-details-page">
+
+    <nav class="event-details-page__breadcrumb">
+        <button class="breadcrumb-link" (click)="onBack()">Event Management</button>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">{{ eventOverview()?.data?.eventSummary?.title || "N/A" }}</span>
+    </nav>
+
+    <div class="event-details-page__header">
+        <h1 class="event-details-page__title">{{ eventOverview()?.data?.eventSummary?.title || "N/A" }}</h1>
+        <!-- No Edit Button for Admins -->
+    </div>
+
+    <div class="event-details-page__tabs" role="tablist">
+        <button type="button" role="tab" class="tab-button" [class.tab-button--active]="activeTab() === 'overview'"
+            [attr.aria-selected]="activeTab() === 'overview'" (click)="setActiveTab('overview')">
+            Overview
+        </button>
+        <button type="button" role="tab" class="tab-button" [class.tab-button--active]="activeTab() === 'guests'"
+            [attr.aria-selected]="activeTab() === 'guests'" (click)="setActiveTab('guests')">
+            Guest
+        </button>
+        <button type="button" role="tab" class="tab-button" [class.tab-button--active]="activeTab() === 'registration'"
+            [attr.aria-selected]="activeTab() === 'registration'" (click)="setActiveTab('registration')">
+            Registration
+        </button>
+    </div>
+
+    @if (activeTab() === 'overview') {
+    <app-overview [overview]="eventOverview()?.data || null" (viewGuest)="onViewAllGuests()"
+        [statCards]="statCards()"></app-overview>
+    }
+
+    @if (activeTab() === 'guests') {
+    <app-guest (inviteGuest)="onInviteGuest()" [currentEventId]="currentEventId()||0"></app-guest>
+    }
+
+    @if (activeTab() === 'registration') {
+    <app-registration [currentEventId]="currentEventId()||0"></app-registration>
+    }
+
+</div>
+}
+}

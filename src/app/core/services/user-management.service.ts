@@ -90,7 +90,7 @@ export class UserManagementService {
   constructor(
     private readonly _userBackend: UserBackendService,
     private readonly _errorHandler: ErrorHandlerService
-  ) { }
+  ) {}
 
   public get totalElements(): number {
     return this._totalElements$.getValue();
@@ -100,6 +100,8 @@ export class UserManagementService {
     page: number = 0,
     size: number = 10
   ): Observable<UserManagementResponse> {
+    console.log('🔧 fetchAllUsers called with page:', page);
+
     this._setLoading(true);
 
     return this._userBackend.getAllUsers(page, size).pipe(
@@ -107,6 +109,13 @@ export class UserManagementService {
         const pagination = response.data.users;
         const normalizedUsers: User[] =
           pagination.content.map(normalizeUserStatus);
+
+        console.log('✅ fetchAllUsers API response:', {
+          page: pagination.number,
+          totalElements: pagination.totalElements,
+          totalPages: pagination.totalPages,
+          usersCount: normalizedUsers.length,
+        });
 
         return {
           ...response,
@@ -127,18 +136,30 @@ export class UserManagementService {
         const pagination = response.data.users;
         const normalizedUsers = pagination.content;
 
+        // Update cache (this is for your internal tracking)
         if (pagination.number === 0) {
           this._usersCache = normalizedUsers;
         } else {
           this._usersCache = [...this._usersCache, ...normalizedUsers];
         }
 
+        console.log('📊 Updating BehaviorSubjects:', {
+          users: normalizedUsers.length,
+          totalPages: pagination.totalPages,
+          currentPage: pagination.number,
+          totalElements: pagination.totalElements,
+        });
+
+        // ✅ These should update with ONLY current page data
         this._users$.next(normalizedUsers);
         this._totalPages$.next(pagination.totalPages);
         this._currentPage$.next(pagination.number);
         this._totalElements$.next(pagination.totalElements);
 
-        this._updateUserCards(response.data);
+        // Only update cards on first page load
+        if (pagination.number === 0) {
+          this._updateUserCards(response.data);
+        }
       }),
 
       catchError((err) => {
@@ -156,6 +177,13 @@ export class UserManagementService {
     status?: boolean,
     page: number = 0
   ): Observable<User[]> {
+    console.log('🔧 SERVICE searchUsers called:', {
+      keyword,
+      role,
+      status,
+      page,
+    });
+
     const cacheKey = this._getCacheKey(keyword, role, status, page);
 
     if (this._searchCache.has(cacheKey)) {
@@ -163,6 +191,7 @@ export class UserManagementService {
       const isExpired = Date.now() - cached.timestamp > this._cacheDuration;
 
       if (!isExpired) {
+        console.log('📦 Using cached data for page:', page);
         this._users$.next(cached.users);
         this._totalPages$.next(cached.totalPages);
         this._currentPage$.next(cached.currentPage);
@@ -174,10 +203,21 @@ export class UserManagementService {
       }
     }
 
+    // ✅ ADD THIS: Set loading state
+    this._setLoading(true);
+
     return this._userBackend.searchUsers(keyword, role, status, page).pipe(
       map((response: UserSearchResponse) => {
         const pagination = response.data;
         const users = pagination?.content ?? [];
+
+        console.log(
+          '✅ API Response - page:',
+          pagination?.number,
+          'users:',
+          users.length
+        );
+
         return {
           users: users.map(normalizeUserStatus),
           pagination: pagination,
@@ -208,10 +248,11 @@ export class UserManagementService {
         this._currentPage$.next(0);
 
         return of([]);
-      })
+      }),
+      // ✅ ADD THIS: Stop loading state
+      finalize(() => this._setLoading(false))
     );
   }
-
   public invalidateCache(): void {
     this._searchCache.clear();
     this._usersCache = [];
@@ -379,7 +420,6 @@ export class UserManagementService {
     this._searchCache.clear();
   }
 
-
   private _updateCardsFromUserList(users: User[]): void {
     const totalUsers = users.length;
 
@@ -403,7 +443,6 @@ export class UserManagementService {
       (u) => u.status === 'Inactive'
     ).length;
 
-
     const accountedFor =
       totalOrganizers + totalCoOrganizers + totalAdmin + totalAttendees;
     const totalOthers = Math.max(
@@ -424,8 +463,6 @@ export class UserManagementService {
     this._updateUserCards();
   }
 
-
-
   private _updateUserCards(data?: Partial<UserStats>): void {
     const stats: UserStats =
       data?.totalUsers != null ? (data as UserStats) : this._userStats;
@@ -435,7 +472,10 @@ export class UserManagementService {
     }
 
     // Calculate Admin count as: Total Users - Active Organizers
-    const calculatedAdmin = Math.max(0, stats.totalUsers - stats.totalOrganizers);
+    const calculatedAdmin = Math.max(
+      0,
+      stats.totalUsers - stats.totalOrganizers
+    );
 
     const cards: UserCardData[] = [
       {

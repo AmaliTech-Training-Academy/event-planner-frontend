@@ -5,7 +5,6 @@
     <app-button (onClick)="navigateToCreateEvent()">Create Event</app-button>
   </div>
 
-
   <div class="stat-card-grid">
     @for (card of statCards(); track card.title) {
     <app-admin-user-card [data]="card" />
@@ -15,20 +14,34 @@
   @if(loading()){
     <app-loading-card></app-loading-card>
   }
-@else {
-  <div class="events-section">
-    @if(myEvents().length < 1 && !loading()){ <app-empty-list-message (handleSecondary)="navigateToExploreEvent()"
-      (handleAction)="navigateToCreateEvent()" [secondaryText]="'Explore Events'" [actionText]="'Create Event'">
-      </app-empty-list-message>
+  @else {
+    <div class="events-section">
+      @if(myEvents().length < 1 && !loading()){ 
+        <app-empty-list-message 
+          (handleSecondary)="navigateToExploreEvent()"
+          (handleAction)="navigateToCreateEvent()" 
+          [secondaryText]="'Explore Events'" 
+          [actionText]="'Create Event'">
+        </app-empty-list-message>
       }
 
       <div class="event-grid">
         @for (event of myEvents(); track event.id;) {
-        <app-event-card [event]="event" [variant]="'manage'" (manageEvent)="onManageEvent(event.id.toString())" />
+          <app-event-card 
+            [event]="event" 
+            [variant]="'manage'" 
+            (manageEvent)="onManageEvent(event.id.toString())" />
         }
       </div>
     </div>
   }
-      <app-pagination [totalItems]="totalaItems()" (pageChange)="onPageChange($event)" [maxVisiblePages]="3"  [currentPage]="page()"></app-pagination>
+  
+  <app-pagination 
+    [totalItems]="totalItems()" 
+    [itemsPerPage]="itemsPerPage()"
+    [currentPage]="currentPage()" 
+    (pageChange)="setCurrentPage($event)" 
+    [maxVisiblePages]="3">
+  </app-pagination>
 
 </main>

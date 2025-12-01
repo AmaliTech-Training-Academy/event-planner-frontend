@@ -26,31 +26,41 @@ export class TransactionsManagementService {
   public readonly loading$ = this._loadingStateSubject.asObservable();
 
   private _transactionsSubject = new BehaviorSubject<TransactionManagement[]>(
-    []
+    [],
   );
   public readonly transactions$ = this._transactionsSubject.asObservable();
 
   private _paginationInfoSubject = new BehaviorSubject<PaginationInfo | null>(
-    null
+    null,
   );
   public readonly paginationInfo$ = this._paginationInfoSubject.asObservable();
 
+  private _totalElementsSubject = new BehaviorSubject<number>(0);
+  public readonly totalElements$ = this._totalElementsSubject.asObservable();
+
+  private _totalPagesSubject = new BehaviorSubject<number>(0);
+  public readonly totalPages$ = this._totalPagesSubject.asObservable();
+
+  private _currentPageSubject = new BehaviorSubject<number>(0);
+  public readonly currentPage$ = this._currentPageSubject.asObservable();
+
+  // ✅ UPDATED: Only track what backend accepts
   private _currentFiltersSubject =
     new BehaviorSubject<TransactionManagementFilterParams>({
       page: 0,
-      size: 10,
-      sort: 'transactionTime,desc',
+      // Removed size and sort - backend handles these internally (10 items, sorted by transactionTime desc)
     });
   public readonly currentFilters$ = this._currentFiltersSubject.asObservable();
 
   constructor(
     private readonly transactionsBackend: TransactionsBackendService,
-    private readonly errorHandlerService: ErrorHandlerService
+    private readonly errorHandlerService: ErrorHandlerService,
   ) {}
 
   public loadTransactions(
-    filters?: TransactionManagementFilterParams
+    filters?: TransactionManagementFilterParams,
   ): Observable<TransactionManagementResponse> {
+    console.log('🔧 SERVICE loadTransactions:', filters);
     this.setLoading(true);
 
     const appliedFilters = filters || this._currentFiltersSubject.getValue();
@@ -59,7 +69,16 @@ export class TransactionsManagementService {
     return this.transactionsBackend.getTransactions(appliedFilters).pipe(
       take(1),
       tap((response) => {
+        console.log('✅ Transactions API response:', {
+          page: response.data.number,
+          totalElements: response.data.totalElements,
+          totalPages: response.data.totalPages,
+          contentLength: response.data.content?.length,
+        });
+
         this._transactionsSubject.next(response.data.content);
+
+        // Update pagination info object
         this._paginationInfoSubject.next({
           pageNumber: response.data.number,
           pageSize: response.data.size,
@@ -68,14 +87,19 @@ export class TransactionsManagementService {
           first: response.data.first,
           last: response.data.last,
         });
+
+        // Update individual pagination subjects
+        this._totalElementsSubject.next(response.data.totalElements);
+        this._totalPagesSubject.next(response.data.totalPages);
+        this._currentPageSubject.next(response.data.number);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
   public loadTransactionById(
-    transactionId: string
+    transactionId: string,
   ): Observable<TransactionManagement> {
     this.setLoading(true);
 
@@ -83,13 +107,13 @@ export class TransactionsManagementService {
       take(1),
       map((response) => response.data),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
   public loadEventTransactions(
     eventId: string,
-    filters?: TransactionManagementFilterParams
+    filters?: TransactionManagementFilterParams,
   ): Observable<TransactionManagementResponse> {
     this.setLoading(true);
 
@@ -105,14 +129,18 @@ export class TransactionsManagementService {
           first: response.data.first,
           last: response.data.last,
         });
+
+        this._totalElementsSubject.next(response.data.totalElements);
+        this._totalPagesSubject.next(response.data.totalPages);
+        this._currentPageSubject.next(response.data.number);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
   public loadUserTransactions(
-    filters?: TransactionManagementFilterParams
+    filters?: TransactionManagementFilterParams,
   ): Observable<TransactionManagementResponse> {
     this.setLoading(true);
 
@@ -128,9 +156,13 @@ export class TransactionsManagementService {
           first: response.data.first,
           last: response.data.last,
         });
+
+        this._totalElementsSubject.next(response.data.totalElements);
+        this._totalPagesSubject.next(response.data.totalPages);
+        this._currentPageSubject.next(response.data.number);
       }),
       catchError((err) => this.errorHandlerService.handle(err)),
-      finalize(() => this.setLoading(false))
+      finalize(() => this.setLoading(false)),
     );
   }
 
@@ -138,12 +170,13 @@ export class TransactionsManagementService {
     const currentFilters = this._currentFiltersSubject.getValue();
     this.loadTransactions({
       ...currentFilters,
-      transactionId: searchTerm,
+      keyword: searchTerm,
       page: 0,
     }).subscribe();
   }
 
   public filterByStatus(status: string): void {
+    console.log('🏷️ SERVICE filterByStatus:', status);
     const currentFilters = this._currentFiltersSubject.getValue();
     this.loadTransactions({
       ...currentFilters,
@@ -175,6 +208,7 @@ export class TransactionsManagementService {
   }
 
   public goToPage(page: number): void {
+    console.log('📄 SERVICE goToPage:', page);
     const currentFilters = this._currentFiltersSubject.getValue();
     this.loadTransactions({
       ...currentFilters,
@@ -182,20 +216,13 @@ export class TransactionsManagementService {
     }).subscribe();
   }
 
-  public changePageSize(size: number): void {
-    const currentFilters = this._currentFiltersSubject.getValue();
-    this.loadTransactions({
-      ...currentFilters,
-      size,
-      page: 0,
-    }).subscribe();
-  }
+  // ✅ REMOVED: changePageSize() method since backend doesn't support dynamic page size
+  // Backend always returns 10 items per page
 
   public resetFilters(): void {
     this.loadTransactions({
       page: 0,
-      size: 10,
-      sort: 'transactionTime,desc',
+      // Removed size and sort
     }).subscribe();
   }
 

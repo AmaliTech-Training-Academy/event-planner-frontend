@@ -34,15 +34,15 @@ export class AuditManagementService {
   public loadAuditLogs(
     page = 0,
     size = 10,
-    email?: string,
-    startDate?: string,
-    endDate?: string,
-    status?: string
+    fullName?: string,
+    status?: string,
+    sortBy = 'createdAt',
+    direction = 'DESC'
   ): Observable<AuditLogsResponse> {
     this._loading.next(true);
 
     return this._backend
-      .getAuditLogs(page, size, email, startDate, endDate, status)
+      .getAuditLogs(page, size, fullName, status, sortBy, direction)
       .pipe(
         tap((data) => {
           this._auditLogsData.next(data);

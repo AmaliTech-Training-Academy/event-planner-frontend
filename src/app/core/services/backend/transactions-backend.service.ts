@@ -16,45 +16,30 @@ export class TransactionsBackendService {
 
   /**
    * Get all transactions with optional filtering and pagination
+   * Backend accepts: keyword, status, page (size and sort are handled internally)
    */
   public getTransactions(
-    filters?: TransactionManagementFilterParams
+    filters?: TransactionManagementFilterParams,
   ): Observable<TransactionManagementResponse> {
     let params = new HttpParams();
 
     if (filters) {
+      // Only send what backend accepts
       if (filters.page !== undefined) {
         params = params.set('page', filters.page.toString());
-      }
-      if (filters.size !== undefined) {
-        params = params.set('size', filters.size.toString());
-      }
-      if (filters.sort) {
-        params = params.set('sort', filters.sort);
       }
       if (filters.status) {
         params = params.set('status', filters.status);
       }
-      if (filters.eventName) {
-        params = params.set('eventName', filters.eventName);
+      if (filters.keyword) {
+        params = params.set('keyword', filters.keyword);
       }
-      if (filters.attendeeEmail) {
-        params = params.set('attendeeEmail', filters.attendeeEmail);
-      }
-      if (filters.transactionId) {
-        params = params.set('transactionId', filters.transactionId);
-      }
-      if (filters.startDate) {
-        params = params.set('startDate', filters.startDate);
-      }
-      if (filters.endDate) {
-        params = params.set('endDate', filters.endDate);
-      }
+      // Note: size and sort are NOT sent - backend handles these internally
     }
 
     return this.http.get<TransactionManagementResponse>(
       API_ENDPOINTS.PAYMENT_TRANSACTIONS,
-      { params }
+      { params },
     );
   }
 
@@ -62,10 +47,10 @@ export class TransactionsBackendService {
    * Get a single transaction by ID
    */
   public getTransactionById(
-    transactionId: string
+    transactionId: string,
   ): Observable<{ data: TransactionManagement }> {
     return this.http.get<{ data: TransactionManagement }>(
-      API_ENDPOINTS.GET_TRANSACTION(transactionId)
+      API_ENDPOINTS.GET_TRANSACTION(transactionId),
     );
   }
 
@@ -74,7 +59,7 @@ export class TransactionsBackendService {
    */
   public getEventTransactions(
     eventId: string,
-    filters?: TransactionManagementFilterParams
+    filters?: TransactionManagementFilterParams,
   ): Observable<TransactionManagementResponse> {
     let params = new HttpParams();
 
@@ -92,7 +77,7 @@ export class TransactionsBackendService {
 
     return this.http.get<TransactionManagementResponse>(
       API_ENDPOINTS.GET_EVENT_TRANSACTIONS(eventId),
-      { params }
+      { params },
     );
   }
 
@@ -100,7 +85,7 @@ export class TransactionsBackendService {
    * Get user's transaction history
    */
   public getUserTransactions(
-    filters?: TransactionManagementFilterParams
+    filters?: TransactionManagementFilterParams,
   ): Observable<TransactionManagementResponse> {
     let params = new HttpParams();
 
@@ -118,7 +103,7 @@ export class TransactionsBackendService {
 
     return this.http.get<TransactionManagementResponse>(
       API_ENDPOINTS.USER_TRANSACTIONS,
-      { params }
+      { params },
     );
   }
 }
