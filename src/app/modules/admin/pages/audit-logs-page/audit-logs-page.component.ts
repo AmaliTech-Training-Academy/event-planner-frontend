@@ -120,7 +120,7 @@ export class AuditLogsComponent implements OnInit {
       options: [
         { label: 'All Statuses', value: '' },
         { label: 'Successful', value: 'success' },
-        { label: 'Failed', value: 'failed' },
+        { label: 'Failed', value: 'failure' },
       ],
     },
   ];
@@ -157,8 +157,8 @@ export class AuditLogsComponent implements OnInit {
     if (filter.key === 'status') {
       const statusValue =
         filter.value === 'all' ||
-        !filter.value ||
-        filter.value.trim().length === 0
+          !filter.value ||
+          filter.value.trim().length === 0
           ? ''
           : filter.value.trim();
       this._statusFilter.set(statusValue);

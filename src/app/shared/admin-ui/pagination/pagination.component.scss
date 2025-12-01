@@ -37,13 +37,19 @@
     user-select: none;
     font-weight: 500;
   }
-} 
+}
 
-.pagination__button {
+::ng-deep .pagination__button {
   &--page {
     background-color: transparent;
     border: 1.5px solid $gray-300;
     color: $gray-900;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover:not(:disabled) {
       background-color: $gray-100;
@@ -63,5 +69,7 @@
 
   &--nav {
     @extend .pagination__button--page;
+    width: auto;
+    padding: 0 $spacing-3;
   }
 }
