@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { PartnersComponent } from '../../../../shared/components/partners/partners.component';
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
 import { FeaturesSectionComponent } from './components/features-section/features-section.component';
@@ -18,5 +18,6 @@ import { FaqSectionComponent } from './components/faq-section/faq-section.compon
   ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LandingPageComponent {}
+export class LandingPageComponent { }

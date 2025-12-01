@@ -26,8 +26,4 @@ export class HeroSectionComponent {
     mail: 'icons/message-icon.svg',
     settings: 'icons/collaboration-icon.svg',
   };
-
-  protected onCreateEvent(): void {}
-
-  protected onViewEvents(): void {}
 }

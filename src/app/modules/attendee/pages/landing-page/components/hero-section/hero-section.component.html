@@ -5,22 +5,11 @@
       <p class="hero__subtitle">{{ subtitle }}</p>
 
       <div class="hero__actions">
-        <app-button
-          type="primary"
-          label="Create an event"
-          (click)="onCreateEvent()"
-          [routerLink]="APP_ROUTES.CREATE_EVENT"
-
-        >
+        <app-button type="primary" label="Create an event" [routerLink]="APP_ROUTES.CREATE_EVENT">
           Create An Event
         </app-button>
 
-        <app-button
-          type="secondary"
-          label="View events"
-          (click)="onViewEvents()"
-          [routerLink]="APP_ROUTES.EXPLORE"
-        >
+        <app-button type="secondary" label="View events" [routerLink]="APP_ROUTES.EXPLORE">
           View Events
         </app-button>
       </div>
@@ -28,72 +17,31 @@
 
     <div class="hero__image-wrapper">
       <div class="hero__image-container">
-        <img
-          [ngSrc]="heroImage"
-          alt="Professional woman in video conference"
-          width="700"
-          height="500"
-          class="hero__image"
-          priority
-        />
+        <img [ngSrc]="heroImage" alt="Professional woman in video conference" width="700" height="500"
+          class="hero__image" priority />
 
         <div class="hero__overlay-icons">
           <button class="hero__icon" aria-label="Microphone">
-            <img
-              [ngSrc]="icons.mic"
-              alt="Microphone"
-              width="40"
-              height="40"
-              class="hero__icon-content"
-              loading="lazy"
-            />
+            <img [ngSrc]="icons.mic" alt="Microphone" width="40" height="40" class="hero__icon-content"
+              loading="lazy" />
           </button>
 
           <button class="hero__icon" aria-label="Video camera">
-            <img
-              [ngSrc]="icons.video"
-              alt="Video camera"
-              width="40"
-              height="40"
-              class="hero__icon-content"
-              loading="lazy"
-            />
+            <img [ngSrc]="icons.video" alt="Video camera" width="40" height="40" class="hero__icon-content"
+              loading="lazy" />
           </button>
 
-          <button
-            class="hero__icon hero__icon--accent icon-red"
-            aria-label="Phone call"
-          >
-            <img
-              [ngSrc]="icons.phone"
-              alt="Phone"
-              width="40"
-              height="40"
-              class="hero__icon-content"
-              loading="lazy"
-            />
+          <button class="hero__icon hero__icon--accent icon-red" aria-label="Phone call">
+            <img [ngSrc]="icons.phone" alt="Phone" width="40" height="40" class="hero__icon-content" loading="lazy" />
           </button>
 
           <button class="hero__icon" aria-label="Email">
-            <img
-              [ngSrc]="icons.mail"
-              alt="Email"
-              width="40"
-              height="40"
-              class="hero__icon-content"
-              loading="lazy"
-            />
+            <img [ngSrc]="icons.mail" alt="Email" width="40" height="40" class="hero__icon-content" loading="lazy" />
           </button>
 
           <button class="hero__icon" aria-label="Settings">
-            <img
-              [ngSrc]="icons.settings"
-              alt="Settings"
-              width="40"
-              height="40"
-              class="hero__icon-content"
-              loading="lazy"
-            />
+            <img [ngSrc]="icons.settings" alt="Settings" width="40" height="40" class="hero__icon-content"
+              loading="lazy" />
           </button>
         </div>
       </div>
