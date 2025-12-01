@@ -89,6 +89,13 @@ export class EventPageComponent implements OnInit , OnDestroy {
   }
 
 
+  protected isPastEvent(eventDateStr: string): boolean {
+    const eventDate = new Date(eventDateStr);
+    const currentDate = new Date();
+    return eventDate < currentDate;
+  }
+
+
 
   protected onVenueImageClick(imageData: VenueImage): void {
 

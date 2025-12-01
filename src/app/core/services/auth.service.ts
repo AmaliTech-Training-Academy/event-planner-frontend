@@ -294,6 +294,7 @@ export class AuthService {
             phone: user_.phone,
           };
           this._userInfo$.next(data);
+          this.updateStoredUserInfo(data);
         }),
         catchError((err) => this.errorHandlerService.handle(err)),
         finalize(() => this.setLoading(false)),

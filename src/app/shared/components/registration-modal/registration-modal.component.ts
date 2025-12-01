@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgModel } from '@angular/forms';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { InputComponent } from '../../ui/input/input.component';
 import { QuantityInputComponent } from '../../ui/quantity-input/quantity-input.component';
@@ -56,6 +56,17 @@ export class RegistrationModalComponent implements OnInit, OnDestroy {
   }
 
 
+
+  protected getErrorMessage(control: NgModel | null) {
+  if (!control || !control.touched) return '';
+
+  if (control.errors?.['required']) return 'This field is required';
+  if (control.errors?.['email']) return 'Enter a valid email address';
+
+  return '';
+}
+
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe()
   }
@@ -69,6 +80,14 @@ export class RegistrationModalComponent implements OnInit, OnDestroy {
   protected onCancel(): void {
     if (this.loading()) return;
     this.cancelRegistration.emit();
+  }
+
+  protected capitalizeWords(text: string): string {
+    return text
+      .toLowerCase()
+      .split(' ')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
   }
 
   protected onSubmit(): void {

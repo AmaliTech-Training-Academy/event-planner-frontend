@@ -4,13 +4,15 @@
     
   </div>
 
-  <form (ngSubmit)="onSubmit()" class="registration-form">
+  <form #formRef="ngForm" (ngSubmit)="onSubmit()" class="registration-form">
     <app-input
       label="Full Name"
       placeholder="Enter your full name"
       [(ngModel)]="fullName"
       name="fullName"
+      #nameRef="ngModel"
       [required]="true"
+      [errorMessage]="getErrorMessage(nameRef)"
     ></app-input>
 
     <app-input
@@ -19,13 +21,15 @@
       placeholder="user@eventhub.com"
       [(ngModel)]="email"
       name="email"
+      #emailRef="ngModel"
       [required]="true"
+      [errorMessage]="getErrorMessage(emailRef)"
     ></app-input>
 
     @if (isPaid()) {
     <div class="quantity-group">
       <label class="form-label"
-        >Number of {{ selectedTicket()?.type }}s</label
+        >Number of {{ capitalizeWords(selectedTicket()?.type || '') }} Tickets</label
       >
       <app-quantity-input
         [(ngModel)]="ticketCount"
@@ -34,7 +38,7 @@
     </div>
     }
 
-    <app-button [disabled]="loading()" type="primary" [buttonType]="'submit'">
+    <app-button  [disabled]="loading()|| (formRef.invalid||false)" type="primary" [buttonType]="'submit'">
       @if (isPaid()) { Proceed to Payment } @else { Register for Event }
     </app-button>
   </form>

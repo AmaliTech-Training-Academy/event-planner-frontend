@@ -27,9 +27,11 @@
     }
   </ul>
 
-  <app-button type="primary" (click)="registerClick.emit()">
-   Buy {{ ticket.type }} Ticket
-  </app-button>
+  @if (!isPast()) {
+    <app-button type="primary" (click)="registerClick.emit()">
+     Buy {{ capitalizeWords(ticket.type) }} Ticket
+    </app-button>
+  }
 </div>
 }
 
