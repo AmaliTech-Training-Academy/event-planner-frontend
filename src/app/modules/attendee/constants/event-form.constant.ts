@@ -21,7 +21,7 @@ export const EVENT_FORM_FIELDS = {
   TITLE: 'title',
   CAPACITY: 'capacity',
   PRICE: 'ticketPrice',
-  PERCS: 'percs',
+  // PERCS: 'percs',
   REQUIRE_APPROVAL: 'requiresApproval',
   PRICE_TYPE: 'priceType',
   VENUE_SECTIONS: 'venuSections',

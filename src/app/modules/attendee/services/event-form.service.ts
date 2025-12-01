@@ -19,7 +19,7 @@ export class EventFormService {
       [F.TITLE]: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       [F.CAPACITY]: [0, [Validators.required, Validators.min(1)]],
       [F.PRICE]: [0, [Validators.min(0)]],
-      [F.PERCS]: ['', [Validators.required, Validators.minLength(3)]],
+      // [F.PERCS]: ['', [Validators.required, Validators.minLength(3)]],
       [F.REQUIRE_APPROVAL]: [false],
       [F.PRICE_TYPE]: [PRICE_TYPE.FREE, Validators.required],
       [F.VENUE_SECTIONS]: this.fb.array([]),
@@ -157,16 +157,16 @@ export class EventFormService {
       .pipe(takeUntil(this.destroy$))
       .subscribe((type) => {
         const priceControl = this.form.get(F.PRICE);
-        const includedControl = this.form.get(F.PERCS);
+        // const includedControl = this.form.get(F.PERCS);
 
         if (type === PRICE_TYPE.FREE) {
           priceControl?.setValue(0, { emitEvent: false });
           priceControl?.disable({ emitEvent: false });
-          includedControl?.setValue('', { emitEvent: false });
-          includedControl?.disable({ emitEvent: false });
+          // includedControl?.setValue('', { emitEvent: false });
+          // includedControl?.disable({ emitEvent: false });
         } else {
           priceControl?.enable({ emitEvent: false });
-          includedControl?.enable({ emitEvent: false });
+          // includedControl?.enable({ emitEvent: false });
         }
       });
 
