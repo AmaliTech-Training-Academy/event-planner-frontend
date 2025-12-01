@@ -22,7 +22,6 @@ import {
 } from '../../../admin/pages/event-management-page/components/top-organizers/top-organizers.component';
 import {
   UpcomingEventsComponent,
-  UpcomingEvent,
 } from '../../../admin/pages/event-management-page/components/upcoming-events/upcoming-events.component';
 import {
   TableColumn,
@@ -36,6 +35,7 @@ import {
   DashboardData,
   EventManagement,
   EventStatus,
+  UpcomingEvent,
 } from '../../../../core/models/events';
 import { PaginatedResponse } from '../../../../core/models/shared';
 
@@ -140,9 +140,10 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
     if (!data) return [];
 
     return data.upcomingEvents.map((event, index) => ({
-      id: index + 1,
-      title: event.eventTitle,
+      id: event.id,
+      title: event.title,
       date: new Date(event.startTime).toISOString().split('T')[0],
+      startTime: event.startTime,
       attendeeCount: event.attendeeCount,
       status: 'upcoming' as const,
     }));
@@ -364,7 +365,7 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
   }
 
   public onOrganizerClick(organizer: Organizer): void {
-    this._router.navigate([this.APP_ROUTES.ADMIN_ORGANIZERS, organizer.id]);
+    // this._router.navigate([this.APP_ROUTES.ADMIN_EVENTS]);
   }
 
   public onViewAllEvents(): void {

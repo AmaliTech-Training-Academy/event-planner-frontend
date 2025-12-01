@@ -25,6 +25,7 @@ import { ModalHeaderComponent } from '../../../../../../shared/ui/modal-header/m
 import { InputComponent } from '../../../../../../shared/ui/input/input.component';
 import { ButtonComponent } from '../../../../../../shared/ui/button/button.component';
 import { UserManagementService } from '../../../../../../core/services/user-management.service';
+import { NotificationService } from '../../../../../../core/services/notification.service';
 
 import { UpdateUserPayload } from '../../../../../../core/services/backend/user-backend.service';
 import { User } from '../../../../../../core/models';
@@ -104,7 +105,8 @@ export class EditUserProfileComponent {
 
   constructor(
     private readonly _fb: FormBuilder,
-    private readonly _userManagementService: UserManagementService
+    private readonly _userManagementService: UserManagementService,
+    private readonly _notificationService: NotificationService
   ) {
     this.profileForm = this._fb.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
@@ -154,7 +156,7 @@ export class EditUserProfileComponent {
           this.profileForm.patchValue(formData, { emitEvent: false });
           return;
         }
-      } catch (error) {}
+      } catch (error) { }
     }
 
     const formData = {
@@ -251,7 +253,7 @@ export class EditUserProfileComponent {
       if (phoneNumberObj && phoneNumberObj.isValid()) {
         return phoneNumberObj.formatInternational();
       }
-    } catch {}
+    } catch { }
 
     return phoneNumber;
   }
@@ -277,6 +279,7 @@ export class EditUserProfileComponent {
         next: (response) => {
           const updatedUser = response.data || response;
           this.save.emit(updatedUser);
+          this._notificationService.success('User profile updated successfully');
           this._resetForm();
           this.close.emit();
         },
@@ -309,7 +312,7 @@ export class EditUserProfileComponent {
         if (phoneNumberObj?.isValid()) {
           formattedPhone = phoneNumberObj.number;
         }
-      } catch {}
+      } catch { }
     }
 
     const user = this.userData();
