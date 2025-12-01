@@ -17,7 +17,7 @@ export class EventFormService {
       [F.MEETING_TYPE]: [MEETING_TYPE.IN_PERSON, [Validators.required]],
       [F.FLYER]: ['', Validators.required],
       [F.TITLE]: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-      [F.CAPACITY]: [0, [Validators.min(0)]],
+      [F.CAPACITY]: [0, [Validators.required, Validators.min(1)]],
       [F.PRICE]: [0, [Validators.min(0)]],
       [F.PERCS]: ['', [Validators.required, Validators.minLength(3)]],
       [F.REQUIRE_APPROVAL]: [false],

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-date-picker',
@@ -9,6 +9,7 @@ import { Component, output } from '@angular/core';
 })
 export class DatePickerComponent {
   public readonly dateSelected = output<Date>();
+  public readonly minDate = input<Date | null>(null);
   private today = new Date();
   protected currentMonth = this.today.getMonth();
   protected currentYear = this.today.getFullYear();
@@ -46,8 +47,18 @@ export class DatePickerComponent {
   }
 
   protected selectDate(day: number) {
-    this.selectedDate = new Date(this.currentYear, this.currentMonth, day);
+    const date = new Date(this.currentYear, this.currentMonth, day);
+    if (this.isPastDate(day)) return;
+    this.selectedDate = date;
     this.dateSelected.emit(this.selectedDate);
+  }
+
+  protected isPastDate(day: number): boolean {
+    const date = new Date(this.currentYear, this.currentMonth, day);
+    const compareDate = this.minDate() || new Date();
+    compareDate.setHours(0, 0, 0, 0);
+    date.setHours(0, 0, 0, 0);
+    return date < compareDate;
   }
 
   protected selectToday() {

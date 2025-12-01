@@ -185,6 +185,11 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     return group.get(controlName) as FormControl;
   }
 
+  protected getStartDate(): Date | null {
+    const startDate = this.eventDates.at(0)?.get(FIELDS.DATE)?.value;
+    return startDate instanceof Date ? startDate : null;
+  }
+
   protected getImageSrc(image: any): string {
     return this.eventFormService.getImageSrc(image);
   }
@@ -208,11 +213,7 @@ export class CreateEventPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  protected removeCapacityLimit() {
-    this.eventFormService.capacity?.setValue(0);
-    this.eventFormService.controlValueChanged(this.eventFormService.capacity);
-    this.toggleCapacityModal();
-  }
+
 
   protected setCapacityLimit() {
     this.eventFormService.controlValueChanged(this.eventFormService.capacity);
