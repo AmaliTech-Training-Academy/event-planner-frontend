@@ -110,7 +110,7 @@ export class EditEventPageComponent implements OnInit {
     })
 
     this.eventService.timeZones().subscribe({
-     next: (response) => {
+      next: (response) => {
         if (response.length > 0) {
           this.timeZones = response
         }
@@ -132,6 +132,15 @@ export class EditEventPageComponent implements OnInit {
     if (!input.files?.length) return;
 
     const file = input.files[0];
+
+    const maxSize = 10 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      this.notificationService.error('Image size must not exceed 10 MB');
+      input.value = '';
+      return;
+    }
+
     this.form.patchValue({
       flyer: file,
     })
@@ -185,7 +194,7 @@ export class EditEventPageComponent implements OnInit {
       zoomUrl: data.zoomMeetingUrl,
       event_meeting_type_id: this.getEventMeetingTypeId(),
       event_type_id: data.eventType,
-      event_time:data.startTime.split('T')[1].substring(0, 5),
+      event_time: data.startTime.split('T')[1].substring(0, 5),
       event_time_zone_id: this.returnTimeZoneId() || '',
       event_start_time_date: this.formatDateToDDMMYYYY(new Date(data.startTime)),
       event_end_time_date: this.formatDateToDDMMYYYY(new Date(data.startTime)),
@@ -226,9 +235,9 @@ export class EditEventPageComponent implements OnInit {
     return timezone;
   }
 
-  private returnTimeZoneId(){
+  private returnTimeZoneId() {
     let timeZone_ = this.returnTimeCurrentTimeZone()
-    return this.timeZones.find((timeZone)=>timeZone.zoneId == timeZone_)?.zoneId
+    return this.timeZones.find((timeZone) => timeZone.zoneId == timeZone_)?.zoneId
   }
 
   protected sumbitUpdate() {
