@@ -28,37 +28,26 @@ export class AuditManagementService {
   constructor(
     private readonly _backend: AuditBackendService,
     private readonly _errorHandler: ErrorHandlerService
-  ) {}
+  ) { }
 
 
   public loadAuditLogs(
     page = 0,
     size = 10,
-    email?: string,
-    startDate?: string,
-    endDate?: string,
-    status?: string
+    fullName?: string,
+    status?: string,
+    sortBy = 'createdAt',
+    direction = 'DESC'
   ): Observable<AuditLogsResponse> {
-    console.log('🔧 SERVICE loadAuditLogs:', { page, size, email, status }); // ✅ ADD THIS
-
     this._loading.next(true);
 
     return this._backend
-      .getAuditLogs(page, size, email, startDate, endDate, status)
+      .getAuditLogs(page, size, fullName, status, sortBy, direction)
       .pipe(
         tap((data) => {
-          console.log('✅ Audit logs API response:', {
-            // ✅ ADD THIS
-            page: data.pageNumber,
-            totalElements: data.totalElements,
-            totalPages: data.totalPages,
-            dataLength: data.data?.length,
-          });
-
           this._auditLogsData.next(data);
         }),
         catchError((err) => {
-          console.error('❌ loadAuditLogs error:', err); // ✅ ADD THIS
           this._errorHandler.handle(err);
           return throwError(() => err);
         }),

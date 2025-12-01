@@ -52,6 +52,6 @@ export function mapAuditLogToTableData(log: AuditLog): AuditLogTableData {
     ipAddress: log.ipAddress,
     timestamp: log.timestamp,
     formattedTimestamp: formatTimestamp(log.timestamp),
-    status: log.auditStatus === 'SUCCESS' ? 'successful' : 'failed', // Changed this line
+    status: log.auditStatus === 'SUCCESS' ? 'success' : 'failed',
   };
 }

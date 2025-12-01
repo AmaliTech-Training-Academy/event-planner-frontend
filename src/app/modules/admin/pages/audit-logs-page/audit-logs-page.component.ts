@@ -119,8 +119,8 @@ export class AuditLogsComponent implements OnInit {
       placeholder: 'Status',
       options: [
         { label: 'All Statuses', value: '' },
-        { label: 'Successful', value: 'success' },
-        { label: 'Failed', value: 'failure' },
+        { label: 'Successful', value: 'SUCCESS' },
+        { label: 'Failed', value: 'FAILED' },
       ],
     },
   ];
