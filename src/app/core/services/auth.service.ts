@@ -107,7 +107,7 @@ export class AuthService {
       .pipe(
         take(1),
         tap(() => {
-          this.router.navigate([APP_ROUTES.LOGIN]);
+          this.login(email, password).subscribe();
         }),
         catchError((err) => this.errorHandlerService.handle(err)),
         finalize(() => this.setLoading(false)),
@@ -256,9 +256,12 @@ export class AuthService {
       email: data.email,
       fullName: data.fullName,
       address: data.address,
-      status: true,
-    });
-    formData.append('userUpdateRequest', formDataText);
+      status: true
+    })
+    formData.append('userUpdateRequest', formDataText)
+    if(data.profilePicture){
+      formData.append('profilePicture', data.profilePicture)
+    }
     this.setLoading(true);
     return this.userBackendService
       .updateUserWithFormData(userId, formData)
@@ -284,20 +287,32 @@ export class AuthService {
             user_.address || dataPasered[AUTH_STORAGE.ADDRESS],
           );
 
-          const data: OtpBodyData = {
-            email: user_.email,
-            fullName: user_.fullName,
-            role: user_.role,
-            profilePicture: user_.profileImageUrl as string,
-            id: user_.userId,
-            address: user_.address,
-            phone: user_.phone,
-          };
-          this._userInfo$.next(data);
-        }),
-        catchError((err) => this.errorHandlerService.handle(err)),
-        finalize(() => this.setLoading(false)),
-      );
+        this.saveAuthToStorage(
+          user_.userId.toString() || dataPasered[AUTH_STORAGE.USER_ID],
+          user_.fullName || dataPasered[AUTH_STORAGE.FULL_NAME],
+          user_.profileImageUrl || dataPasered[AUTH_STORAGE.PROFILE_PICTURE],
+          user_.email || dataPasered[AUTH_STORAGE.EMAIL],
+          dataPasered[AUTH_STORAGE.ROLE],
+          this.currentUser()?.role === USER_ROLES.ADMIN ? 'admin' : 'user',
+          new Date(dataPasered[AUTH_STORAGE.REFRESHED_AT]),
+          user_.phone || dataPasered[AUTH_STORAGE.PHONE_NUMBER],
+          user_.address || dataPasered[AUTH_STORAGE.ADDRESS],
+        )
+
+        const data: OtpBodyData = {
+          email: user_.email,
+          fullName: user_.fullName,
+          role: user_.role,
+          profilePicture: user_.profileImageUrl as string,
+          id: user_.userId,
+          address: user_.address,
+          phone: user_.phone,
+        };
+        this._userInfo$.next(data);
+      }),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
   }
 
   public updateStoredUserInfo(userData: OtpBodyData): void {

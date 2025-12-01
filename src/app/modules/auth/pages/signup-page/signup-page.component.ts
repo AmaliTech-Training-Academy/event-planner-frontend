@@ -90,7 +90,7 @@ export class SignupPageComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.notificationService.success(
-              'Registration successful! Login to continue.'
+              'Registration successful! Verify email to continue.'
             );
           },
         });

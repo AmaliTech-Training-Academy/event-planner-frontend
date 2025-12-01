@@ -57,7 +57,10 @@ export class ProfilePageComponent implements OnInit {
   public ngOnInit(): void {
     this.currentUser = this.authService.currentUser();
 
+    this.avatarUrl.set(this.currentUser?.profilePicture || 'icons/profile-avata.png');
+    
     this.profileForm = this.fb.group({
+      avatar: [null],
       basicInfo: this.fb.group({
         fullName: [this.currentUser?.fullName, [Validators.required]],
         email: [this.currentUser?.email, [Validators.email, Validators.required]],
@@ -141,6 +144,49 @@ export class ProfilePageComponent implements OnInit {
         address: user.address || '',
       }
     });
+  }
+
+  onAvatarSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) return;
+
+    const file = input.files[0];
+
+
+    const maxSize = 10 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      this.notificationnService.error('Image size must not exceed 10 MB');
+      input.value = '';
+      return;
+    }
+
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.avatarUrl.set(reader.result as string)
+    };
+    reader.readAsDataURL(file);
+    this.profileForm.patchValue({ avatar: file });
+
+    this.updateProfileImage(file);
+  }
+
+
+
+  private readonly updateProfileImage = (avatar: File) => {
+    const data: UpdateUserPayload = { ...this.profileForm.getRawValue().basicInfo, ...this.profileForm.getRawValue().contactInfo, profilePicture: avatar };
+
+    this.authService.updateUser(`${this.currentUser?.id}`, data).subscribe({
+      next: () => {
+        this.notificationnService.success(`Profile updated successfully`)
+        this.updateFormValues()
+      },
+      error: () => {
+        this.updateFormValues()
+      }
+    })
   }
 
 

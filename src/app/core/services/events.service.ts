@@ -100,6 +100,14 @@ export class EventsServiceService {
       finalize(() => this.setLoading(false))
     );
   }
+  public getMyEventDetail(id: string) {
+    this.setLoading(true);
+    return this.eventBackendService.myEventDetails(id).pipe(
+      take(1),
+      catchError((err) => this.errorHandlerService.handle(err)),
+      finalize(() => this.setLoading(false))
+    );
+  }
 
   public updateEvent(id: string, formData: FormData) {
     this.setLoading(true);

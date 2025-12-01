@@ -2,34 +2,51 @@
 <app-loading-card></app-loading-card>
 }@else {
 <form [formGroup]="form" class="container">
- <div class="header-action">
-    <div></div>
-    <app-button (onClick)="goBack()" type="secondary">Go back</app-button>
- </div>
-    <app-upload-event-flyer [flyerPreview]="flyerPreview" (selectedFlyer)="onFlyerImageSelected($event)"
-        title="Update Event Flyer"></app-upload-event-flyer>
+    <div class="header-action">
+        <div></div>
+        <app-button (onClick)="goBack()" type="secondary">Go back</app-button>
+    </div>
+
 
     <div class="content">
         <section class="basic-info">
+
             <h2>Event Information</h2>
+
+
             <app-input formControlName="title" label="Event Title"></app-input>
+
+            <div class="meeting-contianer">
+                <p>Select meeting type:</p>
+                <app-radio-button label="Virtual" id="virtual-meeting" [value]="MEETING_TYPES.VIRTUAL"
+                    controlName="meetingType">
+                </app-radio-button>
+
+                <app-radio-button label="In-person" id="inperson-meeting" [value]="MEETING_TYPES.IN_PERSON"
+                    controlName="meetingType">
+                </app-radio-button>
+            </div>
+
+            @if (form.get('meetingType')?.value === MEETING_TYPES.VIRTUAL) {
+            <app-input label="Meeting Link"></app-input>
+            }@else{
             <app-location-search formControlName="location" label="Add event location"
                 placeholder="Type location here"></app-location-search>
+            }
             <div class="field">
                 <label for="description">Add event description</label>
                 <textarea formControlName="description" placeholder="Type description here"></textarea>
                 <app-form-error></app-form-error>
             </div>
 
-            @if (eventType === 'VIRTUAL') {
-            <app-input label="Meeting Link"></app-input>
-            }
-
         </section>
         <section class="tickets">
-            <h2>Ticket Information</h2>
+            <app-upload-event-flyer [flyerPreview]="flyerPreview" (selectedFlyer)="onFlyerImageSelected($event)"
+                title="Update Event Flyer"></app-upload-event-flyer>
 
-            <div class="ticket-list" formArrayName="tickets">
+            <!-- <h2>Ticket Information</h2> -->
+
+            <!-- <div class="ticket-list" formArrayName="tickets">
                 @for (ticket of tickets.controls; track $index) {
                 <div [formGroup]="ticket">
                     <app-edit-ticket-card (removeGroup)="removeTicket($index)" [formGroup]="ticket"
@@ -38,14 +55,14 @@
                 }
             </div>
 
-            <app-button (onClick)="addTicket()" type="secondary">Add Ticket</app-button>
-
+            <app-button (onClick)="addTicket()" type="secondary">Add Ticket</app-button> -->
         </section>
     </div>
 
     <div class="form-action">
         <app-button [disabled]="form.invalid || submitting()" (onClick)="sumbitUpdate()">Update Event</app-button>
-        <app-button (onClick)="goBack()" type="secondary">Go back</app-button>
+        <div></div>
+        <!-- <app-button (onClick)="goBack()" type="secondary">Go back</app-button> -->
     </div>
 </form>
 }

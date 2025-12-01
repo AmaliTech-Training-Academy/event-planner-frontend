@@ -12,24 +12,25 @@
   <div class="price">{{ ticket.price | currency}}</div>
   }
 
-  
+
   <ul class="features-list">
     @for (feature of ticket.description.split('\n'); track $index) {
     <li class="feature-item">
-      <img
-        src="icons/checkmark.png"
-        alt="Checkmark"
-        class="check-icon"
-        aria-hidden="true"
-      />
+      <img src="icons/checkmark.png" alt="Checkmark" class="check-icon" aria-hidden="true" />
       <span>{{ feature }}</span>
     </li>
     }
   </ul>
 
-  <app-button type="primary" (click)="registerClick.emit()">
-   Buy {{ ticket.type }} Ticket
+  @if (!isPast()) {
+  <app-button [disabled]="!ticket.isActive" type="primary" (click)="registerClick.emit()">
+    Buy {{ capitalizeWords(ticket.type) }} Ticket
   </app-button>
+    @if (!ticket.isActive) {
+      <p class="ticket-availability">
+        <small>This ticket is not available</small>
+      </p>
+    }
+  }
 </div>
 }
-

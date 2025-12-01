@@ -10,34 +10,45 @@ import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule, For
 import { ActivatedRoute, Router } from '@angular/router';
 import { APP_ROUTES } from '@app/core/constants/app-routes.constants';
 import { EventsServiceService } from '@app/core/services/events.service';
-import { EventDetail } from '@app/core/models/event.model';
+import { EventDetail, MeetingType, TimeZone } from '@app/core/models/event.model';
 import { NotificationService } from '@app/core/services/notification.service';
 import { LoadingCardComponent } from "@app/shared/components/loading-card/loading-card.component";
+import { RadioButtonComponent } from "@app/shared/ui/radio-button/radio-button.component";
+import { MEETING_TYPE } from '../../constants/event-form.constant';
+import { EventData } from './models/edit-event.model';
 
 @Component({
   selector: 'app-edit-event-page',
-  imports: [UploadEventFlyerComponent, InputComponent, FormErrorComponent, LocationSearchComponent, CommonModule, ButtonComponent, EditTicketCardComponent, ReactiveFormsModule, LoadingCardComponent],
+  imports: [UploadEventFlyerComponent, InputComponent, FormErrorComponent, LocationSearchComponent, CommonModule, ButtonComponent, EditTicketCardComponent, ReactiveFormsModule, LoadingCardComponent, RadioButtonComponent],
   templateUrl: './edit-event-page.component.html',
   styleUrl: './edit-event-page.component.scss'
 })
 export class EditEventPageComponent implements OnInit {
 
   protected form: FormGroup;
-  protected eventType: 'VIRTUAL' | 'IN_PERSON' = 'IN_PERSON'
   protected eventId: number | null = null;
   protected flyerPreview: string = '';
-
+  private meetingTypes: MeetingType[] = [];
+  private timeZones: TimeZone[] = [];
   protected loading = signal<boolean>(true)
   protected submitting = signal<boolean>(false)
+  protected MEETING_TYPES = MEETING_TYPE;
 
-
-  constructor(private readonly fb: FormBuilder, private readonly route: ActivatedRoute, private readonly router: Router, private readonly eventService: EventsServiceService , private readonly notificationService:NotificationService) {
+  constructor(private readonly fb: FormBuilder, private readonly route: ActivatedRoute, private readonly router: Router, private readonly eventService: EventsServiceService, private readonly notificationService: NotificationService) {
     this.form = this.fb.group({
       title: ['', Validators.required],
       location: ['', Validators.required],
       description: ['', Validators.required],
       flyer: [null],
-      tickets: this.fb.array([])
+      tickets: this.fb.array([]),
+      meetingType: [MEETING_TYPE.IN_PERSON, Validators.required],
+      eventType: [null],
+      startTime: [null],
+      endTime: [null],
+      zoomUrl: [''],
+      ticketPrice: [0],
+      requiresApproval: [false],
+      capacity: [0],
     });
   }
 
@@ -51,22 +62,29 @@ export class EditEventPageComponent implements OnInit {
 
     this.eventId = Number(eventId)
     this.eventService.loading$.subscribe({
-      next : (value:boolean) =>{
+      next: (value: boolean) => {
         this.loading.set(value)
       }
     })
 
-    this.eventService.getEvent(eventId).subscribe({
-      next: (response: EventDetail) => {
+    this.eventService.getMyEventDetail(eventId).subscribe({
+      next: (response) => {
         this.form.patchValue({
-          title: response.title,
-          location: response.location,
-          description: response.description,
+          title: response.data.title,
+          location: response.data.location,
+          description: response.data.description,
+          zoomUrl: response.data.zoomMeetingUrl,
+          meetingType: this.isVirtualMeeting(response.data),
+          eventType: response.data.eventType.id,
+          startTime: response.data.eventTime,
+          endTime: response.data.eventTime,
+          requiresApproval: false,
+          capacity: response.data.ticketTypes.reduce((acc, ticket) => acc + (ticket.remainingTickets + (ticket?.soldTickets || 0)), 0),
+          ticketPrice: response.data.ticketTypes[0]?.price || 0,
         })
-        
-        this.flyerPreview = response.flyerUrl;
+        this.flyerPreview = response.data.flyerUrl;
         const ticketsArray = this.form.get('tickets') as FormArray;
-        response.ticketTypes.forEach(ticket => {
+        response.data.ticketTypes.forEach(ticket => {
           ticketsArray.push(
             new FormGroup({
               id: new FormControl(ticket.id),
@@ -82,14 +100,47 @@ export class EditEventPageComponent implements OnInit {
 
       }
     })
+
+    this.eventService.meetingTypes().subscribe({
+      next: (response) => {
+        if (response.length > 0) {
+          this.meetingTypes = response
+        }
+      }
+    })
+
+    this.eventService.timeZones().subscribe({
+      next: (response) => {
+        if (response.length > 0) {
+          this.timeZones = response
+        }
+      }
+    })
+
   }
 
+
+  private isVirtualMeeting(event: EventData): string {
+    if (event.zoomMeetingUrl && event.zoomMeetingUrl.trim() !== '') {
+      return MEETING_TYPE.VIRTUAL
+    }
+    return MEETING_TYPE.IN_PERSON
+  }
 
   protected onFlyerImageSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
 
     const file = input.files[0];
+
+    const maxSize = 10 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      this.notificationService.error('Image size must not exceed 10 MB');
+      input.value = '';
+      return;
+    }
+
     this.form.patchValue({
       flyer: file,
     })
@@ -122,16 +173,42 @@ export class EditEventPageComponent implements OnInit {
     this.tickets.removeAt(index);
   }
 
+  private formatDateToDDMMYYYY(date: Date): string {
+    if (!(date instanceof Date) || isNaN(date.getTime())) return '';
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   private parseObjectToFormdata(): FormData {
     const data = this.form.getRawValue();
     const formData = new FormData();
+
+    console.log(data);
 
     const eventInfo: any = {
       title: data.title,
       description: data.description,
       location: data.location,
-      zoomUrl: data.meetingLink || "",
-      tickets: data.tickets
+      zoomUrl: data.zoomMeetingUrl,
+      event_meeting_type_id: this.getEventMeetingTypeId(),
+      event_type_id: data.eventType,
+      event_time: data.startTime.split('T')[1].substring(0, 5),
+      event_time_zone_id: this.returnTimeZoneId() || '',
+      event_start_time_date: this.formatDateToDDMMYYYY(new Date(data.startTime)),
+      event_end_time_date: this.formatDateToDDMMYYYY(new Date(data.startTime)),
+      event_start_time: data.startTime.split('T')[1].substring(0, 5),
+      event_date: this.formatDateToDDMMYYYY(new Date(data.startTime)),
+      event_end_time: data.startTime.split('T')[1].substring(0, 5),
+      event_start_time_zone_id: this.returnTimeZoneId() || '',
+      event_end_time_zone_id: this.returnTimeZoneId() || '',
+      eventOptionsRequest: {
+        ticketPrice: data.ticketPrice,
+        requiresApproval: data.requiresApproval,
+        capacity: data.capacity,
+      },
+
     };
 
     if (data.flyer instanceof File) {
@@ -145,9 +222,27 @@ export class EditEventPageComponent implements OnInit {
   }
 
 
+  private getEventMeetingTypeId(): string {
+    const meetingType = this.meetingTypes.find(
+      (type) => type.name === this.form.value.meetingType
+    );
+    return meetingType ? meetingType.id.toString() : '';
+  }
+
+
+  private returnTimeCurrentTimeZone(): string {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return timezone;
+  }
+
+  private returnTimeZoneId() {
+    let timeZone_ = this.returnTimeCurrentTimeZone()
+    return this.timeZones.find((timeZone) => timeZone.zoneId == timeZone_)?.zoneId
+  }
+
   protected sumbitUpdate() {
 
-    if( this.form.invalid){
+    if (this.form.invalid) {
       this.notificationService.error(`Please double check the fields before submitting`)
       return
     }
@@ -162,23 +257,22 @@ export class EditEventPageComponent implements OnInit {
 
     const eventId = this.eventId.toString()
     this.eventService.updateEvent(eventId, formData).subscribe({
-      next:()=>{
+      next: () => {
 
       },
-      error : ()=>{
+      error: () => {
         this.submitting.set(false)
       },
-      complete : ()=>{
+      complete: () => {
         this.submitting.set(false)
+        this.notificationService.success(`Event updated successfully`)
         this.goBack()
       }
     })
 
   }
 
-
-
-  protected goBack(){
+  protected goBack() {
     history.back()
   }
 

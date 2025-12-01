@@ -10,7 +10,7 @@
         <input #flyerFileInput type="file" accept="image/*" (change)="onFlyerImageSelected($event)" hidden>
         <div class="info">
             <h5>{{ title() || "Upload event flyer"}}</h5>
-            <p>Accepted formats: PDF, JPG, PNG (max 10MB)</p>
+            <p>Accepted formats: JPG, PNG (max 10MB)</p>
         </div>
         <app-button buttonType="button" type="secondary" (onClick)="flyerFileInput.click()">
             Change the picture

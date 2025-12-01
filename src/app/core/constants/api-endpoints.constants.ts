@@ -92,6 +92,7 @@ export const API_ENDPOINTS = {
 export const EVENTS_API_ENDPOINTS = {
   GET_EVENTS: `${BASE}/events/explore`,
   GET_EVENT: (id: string): string => `${BASE}/events/${id}`,
+  GET_MY_EVENT_DETAIL: (id: string): string => `${BASE}/events/${id}/edit/details`,
   REGISTER_EVENT: (id: string): string => `${BASE}/events/${id}/register`,
   CREATE_EVENT: `${BASE}/events`,
   GET_EVENT_TYPES: `${BASE}/event_types`,

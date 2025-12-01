@@ -10,6 +10,10 @@
       <span>Back to event</span>
     </a>
 
+    @if(isPastEvent(eventDetails()?.startTime || '')) {
+     <p class="past_banner">This is a past event, registration period is past.</p>
+    }
+
     @if (eventDetails(); as event) {
     <section class="hero-section" #heroSection>
       <img (error)="handleImageFallback($event)" [ngSrc]="eventDetails()?.flyerUrl || ''"
@@ -72,7 +76,7 @@
       <div class="right-column">
         <div class="ticket-options-container">
           @for (ticket of eventDetails()?.ticketTypes; track ticket.id) {
-          <app-ticket-card [ticketInfo]="ticket" (registerClick)="onRegister(ticket)"></app-ticket-card>
+          <app-ticket-card [isPast]="isPastEvent(eventDetails()?.startTime || '')" [ticketInfo]="ticket" (registerClick)="onRegister(ticket)"></app-ticket-card>
           }
         </div>
 
