@@ -153,6 +153,16 @@ export class ProfilePageComponent implements OnInit {
 
     const file = input.files[0];
 
+
+    const maxSize = 10 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      this.notificationnService.error('Image size must not exceed 10 MB');
+      input.value = '';
+      return;
+    }
+
+
     const reader = new FileReader();
     reader.onload = () => {
       this.avatarUrl.set(reader.result as string)
