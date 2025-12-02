@@ -11,25 +11,35 @@ import { Registration } from '../../manage-event-page.component';
 
 @Component({
   selector: 'app-registration',
-  imports: [NgOptimizedImage, InputComponent, PaginationComponent, FormsModule, LoadingCardComponent],
+  imports: [
+    NgOptimizedImage,
+    InputComponent,
+    PaginationComponent,
+    FormsModule,
+    LoadingCardComponent,
+  ],
   templateUrl: './registration.component.html',
-  styleUrl: './registration.component.scss'
+  styleUrl: './registration.component.scss',
 })
 export class RegistrationComponent implements OnInit, OnChanges {
   protected readonly registrations = signal<Registration[]>([]);
   protected registrationFilters = signal<TicketType[]>([]);
-  public currentEventId = input<number | null>(null)
-  protected searchTerm = signal<string>('')
-  protected capacity = signal<number>(0)
-  protected page = signal<number>(0)
-  protected totalPage = signal<number>(0)
+  public currentEventId = input<number | null>(null);
+  protected searchTerm = signal<string>('');
+  protected capacity = signal<number>(0);
+  protected page = signal<number>(0);
+  protected totalPage = signal<number>(0);
   protected currentTicketType = signal<string>('');
-  protected loading = signal<boolean>(true)
-  protected registrationsData = signal<Registrants[] | null>(null)
+  protected loading = signal<boolean>(true);
+  protected registrationsData = signal<Registrants[] | null>(null);
+
+  // Add these new signals for pagination
+  protected totalItems = signal<number>(0);
+  protected itemsPerPage = signal<number>(10); // Adjust based on your API page size
+
   private debounceTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private readonly manageEventService: ManageEventService) { }
-
+  constructor(private readonly manageEventService: ManageEventService) {}
 
   ngOnInit(): void {
     const eventId = this.currentEventId();
@@ -38,23 +48,52 @@ export class RegistrationComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) { }
+  ngOnChanges(changes: SimpleChanges) {}
 
   private loadRegistrations(id: number) {
-    this.loading.set(true)
+    this.loading.set(true);
     this.manageEventService.registrationOverview(id).subscribe({
       next: (response) => {
-        this.capacity.set(response.data.capacity)
-        this.registrationFilters.set(response.data.ticketTypes)
-        this.registrationsData.set(response.data.eventRegistrations.content)
-        this.totalPage.set(response.data.eventRegistrations.totalPages)
+        this.capacity.set(response.data.capacity);
+        this.registrationFilters.set(response.data.ticketTypes);
+        this.registrationsData.set(response.data.eventRegistrations.content);
+        this.totalPage.set(response.data.eventRegistrations.totalPages);
+
+        // Add these lines to calculate total items
+        this.totalItems.set(
+          response.data.eventRegistrations.totalElements || 0,
+        );
+        this.itemsPerPage.set(response.data.eventRegistrations.size || 10);
       },
       complete: () => {
-        this.loading.set(false)
-      }
+        this.loading.set(false);
+      },
     });
   }
 
+  private doSearch(id: number) {
+    this.loading.set(true);
+    this.manageEventService
+      .searchRegistration(
+        id,
+        this.searchTerm(),
+        this.currentTicketType(),
+        this.page(),
+      )
+      .subscribe({
+        next: (response) => {
+          this.registrationsData.set(response.data.content);
+          this.totalPage.set(response.data.totalPages);
+
+          // Update pagination info after search
+          this.totalItems.set(response.data.totalElements || 0);
+          this.itemsPerPage.set(response.data.size || 10);
+        },
+        complete: () => {
+          this.loading.set(false);
+        },
+      });
+  }
 
   private searchRegistrants() {
     const id = this.currentEventId();
@@ -67,46 +106,23 @@ export class RegistrationComponent implements OnInit, OnChanges {
     this.debounceTimeoutId = setTimeout(() => {
       this.doSearch(id);
     }, 300);
-
   }
-
-
-  private doSearch(id: number) {
-    this.loading.set(true)
-    this.manageEventService.searchRegistration(
-      id,
-      this.searchTerm(),
-      this.currentTicketType(),
-      this.page()
-    ).subscribe({
-      next: (response) => {
-        this.registrationsData.set(response.data.content);
-        this.totalPage.set(response.data.totalPages);
-      },
-      complete: () => {
-        this.loading.set(false)
-      },
-    });
-  }
-
 
   onSearch(text: string): void {
     this.searchTerm.set(text.toLowerCase());
     this.page.set(0);
-    this.searchRegistrants()
+    this.searchRegistrants();
   }
 
-  // Update signal when filter changes
   onFilter(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     this.currentTicketType.set(selectElement.value);
     this.page.set(0);
-    this.searchRegistrants()
+    this.searchRegistrants();
   }
 
   onPageChange(newPage: number): void {
     this.page.set(newPage);
-    this.searchRegistrants()
+    this.searchRegistrants();
   }
-
 }

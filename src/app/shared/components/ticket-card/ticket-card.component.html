@@ -1,36 +1,44 @@
 @if (ticketInfo(); as ticket) {
-<div class="ticket-card">
-  <h3 class="card-title">
-    @if (!ticket.price) {
-    <span>Get Your <span class="blue-text">Free</span> Ticket</span>
-    } @else {
-    <span>{{ ticket.type}}</span>
+  <div class="ticket-card">
+    <h3 class="card-title">
+      @if (!ticket.price) {
+        <span>Get Your <span class="blue-text">Free</span> Ticket</span>
+      } @else {
+        <span>{{ ticket.type }}</span>
+      }
+    </h3>
+
+    @if (ticket.price) {
+      <div class="price">{{ ticket.price | currency }}</div>
     }
-  </h3>
 
-  @if (ticket.price) {
-  <div class="price">{{ ticket.price | currency}}</div>
-  }
+    <ul class="features-list">
+      @for (feature of ticket.description.split("\n"); track $index) {
+        <li class="feature-item">
+          <img
+            src="icons/checkmark.png"
+            alt="Checkmark"
+            class="check-icon"
+            aria-hidden="true"
+          />
+          <span>{{ feature }}</span>
+        </li>
+      }
+    </ul>
 
-
-  <ul class="features-list">
-    @for (feature of ticket.description.split('\n'); track $index) {
-    <li class="feature-item">
-      <img src="icons/checkmark.png" alt="Checkmark" class="check-icon" aria-hidden="true" />
-      <span>{{ feature }}</span>
-    </li>
+    @if (!isPast()) {
+      <app-button
+        [disabled]="!ticket.isActive"
+        type="primary"
+        (click)="registerClick.emit()"
+      >
+        Get {{ capitalizeWords(ticket.type) }} Ticket
+      </app-button>
+      @if (!ticket.isActive) {
+        <p class="ticket-availability">
+          <small>Out of Stock</small>
+        </p>
+      }
     }
-  </ul>
-
-  @if (!isPast()) {
-  <app-button [disabled]="!ticket.isActive" type="primary" (click)="registerClick.emit()">
-    Buy {{ capitalizeWords(ticket.type) }} Ticket
-  </app-button>
-    @if (!ticket.isActive) {
-      <p class="ticket-availability">
-        <small>This ticket is not available</small>
-      </p>
-    }
-  }
-</div>
+  </div>
 }
