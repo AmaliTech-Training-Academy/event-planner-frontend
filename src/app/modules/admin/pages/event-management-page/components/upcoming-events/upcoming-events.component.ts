@@ -1,14 +1,7 @@
 import { Component, input, output, computed } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ButtonComponent } from "../../../../../../shared/ui/button/button.component";
-
-export interface UpcomingEvent {
-  id: number;
-  title: string;
-  date: string;
-  attendeeCount: number;
-  status?: 'upcoming' | 'ongoing' | 'past';
-}
+import { UpcomingEvent } from '../../../../../../core/models/events/upcoming-event.model';
 
 @Component({
   selector: 'app-upcoming-events',

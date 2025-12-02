@@ -6,6 +6,7 @@ import {
   model,
   ChangeDetectionStrategy,
   output,
+  effect,
 } from '@angular/core';
 import { ButtonComponent } from '../../ui/button/button.component';
 
@@ -18,26 +19,57 @@ import { ButtonComponent } from '../../ui/button/button.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginationComponent {
-  public readonly totalItems = input<number>(0); // ADD THIS
-
+  public readonly totalItems = input<number>(0);
   public readonly itemsPerPage = input<number>(10);
   public readonly maxVisiblePages = input<number>(5);
   public readonly pageChange = output<number>();
-  
-  public readonly currentPage = model<number>(1);
+  public readonly zeroBased = input<boolean>(false);
+
+  public readonly currentPage = model<number>(0);
+
+  // Ensure currentPage is properly initialized based on zeroBased
+  constructor() {
+    effect(() => {
+      const zb = this.zeroBased();
+      const cp = this.currentPage();
+
+      // If not zero-based and currentPage is 0, set it to 1
+      if (!zb && cp === 0) {
+        this.currentPage.set(1);
+      }
+    });
+  }
+
+  // The actual page number for calculations (always 1-based internally)
+  private readonly effectivePage = computed(() => {
+    const current = this.currentPage();
+    const zb = this.zeroBased();
+
+    // If zero-based input, add 1 for internal calculations
+    // If one-based input, use as-is
+    return zb ? current + 1 : current;
+  });
 
   public readonly totalPages = computed(() =>
-    Math.ceil(this.totalItems() / this.itemsPerPage())
+    Math.ceil(this.totalItems() / this.itemsPerPage()),
   );
-  public readonly startIndex = computed(
-    () => (this.currentPage() - 1) * this.itemsPerPage() + 1
-  );
-  public readonly endIndex = computed(() =>
-    Math.min(this.currentPage() * this.itemsPerPage(), this.totalItems())
-  );
+
+  public readonly startIndex = computed(() => {
+    const page = this.effectivePage();
+    const itemsPerPage = this.itemsPerPage();
+    return (page - 1) * itemsPerPage + 1;
+  });
+
+  public readonly endIndex = computed(() => {
+    const page = this.effectivePage();
+    const itemsPerPage = this.itemsPerPage();
+    const total = this.totalItems();
+    return Math.min(page * itemsPerPage, total);
+  });
+
   public readonly visiblePages = computed(() => {
     const total = this.totalPages();
-    const current = this.currentPage();
+    const current = this.effectivePage();
     const max = this.maxVisiblePages();
 
     if (total <= max) return Array.from({ length: total }, (_, i) => i + 1);
@@ -68,9 +100,32 @@ export class PaginationComponent {
 
   public goToPage(page: number | string): void {
     if (typeof page === 'number' && page >= 1 && page <= this.totalPages()) {
-      this.currentPage.set(page);
-      this.pageChange.emit(page); // Emit the 1-based page number
+      // Convert display page to model value
+      const modelValue = this.zeroBased() ? page - 1 : page;
+      this.currentPage.set(modelValue);
+      this.pageChange.emit(modelValue);
     }
   }
-  public readonly serverSidePagination = input<boolean>(false); // ADD THIS
+
+  public isActivePage(page: number | string): boolean {
+    return page === this.effectivePage();
+  }
+
+  public canGoPrevious(): boolean {
+    return this.effectivePage() > 1;
+  }
+
+  public canGoNext(): boolean {
+    return this.effectivePage() < this.totalPages();
+  }
+
+  public goToPrevious(): void {
+    this.goToPage(this.effectivePage() - 1);
+  }
+
+  public goToNext(): void {
+    this.goToPage(this.effectivePage() + 1);
+  }
+
+  public readonly serverSidePagination = input<boolean>(false);
 }

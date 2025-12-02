@@ -1,91 +1,27 @@
-<div class="event-details-page__content">
-    <div class="registration-section">
-        <div class="registration-section__header">
-            <h2 class="registration-section__title">Registration</h2>
-        </div>
-
-        <div class="registration-cards-grid">
-            <!-- <div class="registration-info-card">
-                <div class="registration-info-card__icon">
-                    <img ngSrc="/icons/mail.png" alt="Invite Guest" width="24" height="24" />
-                </div>
-                <div class="registration-info-card__content">
-                    <p class="registration-info-card__label">Invite Guest</p>
-                    <p class="registration-info-card__value">Open</p>
-                </div>
-            </div> -->
-
-            <div class="registration-info-card">
-                <div class="registration-info-card__icon">
-                    <img ngSrc="/icons/trend-up.svg" alt="Event Capacity" width="24" height="24" />
-                </div>
-                <div class="registration-info-card__content">
-                    <p class="registration-info-card__label">Event Capacity</p>
-                    <p class="registration-info-card__value">{{capacity() ? capacity() : 'Unlimited'}}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="registrations-table-wrapper">
-
-
-
-            <div class="registrations-container">
-                <div class="header">
-                    <h2>Registrations</h2>
-                    <div class="controls">
-                        <app-input [value]="searchTerm()" (valueChange)="onSearch($event)"
-                            placeholder="Search attendees..." iconSrc="icons/search-icon.png"></app-input>
-                        <select [(ngModel)]="currentTicketType" (change)="onFilter($event)" class="ticket-type-select">
-                            <option value="">All Tickets</option>
-                            @for (ticket of registrationFilters(); track $index) {
-                                 <option [value]="ticket.type">{{ticket.type}}</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                @if (registrationsData()?.length && !loading()) {
-
-                <table class="registrations-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Number of Tickets</th>
-                            <th>Ticket Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (registrant of registrationsData(); track $index) {
-                        <tr>
-                            <td>{{ registrant.name }}</td>
-                            <td>{{ registrant.email }}</td>
-                            <td>{{ registrant.numberOfTickets }}</td>
-                            <td>{{ registrant.ticketType }}</td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-                <app-pagination [currentPage]="page()"></app-pagination>
-
-                } @else {
-
-                @if (loading()) {
-                <app-loading-card></app-loading-card>
-                }@else {
-
-                <div class="registration-empty-state">
-                    <div class="registration-empty-state__icon">
-                        <img ngSrc="/icons/search-big.png" alt="No registrations" width="120" height="120" />
-                    </div>
-                    <p class="registration-empty-state__text">No Registration found</p>
-                </div>
-                }
-
-                }
-            </div>
-
-
-        </div>
-    </div>
-</div>
+<table class="registrations-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Number of Tickets</th>
+      <th>Ticket Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (registrant of registrationsData(); track $index) {
+      <tr>
+        <td>{{ registrant.name }}</td>
+        <td>{{ registrant.email }}</td>
+        <td>{{ registrant.numberOfTickets }}</td>
+        <td>{{ registrant.ticketType }}</td>
+      </tr>
+    }
+  </tbody>
+</table>
+<app-pagination
+  [totalItems]="totalItems()"
+  [itemsPerPage]="itemsPerPage()"
+  [currentPage]="page()"
+  (pageChange)="onPageChange($event)"
+>
+</app-pagination>

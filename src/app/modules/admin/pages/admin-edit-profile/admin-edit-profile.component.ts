@@ -26,6 +26,7 @@ import { PlatformSettingsService } from '../../../../core/services/platform-sett
 import { UserManagementService } from '../../../../core/services/user-management.service';
 import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { InputComponent } from '../../../../shared/ui/input/input.component';
+import { NotificationService } from '@app/core/services/notification.service';
 
 interface CountryOption {
   readonly value: CountryCode;
@@ -65,7 +66,7 @@ export class EditProfileComponent implements OnInit {
   private _originalImageUrl: string | null = null;
   private _currentUserId: string | null = null;
   private _editingMember: TeamMember | null = null;
-
+  
   protected readonly currentProfileImage = computed(() => {
     if (this.isEditingTeamMember() && this._editingMember) {
       const name = this._editingMember.fullName || 'Team Member';
@@ -117,6 +118,8 @@ export class EditProfileComponent implements OnInit {
   };
 
   constructor(
+      private readonly _notificationService: NotificationService,
+
     private readonly _fb: FormBuilder,
     private readonly _layoutService: LayoutService,
     private readonly _authService: AuthService,
@@ -176,8 +179,7 @@ export class EditProfileComponent implements OnInit {
               }
             },
             error: (err) => {
-              // If fetch fails, use cached user data
-              console.error('Failed to fetch user details:', err);
+         
               if (currentUser) {
                 this._initializeForm(currentUser);
                 this._initializeProfileImage();
@@ -433,6 +435,9 @@ export class EditProfileComponent implements OnInit {
             // For team member updates
             this._platformSettingsService.loadTeamMembers().subscribe();
           }
+          this._notificationService.success(
+            'User profile updated successfully',
+          );
 
           this._resetForm();
           this.error.set(null);
