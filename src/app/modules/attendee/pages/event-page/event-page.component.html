@@ -4,6 +4,35 @@
 @else{
 
 <main class="event-page-content">
+  @if (eventDetails(); as event) {
+  <section class="hero-section" #heroSection>
+    <img (error)="handleImageFallback($event)" [ngSrc]="eventDetails()?.flyerUrl || ''"
+      [alt]="event.title + ' cover image'" class="hero-image" fill priority />
+
+    @if (eventDetails()?.isPaid) {
+    <span class="hero-badge">Paid</span>
+    } @else{
+    <span class="hero-badge">Free</span>
+    }
+
+    <div class="hero-overlay">
+      <h1 class="hero-title">{{ eventDetails()?.title }}</h1>
+      <div class="hero-details">
+        <span class="hero-detail-item">
+          <img src="icons/Mixed.png" alt="" class="hero-icon" aria-hidden="true" />
+          <button class="hero-date-btn">
+            {{( eventDetails()?.startTime | date) || 'N/A' }}
+          </button>
+        </span>
+        <span class="hero-detail-item">
+          <img src="icons/room.png" alt="" class="hero-icon" aria-hidden="true" />
+          {{ eventDetails()?.location || "N/A" }}
+        </span>
+      </div>
+    </div>
+  </section>
+  }
+
   <div class="container">
     <a [routerLink]="routes.EXPLORE" class="back-link">
       <img src="icons/Navigation1.png" alt="Back" class="back-icon" aria-hidden="true" />
@@ -11,36 +40,7 @@
     </a>
 
     @if(isPastEvent(eventDetails()?.startTime || '')) {
-     <p class="past_banner">This is a past event, registration period is past.</p>
-    }
-
-    @if (eventDetails(); as event) {
-    <section class="hero-section" #heroSection>
-      <img (error)="handleImageFallback($event)" [ngSrc]="eventDetails()?.flyerUrl || ''"
-        [alt]="event.title + ' cover image'" class="hero-image" fill priority />
-
-      @if (eventDetails()?.isPaid) {
-      <span class="hero-badge">Paid</span>
-      } @else{
-      <span class="hero-badge">Free</span>
-      }
-
-      <div class="hero-overlay">
-        <h1 class="hero-title">{{ eventDetails()?.title }}</h1>
-        <div class="hero-details">
-          <span class="hero-detail-item">
-            <img src="icons/Mixed.png" alt="" class="hero-icon" aria-hidden="true" />
-            <button class="hero-date-btn">
-              {{( eventDetails()?.startTime | date) || 'N/A' }}
-            </button>
-          </span>
-          <span class="hero-detail-item">
-            <img src="icons/room.png" alt="" class="hero-icon" aria-hidden="true" />
-            {{ eventDetails()?.location || "N/A" }}
-          </span>
-        </div>
-      </div>
-    </section>
+    <p class="past_banner">This is a past event, registration period is past.</p>
     }
 
     <div class="content-grid">
@@ -76,7 +76,8 @@
       <div class="right-column">
         <div class="ticket-options-container">
           @for (ticket of eventDetails()?.ticketTypes; track ticket.id) {
-          <app-ticket-card [isPast]="isPastEvent(eventDetails()?.startTime || '')" [ticketInfo]="ticket" (registerClick)="onRegister(ticket)"></app-ticket-card>
+          <app-ticket-card [isPast]="isPastEvent(eventDetails()?.startTime || '')" [ticketInfo]="ticket"
+            (registerClick)="onRegister(ticket)"></app-ticket-card>
           }
         </div>
 
