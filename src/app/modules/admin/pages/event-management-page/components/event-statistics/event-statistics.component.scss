@@ -92,7 +92,6 @@ $chart-height: 200px;
   &__bar {
     width: 100%;
     max-width: 64px;
-    min-height: 4px;
     border-radius: $radius-3;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 

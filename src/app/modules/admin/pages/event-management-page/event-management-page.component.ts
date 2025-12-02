@@ -141,7 +141,8 @@ export class EventManagementPageComponent implements OnInit, OnDestroy {
 
     return data.upcomingEvents.map((event, index) => ({
       id: event.id,
-      title: event.title,
+      eventTitle: event.eventTitle,
+      title: event.eventTitle,
       date: new Date(event.startTime).toISOString().split('T')[0],
       startTime: event.startTime,
       attendeeCount: event.attendeeCount,

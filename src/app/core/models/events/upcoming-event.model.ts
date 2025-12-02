@@ -1,6 +1,7 @@
 export interface UpcomingEvent {
   id: number;
-  title: string;
+  eventTitle: string; // Backend field
+  title: string; // Frontend display field
   date: string;
   startTime: string;
   attendeeCount: number;

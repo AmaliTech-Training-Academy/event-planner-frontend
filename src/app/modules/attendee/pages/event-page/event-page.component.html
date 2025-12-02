@@ -4,9 +4,21 @@
 @else{
 
 <main class="event-page-content">
+  <div class="container">
+    <a [routerLink]="routes.EXPLORE" class="back-link">
+      <img src="icons/Navigation1.png" alt="Back" class="back-icon" aria-hidden="true" />
+      <span>Back to event</span>
+    </a>
+
+    @if(isPastEvent(eventDetails()?.startTime || '')) {
+    <p class="past_banner">This is a past event, registration period is past.</p>
+    }
+  </div>
+
   @if (eventDetails(); as event) {
   <section class="hero-section" #heroSection>
-    <img (error)="handleImageFallback($event)" [ngSrc]="eventDetails()?.flyerUrl || ''"
+   <div class="container">
+     <img (error)="handleImageFallback($event)" [ngSrc]="eventDetails()?.flyerUrl || ''"
       [alt]="event.title + ' cover image'" class="hero-image" fill priority />
 
     @if (eventDetails()?.isPaid) {
@@ -30,19 +42,11 @@
         </span>
       </div>
     </div>
+   </div>
   </section>
   }
 
   <div class="container">
-    <a [routerLink]="routes.EXPLORE" class="back-link">
-      <img src="icons/Navigation1.png" alt="Back" class="back-icon" aria-hidden="true" />
-      <span>Back to event</span>
-    </a>
-
-    @if(isPastEvent(eventDetails()?.startTime || '')) {
-    <p class="past_banner">This is a past event, registration period is past.</p>
-    }
-
     <div class="content-grid">
       <div class="left-column">
         <div class="content-card">
