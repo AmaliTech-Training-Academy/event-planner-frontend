@@ -41,6 +41,7 @@ import { ButtonComponent } from '../../../../shared/ui/button/button.component';
 import { GuestComponent } from './components/guest/guest.component';
 import { OverviewComponent } from './components/overview/overview.component';
 import { RegistrationComponent } from './components/registration/registration.component';
+import { SuccessModalComponent } from '../../../admin/pages/user-management-page/components/success-modal/success-modal.component';
 import { number } from 'echarts';
 
 export interface Registration {
@@ -81,6 +82,7 @@ interface ManageEventPageState {
     GuestComponent,
     RegistrationComponent,
     LoadingCardComponent,
+    SuccessModalComponent,
   ],
   templateUrl: './manage-event-page.component.html',
   styleUrls: ['./manage-event-page.component.scss'],
@@ -226,7 +228,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   }
 
   private _navigateToEventsList(): void {
-      this._router.navigate([APP_ROUTES.MY_EVENTS]);
+    this._router.navigate([APP_ROUTES.MY_EVENTS]);
   }
 
   protected getBreadcrumbText(): string {
@@ -359,13 +361,7 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
 
     if (status === 'SEND') {
       this._notificationService.success('Invitation sent successfully.');
-
       this.showSuccessModal.set(true);
-
-      setTimeout(() => {
-        this.showSuccessModal.set(false);
-        this._toggleBodyScroll(false);
-      }, 3000);
     } else {
       this._toggleBodyScroll(false);
     }
@@ -374,6 +370,13 @@ export class ManageEventPageComponent implements OnInit, OnDestroy {
   protected onCloseSuccessModal(): void {
     this.showSuccessModal.set(false);
     this._toggleBodyScroll(false);
+  }
+
+  protected onSuccessModalAction(): void {
+    this.showSuccessModal.set(false);
+    this._toggleBodyScroll(false);
+    // Navigate to the event management page (guests tab)
+    this.setActiveTab('guests');
   }
 
   private _toggleBodyScroll(lock: boolean): void {

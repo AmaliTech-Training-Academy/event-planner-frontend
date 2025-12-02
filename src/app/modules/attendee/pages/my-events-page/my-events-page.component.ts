@@ -37,7 +37,7 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
   protected myEvents = signal<MyEventItem[]>([]);
   protected currentPage = signal<number>(1);
   protected totalItems = signal<number>(0);
-  protected itemsPerPage = signal<number>(10);
+  protected itemsPerPage = signal<number>(3);
   protected loading = signal<boolean>(true);
   protected statCards = signal<UserCardData[]>(MY_EVENT_STAT_CARDS);
   private destroy$ = new Subject<void>();
@@ -57,7 +57,7 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
     this.getMyEvents();
 
     forkJoin({
-      events: this.eventService.myEvents(this.currentPage() - 1),
+      events: this.eventService.myEvents(this.currentPage() - 1, this.itemsPerPage()),
       overview: this.eventService.myEventOverview(),
     })
       .pipe(takeUntil(this.destroy$))
@@ -87,7 +87,7 @@ export class MyEventsPageComponent implements OnInit, OnDestroy {
 
   private getMyEvents() {
     this.eventService
-      .myEvents(this.currentPage() - 1)
+      .myEvents(this.currentPage() - 1, this.itemsPerPage())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {

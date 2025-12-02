@@ -40,7 +40,6 @@
 
 .event-details-page {
   padding: $spacing-6;
-  max-width: 1400px;
   margin: 0 auto;
   min-height: 100vh;
 
@@ -807,7 +806,6 @@
 
 @media (max-width: 768px) {
   .event-details-page {
-    padding: $spacing-4;
 
     &__title { font-size: 24px; }
     &__tabs {
